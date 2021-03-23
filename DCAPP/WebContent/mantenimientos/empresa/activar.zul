@@ -1,0 +1,76 @@
+<?page title="Activar empresa" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zActivar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.empresa.activar"
+		position="center, center" sizable="true" width="45%" height="40%"
+		maximizable="false" minimizable="false"
+		title=".:: Activar empresa ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="40px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Comentario:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario" width="450px" rows="4"
+													class="z-textbox-2" maxlength="1500" style="resize: none;">
+													<attribute name="onChanging">
+													<![CDATA[
+													    String value = event.value;     
+													    lComentario.setValue(value.length()+"/1500");
+													]]>
+													</attribute>
+												</textbox>
+											</hlayout>
+											<label id="lComentario" style="position: relative; left: 18.8rem; top: -1.1rem; color:red; font-weight: bold;" value="0/1500"></label>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row align="center">
+								<cell colspan="4">
+									<button id="btnGrabar"
+										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+										autodisable="self" />
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="nom" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				nombre no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el nombre no se encuentre registrado.
+				</span> </p> ]]>
+
+			</html>
+		</popup>
+	</window>
+</zk>

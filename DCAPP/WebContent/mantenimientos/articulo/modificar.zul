@@ -1,0 +1,507 @@
+<?page title="Modificar articulo" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo.modificar"
+		position="center, center" sizable="true" width="35%" height="85%"
+		maximizable="false" minimizable="false"
+		title=".:: Modificar articulo ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="20px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Código:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtCodigo"
+													width="200px" readonly="false" class="z-textbox-2" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cod"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Descripción:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtDescripcion" width="450px" readonly="false" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Categoría:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbCategoria"
+													model="@{zModificar$modificar.obtenerCategorias}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_categoria}"
+														value="@{lista.getId_categoria}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cat"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwMarca" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Marca:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtMarca"
+													width="200px" readonly="false" rows="2"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwModelo" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Modelo:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtModelo"
+													width="200px" readonly="false" rows="2"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwSerie" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Serie:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtSerie"
+													width="200px" readonly="false" rows="2"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwCodigoActivo" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value=" Código de activo fijo:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtCodigoActivo" width="200px" readonly="false"
+													rows="2" class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Ubicación:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<bandbox
+													id="bdxUbicacion" mold="rounded" autodrop="true"
+													width="250px" readonly="true">
+													<bandpopup width="34%">
+														<panel
+															title="">
+															<panelchildren>
+																<space
+																	width="20px">
+																</space>
+																<image
+																	src="/img/botones/ButtonPopup.png" tooltip="con"
+																	style="cursor: help; width: 16px; height: 16px;"
+																	visible="false" />
+	
+																	<listbox
+																		mold="paging" pageSize="500" id="lbxUbicaciones"
+																		model="@{zModificar$modificar.obtenerUbicaciones}"
+																		checkmark="true" multiple="true" vflex="true"
+																		sizedByContent="false">
+																		<listhead
+																			sizable="false">
+																			<listheader
+																				label="ID" visible="true">
+																			</listheader>
+																			<listheader
+																				label="CLIENTE" style="text-align: center !important;">
+																			</listheader>
+																			<listheader
+																				label="UBICACIÓN" style="text-align: center !important;">
+																			</listheader>
+																			<listheader
+																				label="POSICIÓN" style="text-align: center !important;">
+																			</listheader>
+																			<listheader
+																				label="ESTADO" visible="false">
+																			</listheader>
+																		</listhead>
+																		<listitem
+																			self="@{each=lista}">
+																			<listcell
+																				label="@{lista.getId_ubicacion}">
+																			</listcell>
+																			<listcell
+																				label="@{lista.getNom_empresa}">
+																			</listcell>
+																			<listcell
+																				label="@{lista.getNom_ubicacion}" style="text-align: center !important;">
+																			</listcell>
+																			<listcell
+																				label="@{lista.getPos_ubicacion}" style="text-align: center !important;">
+																			</listcell>
+																			<listcell
+																				label="@{lista.mostrarEstado}"
+																				style="@{lista.estiloMostrarEstado}" />
+																		</listitem>
+																	</listbox>
+															</panelchildren>
+														</panel>
+													</bandpopup>
+												</bandbox>
+												<space width="5px"></space>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="con1"
+													style="cursor: help; width: 16px; height: 16px;"
+													visible="true" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row visible="false">
+								<space></space>
+								<label value="* Stock" />
+								<cell colspan="2">
+									<intbox id="txtCantidad"
+										constraint="no negative" width="70px" readonly="true"
+										value="0" class="z-txt-cantidad"
+										style="font-weight: bold; color:black !important;" />
+									<image
+										src="/img/botones/ButtonPopup.png" tooltip="can"
+										style="cursor: help; width: 16px; height: 16px;" />
+								</cell>
+								<space></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<div>
+											<hlayout hflex="1">
+												<div hflex="1">
+													<div hflex="1">
+														<listbox
+															mold="paging" pageSize="10" id="lbxEstados" width="350px">
+															<listhead
+																sizable="true">
+																<listheader width="15%"></listheader>
+																<listheader label="ID" visible="false"></listheader>
+																<listheader
+																	label="ESTADOS PARA EL ARTICULO"
+																	style="font-style: italic;">
+																	<space width="30px"></space>
+																	<image
+																		src="/img/botones/ButtonPopup.png" tooltip="est"
+																		style="cursor: help; width: 16px; height: 16px;" />
+																</listheader>
+															</listhead>
+														</listbox>
+													</div>
+												</div>
+											</hlayout>
+										</div>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Localidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbLocalidad"
+													model="@{zModificar$modificar.obtenerLocalidades}"
+													readonly="true" disabled="true">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_localidad}"
+														value="@{lista.getId_localidad}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="dc"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="Imagen:"
+											class="z-label-1" />
+										<hlayout>
+											<vlayout id="vPics"
+												width="300px" height="200px"
+												style="overflow:auto; border-color: black; border-style: dotted;">
+												<image width="300px"
+													height="200px" style="cursor: none;" id="img1">
+												</image>
+											</vlayout>
+											<vlayout>
+												<button id="btnCargar"
+													iconSclass="z-icon-camera"
+													tooltiptext="Cargar imagen" autodisable="self"
+													upload="true, maxsize=1000" class="btn btn-info">
+												</button>
+												<button id="btnBorrar"
+													iconSclass="z-icon-trash-o"
+													tooltiptext="Borrar imagen" autodisable="self">
+												</button>
+											</vlayout>
+										</hlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Comentario:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario" width="450px" rows="8"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell>
+									<textbox width="280px"
+										id="txtBuscarUbicacion" class="z-textbox-search-move"
+										placeholder="Buscar"
+										tooltiptext="Presione enter para realizar la búsqueda"
+										visible="false" disabled="true">
+									</textbox>
+									<space width="20px"></space>
+									<image
+										src="/img/botones/ButtonPopup.png" tooltip="con"
+										style="cursor: help; width: 16px; height: 16px;"
+										visible="false" />
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</center>
+				</borderlayout>
+		</div>
+
+		<popup id="con" width="450px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicación no se encuentra en la lista, valide que se
+				encuentre creada, aprobada y activa para poderse usar
+				desde la opción de movimientos en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de ubicaciones. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre las
+				ubicaciones consultando por id, cliente, ubicación, etc.
+				Solo escribiendo parte de la palabra en el campo buscar
+				y presionando la tecla Enter </br> 2.- Para mostrar
+				todas las ubicaciones deje limpio el campo buscar y
+				presione la tecla Enter. </p> ]]>
+
+			</html>
+		</popup>
+
+		<popup id="cod" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				codigo no puede ser modificado una vez haya sido creado
+				el articulo. </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="des" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				descripcion no puede ser modificada una vez haya sido
+				creado el articulo. </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="cat" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la categoria no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				categorias. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="ubi" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicacion no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				ubicaciones. </span> </br> </br> <span style="color:
+				black; font-size: 12px; font-style: normal; font-weight:
+				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
+				manera rapida entre las ubicaciones solo escribiendo
+				parte de la palabra y presionando 2 veces la tecla
+				Enter. </br> 2.- Para mostrar todas las ubicaciones deje
+				limpio el campo y presione 2 veces la tecla Enter. </p>
+				]]>
+
+			</html>
+		</popup>
+		<popup id="dc" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				localidad que se muestra es la que se asignó a su
+				usuario en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuracion de usuarios. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="can" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				stock no se puede modificar una vez se haya creado el
+				artículo, <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> si necesita
+				asignar stock al artículo debe hacerlo desde la opcion
+				de movimientos. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="est" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> En
+				esta lista se muestran los estados que pueden ser
+				asignados al artículo, <span style="color: black;
+				font-size: 12px; font-style: italic; font-weight:
+				bold;"> si necesita que se muestre otro estado que no se
+				encuentra en la lista debe solicitarlo al administrador.
+				</span> </br> </br> Si desea desmarcar uno de los
+				estados, deberá validar que antes no exista stock
+				asignado al articulo en alguna ubicación para el estado
+				que desea desmarcar, <span style="color: black;
+				font-size: 12px; font-style: italic; font-weight:
+				bold;"> si existiera stock el estado se encontrará
+				bloqueado. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="con1" width="300px">
+			<html>
+			
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				desea desmarcar una de las ubicaciones, deberá validar
+				que antes no exista stock asignado al articulo en la
+				ubicación que desea desmarcar, <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> si existiera stock la ubicación se encontrará
+				bloqueada. </span> </p> ]]>
+				
+			</html>
+		</popup>
+		<zscript>
+		<![CDATA[
+	            lbxUbicaciones.pagingChild.mold = "os".equals(lbxUbicaciones.pagingChild.mold) ? "default" : "os";
+	            lbxEstados.pagingChild.mold = "os".equals(lbxEstados.pagingChild.mold) ? "default" : "os";
+	        ]]>
+	</zscript>
+	<style>
+	   .z-listheader-checkable {
+	       visibility: hidden;
+	   	}
+	</style>
+	</window>
+</zk>

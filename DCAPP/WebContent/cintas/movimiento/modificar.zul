@@ -1,0 +1,817 @@
+<?page title="Modificar registro" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Modificar registro ::." border="normal"
+		id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.cintas.modificar"
+		position="center, center" sizable="true" width="50%" height="80%"
+		maximizable="false" minimizable="false" mode="overlapped"
+		shadow="false" focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" />
+			</toolbar>
+			<tabbox height="100%">
+				<tabs>
+					<tab label="DATOS ANTERIORES" visible="false"></tab>
+					<tab label="DATOS DESPUES DE PEDIDO" selected="true"></tab>
+				</tabs>
+				<tabpanels vflex="max" style="height: calc(100%);"
+					width="100%">
+					<tabpanel height="50%" width="100%">
+						<borderlayout>
+							<center style="overflow: auto;">
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column width="50%"></column>
+										<column width="50%"></column>
+									</columns>
+									<rows>
+										<row>
+											<space></space>
+										</row>
+										<row visible="false">
+											<cell colspan="2">
+												<div align="center">
+													<label value="ID:"
+														class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtIdAnterior" width="220px" readonly="true"
+																class="z-textbox-1" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="* Código:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtCodigoAnterior" width="200px" readonly="false"
+																class="z-textbox-2" />
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="cod"
+																style="cursor: help; width: 16px; height: 16px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="* Descripción:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtDescripcionAnterior" width="450px"
+																readonly="false" rows="4" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwIngresaFechaAnterior"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<vlayout>
+														<hlayout>
+															<checkbox
+																id="chkIngresaFechaAnterior" width="200px"
+																label="¿Desea registrar fecha de respaldo?"
+																style="font-style: normal !important" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwEsFechaAnterior"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<vlayout>
+														<hlayout>
+															<checkbox
+																id="chkEsFechaAnterior"
+																style="position: relative; left: -5.2rem; font-style: normal !important"
+																width="200px" label="¿Es del tipo fecha?" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row
+											id="rwFechaRespaldoAnterior" visible="false">
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="Fecha de respaldo:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<combobox
+																width="250px" id="cmbRespaldoAnterior1"
+																model="@{zModificar$modificar.obtenerRespaldosAnterior1}"
+																readonly="false" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.toNombreRespaldo}"
+																	value="@{lista.getId_respaldo}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="trp"
+																style="cursor: help; width: 16px; height: 16px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwFechaInicioAnterior"
+											visible="false">
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<label
+														value="* Fecha inicio:" class="z-label-1"
+														style="position: relative; left: -8px;" />
+													<vlayout>
+														<hlayout>
+															<datebox
+																id="dtxFechaInicioAnterior" width="150px"
+																format="dd/MM/yyyy" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwFechaFinAnterior"
+											visible="false">
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<label
+														value=" Fecha fin:" class="z-label-1"
+														style="position: relative; left: -5px;" />
+													<vlayout>
+														<hlayout>
+															<datebox
+																id="dtxFechaFinAnterior" width="150px"
+																format="dd/MM/yyyy" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwTipoRespaldoAnterior"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="Tipo de respaldo:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<combobox
+																width="250px" id="cmbRespaldoAnterior"
+																model="@{zModificar$modificar.obtenerRespaldosAnterior}"
+																readonly="false" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.toNombreRespaldo}"
+																	value="@{lista.getId_respaldo}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="trp"
+																style="cursor: help; width: 16px; height: 16px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwIDContenedorAnterior"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="ID contenedor:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtIDContenedorAnterior" width="250px"
+																readonly="false" rows="5" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="* Ubicación:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxUbicacionAnterior" mold="rounded" autodrop="true"
+																width="250px" readonly="true">
+																<bandpopup
+																	width="45%">
+																	<panel
+																		title="">
+																		<panelchildren>
+																			<textbox
+																				width="280px" id="txtBuscarUbicacionAnterior"
+																				class="z-textbox-search-move"
+																				placeholder="Ingrese palabra clave"
+																				tooltiptext="Presione enter para realizar la búsqueda"
+																				style="font-style: italic;">
+																			</textbox>
+																			<space
+																				width="20px">
+																			</space>
+																			<image
+																				src="/img/botones/ButtonPopup.png" tooltip="con"
+																				style="cursor: help; width: 16px; height: 16px;" />
+																			<div
+																				align="center">
+																				<listbox
+																					mold="paging" pageSize="10"
+																					id="lbxUbicacionesAnterior"
+																					model="@{zModificar$modificar.obtenerUbicacionesAnterior}"
+																					sizedByContent="false" width="100%">
+																					<listhead
+																						sizable="false" style="overflow: scroll;">
+																						<listheader
+																							label="CLIENTE">
+																						</listheader>
+																						<listheader
+																							label="UBICACIÓN">
+																						</listheader>
+																						<listheader
+																							label="POSICIÓN">
+																						</listheader>
+																					</listhead>
+																					<listitem
+																						self="@{each=lista}">
+																						<listcell
+																							label="@{lista.getNom_empresa}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getNom_ubicacion}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getPos_ubicacion}">
+																						</listcell>
+																					</listitem>
+																				</listbox>
+																			</div>
+																		</panelchildren>
+																	</panel>
+																</bandpopup>
+															</bandbox>
+															<space width="45px"></space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Hora llegada custodia:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<timebox
+																id="tmxHoraLlegadaAnterior" format="HH:mm">
+															</timebox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Hora Salida custodia:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<timebox
+																id="tmxHoraSalidaAnterior" format="HH:mm">
+															</timebox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Remesa ingreso Custodia - NOC:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtRemesaIngresoAnterior" width="450px"
+																readonly="false" rows="4" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Remesa salida NOC - Custodia:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtRemesaSalidaAnterior" width="450px"
+																readonly="false" rows="4" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<space></space>
+										</row>
+									</rows>
+								</grid>
+							</center>
+						</borderlayout>
+					</tabpanel>
+					<tabpanel height="50%" width="100%">
+						<borderlayout>
+							<center style="overflow: auto;">
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column width="50%"></column>
+										<column width="50%"></column>
+									</columns>
+									<rows>
+										<row>
+											<space></space>
+										</row>
+										<row visible="false">
+											<cell colspan="2">
+												<div align="center">
+													<label value="ID:"
+														class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtIdActual" width="220px" readonly="true"
+																class="z-textbox-1" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2" visible="false">
+												<div align="center">
+													<label
+														value="* ¿Desea que se actualice el inventario?:"
+														class="z-label-1" />
+													 <space width="10px"></space>
+													<vlayout>
+														<hlayout>
+															<combobox
+																id="cmbActualizaInventario" width="120px" readonly="true"
+																style="font-weight: bold; color:black !important;">
+																<comboitem
+																	label="SI" iconSclass="z-icon-unlock" value="S" style="font-weight: bold !important; font-style: normal !important; background-color: #C8FFC8 !important; text-align: center !important;">
+																</comboitem>
+																<comboitem
+																	label="NO" iconSclass="z-icon-lock" value="N" style="font-weight: bold !important; font-style: normal !important; background-color: #FFE579 !important; text-align: center !important;">
+																</comboitem>
+															</combobox>
+															<space width="25px"></space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="* Código:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtCodigoActual" width="200px" readonly="false"
+																class="z-textbox-2" />
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="cod"
+																style="cursor: help; width: 16px; height: 16px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="* Descripción:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtDescripcionActual" width="450px"
+																readonly="false" rows="4" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwIngresaFechaActual"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<vlayout>
+														<hlayout>
+															<checkbox
+																id="chkIngresaFechaActual" width="200px"
+																label="¿Desea registrar fecha de respaldo?"
+																style="font-style: normal !important" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwEsFechaActual"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<vlayout>
+														<hlayout>
+															<checkbox
+																id="chkEsFechaActual"
+																style="position: relative; left: -5.2rem; font-style: normal !important"
+																width="200px" label="¿Es del tipo fecha?" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row
+											id="rwFechaRespaldoActual" visible="false">
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="Fecha de respaldo:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<combobox
+																width="250px" id="cmbRespaldoActual1"
+																model="@{zModificar$modificar.obtenerRespaldosActual1}"
+																readonly="false" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.toNombreRespaldo}"
+																	value="@{lista.getId_respaldo}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="trp"
+																style="cursor: help; width: 16px; height: 16px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwFechaInicioActual"
+											visible="false">
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<label
+														value="* Fecha inicio:" class="z-label-1"
+														style="position: relative; left: -8px;" />
+													<vlayout>
+														<hlayout>
+															<datebox
+																id="dtxFechaInicioActual" width="150px"
+																format="dd/MM/yyyy" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwFechaFinActual"
+											visible="false">
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<label
+														value=" Fecha fin:" class="z-label-1"
+														style="position: relative; left: -5px;" />
+													<vlayout>
+														<hlayout>
+															<datebox
+																id="dtxFechaFinActual" width="150px"
+																format="dd/MM/yyyy" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwTipoRespaldoActual"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="Tipo de respaldo:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<combobox
+																width="250px" id="cmbRespaldoActual"
+																model="@{zModificar$modificar.obtenerRespaldosActual}"
+																readonly="false" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.toNombreRespaldo}"
+																	value="@{lista.getId_respaldo}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="trp"
+																style="cursor: help; width: 16px; height: 16px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row id="rwIDContenedorActual"
+											visible="true">
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="ID contenedor:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtIDContenedorActual" width="250px"
+																readonly="false" rows="5" class="z-textbox-2" />
+															<space width="15px"></space>	
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<label
+														value="* Ubicación:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxUbicacionActual" mold="rounded" autodrop="true"
+																width="250px" readonly="true">
+																<bandpopup
+																	width="45%">
+																	<panel
+																		title="">
+																		<panelchildren>
+																			<space
+																				width="13px">
+																			</space>
+																			<textbox
+																				width="280px" id="txtBuscarUbicacionActual"																			
+																				placeholder="Ingrese palabra clave"
+																				tooltiptext="Presione enter para realizar la búsqueda"
+																				style="font-style: italic;">
+																			</textbox>
+																			<image
+																				src="/img/botones/ButtonPopup.png" tooltip="con"
+																				style="cursor: help; width: 16px; height: 16px;" />
+																			<div
+																				align="center">
+																				<listbox
+																					mold="paging" pageSize="10"
+																					id="lbxUbicacionesActual"
+																					model="@{zModificar$modificar.obtenerUbicacionesActual}"
+																					sizedByContent="false" width="100%">
+																					<listhead
+																						sizable="false" style="overflow: scroll;">
+																						<listheader
+																							label="CLIENTE">
+																						</listheader>
+																						<listheader
+																							label="UBICACIÓN">
+																						</listheader>
+																						<listheader
+																							label="POSICIÓN">
+																						</listheader>
+																					</listhead>
+																					<listitem
+																						self="@{each=lista}">
+																						<listcell
+																							label="@{lista.getNom_empresa}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getNom_ubicacion}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getPos_ubicacion}">
+																						</listcell>
+																					</listitem>
+																				</listbox>
+																			</div>
+																		</panelchildren>
+																	</panel>
+																</bandpopup>
+															</bandbox>
+															<space width="45px"></space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Hora llegada custodia:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<timebox
+																id="tmxHoraLlegadaActual" format="HH:mm">
+															</timebox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2"
+												class="z-dtx-solicitud">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Hora Salida custodia:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<timebox
+																id="tmxHoraSalidaActual" format="HH:mm">
+															</timebox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Remesa ingreso Custodia - NOC:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtRemesaIngresoActual" width="250px"
+																readonly="false" rows="4" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="2">
+												<div align="center">
+													<space
+														width="58px">
+													</space>
+													<label
+														value="Remesa salida NOC - Custodia:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtRemesaSalidaActual" width="250px"
+																readonly="false" rows="4" class="z-textbox-2" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<space></space>
+										</row>
+									</rows>
+								</grid>
+							</center>
+						</borderlayout>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</div>
+		<popup id="con" width="450px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicación no se encuentra en la lista, valide que se
+				encuentre creada, aprobada y activa para poderse usar
+				desde la opción de movimientos en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de ubicaciones. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre las
+				ubicaciones consultando por id, cliente, ubicación, etc.
+				Solo escribiendo parte de la palabra en el campo buscar
+				y presionando la tecla Enter </br> 2.- Para mostrar
+				todas las ubicaciones deje limpio el campo buscar y
+				presione la tecla Enter. </p> ]]>
+
+			</html>
+		</popup>
+
+		<popup id="cod" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				codigo no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el codigo no se encuentre registrado.
+				</span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="ubi" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicacion no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				ubicaciones. </span> </br> </br> <span style="color:
+				black; font-size: 12px; font-style: normal; font-weight:
+				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
+				manera rapida entre las ubicaciones solo escribiendo
+				parte de la palabra y presionando 2 veces la tecla
+				Enter. </br> 2.- Para mostrar todas las ubicaciones deje
+				limpio el campo y presione 2 veces la tecla Enter. </p>
+				]]>
+	
+			</html>
+		</popup>
+		<popup id="trp" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;">
+				Para realizar la busqueda escriba parte de la palabra a
+				buscar y presione 2 veces enter, <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> si necesita mostrar todos los items deje el
+				campo en blanco y presione 2 veces enter. </span> </p>
+				]]>
+
+			</html>
+		</popup>
+		<zscript>
+		<![CDATA[
+	lbxUbicacionesAnterior.pagingChild.mold = "os".equals(lbxUbicacionesAnterior.pagingChild.mold) ? "default" : "os";
+	lbxUbicacionesActual.pagingChild.mold = "os".equals(lbxUbicacionesActual.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	</window>
+</zk>

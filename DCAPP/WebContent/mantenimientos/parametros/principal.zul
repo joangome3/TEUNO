@@ -1,0 +1,133 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.principal">
+		<borderlayout>
+			<west size="30rem" collapsible="true"
+				title="PARAMETROS GENERALES" border="none" autoscroll="true" splittable="true" open="false">
+				<tree visible="true">
+					<treechildren>
+						<treeitem>
+							<treerow>
+								<treecell label="Parametros generales"
+									class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Parametros varios" id="tcParametros1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion configuracion/Campos" id="tcParametros2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion opcion/Empresas" id="tcParametros3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion dia/Tarea periodica" id="tcParametros4"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion opcion/Usuarios" id="tcParametros5"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion criticidad/Color" id="tcParametros6"
+											style="font-style: italic !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion estado articulo/Color" id="tcParametros7"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion estado bitacora/Color" id="tcParametros8"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion empresa/Ticket bitacora" id="tcParametros9"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion opcion/Tipo de servicio #1" id="tcParametros10"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion opcion/Tipo de servicio #2" id="tcParametros11"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											label="Relacion empresa/Opción (Ticket repetido)" id="tcParametros12"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+					</treechildren>
+				</tree>
+			</west>
+			<center>
+				<tabbox vflex="max" style="height: calc(100%);"
+					width="100%" visible="true" id="tTab">
+					<tabs>
+
+					</tabs>
+					<tabpanels vflex="max" style="height: calc(100%);"
+						width="100%" id="tPanel">
+
+					</tabpanels>
+				</tabbox>
+			</center>
+		</borderlayout>
+	</div>
+</zk>

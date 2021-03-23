@@ -1,0 +1,41 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zParametros" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.parametros8"
+		align="center">
+		<toolbar>
+			<button id="btnGrabar" image="/img/botones/ButtonSave.png"
+				tooltiptext="Grabar" autodisable="self" />
+		</toolbar>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row align="center">
+					<cell colspan="2">
+						<label value="Estado:" class="z-label-1" />
+						<space width="25px"></space>
+						<combobox width="150px" id="cmbEstado"
+							model="@{zParametros$parametros8.obtenerEstados}" readonly="true"
+							disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getNom_estado}" value="@{lista.getId_estado}">
+							</comboitem>
+						</combobox>
+					</cell>
+				</row>
+				<row align="center">
+					<cell colspan="2">
+						<label value="Color:" class="z-label-1" />
+						<space width="30px"></space>
+						<colorbox id="coxEstado"></colorbox>
+						<space width="120px"></space>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+	</div>
+</zk>

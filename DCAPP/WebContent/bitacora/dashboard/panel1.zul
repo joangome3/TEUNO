@@ -1,0 +1,10 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zPastel"
+	apply="bp.aplicaciones.controlador.bitacora.dashboard.panel1">
+	<space></space>
+	<div align="center">
+		<chartjs id="cPastel" />
+	</div>
+	<space></space>
+</window>

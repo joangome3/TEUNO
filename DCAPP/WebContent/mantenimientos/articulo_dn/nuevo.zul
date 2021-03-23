@@ -1,0 +1,490 @@
+<?page title="Nuevo registro" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Nuevo registro ::." border="normal" id="zNuevo"
+		closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo_dn.nuevo"
+		position="center, center" sizable="true" width="45%" height="75%"
+		maximizable="true" minimizable="true" shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row visible="false">
+								<cell colspan="2">
+									<div class="img-logo"></div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Código:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<space width="15px"></space>
+												<textbox id="txtCodigo"
+													width="220px" readonly="false" class="z-textbox-2" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cod"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Descripción:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtDescripcion" width="500px" readonly="false" rows="5"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Categoría:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbCategoria" model="@{zNuevo$nuevo.obtenerCategorias}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_categoria}"
+														value="@{lista.getId_categoria}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cat"
+													style="cursor: help; width: 16px; height: 16px;" />
+												<space width="0px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwCapacidad" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Capacidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbCapacidad"
+													model="@{zNuevo$nuevo.obtenerCapacidades}" readonly="true"
+													disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_capacidad}"
+														value="@{lista.getId_capacidad}">
+													</comboitem>
+												</combobox>
+												<space width="15px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwIngresaFecha" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkIngresaFecha" width="200px"
+													label="¿Desea registrar fecha de respaldo?"
+													style="font-style: normal !important" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwEsFecha" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkEsFecha"
+													style="position: relative; left: -5.2rem; font-style: normal !important"
+													width="200px" label="¿Es del tipo fecha?" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwFechaRespaldo" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value="Fecha de respaldo:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbRespaldo1" model="@{zNuevo$nuevo.obtenerRespaldos1}"
+													readonly="false" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.toNombreRespaldo}"
+														value="@{lista.getId_respaldo}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="trp"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwFechaInicio" visible="false">
+								<cell colspan="2"
+									class="z-dtx-solicitud">
+									<div align="center">
+										<label value="* Fecha inicio:"
+											class="z-label-1" style="position: relative; left: -18px;" />
+										<vlayout>
+											<hlayout>
+												<datebox
+													id="dtxFechaInicio" width="150px" format="dd/MM/yyyy"
+													class="z-textbox-2" />
+												<space width="15px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwFechaFin" visible="false">
+								<cell colspan="2"
+									class="z-dtx-solicitud">
+									<div align="center">
+										<label value=" Fecha fin:"
+											class="z-label-1" style="position: relative; left: -18px;" />
+										<vlayout>
+											<hlayout>
+												<datebox
+													id="dtxFechaFin" width="150px" format="dd/MM/yyyy"
+													class="z-textbox-2" />
+												<space width="15px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwTipoRespaldo" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value="Tipo de respaldo:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbRespaldo" model="@{zNuevo$nuevo.obtenerRespaldos}"
+													readonly="false" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.toNombreRespaldo}"
+														value="@{lista.getId_respaldo}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="trp"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwIDContenedor" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID contenedor:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtIDContenedor" width="250px" readonly="false"
+													rows="4" class="z-textbox-2" />
+												<space width="15px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Ubicación:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<bandbox
+													id="bdxUbicacion" mold="rounded" autodrop="true"
+													width="250px" readonly="true">
+													<bandpopup
+														width="45%">
+														<panel
+															title="">
+															<panelchildren>
+																<space
+																	width="15px">
+																</space>
+																<textbox
+																	width="280px" id="txtBuscarUbicacion"
+																	placeholder="Ingrese palabra clave"
+																	tooltiptext="Presione enter para realizar la búsqueda"
+																	style="font-style: italic;">
+																</textbox>
+																<image
+																	src="/img/botones/ButtonPopup.png" tooltip="con"
+																	style="cursor: help; width: 16px; height: 16px;" />
+																<div
+																	align="center">
+																	<listbox
+																		mold="paging" pageSize="10" id="lbxUbicaciones"
+																		model="@{zNuevo$nuevo.obtenerUbicaciones}"
+																		sizedByContent="false" width="100%">
+																		<listhead
+																			sizable="false" style="overflow: scroll;">
+																			<listheader
+																				label="CLIENTE" style="text-align: center;">
+																			</listheader>
+																			<listheader
+																				label="UBICACIÓN" style="text-align: center;">
+																			</listheader>
+																			<listheader
+																				label="POSICIÓN" style="text-align: center;">
+																			</listheader>
+																		</listhead>
+																		<listitem
+																			self="@{each=lista}">
+																			<listcell
+																				label="@{lista.getNom_empresa}">
+																			</listcell>
+																			<listcell
+																				label="@{lista.getNom_ubicacion}">
+																			</listcell>
+																			<listcell
+																				label="@{lista.getPos_ubicacion}">
+																			</listcell>
+																		</listitem>
+																	</listbox>
+																</div>
+															</panelchildren>
+														</panel>
+													</bandpopup>
+												</bandbox>
+												<space width="45px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row visible="false">
+								<space></space>
+								<label value="* Stock" />
+								<cell colspan="2">
+									<intbox id="txtCantidad"
+										constraint="no negative" width="70px" readonly="true"
+										value="0" class="z-txt-cantidad"
+										style="font-weight: bold; color:black !important;" />
+									<image
+										src="/img/botones/ButtonPopup.png" tooltip="can"
+										style="cursor: help; width: 16px; height: 16px;" />
+								</cell>
+								<space></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value=" Localidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbLocalidad"
+													model="@{zNuevo$nuevo.obtenerLocalidades}" readonly="true"
+													disabled="true">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_localidad}"
+														value="@{lista.getId_localidad}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="dc"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="con" width="450px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicación no se encuentra en la lista, valide que se
+				encuentre creada, aprobada y activa para poderse usar
+				desde la opción de movimientos en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de ubicaciones. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre las
+				ubicaciones consultando por id, cliente, ubicación, etc.
+				Solo escribiendo parte de la palabra en el campo buscar
+				y presionando la tecla Enter </br> 2.- Para mostrar
+				todas las ubicaciones deje limpio el campo buscar y
+				presione la tecla Enter. </p> ]]>
+				
+
+			</html>
+		</popup>
+
+		<popup id="cod" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				codigo no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el codigo no se encuentre registrado.
+				</span> </p> ]]>
+				
+
+			</html>
+		</popup>
+		<popup id="cat" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la categoria no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				categorias. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+		<popup id="ubi" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicacion no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				ubicaciones. </span> </br> </br> <span style="color:
+				black; font-size: 12px; font-style: normal; font-weight:
+				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
+				manera rapida entre las ubicaciones solo escribiendo
+				parte de la palabra y presionando 2 veces la tecla
+				Enter. </br> 2.- Para mostrar todas las ubicaciones deje
+				limpio el campo y presione 2 veces la tecla Enter. </p>
+				]]>
+				
+
+			</html>
+		</popup>
+		<popup id="dc" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				localidad que se muestra es la que se asignó a su
+				usuario en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuracion de usuarios. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+		<popup id="can" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				stock no se puede asignar desde la creación del
+				artículo, <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> si necesita
+				asignar stock al artículo debe hacerlo desde la opcion
+				de movimientos. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+		<popup id="trp" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;">
+				Para realizar la busqueda escriba parte de la palabra a
+				buscar y presione 2 veces enter, <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> si necesita mostrar todos los items deje el
+				campo en blanco y presione 2 veces enter. </span> </p>
+				]]>
+				
+
+			</html>
+		</popup>
+		<zscript>
+		<![CDATA[
+	lbxUbicaciones.pagingChild.mold = "os".equals(lbxUbicaciones.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	</window>
+</zk>

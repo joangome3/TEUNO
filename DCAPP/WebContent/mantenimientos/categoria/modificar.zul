@@ -1,0 +1,267 @@
+<?page title="Modificar categoria" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.categoria.modificar"
+		position="center, center" sizable="true" width="45%" height="85%"
+		maximizable="false" minimizable="false"
+		title=".:: Modificar categoria ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="20px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Nombre:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtNombre"
+													width="200px" rows="2" constraint="" class="z-textbox-2" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="nom"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Descripción:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtDescripcion" width="450px" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-cell-check">
+									<div align="center">
+										<label
+											value="¿Desea registrar marca?:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<checkbox id="chkMarca" />
+												<space width="15px"></space>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="mar"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-cell-check">
+									<div align="center">
+										<label
+											value="¿Desea registrar modelo?:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkModelo" />
+												<space width="15px"></space>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="mod"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-cell-check">
+									<div align="center">
+										<label
+											value="¿Desea registrar serie?:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<checkbox id="chkSerie" />
+												<space width="15px"></space>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="ser"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-cell-check">
+									<div align="center">
+										<label
+											value="¿Desea registrar codigo de activo?:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkCodigoActivo" />
+												<space width="15px"></space>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cod"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-cell-check">
+									<div align="center">
+										<label value="Localidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbLocalidad"
+													model="@{zModificar$modificar.obtenerLocalidades}" readonly="true"
+													disabled="true">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_localidad}"
+														value="@{lista.getId_localidad}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="dc"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Comentario:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario" width="450px" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="nom" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				nombre no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el nombre no se encuentre registrado.
+				</span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="dc" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				localidad que se muestra es la que se asignó a su
+				usuario en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuracion de usuarios. </span> </p> ]]>
+	
+			</html>
+		</popup>
+		<popup id="mar" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				se selecciona este campo, cuando se cree un artículo se
+				le solicitará <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> registrar
+				la marca. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="mod" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				se selecciona este campo, cuando se cree un artículo se
+				le solicitará <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> registrar
+				el modelo. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="ser" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				se selecciona este campo, cuando se cree un artículo se
+				le solicitará <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> registrar
+				la serie. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="cod" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				se selecciona este campo, cuando se cree un artículo se
+				le solicitará <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> registrar
+				el codigo de activo. </span> </p> ]]>
+
+			</html>
+		</popup>
+	</window>
+</zk>

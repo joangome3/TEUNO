@@ -1,0 +1,59 @@
+<?page title="DC Aplicaciones | Logout" contentType="text/html; charset=UTF-8"?>
+<?link rel="shortcut icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="stylesheet" type="text/css" href="/css/normalize.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/timeout.css"?>
+<div align="center" class="div">
+	<html>
+
+		<![CDATA[
+
+		<head> <meta charset="utf-8"> <title>Aplicaciones NOC |
+		Logout</title> <meta name="viewport"
+		content="width=device-width, initial-scale=1.0"> <meta
+		name="description" content="Sistema integrado de aplicaciones
+		del NOC Datacenter"> <meta name="author" content="Jose Gomez">
+		<!-- /meta tags --> <!-- HTML5 shim, for IE6-8 support of HTML5
+		elements --> <!--[if lt IE 9]> <script
+		src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]--> </head> <body> <h1></h1> <div class="
+		w3l-login-form contenedor"> <img src="img/login/imgST3.svg"
+		alt="Logo DCAP" class="img-logo"> </br>
+		<a href="#" title="Fuera de servicio"><img
+		src="img/botones/ButtonTime1.png" alt="Sesión no disponible"
+		class="img-time"> </a>
+		</br></br>
+		<p style="color: #fff;
+		font-size: 14px; font-weight: bold; font-style: normal"> ¡Oops!.
+		</p> <p style="color: #fff; font-size: 14px; font-weight: bold;
+		font-style: normal"> La página ya no se encuentra disponible.
+		</p> </br> <button type="submit"
+		onclick="btnRegresar();"><b><i>Regresar</i></b></button></body>
+
+		]]>
+
+		<script type="text/javascript">
+			function btnRegresar() {
+				zk.Widget.$("$cTimer").setRunning(true);
+			}
+		</script>
+
+		</html>
+
+	<div>
+		<timer id="cTimer" delay="0" running="false" repeats="false"
+			visible="false" onTimer="Regresar();" />
+	</div>
+
+	<zscript>
+	void Regresar() {
+		String url = "/index.zul";
+		Sessions.getCurrent().removeAttribute("id_user");
+		Sessions.getCurrent().removeAttribute("id_perfil");
+		Sessions.getCurrent().removeAttribute("user");
+		Sessions.getCurrent().removeAttribute("id_dc");
+		Sessions.getCurrent().removeAttribute("nom_ape_user");
+		Executions.sendRedirect(url);
+	}
+</zscript>
+</div>

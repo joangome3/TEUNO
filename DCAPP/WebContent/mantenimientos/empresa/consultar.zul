@@ -1,0 +1,138 @@
+<?page title="Mantenimiento de empresas" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.empresa.consultar"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
+												autodisable="self" />
+											<space width="5px"></space>
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+											<space width="5px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox mold="paging" id="lbxEmpresas" vflex="true"
+					sizedByContent="true" width="100%" model="@{zConsultar$consultar.obtenerEmpresas}">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader></listheader>
+						<listheader label="ID"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="NOMBRE"></listheader>
+						<listheader label="DESCRIPCIÓN"></listheader>
+						<listheader label="ESTADO"
+							style="text-align: center !important;">
+						</listheader>
+					</listhead>
+					<listitem context="editPopup"
+						self="@{each=lista}">
+						<listcell image="@{lista.mostrarImagenEstadoSolicitud}" style="text-align: center !important;"/>
+						<listcell label="@{lista.getId_empresa}" />
+						<listcell
+							label="@{lista.getNom_empresa}" />
+						<listcell label="@{lista.getDes_empresa}" />
+						<listcell label="@{lista.mostrarEstado}" style="@{lista.estiloMostrarEstado}"/>
+					</listitem>
+				</listbox>
+			</hlayout>
+		</vlayout>
+	</div>
+	
+	<menupopup id="editPopup">
+		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
+			label=" - Seguimiento"
+			tooltiptext="Permite visualizar el estado de la solicitud." visible="true" />
+		<menuseparator id="mSeparador1" visible="true" />
+		<menuitem id="mSolicitar" iconSclass="z-icon-check"
+			label=" - Solicitar"
+			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador." visible="true" />
+		<menuitem id="mAccion" iconSclass="z-icon-check"
+			label=" - Accion"
+			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador."  visible="true"/>
+		<menuseparator id="mSeparador2" visible="true" />
+		<menuitem id="mRelacionar" iconSclass="z-icon-th-list"
+			label=" - Relacionar"
+			tooltiptext="Permite relacionar la empresa para que se pueda utilizar en modulos y configuraciones." visible="true" />
+	</menupopup>
+	
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+            lbxEmpresas.pagingChild.mold = "os".equals(lbxEmpresas.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+</zk>

@@ -1,0 +1,218 @@
+<?page title="Nueva ubicacion" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zNuevo" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.ubicacion_dn.nuevo"
+		position="center, center" sizable="true" width="35%" height="75%"
+		maximizable="false" minimizable="false"
+		title=".:: Nueva ubicacion ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="20px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Empresa:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbEmpresa" model="@{zNuevo$nuevo.obtenerEmpresas}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_empresa}"
+														value="@{lista.getId_empresa}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="emp"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Ubicación:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbUbicacion"
+													model="@{zNuevo$nuevo.obtenerUbicaciones}" readonly="true"
+													disabled="false">
+													<comboitem
+														self="@{each=lista}"
+														label="@{lista.getNom_tipo_ubicacion}"
+														value="@{lista.getId_tipo_ubicacion}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="ubi"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Posición:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtPosicion" class="z-textbox-2" width="200px" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="pos"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkCapacidad" class="z-textbox-2" width="200px"
+													label="¿Desea validar capacidad?" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="Capacidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<intbox
+													id="intCapacidad" style="position: relative; left: -34px; text-align: center;"
+													width="150px" constraint="no negative" disabled="true" value="0"/>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="Localidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbLocalidad"
+													model="@{zNuevo$nuevo.obtenerLocalidades}" readonly="true"
+													disabled="true">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_localidad}"
+														value="@{lista.getId_localidad}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="dc"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="emp" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la empresa no se muestra en la lista, valide que se
+				encuentre creada, relacionada a la configuracion de
+				ubicaciones y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				empresas. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="ubi" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				necesita que se muestre otra ubicación, <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> deberá solicitarlo al
+				administrador. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="pos" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				posicion no puede repetirse con alguna otra que ya se
+				haya registrado. <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> El
+				sistema validará que la posicion no se encuentre
+				registrada para la empresa y ubicación que se
+				seleccione. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="dc" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				localidad que se muestra es la que se asignó a su
+				usuario en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuracion de usuarios. </span> </p> ]]>
+
+			</html>
+		</popup>
+	</window>
+</zk>

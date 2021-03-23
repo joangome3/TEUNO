@@ -1,0 +1,304 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zParametros" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.parametros1">
+		<toolbar>
+			<button id="btnGrabar" image="/img/botones/ButtonSave.png"
+				tooltiptext="Grabar" autodisable="self" />
+		</toolbar>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<grid>
+					<columns>
+						<column align="right"></column>
+						<column align="right"></column>
+						<column align="right"></column>
+						<column align="right"></column>
+					</columns>
+					<rows>
+						<row>
+							<cell colspan="2">
+								<label
+									value="URL del modulo de Diners (Externa):"
+									style="font-weight: bold;">
+								</label>
+							</cell>
+							<cell align="left" colspan="1">
+								<space width="15px"></space>
+								<textbox id="txtURL1" width="150px"
+									type="url">
+								</textbox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="URL del modulo de control de cambio (Externa):"
+									style="font-weight: bold;">
+								</label>
+							</cell>
+							<cell align="left" colspan="1">
+								<space width="15px"></space>
+								<textbox id="txtURL2" width="150px"
+									type="url">
+								</textbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Localidad principal que se usara para el modulo de control de cambio:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px"
+									id="cmbLocalidad"
+									model="@{zParametros$parametros1.obtenerLocalidades}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_localidad}"
+										value="@{lista.getId_localidad}">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="Secuencia para el siguiente registro del modulo de control de cambio:"
+									style="font-weight: bold;">
+								</label>
+							</cell>
+							<cell align="left">
+								<intbox id="intSecuencia1"
+									constraint="no negative" width="50px">
+								</intbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="¿Desea redireccionar los usuarios (url externa del modulo de control de cambios) que no pertenecen a la localidad principal del modulo control de cambios?:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<checkbox id="chkRedireccion1">
+								</checkbox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="¿Desea redireccionar los usuarios a la url externa del modulo de Diners?:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<checkbox id="chkRedireccion2">
+								</checkbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="¿Desea validar el código del artículo en el mantenimiento de articulos del modulo de bodega?:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<checkbox id="chkValidarCodigo1">
+								</checkbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="¿Desea activar boton cargar imagen de artículo (Masivo), en el mantenimiento de articulos del modulo de bodega?:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<checkbox id="chkActivarCargar">
+								</checkbox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="¿Desea activar boton borrar imagen de artículo (Masivo), en el mantenimiento de articulos del modulo de bodega?:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<checkbox id="chkActivarBorrar">
+								</checkbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Categoría para el reporte de baldosas del modulo de bodega:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px"
+									id="cmbCategoria1"
+									model="@{zParametros$parametros1.obtenerCategorias}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_categoria}"
+										value="@{lista.getId_categoria}">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="Categoría para el reporte de repuestos del modulo de bodega:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px"
+									id="cmbCategoria2"
+									model="@{zParametros$parametros1.obtenerCategorias}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_categoria}"
+										value="@{lista.getId_categoria}">
+									</comboitem>
+								</combobox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Ubicación de bodega para el reporte de baldosas del modulo de bodega:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px"
+									id="cmbUbicacion1"
+									model="@{zParametros$parametros1.obtenerUbicaciones}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_tipo_ubicacion}"
+										value="@{lista.getId_tipo_ubicacion}">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="Ubicación de sala util para el reporte de baldosas del modulo de bodega:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px"
+									id="cmbUbicacion2"
+									model="@{zParametros$parametros1.obtenerUbicaciones}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_tipo_ubicacion}"
+										value="@{lista.getId_tipo_ubicacion}">
+									</comboitem>
+								</combobox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Etiqueta que se usara para la generacion de tickets interno en el modulo de bitacora (Log de eventos):"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<textbox width="150px" id="txtEtiqueta1"
+									style="font-style: italic;">
+								</textbox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="Secuencia para el siguiente registro del modulo de bitacora (Log de eventos):"
+									style="font-weight: bold;">
+								</label>
+							</cell>
+							<cell align="left">
+								<intbox id="intSecuencia2"
+									constraint="no negative" width="50px">
+								</intbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Etiqueta que se usara para la generacion de tickets interno en el modulo de bitacora (Tareas abiertas):"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<textbox width="150px" id="txtEtiqueta2"
+									style="font-style: italic;">
+								</textbox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="Secuencia para el siguiente registro del modulo de bitacora (Tareas abiertas):"
+									style="font-weight: bold;">
+								</label>
+							</cell>
+							<cell align="left">
+								<intbox id="intSecuencia3"
+									constraint="no negative" width="50px">
+								</intbox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Perfil que se usara para la revisión de registros en el modulo de bitacora por parte del coordinador:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px" id="cmbPerfil1"
+									model="@{zParametros$parametros1.obtenerPerfiles2}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_perfil}"
+										value="@{lista.getId_perfil}">
+									</comboitem>
+								</combobox>
+							</cell>
+						</row>
+						<row>
+							<cell colspan="2">
+								<label
+									value="Estado que se usará por defecto para las tareas del log de eventos en el modulo de bitacora:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px" id="cmbEstado1"
+									model="@{zParametros$parametros1.obtenerEstados}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_estado}"
+										value="@{lista.getId_estado}">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="2">
+								<label
+									value="Estado que se usará por defecto para las actividades programadas en el modulo de bitacora:"
+									style="font-weight: bold;" />
+							</cell>
+							<cell align="left">
+								<space width="15px"></space>
+								<combobox width="150px" id="cmbEstado2"
+									model="@{zParametros$parametros1.obtenerEstados}"
+									readonly="false" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_estado}"
+										value="@{lista.getId_estado}">
+									</comboitem>
+								</combobox>
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</hlayout>
+		</vlayout>
+	</div>
+</zk>

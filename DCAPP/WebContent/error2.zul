@@ -1,0 +1,19 @@
+<?page title="Error" contentType="text/html;charset=UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="/css/normalize.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/principal.css"?>
+<zk>
+	<window title="¡Oops!" border="normal" closable="true" width="500px"
+		height="180px" position="center" >
+		<div align="center">
+			<html>
+			
+				<![CDATA[ </br></br> <p style="color: black; font-size: 12px;"> Ha
+				ocurrido un error, por favor intente nuevamente. <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> </br> Si el error se vuelve
+				a presentar contacte al administrador. </span> </p> ]]>
+				
+			</html>
+		</div>
+	</window>
+</zk>

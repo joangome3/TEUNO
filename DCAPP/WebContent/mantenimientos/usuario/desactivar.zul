@@ -1,0 +1,112 @@
+<?page title="Desactivar usuario" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zDesactivar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.usuario.desactivar"
+		position="center, center" sizable="true" width="45%" height="40%"
+		maximizable="false" minimizable="false"
+		title=".:: Desactivar usuario ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="40px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Comentario:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario" width="450px" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row align="center">
+								<cell colspan="4">
+									<button id="btnGrabar"
+										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+										autodisable="self" />
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="pass" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				contraseña debe tener al menos entre 8 y 16 caracteres,
+				al menos un numero, al menos una minúscula, al menos una
+				mayúscula y al menos un caracter no alfanumérico. <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> La contraseña se cifrará
+				usando un algoritmo de 256 bits para garantizar la
+				seguridad del acceso a la aplicación. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="user" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				usuario no puede modificarse una vez que se haya
+				registrado. </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="dc" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la localidad no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				localidades. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="perf" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el perfil no se muestra en la lista, valide que se
+				encuentre creado y que no este inactivo en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				perfiles. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="cam" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				se selecciona este campo el usuario deberá cambiar la
+				contraseña antes de iniciar sesión. </p> ]]>
+
+			</html>
+		</popup>
+	</window>
+</zk>

@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="A65_Registro_de_inventario_de_materiales" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0ee78576-d84b-47a1-be7b-a12825845cd2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.exports.xls.font.size.fix.enabled" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.freeze.row" value="3"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="Data/Footnotes"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="false"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.report.description" value="Registro de inventario de materiales"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="138"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="856"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NOCAP"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="p_articulo" class="java.lang.String"/>
+	<parameter name="p_proveedor" class="java.lang.String"/>
+	<parameter name="p_categoria" class="java.lang.String"/>
+	<parameter name="p_movimiento" class="java.lang.String"/>
+	<parameter name="p_fechainicio" class="java.util.Date"/>
+	<parameter name="p_fechafin" class="java.util.Date"/>
+	<parameter name="p_usuario" class="java.lang.String"/>
+	<parameter name="p_localidad" class="java.lang.String"/>
+	<parameter name="articulo" class="java.lang.String"/>
+	<parameter name="categoria" class="java.lang.String"/>
+	<parameter name="movimiento" class="java.lang.String"/>
+	<parameter name="localidad" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="proveedor" class="java.lang.String"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select a.id_articulo, a.cod_articulo, a.des_articulo, a.img_articulo, e.nom_empresa, a.id_categoria, b.nom_categoria, g.id_ubicacion, CONCAT(d.nom_tip_ubicacion, ' - ', c.pos_ubicacion) as nom_ubicacion, g.sto_articulo, a.img_articulo, a.id_localidad, f.nom_localidad, a.marca, a.modelo, a.serie, a.codigo_activo, a.est_articulo, a.usu_ingresa, a.fec_ingresa, a.usu_modifica, a.fec_modifica from sibod_articulo a, sibod_categoria b, sibod_ubicacion c, sibod_tipo_ubicacion d, sibod_empresa e, sibod_localidad f, sibod_relacion_articulo_ubicacion g where (c.id_empresa = e.id_empresa) and (a.id_categoria = b.id_categoria and g.id_ubicacion = c.id_ubicacion and c.id_tip_ubicacion = d.id_tip_ubicacion) and (a.id_localidad = f.id_localidad) and (a.id_articulo = g.id_articulo)  and SUBSTRING(b.est_categoria,1,1) = 'A' and SUBSTRING(c.est_ubicacion,1,1) = 'A' and SUBSTRING(d.est_tip_ubicacion,1,1) = 'A' and SUBSTRING(e.est_empresa,1,1) = 'A' and SUBSTRING(g.est_relacion,1,1) = 'A'
+and e.id_empresa = $P{empresa}  and	(a.id_articulo  like concat('%',$P{articulo},'%') or $P{articulo} is null)  and (a.id_categoria  like concat('%',$P{categoria},'%') or $P{categoria} is null)  and a.id_localidad = $P{localidad} and g.sto_articulo > 0]]>
+	</queryString>
+	<field name="id_articulo" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="cod_articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cod_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="des_articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="des_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="img_articulo" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="img_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="nom_empresa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_empresa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_empresa"/>
+	</field>
+	<field name="id_categoria" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_categoria"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="nom_categoria" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_categoria"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_categoria"/>
+	</field>
+	<field name="id_ubicacion" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_ubicacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_relacion_articulo_ubicacion"/>
+	</field>
+	<field name="nom_ubicacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_ubicacion"/>
+	</field>
+	<field name="sto_articulo" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="sto_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_relacion_articulo_ubicacion"/>
+	</field>
+	<field name="COLUMN_11" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.label" value="img_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="id_localidad" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_localidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="nom_localidad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_localidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_localidad"/>
+	</field>
+	<field name="marca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="marca"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="modelo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="modelo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="serie" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="serie"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="codigo_activo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="codigo_activo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="est_articulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="est_articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="usu_ingresa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="usu_ingresa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="fec_ingresa" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_ingresa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="usu_modifica" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="usu_modifica"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<field name="fec_modifica" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_modifica"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="149" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="64" width="798" height="24" forecolor="#000000" backcolor="#000000" uuid="8db2d9aa-0689-47ad-bee0-a2d155a1b2ae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="20" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[A.65 - REGISTRO DE INVENTARIO DE MATERIALES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="134" width="89" height="15" forecolor="#000000" uuid="e6997397-1560-49d0-bf77-d9af0e5fdd26"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Categoría:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="110" width="89" height="24" forecolor="#000000" uuid="760ceb47-29e5-4928-ab8f-ffa83831bfb7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Artículo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="266" y="95" width="89" height="15" forecolor="#000000" uuid="aa6a4fe9-2658-432d-832d-235c44bc7921"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="370" y="110" width="337" height="24" uuid="384010dc-7b29-46b0-871e-41134d08fa04"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_articulo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="134" width="100" height="15" uuid="1cab1b26-c2ca-4eb6-8c01-e8f2d350386b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_categoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="95" width="195" height="15" uuid="480c3b02-f6b8-4cc7-8395-f48d764676cb"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_localidad}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement key="" x="41" y="2" width="59" height="58" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="f0e5bfbd-ead8-4223-97bc-56a9721bbec2"/>
+				<imageExpression><![CDATA[($P{logo})]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="2" width="39" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="81a59a2f-cb5b-4213-af58-dc3872a2606c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="41" y="2" width="90" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="963a5dd2-86ae-4969-9839-a00c687d9c2e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="131" y="2" width="138" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="c134b6b4-48e6-4232-b193-266f3f8a5814">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="269" y="2" width="90" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="971a5c82-aa0e-45ad-8d42-8154c7d6e34d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="418" y="2" width="119" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="9e99da18-954e-49e9-a1f6-c31bf42caa0c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[UBICACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="537" y="2" width="39" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="ff8b957f-9d83-40e0-847d-fbc6fc6b5206">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[STOCK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="616" y="2" width="50" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="dc15202b-d216-4228-9a49-57a99f4626ad">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[MODELO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="666" y="2" width="50" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="d9a5560f-128c-4e4a-ab56-b0ad90447917">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[SERIE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="359" y="2" width="59" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="2b7b9aa4-3186-47ed-8784-e0ce8edf587b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CATEGORIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="576" y="2" width="40" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="19377b83-47d5-48b5-b266-166f68e498eb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[MARCA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="716" y="2" width="84" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="5afdbee8-b4d2-4012-ab53-46eabdb52f98">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO DE ACTIVO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="79" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="269" y="0" width="90" height="60" uuid="29bd9795-2063-491f-a07a-31b7bb848742">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_empresa}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="537" y="0" width="39" height="60" uuid="326792d6-37fb-4e4a-84bc-c8fa4b9bbd97">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sto_articulo}]]></textFieldExpression>
+			</textField>
+			<elementGroup>
+				<textField isBlankWhenNull="true">
+					<reportElement x="2" y="0" width="39" height="60" uuid="25a79ea2-e1c7-4ee0-b0bf-d95afc130957">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{id_articulo}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+			<textField>
+				<reportElement x="41" y="0" width="90" height="60" uuid="65cc1cf9-75ef-4897-b65b-97a30b2dcd16">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_articulo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="131" y="0" width="138" height="60" uuid="3e8ef0de-8c71-4369-a2c1-125b85fe5e21">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{des_articulo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="418" y="0" width="119" height="60" uuid="9a7a585b-1b9d-4bf4-b56a-9c2e33c28d09">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_ubicacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="616" y="0" width="50" height="60" uuid="3091149e-d047-4046-9a51-712706d73a05">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{modelo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="666" y="0" width="50" height="60" uuid="c989a7b6-b187-4d44-b54d-5498593c194e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{serie}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="359" y="0" width="59" height="60" uuid="32ec0d79-86e6-48fb-8c83-466eb932ebfe">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_categoria}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="576" y="0" width="40" height="60" uuid="97addad6-9f51-45b3-8c47-6bd65ff4679e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{marca}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="716" y="0" width="84" height="60" uuid="be3fef5a-4f5d-4391-9563-d8e9f803509e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigo_activo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

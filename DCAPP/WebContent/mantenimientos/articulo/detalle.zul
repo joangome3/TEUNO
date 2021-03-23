@@ -1,0 +1,27 @@
+<?page title="Detalle del articulo" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Detalle del articulo ::."
+		position="center, center" sizable="false" width="250px" height="300px"
+		maximizable="false" minimizable="false" shadow="false"
+		mode="overlapped" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo.detalle"
+		id="zDetalle">
+		<div class="m-div-f" width="200px" height="200px">
+			<listbox mold="paging" id="lbxEstados" vflex="true"
+				sizedByContent="false">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="ID"
+						style="text-align: center !important;" visible="false">
+					</listheader>
+					<listheader label="ESTADO"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="STOCK"
+						style="text-align: center !important;">
+					</listheader>
+				</listhead>
+			</listbox>
+		</div>
+	</window>
+</zk>

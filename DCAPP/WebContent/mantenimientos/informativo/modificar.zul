@@ -1,0 +1,125 @@
+<?page title="Modificar informativo" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Modificar informativo ::." border="normal"
+		id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.informativo.modificar"
+		position="center, center" sizable="true" width="65%" height="95%"
+		maximizable="false" minimizable="true" shadow="false" mode="overlapped">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+			<vlayout vflex="1">
+				<hlayout vflex="1" style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="25px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-dtx-solicitud">
+									<div align="center">
+										<label value="* Fecha inicio:"
+											class="z-label-1" style="position: relative; left: -8px;" />
+										<vlayout>
+											<hlayout>
+												<datebox
+													id="dtxFechaInicio" width="150px" format="dd/MM/yyyy HH:mm"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-dtx-solicitud">
+									<div align="center">
+										<label value="* Fecha fin:"
+											class="z-label-1" style="position: relative; left: -8px;" />
+										<vlayout>
+											<hlayout>
+												<datebox
+													id="dtxFechaFin" width="150px" format="dd/MM/yyyy HH:mm"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Descripción:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<ckeditor id="cEditor"
+													toolbar="Complex"
+													filebrowserImageBrowseUrl="/media/informativos"
+													filebrowserImageUploadUrl="/media/informativos"
+													customConfigurationsPath="/js/cke_config.js">
+												</ckeditor>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkSePublica" class="z-textbox-2" width="200px"
+													label="¿Desea publicar el informativo?" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+							<row>
+								<div>
+									<html id="hVer"></html>
+								</div>
+								<label id="lVer" visible="true"></label>
+							</row>
+						</rows>
+					</grid>
+				</hlayout>
+			</vlayout>
+			</center>
+			</borderlayout>
+		</div>
+	</window>
+</zk>

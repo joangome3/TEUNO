@@ -1,0 +1,22 @@
+<?page title="Detalle del articulo" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Imagen del articulo ::."
+		position="center, center" sizable="false" width="500px" height="550px"
+		maximizable="false" minimizable="false" shadow="false"
+		mode="overlapped" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo.foto"
+		id="zFoto">
+		<div class="m-div-f" width="450px" height="450px">
+			<vlayout id="vPics" vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<div>
+					<image src="/img/principal/unnamed.jpg"
+						 style="cursor: none;" id="imgFoto" width="450px" height="450px">
+					</image>
+				</div>
+				</hlayout>
+			</vlayout>
+		</div>
+	</window>
+</zk>

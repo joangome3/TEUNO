@@ -1,0 +1,80 @@
+<?page title="SIBOD - Dashboard" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zPanel" apply="bp.aplicaciones.controlador.panel1"
+		vflex="max" style="height: calc(100%);" width="100%">
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row class="m-row-a">
+					<panel hflex="1"
+						title="DISTRIBUCIÓN DE BALDOSAS EN BODEGA" id="cpPastel1">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/sibod/dashboard/pastel1.zul">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+					<panel hflex="1"
+						title="DISTRIBUCIÓN DE BALDOSAS EN SALA UTIL" id="cpPastel2">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/sibod/dashboard/pastel2.zul">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+				</row>
+				<row class="m-row-a">
+					<panel hflex="1" title="MOVIMIENTOS POR MES"
+						id="cpLineal">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/sibod/dashboard/lineal.zul">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+					<panel hflex="1"
+						title="STOCK DISPONIBLE DE ARTÍCULOS EN LA CATEGORÍA CABLEADO"
+						id="cpTabla1" visible="false">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/sibod/dashboard/tabla.zul">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+				</row>
+			</rows>
+		</grid>
+	</div>
+</zk>

@@ -1,0 +1,24 @@
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
+    "http://getahead.org/dwr/dwr30.dtd">
+
+<dwr>
+	<allow>
+		<!-- Se cargan los bean (Modelos) -->
+		<!-- <convert converter="bean" match="bp.aplicaciones.sibod.modelo.modelo_grafico_barra" 
+			javascript="modelo_grafico_barra" /> <convert converter="bean" match="bp.aplicaciones.sibod.modelo.modelo_grafico_lineal" 
+			javascript="modelo_grafico_lineal" /> -->
+		<convert converter="bean"
+			match="bp.aplicaciones.sibod.modelo.modelo_grafico_pastel"
+			javascript="modelo_grafico_pastel" />
+
+		<!-- Se cargan los metodos de las clases DAO -->
+		<create creator="new" javascript="graficosDWR">
+			<param name="class"
+				value="bp.aplicaciones.sibod.DAO.dao_graficos" />
+			<!-- <include method="obtenerCategoriasGraficoDeBarra" /> <include method="obtenerIngresosGraficoLineal" 
+				/> <include method="obtenerEgresosGraficoLineal" /> -->
+			<include method="obtenerDatosGraficoDePastel" />
+		</create>
+	</allow>
+</dwr>

@@ -1,0 +1,290 @@
+<?page title="Nuevo usuario" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zNuevo" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.usuario.nuevo"
+		position="center, center" sizable="true" width="55%" height="80%"
+		maximizable="false" minimizable="false"
+		title=".:: Nueva usuario ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+		<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="true" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="20px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Usuario:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtUsuario"
+													width="200px" class="z-textbox-2" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="user"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="1">
+									<div align="center">
+										<label value="* Contraseña:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtContrasena1" width="220px" type="password"
+													class="z-textbox-2" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="pass"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<cell colspan="1">
+									<div align="center">
+										<label
+											value="* Confirmar contraseña:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtContrasena2" width="220px" type="password"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="1">
+									<div align="center">
+										<hlayout>
+											<progressmeter
+												id="pgsSeguridad" value="0" width="70px" />
+
+											<label id="lblSeguridad"
+												value="Clave no segura"
+												style="font-style: italic; font-weight: bold;">
+											</label>
+										</hlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="1">
+									<div align="center">
+										<label value="* Nombres:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtNombres"
+													width="220px" rows="2" class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<cell colspan="1">
+									<div align="center">
+										<label value="* Apellidos:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtApellidos" width="220px" rows="2"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Perfil:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbPerfil" model="@{zNuevo$nuevo.obtenerPerfiles}"
+													readonly="true"
+													style="font-weight: bold; color:black !important;">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_perfil}"
+														value="@{lista.getId_perfil}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="perf"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2"
+									class="z-cell-check">
+									<div align="center">
+										<label
+											value="¿Debe cambiar la contraseña al iniciar sesión?:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<checkbox
+													id="chkCambiarPassword" />
+												<space width="10px"></space>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cam"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Localidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="250px"
+													id="cmbLocalidad"
+													model="@{zNuevo$nuevo.obtenerLocalidades}" readonly="true"
+													style="font-weight: bold; color:black !important;">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_localidad}"
+														value="@{lista.getId_localidad}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="dc"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="pass" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				contraseña debe tener al menos entre 8 y 16 caracteres,
+				al menos un numero, al menos una minúscula, al menos una
+				mayúscula y al menos un caracter no alfanumérico. <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> La contraseña se cifrará
+				usando un algoritmo de 256 bits para garantizar la
+				seguridad del acceso a la aplicación. </span> </p> ]]>
+				
+				
+	
+			</html>
+		</popup>
+		<popup id="user" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				usuario no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el usuario no se encuentre registrado.
+				</span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+		<popup id="dc" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la localidad no se muestra en la lista, valide que se
+				encuentre creada y que no este inactiva en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				localidades. </span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+		<popup id="perf" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el perfil no se muestra en la lista, valide que se
+				encuentre creado y que no este inactivo en las <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				perfiles. </span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+		<popup id="cam" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				se selecciona este campo el usuario deberá cambiar la
+				contraseña antes de iniciar sesión. </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+	</window>
+</zk>

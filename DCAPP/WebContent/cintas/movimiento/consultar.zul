@@ -1,0 +1,422 @@
+<?page title="Mantenimiento de FD.08 - Inventario" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" vflex="1"
+		apply="bp.aplicaciones.controlador.cintas.consultar" align="center"
+		visible="true" style="overflow-y: scroll;">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
+												autodisable="self" visible="false" label="Hola mundo" />
+											<space width="5px"></space>
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<combobox
+												id="cmbTipoBusqueda" readonly="true" width="200px"
+												tooltiptext="Seleccione en que lista desea realizar la consulta."
+												style="font-weight: bold !important; color:black !important; font-style: italic !important;">
+												<comboitem
+													label="LISTA PRINCIPAL" value="LP">
+												</comboitem>
+												<comboitem
+													label="LISTA DETALLE" value="LD">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<textbox id="txtBuscar"
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+											<datebox format="dd/MM/yyyy"
+												id="dtxFechaInicio">
+											</datebox>
+											<space width="5px"></space>
+											<datebox format="dd/MM/yyyy"
+												id="dtxFechaFin">
+											</datebox>
+											<space width="25px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar."
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<combobox id="cmbEstado"
+												readonly="true" width="250px"
+												tooltiptext="Seleccione el estado de los movimientos a mostrar."
+												style="font-weight: bold !important; color:black !important; font-style: italic !important;">
+												<comboitem label="TODOS"
+													value="">
+												</comboitem>
+												<comboitem
+													label="PENDIENTE REVISION OPERADOR EN TURNO" value="RV1">
+												</comboitem>
+												<comboitem
+													label="PENDIENTE REVISION OPERADOR EN T1" value="RV2">
+												</comboitem>
+												<comboitem
+													label="PENDIENTE REVISION AUDITOR" value="RV3">
+												</comboitem>
+											</combobox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<div align="center">
+			<listbox mold="paging" pageSize="10" id="lbxMovimientos"
+				span="true" sizedByContent="true" width="100%"
+				model="@{zConsultar$consultar.obtenerMovimientos}"
+				style="overflow-y: scroll;">
+				<listhead sizable="false" style="overflow: scroll;"
+					columnsgroup="true">
+					<listheader label="ID"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="TICKET PROACTIVANET"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="FECHA Y HORA REGISTRO DE PEDIDO"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="TIPO DE PEDIDO"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="FECHA Y HORA SOLICITUD"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="FECHA Y HORA RESPUESTA"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="FECHA Y HORA EJECUCIÓN"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="SOLICITANTE"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="ESTADO"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="OBSERVACION"
+						style="text-align: center !important;">
+					</listheader>
+				</listhead>
+				<listitem context="editPopup" self="@{each=lista}">
+					<listcell label="@{lista.getId_movimiento}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.getTck_movimiento}"
+						style="text-align: center !important;" />
+					<listcell
+						label="@{lista.mostrarFechaYHoraMovimiento}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.mostrarTipoPedido}"
+						style="text-align: center !important;" />
+					<listcell
+						label="@{lista.mostrarFechaYHoraSolicitud}"
+						style="text-align: center !important;" />
+					<listcell
+						label="@{lista.mostrarFechaYHoraRespuesta}"
+						style="text-align: center !important;" />
+					<listcell
+						label="@{lista.mostrarFechaYHoraEjecucion}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.getNom_solicitante}" />
+					<listcell label="@{lista.mostrarEstado}" />
+					<listcell label="@{lista.getObs_movimiento}" />
+				</listitem>
+			</listbox>
+		</div>
+		<div align="center" style="height: calc(84%); overflow: scroll;" >
+			<hlayout vflex="max" hflex="min">
+				<groupbox hflex="1" closable="false">
+					<caption label="REGISTRO ANTES DE PEDIDO"></caption>
+					<listbox mold="paging" pageSize="25"
+						id="lbxDetalleMovimientoAnterior" span="true"
+						sizedByContent="true" width="100%"
+						model="@{zConsultar$consultar.obtenerDetalleMovimientos}">
+						<listhead sizable="false"
+							style="overflow: scroll;">
+							<listheader label="CODIGO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="DESCRIPCIÓN"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="CATEGORÍA"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="CAPACIDAD"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="UBICACIÓN"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="FECHA INICIO RESPALDO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="FECHA FIN RESPALDO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="TIPO DE RESPALDO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="ID CONTENEDOR"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="HORA LLEGADA CUSTODIA"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="HORA SALIDA CUSTODIA"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader
+								label="REMESA INGRESO CUSTODIA - NOC"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader
+								label="REMESA SALIDA NOC - CUSTODIA"
+								style="text-align: center !important;">
+							</listheader>
+						</listhead>
+						<listitem self="@{each=lista}">
+							<listcell
+								label="@{lista.getCod_articulo_anterior}">
+							</listcell>
+							<listcell
+								label="@{lista.getDes_articulo_anterior}">
+							</listcell>
+							<listcell
+								label="@{lista.getNom_cat_articulo_anterior}">
+							</listcell>
+							<listcell
+								label="@{lista.getNom_id_cap_articulo_anterior}">
+							</listcell>
+							<listcell
+								label="@{lista.getNom_ubicacion_anterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarFechaInicioAnterior}"
+								style="@{lista.estiloImagenFechaInicioAnterior}"
+								image="@{lista.mostrarImagenFechaInicioAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarFechaFinAnterior}"
+								style="@{lista.estiloImagenFechaFinAnterior}"
+								image="@{lista.mostrarImagenFechaFinAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarTipoRespaldoAnterior}"
+								style="@{lista.estiloImagenTipoRespaldoAnterior}"
+								image="@{lista.mostrarImagenTipoRespaldoAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarIdContenedorAnterior}"
+								style="@{lista.estiloImagenIdContenedorAnterior}"
+								image="@{lista.mostrarImagenIdContenedorAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarHoraIngresoCustodiaAnterior}"
+								style="@{lista.estiloImagenHoraIngresoCustodiaAnterior}"
+								image="@{lista.mostrarImagenHoraIngresoCustodiaAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarHoraSalidaCustodiaAnterior}"
+								style="@{lista.estiloImagenHoraSalidaCustodiaAnterior}"
+								image="@{lista.mostrarImagenHoraSalidaCustodiaAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarRemesaIngresoAnterior}"
+								style="@{lista.estiloImagenRemesaIngresoAnterior}"
+								image="@{lista.mostrarImagenRemesaIngresoAnterior}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarRemesaSalidaAnterior}"
+								style="@{lista.estiloImagenRemesaSalidaAnterior}"
+								image="@{lista.mostrarImagenRemesaSalidaAnterior}">
+							</listcell>
+						</listitem>
+					</listbox>
+				</groupbox>
+				<groupbox hflex="1" closable="false">
+					<caption label="REGISTRO DESPUES DE PEDIDO"></caption>
+					<listbox mold="paging" pageSize="25"
+						id="lbxDetalleMovimientoActual" span="true" sizedByContent="true"
+						width="100%"
+						model="@{zConsultar$consultar.obtenerDetalleMovimientos}">
+						<listhead sizable="false"
+							style="overflow: scroll;">
+							<listheader label="CODIGO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="DESCRIPCIÓN"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="CATEGORÍA"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="CAPACIDAD"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="UBICACIÓN"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="FECHA INICIO RESPALDO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="FECHA FIN RESPALDO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="TIPO DE RESPALDO"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="ID CONTENEDOR"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="HORA LLEGADA CUSTODIA"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader label="HORA SALIDA CUSTODIA"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader
+								label="REMESA INGRESO CUSTODIA - NOC"
+								style="text-align: center !important;">
+							</listheader>
+							<listheader
+								label="REMESA SALIDA NOC - CUSTODIA"
+								style="text-align: center !important;">
+							</listheader>
+						</listhead>
+						<listitem self="@{each=lista}">
+							<listcell
+								label="@{lista.getCod_articulo_actual}">
+							</listcell>
+							<listcell
+								label="@{lista.getDes_articulo_actual}">
+							</listcell>
+							<listcell
+								label="@{lista.getNom_cat_articulo_actual}">
+							</listcell>
+							<listcell
+								label="@{lista.getNom_id_cap_articulo_actual}">
+							</listcell>
+							<listcell
+								label="@{lista.getNom_ubicacion_actual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarFechaInicioActual}"
+								style="@{lista.estiloImagenFechaInicioActual}"
+								image="@{lista.mostrarImagenFechaInicioActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarFechaFinActual}"
+								style="@{lista.estiloImagenFechaFinActual}"
+								image="@{lista.mostrarImagenFechaFinActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarTipoRespaldoActual}"
+								style="@{lista.estiloImagenTipoRespaldoActual}"
+								image="@{lista.mostrarImagenTipoRespaldoActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarIdContenedorActual}"
+								style="@{lista.estiloImagenIdContenedorActual}"
+								image="@{lista.mostrarImagenIdContenedorActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarHoraIngresoCustodiaActual}"
+								style="@{lista.estiloImagenHoraIngresoCustodiaActual}"
+								image="@{lista.mostrarImagenHoraIngresoCustodiaActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarHoraSalidaCustodiaActual}"
+								style="@{lista.estiloImagenHoraSalidaCustodiaActual}"
+								image="@{lista.mostrarImagenHoraSalidaCustodiaActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarRemesaIngresoActual}"
+								style="@{lista.estiloImagenRemesaIngresoActual}"
+								image="@{lista.mostrarImagenRemesaIngresoActual}">
+							</listcell>
+							<listcell
+								label="@{lista.mostrarRemesaSalidaActual}"
+								style="@{lista.estiloImagenRemesaSalidaActual}"
+								image="@{lista.mostrarImagenRemesaSalidaActual}">
+							</listcell>
+						</listitem>
+					</listbox>
+				</groupbox>
+	</hlayout>
+	</div>
+	</div>
+	<menupopup id="editPopup">
+		<menuitem id="mValidar" iconSclass="z-icon-edit" />
+	</menupopup>
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+	
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+	lbxMovimientos.pagingChild.mold = "os".equals(lbxMovimientos.pagingChild.mold) ? "default" : "os";
+	lbxDetalleMovimientoAnterior.pagingChild.mold = "os".equals(lbxDetalleMovimientoAnterior.pagingChild.mold)
+			? "default"
+			: "os";
+	lbxDetalleMovimientoActual.pagingChild.mold = "os".equals(lbxDetalleMovimientoActual.pagingChild.mold) ? "default"
+			: "os";
+]]>
+	</zscript>
+</zk>

@@ -1,0 +1,257 @@
+<?page title="DC Aplicaciones | Dashboard" contentType="text/html; charset=UTF-8"?>
+<?link rel="shortcut icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="stylesheet" type="text/css" href="/css/normalize.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/principal.css"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window id="zDashboard" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.dashboard">
+		<borderlayout>
+			<north collapsible="true" border="none" class="m_north">
+				<div class="north">
+					<div align="center">
+						<menubar class="menu_a" autodrop="false">
+							<menu
+								image="/img/botones/ButtonDashboard2.png" label=" - DASHBOARD"
+								width="180px" height="5px" style="font-style: italic !important"
+								id="tMenu4">
+								<menupopup>
+									<menuitem
+										image="/img/botones/ButtonInventory3.png"
+										label=" - Gestión de bodega" id="tcDBodega"
+										tooltiptext="Módulo creado para la gestión del inventario del Data center."
+										height="35px" class="m-bitacora m-item_a">
+									</menuitem>
+									<menuitem
+										image="/img/botones/ButtonBitacore5.png"
+										label=" - Gestión de bitacora"
+										tooltiptext="Módulo creado para la gestión de las tareas realizadas en el Data center."
+										height="35px" id="tcDBitacora" class="m-bitacora m-item_a">
+									</menuitem>
+								</menupopup>
+							</menu>
+							<menu image="/img/botones/ButtonApp1.png"
+								label=" - APLICACIONES" width="180px" height="5px"
+								style="font-style: italic !important" id="tMenu1">
+								<menupopup>
+									<menuitem
+										image="/img/botones/ButtonInventory3.png"
+										label=" - Gestión de bodega" id="tcBodega"
+										tooltiptext="Módulo creado para la gestión del inventario del Data center."
+										height="35px" class="m-bitacora m-item_a">
+									</menuitem>
+									<menuseparator visible="false" />
+									<menuitem
+										image="/img/botones/ButtonBitacore5.png"
+										label=" - Gestión de bitacora"
+										tooltiptext="Módulo creado para la gestión de las tareas realizadas en el Data center."
+										height="35px" id="tcBitacora" class="m-bitacora m-item_a">
+									</menuitem>
+									<menuseparator visible="false" />
+									<menuitem
+										image="/img/botones/ButtonDiners3.png"
+										label=" - Gestión de cintas" id="tcCintas"
+										tooltiptext="Módulo creado para la gestión de cintas del cliente Diners."
+										height="35px" class="m-bitacora m-item_a">
+									</menuitem>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonGenerate4.png"
+										label=" - Gestión de control de cambios" id="tControlCambio"
+										tooltiptext="Módulo creado para la generación de la secuencia para los controles de cambio."
+										height="35px" class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonGenerate5.png"
+												label=" - Generar codigo" id="tcControlCambioGenerar"
+												height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonReport3.png"
+												label=" - Reporte control de cambio" height="35px"
+												visible="false" />
+										</menupopup>
+									</menu>
+								</menupopup>
+							</menu>
+							<menu
+								image="/img/botones/ButtonSettings1.png"
+								label=" - CONFIGURACIONES" id="tMantenimientos">
+								<menupopup>
+									<menu
+										image="/img/botones/ButtonAdministrator2.png"
+										label=" - Administración" height="35px" class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonParameters1.png"
+												label=" - Parametros generales"
+												id="tcMantenimientoParametros" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonOffice1.png"
+												label=" - Localidades" id="tcMantenimientoLocalidades"
+												height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonGroup1.png" label=" - Perfiles"
+												id="tcMantenimientoPerfiles" height="35px" class="m-item" />
+										</menupopup>
+									</menu>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonSettings3.png" label=" - Generales"
+										height="35px" class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonUser1.png" label=" - Usuarios"
+												id="tcMantenimientoUsuarios" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonCompany1.png" label=" - Empresas"
+												id="tcMantenimientoEmpresas" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonEmployee1.png"
+												label=" - Solicitantes/proveedores"
+												id="tcMantenimientoSolicitantesProveedores" height="35px"
+												class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonInfo1.png"
+												label=" - Informativos"
+												id="tcMantenimientoInformativos" height="35px"
+												class="m-item" />
+										</menupopup>
+									</menu>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonInventory3.png"
+										label=" - Gestión de bodega" height="35px" class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonCategory1.png"
+												label=" - Categorias" id="tcMantenimientoCategorias1"
+												height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonUbication1.png"
+												label=" - Ubicaciones" id="tcMantenimientoUbicaciones1"
+												height="35px" class="m-item" />
+										</menupopup>
+									</menu>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonDiners3.png"
+										label=" - Gestión de cintas" height="35px" class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonAlarm1.png" label=" - Sesiones"
+												id="tcMantenimientoSesiones" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonBackup1.png" label=" - Respaldos"
+												id="tcMantenimientoRespaldos" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonTape1.png" label=" - Capacidades"
+												id="tcMantenimientoCapacidades" height="35px"
+												class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonCategory1.png"
+												label=" - Categorias" id="tcMantenimientoCategorias2"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonUbication1.png"
+												label=" - Ubicaciones" id="tcMantenimientoUbicaciones2"
+												height="35px" class="m-item" />
+										</menupopup>
+									</menu>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonRequire3.png"
+										label=" - Gestión de solicitudes" height="35px"
+										class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonRequire1.png"
+												label=" - Solicitudes" id="tcMantenimientoSolicitudes"
+												height="35px" class="m-item" />
+										</menupopup>
+									</menu>
+								</menupopup>
+							</menu>
+							<menu image="/img/botones/ButtonHelp1.png"
+								label=" - AYUDA">
+								<custom-attributes data-tittle="AYUDA" />
+								<menupopup>
+									<menuitem
+										image="/img/botones/ButtonPDF3.png"
+										label=" - Descargar manual Gestión de bodega" height="35px"
+										class="m-item" />
+									<menuseparator visible="false" />
+									<menuitem
+										image="/img/botones/ButtonPDF3.png"
+										label=" - Descargar manual Gestión de bitacora y control de cambio"
+										height="35px" class="m-item" />
+									<menuitem
+										image="/img/botones/ButtonPDF3.png"
+										label=" - Descargar manual Gestión de cintas" height="35px"
+										class="m-item" />
+									<menuseparator visible="false" />
+									<menuitem
+										image="/img/botones/ButtonAbout2.png" label=" - Acerca de."
+										id="tcAcercaDe" height="35px" class="m-item" />
+								</menupopup>
+							</menu>
+						</menubar>
+					</div>
+					<div align="right" class="m_botones">
+						<button id="btnUsuario"
+							image="/img/botones/ButtonUser1.png" tooltiptext="Usuario"
+							autodisable="self" style="background: rgb(2, 0, 36) !important;" />
+						<button id="btnSalir"
+							image="/img/principal/btnExit2.png" tooltiptext="Cerrar sesión"
+							autodisable="self" style="background: rgb(2, 0, 36) !important;" />
+					</div>
+				</div>
+			</north>
+			<center flex="true" border="none">
+				<div>
+					<div class="m-div-b" id="dSolicitudes">
+						<label value="SOLICITUDES" class="m-label-b"
+							visible="false">
+						</label>
+					</div>
+					<tabbox id="tTab" vflex="max"
+						style="height: calc(100%);" width="100%">
+						<tabs>
+							<tab
+								image="/img/botones/ButtonDashboard3.png" label=" - DASHBOARD"
+								id="tDashboard" selected="true" closable="false">
+							</tab>
+						</tabs>
+						<tabpanels id="tPanel" vflex="max"
+							style="height: calc(100%);" width="100%">
+							<tabpanel vflex="max"
+								style="height: calc(100%);" width="100%">
+								<borderlayout height="99.9%">
+									<center autoscroll="true"
+										id="cPaneles">
+									</center>
+								</borderlayout>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
+		</borderlayout>
+	</window>
+</zk>

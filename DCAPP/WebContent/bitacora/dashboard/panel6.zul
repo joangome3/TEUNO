@@ -1,0 +1,12 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zLabel"
+	apply="">
+	<space></space>
+	<div align="center">
+		<label id="lTiempoTrabajado" value="00:00:00"
+			style="font-size: 95px !important;">
+		</label>
+	</div>
+	<space></space>
+</window>

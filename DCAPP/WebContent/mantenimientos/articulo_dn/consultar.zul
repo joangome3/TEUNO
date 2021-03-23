@@ -1,0 +1,202 @@
+<?page title="Mantenimiento de FD.08 - Inventario" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo_dn.consultar"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
+												autodisable="self" />
+											<space width="5px"></space>
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+											<space width="5px"></space>
+											<combobox id="cmbEstado"
+												readonly="true" width="200px"
+												tooltiptext="Seleccione el estado a consultar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem
+													label="ACTIVO" value="A">
+												</comboitem>
+												<comboitem
+													label="INACTIVO" value="I">
+												</comboitem>
+												<comboitem
+													label="PENDIENTE APROBAR CREACIÓN" value="P">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
+											<button id="btnAccion"
+												visible="false">
+											</button>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox id="lbxArticulos" mold="paging"
+					sizedByContent="true" width="100%" vflex="true"
+					model="@{zConsultar$consultar.obtenerArticulos}" multiple="true">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader visible="false"></listheader>
+						<listheader label="ID"
+							style="text-align: center !important;" visible="false">
+						</listheader>
+						<listheader label="CODIGO" />
+						<listheader label="DESCRIPCION" />
+						<listheader label="CLIENTE"
+							style="text-align: center !important;" />
+						<listheader label="CATEGORIA" />
+						<listheader label="UBICACION"
+							style="text-align: center !important;" />
+						<listheader label="STOCK"
+							style="text-align: center !important;" visible="false" />
+						<listheader label="CAPACIDAD"
+							style="text-align: center !important;" />
+						<listheader label="FECHA INICIO RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="FECHA FIN RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="TIPO RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="ID CONTENEDOR"
+							style="text-align: center !important;" />
+						<listheader label="ESTADO"
+							style="text-align: center !important;" />
+					</listhead>
+					<listitem self="@{each=lista}" context="editPopup">
+						<listcell image="@{lista.mostrarImagenEstadoSolicitud}" style="text-align: center !important;"/>
+						<listcell label="@{lista.getId_articulo}" style="text-align: center !important;"/>
+						<listcell label="@{lista.getCod_articulo}" />
+						<listcell label="@{lista.getDes_articulo}" />
+						<listcell label="@{lista.getNom_empresa}" />
+						<listcell label="@{lista.getNom_categoria}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.getNom_ubicacion}" />
+						<listcell label="@{lista.getSto_articulo}" />
+						<listcell
+							image="@{lista.mostrarImagenCapacidad}"
+							label="@{lista.mostrarCapacidad}"
+							style="text-align: center !important;" />
+						<listcell
+							image="@{lista.mostrarImagenFechaInicio}"
+							label="@{lista.mostrarFechaInicio}"
+							style="text-align: center !important;" />
+						<listcell image="@{lista.mostrarImagenFechaFin}"
+							label="@{lista.mostrarFechaFin}"
+							style="text-align: center !important;" />
+						<listcell
+							image="@{lista.mostrarImagenTipoDeRespaldo}"
+							label="@{lista.mostrarTipoDeRespaldo}"
+							style="@{lista.estiloImagenTipoDeRespaldo}" />
+						<listcell
+							image="@{lista.mostrarImagenIdContenedor}"
+							label="@{lista.mostrarIdContenedor}"
+							style="@{lista.estiloImagenIdContenedor}" />
+						<listcell label="@{lista.mostrarEstado}" style="@{lista.estiloMostrarEstado}" />
+					</listitem>
+				</listbox>
+			</hlayout>
+		</vlayout>
+	</div>
+	
+	<menupopup id="editPopup">
+		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
+			label=" - Seguimiento"
+			tooltiptext="Permite visualizar el estado de la solicitud." disabled="true" visible="false"/>
+		<menuseparator id="mSeparador1" visible="false"/>
+		<menuitem id="mSolicitar" iconSclass="z-icon-check"
+			label=" - Solicitar"
+			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador." disabled="true" visible="false"/>
+		<menuitem id="mAccion" iconSclass="z-icon-check"
+			label=" - Accion"
+			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador." disabled="true" visible="false"/>
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar la informacion de solo los registros que son cajas."/>
+		<menuseparator id="mSeparador2" />
+		<menuitem id="mActivar" iconSclass="z-icon-font"
+			label=" - Activar"
+			tooltiptext="Permite activar los registros que solo sean del tipo caja."/>
+		<menuseparator id="mSeparador3" />
+		<menuitem id="mInactivar" iconSclass="z-icon-italic"
+			label=" - Inactivar"
+			tooltiptext="Permite desactivar los registros que solo sean del tipo caja."/>
+	</menupopup>
+	
+	<popup id="cons" width="300px">
+		<html>
+			
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+			
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+	lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+</zk>

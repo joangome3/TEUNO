@@ -1,0 +1,74 @@
+<?page title="SIBOD | Reporte BALDOSAS" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zReporte" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.sibod.movimiento.reporte_baldosas">
+		<borderlayout height="100%">
+			<north autoscroll="true" collapsible="true"
+				splittable="true">
+				<grid>
+					<columns>
+						<column width="0%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="15%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="15%"></column>
+					</columns>
+					<rows>
+						<row>
+							<space></space>
+							<label value="Formato:"></label>
+							<cell colspan="2"
+								class="z-dtx-nuevo-movimiento">
+								<space width="27px"></space>
+								<combobox id="cmbFormato"
+									readonly="true" width="150px">
+									<comboitem label="PDF"
+										value="pdf">
+									</comboitem>
+									<comboitem label="EXCEL"
+										value="xls">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="3" align="center">
+								<button label="" id="btnConsultar"
+									image="/img/botones/ButtonSearch1.png" tooltiptext="Consultar"
+									autodisable="self">
+								</button>
+								<space></space>
+								<button label="" id="btnLimpiar"
+									image="/img/botones/ButtonUpdate4.png" tooltiptext="Limpiar"
+									autodisable="self">
+								</button>
+							</cell>
+							<label value="Ubicación:"></label>
+							<cell colspan="2">
+								<combobox readonly="true"
+									id="cmbUbicacion" width="150px" disabled="true" class="z-cmb-1">
+									<comboitem label="BODEGA"
+										value="B">
+									</comboitem>
+									<comboitem label="SALA UTIL"
+										value="S">
+									</comboitem>
+								</combobox>
+								<checkbox id="chkUbicacion"
+									disabled="false" label="Todos">
+								</checkbox>
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</north>
+			<center>
+				<jasperreport id="reporte" height="100%"></jasperreport>
+			</center>
+		</borderlayout>
+	</div>
+</zk>

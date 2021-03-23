@@ -1,0 +1,57 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zParametros" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.parametros3"
+		align="center">
+		<toolbar>
+			<button id="btnGrabar" image="/img/botones/ButtonSave.png"
+				tooltiptext="Grabar" autodisable="self" />
+		</toolbar>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row align="center">
+					<cell colspan="2">
+						<label value="Opción:" class="z-label-1" />
+						<space width="25px"></space>
+						<combobox width="300px" id="cmbOpcion"
+							model="@{zParametros$parametros3.obtenerOpciones}"
+							readonly="true" disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getNom_opcion}" value="@{lista.getId_opcion}">
+							</comboitem>
+						</combobox>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<listbox mold="paging" id="lbxEmpresas"
+			model="@{zParametros$parametros3.obtenerEmpresas}" vflex="true"
+			sizedByContent="true" width="50%" multiple="true" checkmark="true">
+			<listhead sizable="false" style="overflow: scroll;">
+				<listheader label="ID" width="100px"></listheader>
+				<listheader label="NOMBRE"></listheader>
+			</listhead>
+			<listitem self="@{each=lista}">
+				<listcell label="@{lista.getId_empresa}"></listcell>
+				<listcell label="@{lista.getNom_empresa}"
+					style="font-style: normal;">
+				</listcell>
+			</listitem>
+		</listbox>
+	</div>
+	<zscript>
+		<![CDATA[
+	            lbxEmpresas.pagingChild.mold = "os".equals(lbxEmpresas.pagingChild.mold) ? "default" : "os";
+	        ]]>
+	</zscript>
+	<style>
+	   .z-listheader-checkable {
+	       visibility: hidden;
+	   	}
+	</style>
+</zk>

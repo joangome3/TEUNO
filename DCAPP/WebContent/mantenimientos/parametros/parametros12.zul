@@ -1,0 +1,62 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zParametros" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.parametros12"
+		align="center">
+		<toolbar>
+			<button id="btnGrabar" image="/img/botones/ButtonSave.png"
+				tooltiptext="Grabar" autodisable="self" />
+		</toolbar>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row align="center">
+					<cell colspan="2">
+						<space width="80px"></space>
+						<label value="Opción:" class="z-label-1" />
+						<space width="25px"></space>
+						<combobox width="300px" id="cmbOpcion"
+							model="@{zParametros$parametros12.obtenerOpciones}"
+							readonly="true" disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getNom_opcion}" value="@{lista.getId_opcion}">
+							</comboitem>
+						</combobox>
+					</cell>
+				</row>
+				<row align="center">
+					<cell colspan="2">
+						<space width="70px"></space>
+						<label value="Empresa:" class="z-label-1" />
+						<space width="25px"></space>
+						<combobox width="300px" id="cmbEmpresa"
+							model="@{zParametros$parametros12.obtenerEmpresas}"
+							readonly="true" disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getNom_empresa}"
+								value="@{lista.getId_empresa}">
+							</comboitem>
+						</combobox>
+					</cell>
+				</row>
+				<row align="center">
+					<cell colspan="2">
+						<label value="Se acepta ticket repetido:" class="z-label-1" />
+						
+						<combobox width="150px"
+							id="cmbSeAceptaTicketRepetido" readonly="true"
+							disabled="false">
+							<comboitem label="SI" value="S"></comboitem>
+							<comboitem label="NO" value="N"></comboitem>
+						</combobox>
+						<space width="140px"></space>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+	</div>
+</zk>

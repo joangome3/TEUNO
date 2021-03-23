@@ -1,0 +1,76 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zTabla"
+	apply="bp.aplicaciones.controlador.sibod.dashboard.TableChart">
+	<space></space>
+	<div hflex="1" align="center">
+		<div hflex="1" align="center">
+			<bandbox id="bdxArticulos" mold="rounded" autodrop="true"
+				width="250px" readonly="true">
+				<bandpopup>
+					<vbox id="modulesTabpanelVbox1" spacing="2">
+						<textbox placeholder="Buscar"
+							tooltiptext="Presione enter para realizar la búsqueda"
+							id="txtBuscar"
+							style="width: 200px; position: relative; left: 2px;">
+						</textbox>
+						<listbox mold="paging" pageSize="3"
+							id="lbxArticulos" model="@{zTabla$TableChart.obtenerArticulos}"
+							width="500px" span="true" sizedByContent="true">
+							<listhead>
+								<listheader label="CÓDIGO"></listheader>
+								<listheader label="DESCRIPCIÓN"></listheader>
+								<listheader label="CLIENTE"></listheader>
+								<listheader label="UBICACIÓN"></listheader>
+							</listhead>
+							<listitem self="@{each=lista}">
+								<listcell
+									label="@{lista.getCod_articulo}">
+								</listcell>
+								<listcell
+									label="@{lista.getDes_articulo}">
+								</listcell>
+								<listcell
+									label="@{lista.getNom_empresa}">
+								</listcell>
+								<listcell
+									label="@{lista.getNom_ubicacion}">
+								</listcell>
+							</listitem>
+						</listbox>
+					</vbox>
+				</bandpopup>
+			</bandbox>
+		</div>
+		<div hflex="1" align="center">
+			<space></space>
+			<grid width="200px">
+				<auxhead>
+					<auxheader colspan="4" label="STOCK" align="center" />
+				</auxhead>
+				<columns>
+					<column width="25%"></column>
+					<column width="25%"></column>
+					<column width="25%"></column>
+					<column width="25%"></column>
+				</columns>
+				<rows sclass="narrow">
+					<row align="center">
+						<cell colspan="4" align="center">
+							<textbox width="197px" height="57px"
+								readonly="true" id="txtStock"
+								style="font-style: normal; font-weight: bold; font-size: 35px !important; text-align: center;">
+							</textbox>
+						</cell>
+					</row>
+				</rows>
+			</grid>
+		</div>
+	</div>
+
+	<zscript>
+		<![CDATA[
+	            lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+	        ]]>
+	</zscript>
+</window>

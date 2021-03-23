@@ -1,0 +1,232 @@
+<?page title="Modificar perfil" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Modificar perfil ::." border="normal"
+		id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.perfiles.modificar"
+		position="center, center" sizable="true" width="45%" height="70%"
+		maximizable="true" minimizable="false">
+		<div height="100%" width="100%">
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<cell colspan="2">
+									<div class="img-logo"></div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Nombre:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtNombre"
+													width="400px" rows="3" constraint="" class="z-textbox-2" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="nom"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="4">
+									<div align="center">
+										<groupbox>
+											<caption label="Permisos"
+												style="text-align: center;">
+											</caption>
+											<grid>
+												<columns>
+													<column
+														width="6%">
+													</column>
+													<column
+														width="30%">
+													</column>
+													<column
+														width="60%">
+													</column>
+													<column
+														width="2%">
+													</column>
+												</columns>
+												<rows>
+													<row>
+														<space></space>
+														<label
+															value="Consultar:">
+														</label>
+														<cell
+															colspan="2" class="z-cell-check">
+															<checkbox
+																id="chkConsultar" />
+															<space
+																width="118px">
+															</space>
+															<label
+																value="Solicitar:" style="font-weight: bold;">
+															</label>
+															<space
+																width="13px">
+															</space>
+															<checkbox
+																id="chkSolicitar" />
+														</cell>
+													</row>
+													<row>
+														<space></space>
+														<label
+															value="Insertar:">
+														</label>
+														<cell
+															colspan="2" class="z-cell-check">
+															<checkbox
+																id="chkInsertar" />
+															<space
+																width="122px">
+															</space>
+															<label
+																value="Revisar:" style="font-weight: bold;">
+															</label>
+															<space
+																width="13px">
+															</space>
+															<checkbox
+																id="chkRevisar" />
+														</cell>
+														<space></space>
+													</row>
+													<row>
+														<space></space>
+														<label
+															value="Modificar:">
+														</label>
+														<cell
+															colspan="2" class="z-cell-check">
+															<checkbox
+																id="chkModificar" />
+															<space
+																width="116px">
+															</space>
+															<label
+																value="Aprobar:" style="font-weight: bold;">
+															</label>
+															<space
+																width="13px">
+															</space>
+															<checkbox
+																id="chkAprobar" />
+														</cell>
+														<space></space>
+													</row>
+													<row>
+														<space></space>
+														<label
+															value="Relacionar:">
+														</label>
+														<cell
+															colspan="2" class="z-cell-check">
+															<checkbox
+																id="chkRelacionar" />
+															<space
+																width="116px">
+															</space>
+															<label
+																value="Ejecutar:" style="font-weight: bold;">
+															</label>
+															<space
+																width="13px">
+															</space>
+															<checkbox
+																id="chkEjecutar" />
+														</cell>
+														<space></space>
+													</row>
+													<row>
+														<space></space>
+														<label
+															value="Desactivar:">
+														</label>
+														<cell
+															colspan="2" class="z-cell-check">
+															<checkbox
+																id="chkDesactivar" />
+														</cell>
+														<space></space>
+													</row>
+													<row
+														visible="false">
+														<space></space>
+														<label
+															value="Eliminar:">
+														</label>
+														<cell
+															colspan="2" class="z-cell-check">
+															<checkbox
+																id="chkEliminar" />
+														</cell>
+														<space></space>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+									</div>
+								</cell>
+							</row>
+							<row align="center">
+								<cell colspan="4">
+									<button id="btnGrabar"
+										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+										autodisable="self" />
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="nom" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				nombre no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el nombre no se encuentre registrado.
+				</span> </p> ]]>
+				
+
+			</html>
+		</popup>
+	</window>
+</zk>

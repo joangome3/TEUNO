@@ -1,0 +1,289 @@
+<?page title="DC Aplicaciones | Dashboard" contentType="text/html; charset=UTF-8"?>
+<?link rel="shortcut icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="stylesheet" type="text/css" href="/css/normalize.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/principal.css"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window id="zDashboard" width="100%" height="100%"
+		apply="">
+		<borderlayout>
+			<north collapsible="true" border="none">
+				<div class="north">
+					<hlayout hflex="1">
+						<div hflex="1">
+							<div hflex="1">
+								<html>
+
+									<![CDATA[ <header class="encabezado"
+									role="banner"> <div
+									class="contenedor"> <a
+									href="dashboard.zul" class="logo">
+									<!-- <img
+									src="img/login/login05.png"
+									alt="Logo del Sitio"
+									class="z-noc-ap"> --> <i> <p
+									class="z-noc-ap"> DC Aplicaciones
+									(v1.2) </p> </i> </a> <nav
+									role="navigation"> <ul> <li> <a
+									href="#" style="display: none
+									!important;"> INGRESO PERSONAL </a>
+									</li> <li> <a href="#"
+									style="display: none !important;">
+									CINTAS DINERS </a> </li> <li> <a
+									href="#" onclick="btnInventario();">
+									INVENTARIO (A.65) </a> </li> <li> <a
+									href="#"
+									onclick="btnConfiguraciones();">
+									MANTENIMIENTOS </a> </li> <li> <a
+									href="#" id="txtUsuario"
+									style="font-style: normal
+									!important;"> USUARIO </a> </li>
+									<li> <a href="#"
+									onclick="btnSalir();"> <img
+									src="img/principal/btnExit1.png"
+									alt="Salir" style="padding: 0
+									10px;"> </a> </li> </ul> </nav>
+									</div> </header>]]>
+	
+									<script type="text/javascript">
+										function btnInventario() {
+											if (zk.Widget.$("$tMantenimientos").getItemCount() == 0) {
+												zk.Widget.$("$tSibod").setVisible(true);
+												zk.Widget.$("$tMantenimientos").setVisible(false);
+											} else {
+												zk.Widget.$("$tSibod").setVisible(true);
+												zk.Widget.$("$tMantenimientos").setVisible(false);
+											}
+										}
+										function btnConfiguraciones() {
+											if (zk.Widget.$("$tMantenimientos").getItemCount() == 0) {
+												zk.Widget.$("$tSibod").setVisible(false);
+												zk.Widget.$("$tMantenimientos").setVisible(true);
+											} else {
+												zk.Widget.$("$tSibod").setVisible(false);
+												zk.Widget.$("$tMantenimientos").setVisible(true);
+											}
+										}
+										function btnSalir() {
+											zk.Widget.$("$cTimer").setRunning(true);
+										}
+										window.onload = function() {
+										   var nom_usuario = zk.Widget.$("$lblUsuario");
+										   document.getElementById("txtUsuario").innerHTML = nom_usuario.getValue();
+										};
+
+									</script>
+
+								</html>
+
+							</div>
+						</div>
+					</hlayout>
+				</div>
+			</north>
+			<west class="west" splittable="false" size="28rem"
+				collapsible="true" title="OPCIONES" border="none"
+				autoscroll="true">
+				<div>
+					<!-- Inicio de opciones del modulo SIBOD - Inventarios -->
+					<tree id="tSibod" visible="false">
+						<treechildren>
+							<treeitem>
+								<treerow>
+									<treecell image="/img/botones/ButtonEstadistic1.png" label="INVENTARIO"
+										style="font-style: italic; font-weight: bold;">
+									</treecell>
+								</treerow>
+								<treechildren>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonArticles1.png"
+												label=" - Inventario Artículos (A.65)" id="tcMantenimientoArticulos2"
+												style="font-style: normal !important; font-weight: normal;">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonMove1.png" label=" - Movimientos (A.65)"
+												id="tcSibodMovimientos">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonReport1.png"
+												label=" - Reporte Movimientos" id="cSibodReporteGeneral">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonReport1.png"
+												label=" - Reporte Inventario Baldosas" id="cSibodReporteBaldosas">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonReport1.png"
+												label=" - Reporte Inventario Artículos" id="cSibodReporteArticulos">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonReport1.png"
+												label=" - Reporte Inventario Repuestos" id="cSibodReporteRepuestos">
+											</treecell>
+										</treerow>
+									</treeitem>
+								</treechildren>
+							</treeitem>
+						</treechildren>
+					</tree>
+					<!-- Fin de opciones del modulo SIBOD - Inventarios -->
+					<!-- Inicio de opciones del modulo Mantenimientos -->
+					<tree id="tMantenimientos" visible="false">
+						<treechildren>
+							<treeitem>
+								<treerow>
+									<treecell image="/img/botones/ButtonSettings1.png" label="MANTENIMIENTOS"
+										style="font-style: italic; font-weight: bold;">
+									</treecell>
+								</treerow>
+								<treechildren>
+								<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonParameters1.png"
+												label=" - Parametros Generales" id="tcMantenimientoParametros">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonOffice1.png"
+												label=" - Localidades" id="tcMantenimientoLocalidades">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonGroup1.png" label=" - Perfiles"
+												id="tcMantenimientoPerfiles">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonUser1.png" label=" - Usuarios"
+												id="tcMantenimientoUsuarios">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonCompany1.png" label=" - Empresas"
+												id="tcMantenimientoEmpresas">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonEmployee1.png"
+												label=" - Solicitantes/Proveedores"
+												id="tcMantenimientoSolicitantesProveedores">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonCategory1.png"
+												label=" - Categorías" id="tcMantenimientoCategorias">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonUbication1.png"
+												label=" - Ubicaciones" id="tcMantenimientoUbicaciones">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonArticles1.png" label=" - Inventario Articulos (A.65)"
+												id="tcMantenimientoArticulos1">
+											</treecell>
+										</treerow>
+									</treeitem>
+									<treeitem>
+										<treerow>
+											<treecell
+												image="/img/botones/ButtonRequire1.png"
+												label=" - Solicitudes" id="tcMantenimientoSolicitudes">
+											</treecell>
+										</treerow>
+									</treeitem>
+								</treechildren>
+							</treeitem>
+						</treechildren>
+					</tree>
+					<!-- Fin de opciones del modulo Mantenimientos -->
+				</div>
+			</west>
+			<center flex="true" border="none">
+				<div>
+					<tabbox id="tTab" sclass="divA" height="100%">
+						<tabs>
+							<tab
+								image="/img/botones/ButtonDashboard1.png" label=" - DASHBOARD"
+								id="tDashboard" selected="true" closable="false">
+							</tab>
+						</tabs>
+						<tabpanels id="tPanel" sclass="divA">
+							<tabpanel>
+								<borderlayout>
+									<center autoscroll="true">
+										<include src="/panel.zul">
+										</include>
+									</center>
+								</borderlayout>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+					<timer id="cTimer" delay="0" running="false"
+						repeats="false" visible="false" onTimer="Salir();" />
+					<label id="lblUsuario" visible="false"></label>
+				</div>
+			</center>
+		</borderlayout>
+		<zscript>
+	void Salir() {
+		String url = "/index.zul";
+		Sessions.getCurrent().removeAttribute("id_user");
+		Sessions.getCurrent().removeAttribute("id_perfil");
+		Sessions.getCurrent().removeAttribute("user");
+		Sessions.getCurrent().removeAttribute("id_dc");
+		Sessions.getCurrent().removeAttribute("nom_ape_user");
+		Executions.sendRedirect(url);
+	}
+</zscript>
+	</window>
+</zk>

@@ -1,0 +1,31 @@
+<?page title="INFORMATIVOS" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title="INFORMATIVOS" border="normal"
+		position="center, center" sizable="false" width="50%" height="95%"
+		maximizable="false" minimizable="false" shadow="false"
+		mode="overlapped" closable="true"
+		apply="bp.aplicaciones.controlador.informativo" id="zInformativo">
+		<div class="m-div-f" height="95%">
+			<div>
+				<label id="lInformativosSinLeer" class="m-div-h"></label>
+			</div>
+			<listbox mold="paging" id="lbxInformativos" vflex="true"
+				sizedByContent="false">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label=""
+						style="text-align: center !important;" visible="false">
+					</listheader>
+					<listheader label=""
+						style="text-align: center !important;">
+					</listheader>
+				</listhead>
+			</listbox>
+		</div>
+		<zscript>
+	<![CDATA[
+            lbxInformativos.pagingChild.mold = "os".equals(lbxInformativos.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+	</window>
+</zk>

@@ -1,0 +1,1 @@
+update sibod_bitacora set id_estado_bitacora = 2

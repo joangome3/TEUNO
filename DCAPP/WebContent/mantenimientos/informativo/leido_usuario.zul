@@ -1,0 +1,24 @@
+<?page title="INFORMATIVOS LEIDOS" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title="USUARIOS QUE HAN LEIDO EL INFORMATIVO"
+		border="normal" position="center, center" sizable="false" width="35%"
+		height="50%" maximizable="false" minimizable="false" shadow="false"
+		mode="overlapped" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.informativo.leido_usuario"
+		id="zLeidos">
+		<div class="m-div-f" height="85%">
+			<listbox mold="paging" id="lbxUsuarios" vflex="true"
+				sizedByContent="false">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label=""
+						style="text-align: center !important;" visible="false">
+					</listheader>
+					<listheader label=""
+						style="text-align: center !important;">
+					</listheader>
+				</listhead>
+			</listbox>
+		</div>
+	</window>
+</zk>

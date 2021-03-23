@@ -1,0 +1,211 @@
+<?page title="Mantenimiento de solicitudes" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.solicitud.consultar"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
+												autodisable="self" visible="false" />
+											<space width="5px"></space>
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="200px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+											<datebox
+												constraint="no empty" format="dd/MM/yyyy"
+												id="dtxFechaInicio" tooltip="f_i">
+											</datebox>
+											<space width="5px"></space>
+											<datebox
+												constraint="no empty" format="dd/MM/yyyy" id="dtxFechaFin"
+												tooltip="f_f">
+											</datebox>
+											<space width="30px"></space>
+											<combobox width="220px"
+												id="cmbEstado" readonly="true" disabled="false"
+												style="font-weight: bold !important; color:black !important; font-style: italic !important;"
+												tooltip="est">
+												<comboitem
+													label="ABIERTAS" value="P">
+												</comboitem>
+												<comboitem
+													label="EN REVISIÓN" value="R">
+												</comboitem>
+												<comboitem
+													label="APROBADAS" value="A">
+												</comboitem>
+												<comboitem
+													label="NO APROBADAS" value="N">
+												</comboitem>
+												<comboitem
+													label="PENDIENTE EJECUCIÓN" value="S">
+												</comboitem>
+												<comboitem
+													label="PENDIENTE ACTUALIZACIÓN" value="T">
+												</comboitem>
+												<comboitem
+													label="EJECUTADAS" value="E">
+												</comboitem>
+											</combobox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox mold="paging" id="lbxSolicitudes" vflex="true"
+					sizedByContent="true" width="100%"
+					model="@{zConsultar$consultar.obtenerSolicitudes}">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="ID"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="TIPO DE SOLICITUD"></listheader>
+						<listheader label="CONFIGURACIÓN"></listheader>
+						<listheader label="CAMPO"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="FECHA SOLICITUD"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="SOLICITANTE"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="DETALLE DE LA SOLICITUD">
+						</listheader>
+					</listhead>
+					<listitem context="editPopup" self="@{each=lista}">
+						<listcell label="@{lista.getId_solicitud}" />
+						<listcell
+							label="@{lista.getNom_tipo_solicitud}" />
+						<listcell label="@{lista.mostrarNombreOpcion}" />
+						<listcell label="@{lista.mostrarCampo}"
+							image="@{lista.mostrarImagenCampo}" style="text-align: center !important;"/>
+						<listcell label="@{lista.mostrarFecha1}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarSolicitante}" />
+						<listcell label="@{lista.getComentario_1}" />
+					</listitem>
+				</listbox>
+			</hlayout>
+		</vlayout>
+	</div>
+	
+	<menupopup id="editPopup">
+		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
+			label=" - Seguimiento"
+			tooltiptext="Permite visualizar el estado de la solicitud." />
+		<menuseparator id="mSeparador1" />
+		<menuitem id="mAprobar" iconSclass="z-icon-check"
+			label=" - Aprobar"
+			tooltiptext="Permite realizar la aprobación de la solicitud." />
+	</menupopup>
+	
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+
+			</html>
+	</popup>
+	<popup id="f_i" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Use este campo para indicar la <span style="color:
+			black; font-size: 12px; font-style: normal; font-weight:
+			bold;"> fecha inicio </span> desde donde desea realizar la
+			consulta.</br>2.- Por defecto se establece el <span
+			style="color: black; font-size: 12px; font-style: normal;
+			font-weight: bold;"> primer día del mes </span> en este
+			campo.</br>3.- Seleccione una fecha y los <span
+			style="color: black; font-size: 12px; font-style: normal;
+			font-weight: bold;">registros se actualizarán de manera
+			automática </span>.</p> ]]>
+
+			</html>
+	</popup>
+	<popup id="f_f" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Use este campo para indicar la <span style="color:
+			black; font-size: 12px; font-style: normal; font-weight:
+			bold;"> fecha final </span> hasta donde desea realizar la
+			consulta.</br>2.- Por defecto se establece el <span
+			style="color: black; font-size: 12px; font-style: normal;
+			font-weight: bold;"> último día del mes </span> en este
+			campo.</br>3.- Seleccione una fecha y los <span
+			style="color: black; font-size: 12px; font-style: normal;
+			font-weight: bold;"> registros se actualizarán de manera
+			automática</span>.</p> ]]>
+
+			</html>
+	</popup>
+	<popup id="est" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Use este campo para mostrar los registros entre
+			cada una de las colas que se crearon para la validación
+			cruzada.</br>2.- Seleccione una cola y los registros se
+			actualizarán de manera automática.</p> ]]>
+
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+	lbxSolicitudes.pagingChild.mold = "os".equals(lbxSolicitudes.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+</zk>

@@ -1,0 +1,64 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zParametros" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.parametros9"
+		align="center">
+		<toolbar>
+			<button id="btnGrabar" image="/img/botones/ButtonSave.png"
+				tooltiptext="Grabar" autodisable="self" />
+		</toolbar>
+		<grid>
+			<columns>
+				<column width="40%"></column>
+				<column width="2%"></column>
+				<column width="25%"></column>
+				<column width="25%"></column>
+			</columns>
+			<rows>
+				<row align="center">
+					<label value="Empresa:" class="z-label-1" />
+					<space></space>
+					<cell colspan="1" align="left">
+						<space width="15px"></space>
+						<combobox width="300px" id="cmbEmpresa"
+							model="@{zParametros$parametros9.obtenerEmpresas}"
+							readonly="true" disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getNom_empresa}"
+								value="@{lista.getId_empresa}">
+							</comboitem>
+						</combobox>
+						<space></space>
+					</cell>
+				</row>
+				<row align="center">
+					<label
+						value="Etiqueta que se mostrará en modulo de bitacora para la empresa seleccionada:"
+						class="z-label-1" />
+					<space></space>
+					<cell colspan="1" align="left">
+						<space width="15px"></space>
+						<textbox id="txtNomTicket"
+							style="font-style: normal !important;">
+						</textbox>
+					</cell>
+					<space></space>
+				</row>
+				<row align="center">
+					<label
+						value="Cantidad de caracteres que se validará en el ticket:"
+						class="z-label-1" />
+					<space></space>
+					<cell colspan="1" align="left">
+						<space width="0px"></space>
+						<intbox id="intCantidadCaracteres"
+							constraint="no negative; no empty" width="50px">
+						</intbox>
+					</cell>
+					<space></space>
+				</row>
+			</rows>
+		</grid>
+	</div>
+</zk>

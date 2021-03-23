@@ -1,0 +1,205 @@
+<?page title="Aplicaciones Diners | Reporte Articulos" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zReporte" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.cintas.reporte_articulos2">
+		<borderlayout height="100%">
+			<north autoscroll="true" collapsible="true"
+				splittable="true">
+				<grid>
+					<columns>
+						<column width="0%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="15%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="15%"></column>
+					</columns>
+					<rows>
+						<row>
+							<space></space>
+							<label value="Ubicación:" />
+							<cell colspan="3">
+								<bandbox id="bdxUbicacion"
+									mold="rounded" autodrop="true" width="150px" readonly="true" disabled="true">
+									<bandpopup width="25%">
+										<panel title="">
+											<panelchildren>
+												<space width="15px">
+												</space>
+												<textbox width="280px"
+													id="txtBuscarUbicacion" placeholder="Ingrese palabra clave"
+													tooltiptext="Presione enter para realizar la búsqueda"
+													style="font-style: italic;">
+												</textbox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="con"
+													style="cursor: help; width: 16px; height: 16px;" />
+												<div align="center">
+													<listbox
+														mold="paging" pageSize="10" id="lbxUbicaciones"
+														model="@{zReporte$reporte_articulos2.obtenerUbicaciones}"
+														sizedByContent="false" width="100%">
+														<listhead
+															sizable="false" style="overflow: scroll;">
+															<listheader
+																label="ID" style="text-align: center;" visible="false">
+															</listheader>
+															<listheader
+																label="UBICACIÓN" style="text-align: center;">
+															</listheader>
+														</listhead>
+														<listitem
+															self="@{each=lista}">
+															<listcell
+																label="@{lista.getId_tipo_ubicacion}"
+																style="text-align: center !important;">
+															</listcell>
+															<listcell
+																label="@{lista.getNom_tipo_ubicacion}"
+																style="text-align: center !important;">
+															</listcell>
+														</listitem>
+													</listbox>
+												</div>
+											</panelchildren>
+										</panel>
+									</bandpopup>
+								</bandbox>
+								<space width="5px"></space>
+								<checkbox id="chkUbicacion"
+									label="Todos">
+								</checkbox>
+							</cell>
+							<cell colspan="2"></cell>
+							<label value="Capacidad:"></label>
+							<cell colspan="3">
+								<space width="20px"></space>
+								<combobox
+									model="@{zReporte$reporte_articulos2.obtenerCapacidades}"
+									readonly="true" id="cmbCapacidad" width="150px"
+									disabled="true">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_capacidad}"
+										value="@{lista.getId_capacidad}">
+									</comboitem>
+								</combobox>
+								<checkbox id="chkCapacidad"
+									label="Todos">
+								</checkbox>
+							</cell>
+						</row>
+						<row>
+							<space></space>
+							<label value="Formato:"></label>
+							<cell colspan="2"
+								class="z-dtx-nuevo-movimiento">
+								<space width="31px"></space>
+								<combobox id="cmbFormato"
+									readonly="true" width="150px">
+									<comboitem label="PDF"
+										value="pdf">
+									</comboitem>
+									<comboitem label="HTML"
+										value="html" visible="false">
+									</comboitem>
+									<comboitem label="WORD (RTF)"
+										value="rtf" visible="false">
+									</comboitem>
+									<comboitem label="EXCEL"
+										value="xls">
+									</comboitem>
+									<comboitem label="EXCEL (JXL)"
+										value="jxl" visible="false">
+									</comboitem>
+									<comboitem label="CSV"
+										value="csv" visible="false">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="3" align="center">
+								<button label="" id="btnConsultar"
+									image="/img/botones/ButtonSearch1.png" tooltiptext="Consultar"
+									autodisable="self">
+								</button>
+								<space></space>
+								<button label="" id="btnLimpiar"
+									image="/img/botones/ButtonUpdate4.png" tooltiptext="Limpiar"
+									autodisable="self">
+								</button>
+							</cell>
+							<label value="Tipo:"></label>
+							<cell colspan="2">
+								<space width="20px"></space>
+								<combobox
+									model="@{zReporte$reporte_articulos2.obtenerCategorias}"
+									readonly="true" id="cmbCategoria" width="150px"
+									disabled="true">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_categoria}"
+										value="@{lista.getId_categoria}">
+									</comboitem>
+								</combobox>
+								<checkbox id="chkCategoria"
+									label="Todos">
+								</checkbox>
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</north>
+			<center autoscroll="true">
+				<jasperreport id="reporte" height="100%"></jasperreport>
+			</center>
+		</borderlayout>
+	</div>
+	<popup id="art" width="450px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Si el
+			artículo no se encuentra en la lista, valide que se
+			encuentre creado, aprobado y activo en la <span
+			style="color: black; font-size: 12px; font-style: italic;
+			font-weight: bold;"> configuración de artículos. </span>
+			</br> </br> <span style="color: black; font-size: 12px;
+			font-style: normal; font-weight: bold;"> TIPS: </span> </br>
+			1.- Puede buscar de una manera rapida entre los artículos
+			consultando por código, descripción, categoría, ubicación,
+			etc. Solo escribiendo parte de la palabra en el campo buscar
+			y presionando la tecla Enter </br> 2.- Para mostrar todos
+			los artículos deje limpio el campo buscar y presione la
+			tecla Enter. </p> ]]>
+
+			</html>
+	</popup>
+	<popup id="con" width="450px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Si el
+			proveedor no se encuentra en la lista, valide que se
+			encuentre creado, aprobado, activo y que mantenga una
+			relación creada para poderse usar desde la opción de
+			movimientos en la <span style="color: black; font-size:
+			12px; font-style: italic; font-weight: bold;"> configuración
+			de solicitante/proveedores. </span> </br> </br> <span
+			style="color: black; font-size: 12px; font-style: normal;
+			font-weight: bold;"> TIPS: </span> </br> 1.- Puede buscar de
+			una manera rapida entre los proveedores consultando por
+			numero de documento, nombres, apellidos, empresa, etc. Solo
+			escribiendo parte de la palabra en el campo buscar y
+			presionando la tecla Enter </br> 2.- Para mostrar todos los
+			proveedores deje limpio el campo buscar y presione la tecla
+			Enter. </p> ]]>
+
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+            lbxUbicaciones.pagingChild.mold = "os".equals(lbxUbicaciones.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+</zk>

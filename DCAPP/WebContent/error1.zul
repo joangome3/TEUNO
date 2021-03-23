@@ -1,0 +1,11 @@
+<?page title="Error" contentType="text/html;charset=UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="/css/normalize.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/principal.css"?>
+<zk>
+	<zscript>
+	 	Component c = Executions.createComponents("/error2.zul", null, null);
+	 	if (c instanceof Window) {
+				((Window) c).doModal();
+		}
+	</zscript>
+</zk>

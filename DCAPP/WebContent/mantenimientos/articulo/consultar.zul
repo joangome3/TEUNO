@@ -1,0 +1,243 @@
+<?page title="Mantenimiento de articulos" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo.consultar"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
+												autodisable="self" />
+											<space width="5px"></space>
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+											<space width="5px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
+											<space width="2px"></space>
+											<button id="btnCargar"
+												iconSclass="z-icon-camera" tooltiptext="Cargar imagen"
+												autodisable="self" upload="true, maxsize=1000"
+												disabled="false" class="btn btn-info">
+											</button>
+											<space width="5px"></space>
+											<button id="btnBorrar"
+												iconSclass="z-icon-trash-o" tooltiptext="Borrar imagen"
+												autodisable="self" disabled="false">
+											</button>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox mold="paging" id="lbxArticulos" vflex="true"
+					sizedByContent="true" width="100%"
+					model="@{zConsultar$consultar.obtenerArticulos}">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader></listheader>
+						<listheader label="ID"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="CÓDIGO"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="DESCRIPCIÓN"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="CLIENTE"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="CATEGORÍA"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="UBICACIÓN"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="STOCK"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="MARCA"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="MODELO"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="SERIE"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="CÓDIGO DE ACTIVO"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="ESTADO"
+							style="text-align: center !important;">
+						</listheader>
+					</listhead>
+					<listitem context="editPopup"
+						self="@{each=lista}">
+						<listcell
+							image="@{lista.mostrarImagenEstadoSolicitud}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.getId_articulo}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.getCod_articulo}" />
+						<listcell label="@{lista.getDes_articulo}" />
+						<listcell label="@{lista.getNom_empresa}" />
+						<listcell label="@{lista.getNom_categoria}" />
+						<listcell label="@{lista.getNom_ubicacion}" />
+						<listcell label="@{lista.getSto_articulo}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarMarca}"
+							image="@{lista.mostrarImagenMarca}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarModelo}"
+							image="@{lista.mostrarImagenModelo}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarSerie}"
+							image="@{lista.mostrarImagenSerie}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarCodigoActivo}"
+							image="@{lista.mostrarImagenCodigoActivo}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarEstado}"
+							style="@{lista.estiloMostrarEstado}" />
+					</listitem>
+				</listbox>
+			</hlayout>
+		</vlayout>
+	</div>
+
+	<menupopup id="editPopup">
+		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
+			label=" - Seguimiento"
+			tooltiptext="Permite visualizar el estado de la solicitud."
+			disabled="false" />
+		<menuseparator id="mSeparador1" />
+		<menuitem id="mSolicitar" iconSclass="z-icon-check"
+			label=" - Solicitar"
+			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador."
+			disabled="false" />
+		<menuitem id="mAccion" iconSclass="z-icon-check"
+			label=" - Accion"
+			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador."
+			disabled="false" />
+		<menuseparator id="mSeparador2" />
+		<menuitem id="mDetalle" iconSclass="z-icon-th-list"
+			label=" - Ver detalle"
+			tooltiptext="Permite ver para cada estado del articulo cual es su cantidad."
+			disabled="false" />
+		<menuseparator id="mSeparador3" />
+		<menuitem id="mFoto" iconSclass="z-icon-camera"
+			label=" - Ver imagen"
+			tooltiptext="Permite ver la imagen registrada en el articulo."
+			disabled="false" />
+	</menupopup>
+
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+
+			</html>
+	</popup>
+	<popup id="pop1"></popup>
+	<popup id="pop2">
+		<div align="center" id="dEstado">
+			<groupbox>
+				<caption label="Stock por estado"></caption>
+				<hlayout hflex="1">
+					<div hflex="1">
+						<div hflex="1">
+							<div
+								style="overflow:auto;position:relative">
+								<vbox spacing="2">
+									<listbox mold="paging" pageSize="50"
+										id="lbxEstados" vflex="false" span="true"
+										sizedByContent="false" width="300px">
+										<listhead
+											style="overflow: scroll;">
+											<listheader label="ID"
+												style="text-align: center !important;" width="4%"
+												visible="false">
+											</listheader>
+											<listheader label="ESTADO"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader label="STOCK"
+												style="text-align: center !important;">
+											</listheader>
+										</listhead>
+									</listbox>
+								</vbox>
+							</div>
+						</div>
+					</div>
+				</hlayout>
+			</groupbox>
+		</div>
+	</popup>
+	<zscript>
+	<![CDATA[
+            lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+</zk>

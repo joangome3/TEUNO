@@ -1,0 +1,48 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zListbox"
+	apply="">
+	<div align="center">
+		<listbox mold="paging" pageSize="3" id="lbxTareasProveedores"
+			vflex="" sizedByContent="true" width="100%">
+			<listhead sizable="false" style="overflow: scroll;">
+				<listheader label="CLIENTE"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TICKET" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="SERVICIO/CATEGORIA" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TIPO TAREA" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="DESCRIPCION" align="center"
+					style="text-align: center !important;" width="200px">
+				</listheader>
+				<listheader label="FECHA INICIO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="FECHA FIN" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="ESTADO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="OPERADOR REGISTRA"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="OPERADOR MODIFICA"
+					style="text-align: center !important;">
+				</listheader>
+			</listhead>
+		</listbox>
+	</div>
+	<space></space>
+	<zscript>
+	<![CDATA[
+            lbxTareasProveedores.pagingChild.mold = "os".equals(lbxTareasProveedores.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+</window>

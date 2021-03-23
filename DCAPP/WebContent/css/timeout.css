@@ -1,0 +1,342 @@
+
+
+@font-face {
+	font-family: 'robotolight';
+	src: url('/DCAPP/fonts/Roboto-Light-webfont.eot');
+	src: url('/DCAPP/fonts/Roboto-Light-webfont.eot?#iefix')
+		format('embedded-opentype'),
+		url('/DCAPP/fonts/Roboto-Light-webfont.woff') format('woff'),
+		url('/DCAPP/fonts/Roboto-Light-webfont.ttf') format('truetype'),
+		url('/DCAPP/fonts/Roboto-Light-webfont.svg#robotolight') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'arimoregular';
+    src: url('/DCAPP/fonts/Arimo-Regular-webfont.eot');
+    src: url('/DCAPP/fonts/Arimo-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/DCAPP/fonts/Arimo-Regular-webfont.woff') format('woff'),
+         url('/DCAPP/fonts/Arimo-Regular-webfont.ttf') format('truetype'),
+         url('/DCAPP/fonts/Arimo-Regular-webfont.svg#arimoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+* {
+	font-family: Arial, "arimoregular", "robotolight", Arial;
+}
+
+body {
+	background-image: url(/DCAPP/img/login/body_bg.jpg);
+    background-repeat: repeat;
+}
+
+h1 {
+	margin: 0;
+	color: #ffffff;
+	text-align: center;
+	font-size: 50px;
+	font-weight: 500;
+	letter-spacing: 2px;
+	padding: 50px 0;
+}
+
+h2 {
+	margin: 0;
+	color: #fc3955;
+	font-size: 25px;
+	font-weight: 400;
+	text-align: center;
+	letter-spacing: 1px;
+	padding-bottom: 30px;
+}
+
+p.w3l-register-p {
+	color: #eee;
+	font-size: 13px;
+	text-align: center;
+	margin-top: 2em;
+}
+
+.w3l-login-form {
+	background-color: #23282B;
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 3em;
+	border-radius: 10px;
+	box-sizing: border-box;
+}
+
+.group {
+	display: flex;
+	padding: 15px 5px;
+	background-color: #ffffff;
+}
+
+.group i {
+	color: #343a40;
+	font-size: 20px;
+	padding: 0 10px;
+}
+
+.w3l-form-group {
+	margin: 20px 0;
+}
+
+.w3l-form-group label {
+	display: block;
+	text-transform: uppercase;
+	font-size: 13px;
+	color: #d2d2d2;
+	letter-spacing: 2px;
+	margin-bottom: 10px;
+	font-style: normal;
+}
+
+input[type="text"], input[type="password"] {
+	width: 100%;
+	border: none;
+	box-sizing: border-box;
+	background: transparent;
+	color: #000;
+	font-size: 12px;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+	outline: none;
+}
+
+button {
+	background: #007ad9;
+	color: #ffffff;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	border: none;
+	padding: 12px 60px;
+	cursor: pointer;
+	width: 70%;
+	border-radius: 6px;
+}
+
+button:hover {
+	background-color: #00BCD4;
+	transition-duration: 5s;
+}
+
+.forgot {
+	display: flex;
+	justify-content: space-between;
+	margin: 20px 0;
+}
+
+a {
+	color: #eee;
+	font-size: 14px;
+	text-decoration: none;
+}
+
+.forgot p {
+	color: #ffffff;
+	text-align: center;
+	margin: 0px;
+	font-size: 13px;
+}
+
+.register {
+	color: #00BCD4;
+	text-decoration: none;
+}
+
+.img-logo {
+	width: 100px;
+	height: 100px;
+	position: relative;
+	left: -5px;
+	top: -20px;
+}
+
+/*--footer--*/
+p.copyright-agileinfo {
+	font-size: 15px;
+	letter-spacing: 2px;
+	color: #fff;
+	font-weight: 300;
+}
+
+footer p a {
+	display: inline-block;
+	color: #fff;
+	text-decoration: underline;
+}
+
+footer p a:hover {
+	color: #fff;
+	text-decoration: none;
+	-webkit-transition: 0.5s all;
+	-o-transition: 0.5s all;
+	-moz-transition: 0.5s all;
+	-ms-transition: 0.5s all;
+	transition: 0.5s all;
+}
+
+footer {
+	padding: 4em 0;
+	text-align: center;
+}
+/*--//footer--*/
+
+/*-- /responsive design --*/
+@media ( max-width :768px) {
+	h1 {
+		font-size: 47px;
+	}
+}
+
+@media ( max-width :667px) {
+	h1 {
+		font-size: 45px;
+	}
+}
+
+@media ( max-width :640px) {
+	p.copyright-agileinfo {
+		letter-spacing: 1px;
+	}
+	h1 {
+		font-size: 43px;
+	}
+}
+
+@media ( max-width :568px) {
+	h1 {
+		font-size: 40px;
+	}
+	p.copyright-agileinfo {
+		font-size: 14px;
+	}
+}
+
+@media ( max-width :480px) {
+	.w3l-login-form {
+		margin: 0 3vw;
+	}
+	h1 {
+		font-size: 38px;
+	}
+	p.copyright-agileinfo {
+		line-height: 1.8em;
+	}
+}
+
+@media ( max-width :414px) {
+	h1 {
+		font-size: 34px;
+	}
+}
+
+@media ( max-width :384px) {
+	h1 {
+		font-size: 30px;
+	}
+}
+
+@media ( max-width :320px) {
+	h1 {
+		font-size: 25px;
+	}
+	.forgot p {
+		text-align: left;
+	}
+	.forgot {
+		display: block;
+	}
+}
+
+/*-- /responsive design --*/
+
+/* ------------------------- */
+/* POPUP */
+/* ------------------------- */
+.overlay {
+	position: fixed;
+	top: -200px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	visibility: hidden;
+}
+
+.overlay.active {
+	visibility: visible;
+}
+
+.popup {
+	background: rgba(0, 0, 0);
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+	font-family: 'Raleway', sans-serif;
+	padding: 20px;
+	text-align: center;
+	width: 400px;
+	transition: .3s ease all;
+	transform: scale(0.7);
+	opacity: 0;
+}
+
+.popup .btn-cerrar-popup {
+	font-size: 16px;
+	line-height: 16px;
+	display: block;
+	text-align: right;
+	transition: .3s ease all;
+	color: #BBBBBB;
+}
+
+.popup .btn-cerrar-popup:hover {
+	color: #fc3955;
+}
+
+.popup h3 {
+	font-size: 36px;
+	font-weight: 600;
+	margin-bottom: 10px;
+	opacity: 0;
+}
+
+.popup h4 {
+	margin: 0;
+	color: #fc3955;
+	font-size: 25px;
+	font-weight: 400;
+	text-align: center;
+	letter-spacing: 1px;
+	padding-bottom: 30px;
+}
+
+.popup {
+	opacity: 0;
+}
+
+.popup .btn-submit {
+	background: #fc3955;
+	color: #ffffff;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	border: none;
+	padding: 12px 60px;
+	cursor: pointer;
+	width: 100%;
+	border-radius: 6px;
+}
+
+.popup .btn-submit:hover {
+	background-color: #00BCD4;
+	transition-duration: 5s;
+}

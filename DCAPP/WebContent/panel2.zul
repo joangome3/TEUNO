@@ -1,0 +1,174 @@
+<?page title="SIBOD - Dashboard" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zPanel" apply="bp.aplicaciones.controlador.panel2"
+		vflex="max" style="height: calc(100%);" width="100%">
+		<div align="left" class="m-div-e">
+			<space width="13px"></space>
+			<button id="btnRefrescar"
+				image="/img/botones/ButtonRefresh.png"
+				tooltiptext="Refrescar dashboard" autodisable="self">
+			</button>
+			<space width="10px"></space>
+			<combobox width="315px" id="cmbUsuario" readonly="false"
+				disabled="false" model="@{zPanel$panel2.obtenerUsuarios}">
+				<comboitem self="@{each=lista}"
+					label="@{lista.verNombreCompleto}"
+					value="@{lista.getId_usuario}">
+				</comboitem>
+			</combobox>
+			<space width="10px"></space>
+			<combobox width="150px" id="cmbMes" readonly="true"
+				disabled="false" model="@{zPanel$panel2.obtenerMeses}">
+				<comboitem self="@{each=lista}"
+					label="@{lista.descripcion}"
+					value="@{lista.getId_mes}">
+				</comboitem>
+			</combobox>
+		</div>
+		<grid>
+			<columns>
+				<column></column>
+				<column></column>
+				<column></column>
+			</columns>
+			<rows>
+				<row class="m-row-a">
+					<!-- 
+						<panel hflex="1" title="" id="cpPanel1" visible="false">
+						<panelchildren>
+						<hlayout hflex="1">
+						<div hflex="1">
+						<div hflex="1"
+						style="overflow:auto;position:relative">
+						<include
+						src="/bitacora/dashboard/barra1.zul">
+						</include>
+						</div>
+						</div>
+						</hlayout>
+						</panelchildren>
+						</panel>  
+					-->
+					<cell colspan="1">
+						<panel framable="true" hflex="1" height="450px"
+							title="1" id="cpPanel6">
+							<panelchildren style="overflow: auto">
+								<hlayout hflex="1">
+									<div hflex="1">
+										<div hflex="1"
+											style="overflow:auto;position:relative">
+											<include
+												src="/bitacora/dashboard/panel5.zul" id="iPanel6">
+											</include>
+										</div>
+									</div>
+								</hlayout>
+							</panelchildren>
+						</panel>
+					</cell>
+					<panel framable="true" hflex="1" height="450px"
+						title="" id="cpPanel2">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/bitacora/dashboard/panel1.zul" id="iPanel2">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+					<cell colspan="1">
+						<panel framable="true" hflex="1" height="450px"
+							title="" id="cpPanel3">
+							<panelchildren>
+								<hlayout hflex="1">
+									<div hflex="1">
+										<div hflex="1"
+											style="overflow:auto;position:relative">
+											<include
+												src="/bitacora/dashboard/panel2.zul" id="iPanel3">
+											</include>
+										</div>
+									</div>
+								</hlayout>
+							</panelchildren>
+						</panel>
+					</cell>
+				</row>
+				<row class="m-row-a">
+					<panel framable="true" hflex="1" height="450px"
+						title="" id="cpPanel4">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/bitacora/dashboard/panel3.zul" id="iPanel4">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+					<panel framable="true" hflex="1" height="450px"
+						title="" id="cpPanel5">
+						<panelchildren>
+							<hlayout hflex="1">
+								<div hflex="1">
+									<div hflex="1"
+										style="overflow:auto;position:relative">
+										<include
+											src="/bitacora/dashboard/panel4.zul" id="iPanel5">
+										</include>
+									</div>
+								</div>
+							</hlayout>
+						</panelchildren>
+					</panel>
+					<cell colspan="1" visible="false">
+						<panel framable="true" hflex="1" height="450px"
+							title="1" id="cpPanel7">
+							<panelchildren style="overflow: auto">
+								<hlayout hflex="1">
+									<div hflex="1">
+										<div hflex="1"
+											style="overflow:auto;position:relative">
+											<include
+												src="/bitacora/dashboard/panel6.zul" id="iPanel7">
+											</include>
+										</div>
+									</div>
+								</hlayout>
+							</panelchildren>
+						</panel>
+					</cell>
+				</row>
+				<row visible="false">
+					<cell colspan="3">
+						<panel framable="true" hflex="1" height="545px"
+							title="1" id="cpPanel8">
+							<panelchildren>
+								<hlayout hflex="1">
+									<div hflex="1">
+										<div hflex="1"
+											style="position:relative">
+											<include
+												src="/bitacora/dashboard/panel7.zul" id="iPanel8">
+											</include>
+										</div>
+									</div>
+								</hlayout>
+							</panelchildren>
+						</panel>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+	</div>
+</zk>

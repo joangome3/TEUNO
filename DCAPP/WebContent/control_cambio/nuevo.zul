@@ -1,0 +1,359 @@
+<?page title="Nuevo código" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Nuevo código ::." border="normal" id="zNuevo"
+		closable="true"
+		apply="bp.aplicaciones.controlador.controlcambio.nuevo"
+		position="center, center" sizable="true" width="45%" height="95%"
+		maximizable="true" minimizable="true" shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<vlayout vflex="1">
+				<hlayout vflex="1" style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<cell colspan="2">
+									<div class="img-logo"></div>
+								</cell>
+							</row>
+							<row visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Cliente:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="300px"
+													id="cmbCliente" model="@{zNuevo$nuevo.obtenerClientes}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_empresa}"
+														value="@{lista.getId_empresa}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cli"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Sistema:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbTipoSistema"
+													model="@{zNuevo$nuevo.obtenerTipoSistema}" readonly="true"
+													disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_tipo_sistema}"
+														value="@{lista.getId_tipo_sistema}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="tip_sis"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value="* Infraestructura:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="300px"
+													id="cmbInfraestructura"
+													model="@{zNuevo$nuevo.obtenerInfraestructura}"
+													readonly="false" disabled="false" autocomplete="true"
+													style="font-style: italic !important;">
+													<comboitem
+														self="@{each=lista}"
+														label="@{lista.getNom_infraestructura}"
+														value="@{lista.getId_infraestructura}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="inf"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Proveedor:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="300px"
+													id="cmbProveedor"
+													model="@{zNuevo$nuevo.obtenerProveedores}" readonly="true"
+													disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_empresa}"
+														value="@{lista.getId_empresa}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="pro"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value="* Tipo de mantenimiento:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="300px"
+													id="cmbTipoMantenimiento"
+													model="@{zNuevo$nuevo.obtenerTipoMantenimiento}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}"
+														label="@{lista.getNom_tipo_mantenimiento}"
+														value="@{lista.getId_tipo_mantenimiento}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="tip_man"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Criticidad:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbCriticidad"
+													model="@{zNuevo$nuevo.obtenerCriticidad}" readonly="true"
+													disabled="false" style="font-style: italic !important;">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_criticidad}"
+														value="@{lista.getId_criticidad}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cri"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value="* Fecha programada:" class="z-label-1" />
+										<vlayout>
+											<hlayout
+												style="position: relative; left: -36px;">
+												<datebox
+													id="dtxFechaProgramada" format="dd/MM/yyyy"
+													width="150px">
+												</datebox>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Responsable:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="300px"
+													id="cmbResponsable"
+													model="@{zNuevo$nuevo.obtenerResponsable}" readonly="true"
+													disabled="false" style="font-style: italic !important;">
+													<comboitem
+														self="@{each=lista}" label="@{lista.toStringSolicitante}"
+														value="@{lista.getId_solicitante}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="res"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value="* Descripción del mantenimiento:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtDescripcion" width="500px" rows="7" top="true"
+													maxlength="500" multiline="true" style="resize: none;">
+												</textbox>
+											</hlayout>
+											<label id="lDescripcion" style="position: relative; left: 21.5rem; top: -1.1rem; color:red; font-weight: bold;" value="0/500"></label>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row align="center">
+								<cell colspan="2">
+									<button id="btnGrabar"
+										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+										autodisable="self" />
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</hlayout>
+				</vlayout>
+		</div>
+
+		<popup id="cli" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el cliente no se muestra en la lista, debe solicitar a
+				la coordinación que sea agregado por el <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> administrador de la
+				aplicación. </span> </p> ]]>
+
+			</html>
+		</popup>
+
+		<popup id="tip_sis" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el tipo de sistema no se muestra en la lista, debe
+				validar que se encuentre creado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de tipo de
+				sistemas. </span> </p> ]]>
+
+			</html>
+		</popup>
+
+		<popup id="inf" width="300px">
+			<html>
+	
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el componente de infraestructura no se muestra en la
+				lista, debe validar que se encuentre creado y activo en
+				la <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> configuración
+				de infraestructura. </span> </br> </br> De acuerdo al sistema
+				que se seleccione se mostrarán los componentes de
+				infraestructura. </p> ]]>
+
+			</html>
+		</popup>
+
+		<popup id="pro" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el proveedor no se muestra en la lista, debe validar que
+				se encuentre creado y activo en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de proveedores y se encuentre
+				relacionado para la opción control de cambio. </span>
+				</p> ]]>
+				
+
+			</html>
+		</popup>
+
+		<popup id="tip_man" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el tipo de mantenimiento no se muestra en la lista, debe
+				validar que se encuentre creado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de tipo de
+				mantenimientos. </span> </p> ]]>
+
+			</html>
+		</popup>
+
+		<popup id="cri" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la criticidad no se muestra en la lista, debe validar
+				que se encuentre creada y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de
+				criticidades. </span> </p> ]]>
+
+			</html>
+		</popup>
+
+	<popup id="res" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el responsable no se muestra en la lista, debe validar que
+				se encuentre creado y activo en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de solicitantes y se encuentre
+				relacionado para la opción control de cambio. </span>
+				</p> ]]>
+				
+
+			</html>
+		</popup>
+		
+	</window>
+</zk>

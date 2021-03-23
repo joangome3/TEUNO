@@ -1,0 +1,511 @@
+<?page title="Nuevo movimiento" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window id="zRevision" position="center, center" sizable="true"
+		maximizable="false" minimizable="false"
+		title="a" class="w-tittle_a"
+		apply="bp.aplicaciones.controlador.cintas.revision1">
+		<div width="100%">
+			<div class="m-div-a">
+				<label class="m-label-a" value="MOVIMIENTOS - "></label>
+				<label class="m-label-a" value="REVISION DE OPERADOR EN TURNO"
+					style="font-style: normal; color: #FFD500; font-weight: bold;" id="lTitulo">
+				</label>
+			</div>
+			<space height="1px"></space>
+			<toolbar class="m-toolbar">
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" />
+				<button id="btnLimpiar"
+					image="/img/botones/ButtonClean1.png" tooltiptext="Limpiar campos"
+					autodisable="self" visible="false"/>
+			</toolbar>
+					<div id="winList" class="m-div-c"></div>
+					<borderlayout style="height: 82vh;">
+			<center style="overflow: scroll;">
+					<grid>
+						<columns>
+							<column width="18%"></column>
+							<column width="25%"></column>
+							<column width="25%"></column>
+							<column width="32%"></column>
+						</columns>
+						<rows>
+							<row>
+								<label value="TICKET PROACTIVANET:" />
+								<cell colspan="1">
+									<space width="5px"></space>
+									<textbox id="txtId" width="225px"
+										readonly="false"
+										style="font-weight: bold; color:black !important; text-align: center;" />
+								</cell>
+								<label value="* Tipo de Pedido:" />
+								<cell colspan="1">
+									<space width="15px"></space>
+									<combobox id="cmbPedido"
+										width="170px" readonly="true"
+										style="font-weight: bold; color:black !important;">
+										<comboitem label="MOVIMIENTO"
+											value="M">
+										</comboitem>
+										<comboitem label="REQUERIMIENTO"
+											value="R">
+										</comboitem>
+									</combobox>
+								</cell>
+							</row>
+							<row>
+								<label value="* Fecha solicitud:" />
+								<cell colspan="1"
+									class="z-dtx-nuevo-movimiento">
+									<space width="5px"></space>
+									<datebox format="dd/MM/yyyy"
+										id="dtxFechaSolicitud" width="125px">
+									</datebox>
+									<space width="5px"></space>
+									<timebox width="95px"
+										id="tmxHoraSolicitud" format="HH:mm">
+									</timebox>
+								</cell>
+								<label value="* Fecha respuesta:" />
+								<cell colspan="1"
+									class="z-dtx-nuevo-movimiento">
+									<space width="15px"></space>
+									<datebox format="dd/MM/yyyy"
+										id="dtxFechaRespuesta" width="125px">
+									</datebox>
+									<space width="5px"></space>
+									<timebox width="95px"
+										id="tmxHoraRespuesta" format="HH:mm">
+									</timebox>
+									<space width="18px"></space>
+									<label id="lblRespuesta"
+										class="z-label-estado parpadea" visible="false">
+									</label>
+								</cell>
+							</row>
+							<row>
+								<label
+									value="* Fecha ejecución solicitado (Diners):" />
+								<cell colspan="1"
+									class="z-dtx-nuevo-movimiento">
+									<space width="5px"></space>
+									<datebox format="dd/MM/yyyy"
+										id="dtxFechaEjecucion" width="125px">
+									</datebox>
+									<space width="5px"></space>
+									<timebox width="95px"
+										id="tmxHoraEjecucion" format="HH:mm">
+									</timebox>
+								</cell>
+								<label value="* Solicitante:" />
+								<cell colspan="1">
+									<bandbox id="bdxSolicitantes"
+										mold="rounded" autodrop="true" width="280px" readonly="true"
+										style="font-weight: bold; color:black !important;">
+										<bandpopup width="45%">
+											<panel title="">
+												<panelchildren>
+													<space
+														width="12px">
+													</space>
+													<textbox
+														width="280px" id="txtBuscarProveedor"
+														placeholder="Ingrese palabra clave"
+														tooltiptext="Presione enter para realizar la búsqueda"
+														style="font-style: italic;">
+													</textbox>
+													<image
+														src="/img/botones/ButtonPopup.png" tooltip="con"
+														style="cursor: help; width: 12px; height: 12px;" />
+													<div
+														align="center">
+														<listbox
+															mold="paging" pageSize="10" id="lbxSolicitantes"
+															model="@{zRevision$revision1.obtenerSolicitantes}"
+															sizedByContent="false" width="100%">
+															<listhead
+																sizable="false" style="overflow: scroll;">
+																<listheader
+																	label="DOCUMENTO"
+																	style="text-align: center !important;" />
+																<listheader
+																	label="NOMBRE" />
+																<listheader
+																	label="EMPRESA" />
+															</listhead>
+															<listitem
+																self="@{each=lista}">
+																<listcell
+																	label="@{lista.getNum_documento}"
+																	style="text-align: center !important;" />
+																<listcell
+																	label="@{lista.toStringSolicitante}" />
+																<listcell
+																	label="@{lista.getNom_empresa}" />
+															</listitem>
+														</listbox>
+													</div>
+												</panelchildren>
+											</panel>
+										</bandpopup>
+									</bandbox>
+								</cell>
+								<space></space>
+								<space></space>
+							</row>
+							<row>
+								<label value="* Estado:" />
+								<cell colspan="1">
+									<space width="5px"></space>
+									<combobox id="cmbEstado"
+										width="170px" readonly="true"
+										style="font-weight: bold; color:black !important;">
+										<comboitem label="EJECUTADO"
+											value="E">
+										</comboitem>
+										<comboitem label="NO EJECUTADO"
+											value="NE">
+										</comboitem>
+									</combobox>
+								</cell>
+								<label value="Observación:"
+									id="lblObservacion" visible="true" />
+								<cell colspan="1">
+									<space width="15px"></space>
+									<textbox rows="4" width="280px"
+										id="txtObservacion" visible="true" disabled="false">
+									</textbox>
+								</cell>
+							</row>
+							<row>
+								<label value="* Cliente:" />
+								<cell colspan="1">
+									<space width="5px"></space>
+									<combobox width="190px"
+										id="cmbEmpresa" model="@{zRevision$revision1.obtenerEmpresas}"
+										readonly="true" autocomplete="false" autodrop="false"
+										buttonVisible="true" disabled="false"
+										style="font-weight: bold; color:black !important;">
+										<comboitem self="@{each=lista}"
+											label="@{lista.getNom_empresa}"
+											value="@{lista.getId_empresa}">
+										</comboitem>
+									</combobox>
+									<image
+										src="/img/botones/ButtonPopup.png" tooltip="cli"
+										style="cursor: help; width: 16px; height: 16px;" />
+								</cell>
+								<label value="* Articulo:" />
+								<cell colspan="1">
+									<bandbox id="bdxArticulos"
+										mold="rounded" autodrop="true" width="280px" readonly="true"
+										style="font-weight: bold; color:black !important;"
+										disabled="true">
+										<bandpopup width="50%">
+											<panel title="">
+												<panelchildren>
+													<space
+														width="12px">
+													</space>
+													<textbox
+														width="280px" id="txtBuscarArticulo"
+														placeholder="Ingrese palabra clave"
+														tooltiptext="Presione enter para realizar la búsqueda"
+														style="font-style: italic;">
+													</textbox>
+													<image
+														src="/img/botones/ButtonPopup.png" tooltip="art"
+														style="cursor: help; width: 12px; height: 12px;" />
+													<div
+														align="center">
+														<listbox
+															mold="paging" pageSize="10" id="lbxArticulos"
+															model="@{zRevision$revision1.obtenerArticulos}"
+															sizedByContent="false" width="100%">
+															<listhead
+																sizable="false" style="overflow: scroll;">
+																<listheader
+																	label="CÓDIGO"
+																	style="text-align: center !important;">
+																</listheader>
+																<listheader
+																	label="DESCRIPCIÓN"
+																	style="text-align: center !important;">
+																</listheader>
+																<listheader
+																	label="CATEGORÍA"
+																	style="text-align: center !important;">
+																</listheader>
+																<listheader
+																	label="UBICACIÓN">
+																</listheader>
+															</listhead>
+															<listitem
+																self="@{each=lista}">
+																<listcell
+																	label="@{lista.getCod_articulo}">
+																</listcell>
+																<listcell
+																	label="@{lista.getDes_articulo}">
+																</listcell>
+																<listcell
+																	label="@{lista.getNom_categoria}"
+																	style="text-align: center !important;">
+																</listcell>
+																<listcell
+																	label="@{lista.getNom_ubicacion}">
+																</listcell>
+															</listitem>
+														</listbox>
+													</div>
+												</panelchildren>
+											</panel>
+										</bandpopup>
+									</bandbox>
+								</cell>
+							</row>
+							<row visible="false">
+								<label value="* Turno:" />
+								<cell colspan="1">
+									<space width="5px"></space>
+									<combobox width="150px"
+										id="cmbTurno" readonly="false" disabled="true"
+										tooltiptext="Seleccione el turno a consultar"
+										model="@{zRevision$revision1.obtenerTurnos}" visible="true">
+										<comboitem self="@{each=lista}"
+											label="@{lista.getNom_turno}" value="@{lista.getId_turno}">
+										</comboitem>
+									</combobox>
+								</cell>
+								<label value="* Operador:" />
+								<cell colspan="1">
+									<space width="15px"></space>
+									<textbox id="txtOperador"
+										width="280px" readonly="true"
+										style="font-style: normal; font-weight: bold;" />
+								</cell>
+							</row>
+							<row>
+								<cell colspan="3"></cell>
+								<cell colspan="1">
+									<label value="Nuevo movimiento."
+										class="z-label-estado parpadea" visible="false">
+									</label>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="4">
+									<listbox mold="paging" pageSize="100" id="lbxMovimientos"
+					span="true" sizedByContent="true" width="100%"
+					model="@{zRevision$revision1.obtenerMovimientoDetalles}" multiple="true"
+					checkmark="false" autopaging="false">
+					<listhead sizable="false">
+						<listheader label="ID" align="center" width="5%"
+							style="text-align: center !important;" visible="false">
+						</listheader>
+						<listheader label="¿ACTUALIZA INVENTARIO?"
+							style="text-align: center !important;" visible="true">
+						</listheader>
+						<listheader label="CODIGO"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="DESCRIPCION"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="UBICACION" align="center"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="FECHA INICIO RESPALDO"
+							style="text-align: center !important;" width="300px">
+						</listheader>
+						<listheader label="FECHA FIN RESPALDO"
+							style="text-align: center !important;" width="11%">
+						</listheader>
+						<listheader label="TIPO RESPALDO"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="ID CONTENEDOR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="HORA LLEGADA CUSTODIA"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="HORA SALIDA CUSTODIA"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader
+							label="REMESA INGRESO CUSTODIA - NOC"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="REMESA SALIDA NOC - CUSTODIA"
+							style="text-align: center !important;">
+						</listheader>
+					</listhead>
+					<listitem context="editPopup"
+						self="@{each=lista}">
+						<listcell label="@{lista.getId_articulo}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarActualizaInventario}"
+							style="@{lista.estiloActualizaInventario}">
+						</listcell>
+						<listcell
+							label="@{lista.getCod_articulo_actual}">
+						</listcell>
+						<listcell
+							label="@{lista.getDes_articulo_actual}">
+						</listcell>
+						<listcell
+							label="@{lista.getNom_ubicacion_actual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarFechaInicioActual}"
+							style="@{lista.estiloImagenFechaInicioActual}"
+							image="@{lista.mostrarImagenFechaInicioActual}">
+						</listcell>
+						<listcell label="@{lista.mostrarFechaFinActual}"
+							style="@{lista.estiloImagenFechaFinActual}"
+							image="@{lista.mostrarImagenFechaFinActual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarTipoRespaldoActual}"
+							style="@{lista.estiloImagenTipoRespaldoActual}"
+							image="@{lista.mostrarImagenTipoRespaldoActual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarIdContenedorActual}"
+							style="@{lista.estiloImagenIdContenedorActual}"
+							image="@{lista.mostrarImagenIdContenedorActual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarHoraIngresoCustodiaActual}"
+							style="@{lista.estiloImagenHoraIngresoCustodiaActual}"
+							image="@{lista.mostrarImagenHoraIngresoCustodiaActual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarHoraSalidaCustodiaActual}"
+							style="@{lista.estiloImagenHoraSalidaCustodiaActual}"
+							image="@{lista.mostrarImagenHoraSalidaCustodiaActual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarRemesaIngresoActual}"
+							style="@{lista.estiloImagenRemesaIngresoActual}"
+							image="@{lista.mostrarImagenRemesaIngresoActual}">
+						</listcell>
+						<listcell
+							label="@{lista.mostrarRemesaSalidaActual}"
+							style="@{lista.estiloImagenRemesaSalidaActual}"
+							image="@{lista.mostrarImagenRemesaSalidaActual}">
+						</listcell>
+					</listitem>
+				</listbox>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+					</center>
+					</borderlayout>
+		</div>
+		<menupopup id="editPopup">
+			<menuitem id="mModificar" iconSclass="z-icon-edit"
+				label=" - Modificar"
+				tooltiptext="Permite modificar el articulo que se encuentra seleccionada, solo se permite modificar un registro a la vez." />
+			<menuseparator />
+			<menuitem id="mEliminar" iconSclass="z-icon-times"
+				label=" - Eliminar"
+				tooltiptext="Permite eliminar el articulo que se encuentra seleccionado, solo se permite eliminar una registro a la vez." />
+			<menuseparator visible="true" id="mSeparador1"/>
+			<menuitem id="mSiActualizaInventario"
+				iconSclass="z-icon-unlock" label=" - Si actualiza inventario"
+				tooltiptext="Permite indicar que al guardar el registro el articulo si se actualizara en el inventario, se permite realizar a varios registros a la vez."
+				visible="true" />
+			<menuseparator visible="true" id="mSeparador2"/>
+			<menuitem id="mNoActualizaInventario"
+				iconSclass="z-icon-lock" label=" - No actualiza inventario"
+				tooltiptext="Permite indicar que al guardar el registro el articulo no se actualizara en el inventario, se permite realizar a varios registros a la vez."
+				visible="true" />
+		</menupopup>
+
+		<popup id="con" width="450px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el proveedor no se encuentra en la lista, valide que se
+				encuentre creado, aprobado, activo y que mantenga una
+				relación creada para poderse usar desde la opción de
+				movimientos en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuración de solicitante/proveedores. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre los
+				proveedores consultando por numero de documento,
+				nombres, apellidos, empresa, etc. Solo escribiendo parte
+				de la palabra en el campo buscar y presionando la tecla
+				Enter </br> 2.- Para mostrar todos los proveedores deje
+				limpio el campo buscar y presione la tecla Enter. </p>
+				]]>
+				
+
+			</html>
+		</popup>
+		<popup id="art" width="450px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el artículo no se encuentra en la lista, valide que se
+				encuentre creado, aprobado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de artículos.
+				</span> </br> </br> <span style="color: black;
+				font-size: 12px; font-style: normal; font-weight:
+				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
+				manera rapida entre los artículos consultando por
+				código, descripción, categoría, ubicación, etc. Solo
+				escribiendo parte de la palabra en el campo buscar y
+				presionando la tecla Enter </br> 2.- Para mostrar todos
+				los artículos deje limpio el campo buscar y presione la
+				tecla Enter. </p> ]]>
+				
+
+			</html>
+		</popup>
+		<popup id="cli" width="400px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el cliente no se encuentra en la lista, valide que se
+				encuentre creado, aprobado, activo y que mantenga una
+				relación creada para poderse usar desde la opción de
+				movimientos en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuración de empresas. </span> </br> </br> <span
+				style="color: black; font-size: 12px; font-style:
+				normal; font-weight: bold;"> TIPS: </span> </br> 1.- Los
+				artículos que se cargaran en el campo artículo serán
+				deacuerdo al cliente que se seleccione. </p> ]]>
+				
+
+			</html>
+		</popup>
+		<zscript>
+		<![CDATA[
+	lbxSolicitantes.pagingChild.mold = "os".equals(lbxSolicitantes.pagingChild.mold) ? "default" : "os";
+	lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+	lbxMovimientos.pagingChild.mold = "os".equals(lbxMovimientos.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+		<style>.z-listheader-checkable { visibility: hidden; }</style>
+	</window>
+</zk>

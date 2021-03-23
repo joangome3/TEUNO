@@ -1,0 +1,1001 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FD07_Registro_de_movimiento_de_cintas" printOrder="Horizontal" pageWidth="3580" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="3540" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Error" isIgnorePagination="true" uuid="0ee78576-d84b-47a1-be7b-a12825845cd2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.exports.xls.font.size.fix.enabled" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.freeze.row" value="3"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="Data/Footnotes"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="false"/>
+	<property name="net.sf.jasperreports.export.pdf.size.page.to.content" value="true"/>
+	<property name="net.sf.jasperreports.export.pdf.compressed" value="true"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.report.description" value="Reporte de movimientos realizados"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="138"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="856"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DCAPP "/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="p_fechainicio" class="java.util.Date"/>
+	<parameter name="p_fechafin" class="java.util.Date"/>
+	<parameter name="p_localidad" class="java.lang.String"/>
+	<parameter name="fechainicio" class="java.lang.String"/>
+	<parameter name="fechafin" class="java.lang.String"/>
+	<parameter name="localidad" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+	smd.tck_movimiento as ticket,
+	(case
+		when smd.tip_pedido = 'R' then 'REQUERIMIENTO'
+		else 'MOVIMIENTO'
+	end) as tipo_pedido,
+	smdd.nom_ubicacion_anterior,
+	smdd.nom_ubicacion_actual,
+	smdd.id_contenedor_actual,
+	date_format(smd.fec_ejecucion, '%d-%m-%Y') as fec_ejecucion,
+	date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s') as hor_ejecucion,
+	smdd.des_articulo_actual,
+	smdd.cod_articulo_actual,
+	smdd.nom_id_cap_articulo_actual,
+	(case
+		when smdd.si_ing_fec_inicio_fin_actual = 's'
+		and smdd.es_fecha_actual = "s" then
+		(case
+			when smdd.fec_fin_actual is not null then concat('F.I: ', date_format(smdd.fec_inicio_actual, '%d-%m-%Y'), ' ', 'F.F: ', date_format(smdd.fec_fin_actual, '%d-%m-%Y'))
+			else date_format(smdd.fec_inicio_actual, '%d-%m-%Y')
+		end)
+		when smdd.si_ing_fec_inicio_fin_actual = 's'
+		and smdd.es_fecha_actual = 'n' then smdd.nom_tip_respaldo_actual
+		else ''
+	end) as fec_cinta_actual,
+	smd.obs_movimiento,
+	replace(date_format(smd.fec_solicitud, '%d-%m-%Y %H:%i:%s'),
+	'00:00:00',
+	date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')) as hor_correo,
+	replace(date_format(smd.fec_respuesta, '%d-%m-%Y %H:%i:%s'),
+	'00:00:00',
+	date_format(from_unixtime(smd.hor_respuesta / 1000) , '%H:%i:%s')) as hor_respuesta,
+	(case
+		when ((convert(date_format(from_unixtime(smd.hor_respuesta / 1000), '%i'),
+		int) - convert(date_format(from_unixtime(smd.hor_solicitud / 1000), '%i'),
+		int) >= 0)
+		and (convert(date_format(from_unixtime(smd.hor_respuesta / 1000), '%i'),
+		int) - convert(date_format(from_unixtime(smd.hor_solicitud / 1000), '%i'),
+		int) <= 15)
+		and (convert(date_format(smd.fec_respuesta, '%d'),
+		int) - convert(date_format(smd.fec_solicitud, '%d'),
+		int) = 0)
+		and (convert(date_format(from_unixtime(smd.hor_respuesta / 1000), '%H'),
+		int) - convert(date_format(from_unixtime(smd.hor_solicitud / 1000), '%H'),
+		int) = 0)) then 'DENTRO DEL SLA (15 minutos)'
+		else 'FUERA DEL SLA (15 minutos)'
+	end) as cumplimiento,
+	(CONCAT( FLOOR(hour(TIMEDIFF(convert(replace(date_format(smd.fec_solicitud, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')), datetime), convert(replace(date_format(smd.fec_ejecucion, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s')), datetime))) / 24), ' dias, ', mod(hour(TIMEDIFF(convert(replace(date_format(smd.fec_solicitud, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')), datetime), convert(replace(date_format(smd.fec_ejecucion, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s')), datetime) )), 24), ' horas, ', minute(TIMEDIFF(convert(replace(date_format(smd.fec_solicitud, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')), datetime), convert(replace(date_format(smd.fec_ejecucion, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s')), datetime) )), ' minutos')) as tiempo_ejecucion_solicitado,
+	(case
+		when smdd.hora_llegada_custodia_actual <> 0 then date_format(from_unixtime(smdd.hora_llegada_custodia_actual / 1000), '%H:%i:%s')
+		else ''
+	end) as hora_llegada_custodia,
+	(case
+		when smdd.hora_salida_custodia_actual <> 0 then date_format(from_unixtime(smdd.hora_salida_custodia_actual / 1000), '%H:%i:%s')
+		else ''
+	end) as hora_salida_custodia,
+	(case
+		when smdd.hora_salida_custodia_actual - smdd.hora_llegada_custodia_actual <> 0 then date_format(from_unixtime((smdd.hora_salida_custodia_actual - smdd.hora_llegada_custodia_actual) / 1000), '%i:%s')
+		else ''
+	end) as tiempo_custodia_real,
+	smdd.remesa_ingreso_custodia_actual,
+	smdd.remesa_salida_custodia_actual,
+	(case
+		when smd.est_movimiento = 'e' then 'EJECUTADO'
+		else 'NO EJECUTADO'
+	end) as est_pedido,
+	(
+	select
+		concat(ss.nom_solicitante, ' ', ss.ape_solicitante)
+	from
+		sibod_solicitante ss
+	where
+		ss.id_solicitante = smd.id_solicitante
+	limit 1) as solicitante,
+	(
+	select
+		st.nom_turno
+	from
+		sibod_turno st
+	where
+		st.id_turno = smd.tur_movimiento
+	limit 1) as turno,
+	(
+	select
+		concat(su.nom_usuario, ' ', su.ape_usuario)
+	from
+		sibod_usuario su
+	where
+		su.use_usuario = smd.usu_revision_1
+	limit 1) as rev_fisico,
+	(
+	select
+		concat(su.nom_usuario, ' ', su.ape_usuario)
+	from
+		sibod_usuario su
+	where
+		su.use_usuario = smd.usu_revision_2
+	limit 1) as rev_digital,
+	(
+	select
+		concat(su.nom_usuario, ' ', su.ape_usuario)
+	from
+		sibod_usuario su
+	where
+		su.use_usuario = smd.usu_revision_3
+	limit 1) as auditor
+from
+	sibod_movimiento_dn smd,
+	sibod_movimiento_detalle_dn smdd
+where
+	smd.id_movimiento = smdd.id_movimiento and (CAST(DATE_FORMAT(smd.fec_solicitud, "%Y-%m-%d") AS DATETIME)  between $P{fechainicio}  and $P{fechafin}) and (smd.id_localidad = $P{localidad} )]]>
+	</queryString>
+	<field name="ticket" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ticket"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_dn"/>
+	</field>
+	<field name="tipo_pedido" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tipo_pedido"/>
+	</field>
+	<field name="nom_ubicacion_anterior" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_ubicacion_anterior"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="nom_ubicacion_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_ubicacion_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="id_contenedor_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="id_contenedor_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="fec_ejecucion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fec_ejecucion"/>
+	</field>
+	<field name="hor_ejecucion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hor_ejecucion"/>
+	</field>
+	<field name="des_articulo_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="des_articulo_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="cod_articulo_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cod_articulo_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="nom_id_cap_articulo_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_id_cap_articulo_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="fec_cinta_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fec_cinta_actual"/>
+	</field>
+	<field name="obs_movimiento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="obs_movimiento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_dn"/>
+	</field>
+	<field name="hor_correo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hor_correo"/>
+	</field>
+	<field name="hor_respuesta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hor_respuesta"/>
+	</field>
+	<field name="cumplimiento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cumplimiento"/>
+	</field>
+	<field name="tiempo_ejecucion_solicitado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tiempo_ejecucion_solicitado"/>
+	</field>
+	<field name="hora_llegada_custodia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hora_llegada_custodia"/>
+	</field>
+	<field name="hora_salida_custodia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hora_salida_custodia"/>
+	</field>
+	<field name="tiempo_custodia_real" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tiempo_custodia_real"/>
+	</field>
+	<field name="remesa_ingreso_custodia_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="remesa_ingreso_custodia_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="remesa_salida_custodia_actual" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="remesa_salida_custodia_actual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_detalle_dn"/>
+	</field>
+	<field name="est_pedido" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="est_pedido"/>
+	</field>
+	<field name="solicitante" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="solicitante"/>
+	</field>
+	<field name="turno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="turno"/>
+	</field>
+	<field name="rev_fisico" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="rev_fisico"/>
+	</field>
+	<field name="rev_digital" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="rev_digital"/>
+	</field>
+	<field name="auditor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="auditor"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="167" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="64" width="3534" height="24" forecolor="#000000" backcolor="#000000" uuid="8db2d9aa-0689-47ad-bee0-a2d155a1b2ae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="20" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[FD.07 - REGISTRO DE MOVIMIENTO DE CINTAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1685" y="143" width="89" height="24" forecolor="#000000" uuid="e6997397-1560-49d0-bf77-d9af0e5fdd26"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1685" y="119" width="89" height="24" forecolor="#000000" uuid="760ceb47-29e5-4928-ab8f-ffa83831bfb7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1685" y="95" width="89" height="24" forecolor="#000000" uuid="aa6a4fe9-2658-432d-832d-235c44bc7921"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="1789" y="119" width="402" height="24" uuid="384010dc-7b29-46b0-871e-41134d08fa04"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fechainicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="1789" y="143" width="402" height="24" uuid="1cab1b26-c2ca-4eb6-8c01-e8f2d350386b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fechafin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1789" y="95" width="195" height="24" uuid="480c3b02-f6b8-4cc7-8395-f48d764676cb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_localidad}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement key="" x="41" y="2" width="59" height="58" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="f0e5bfbd-ead8-4223-97bc-56a9721bbec2"/>
+				<imageExpression><![CDATA[($P{logo})]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="32" y="2" width="88" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="81a59a2f-cb5b-4213-af58-dc3872a2606c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[TICKET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="551" y="2" width="120" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="963a5dd2-86ae-4969-9839-a00c687d9c2e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[ID CONTENEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="671" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="c134b6b4-48e6-4232-b193-266f3f8a5814">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[FECHA EJECUCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1260" y="2" width="100" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="2b7b9aa4-3186-47ed-8784-e0ce8edf587b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[TIPO DE CINTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="120" y="2" width="109" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="0f7ce454-1fe9-47b2-a222-e626ade6d338">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[TIPO DE PEDIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="229" y="2" width="161" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="9e99da18-954e-49e9-a1f6-c31bf42caa0c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[ORIGEN
+(Libreria - Cintoteca - Custodia)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="801" y="2" width="139" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="98b59cb0-f7f3-4986-a29f-804f409ef7cf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[HORA MAXIMA EJECUCION
+(Solicitada)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1090" y="2" width="170" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="841645df-1e0f-4b80-8b5a-13f8119eb38a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CODIGO DE CINTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1360" y="2" width="140" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="75e84cd8-4d23-4405-8132-f277df6cef39">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[FECHA ACTUAL DE 
+CINTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="390" y="2" width="161" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="c68f6886-7faf-4f83-b8fe-67c7299022a6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[DESTINO
+(Libreria - Cintoteca - Custodia)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="940" y="2" width="150" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="5fa6047a-c597-49a7-b22e-54b7d55ba00e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[NOMBRE ACTUAL DE CINTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1500" y="2" width="218" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="2a5cdd26-80f8-408e-8bca-2e5dbb052515">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACIONES ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1718" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="0c0c14de-2c54-43cf-96d9-265fe0ab0372">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[FECHA Y HORA RECEPCION CORREO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1848" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="ec874a70-eaf7-4580-8b35-4f518cee8ddc">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[FECHA Y HORA RESPUESTA
+CORREO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1978" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#FF0000" uuid="9e17b822-6cc7-43e1-a28e-72eeecb88276">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[CUMPLIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2108" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="927076e8-7efd-40d7-b988-14c3c2656d42">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[HORA LLEGADA
+CUSTODIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2238" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="d0287ea8-5c31-4e7e-a1e4-704a4ee3d449">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[HORA SALIDA
+CUSTODIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2368" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="4ca6471b-fc4f-47f9-91f1-f0d35496e023">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[REMESA INGRESO
+CUSTODIA - NOC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2498" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="eddb430e-c6f6-43a4-b25f-cf2c37f3f411">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[REMESA SALIDA
+NOC - CUSTODIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2628" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="621ed645-d1f4-47d3-8fe0-5ac72f42b325">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[ESTADO DE PEDIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2758" y="2" width="162" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="39932844-c73c-46ff-9378-690692f5c905">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[SOLICITANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2920" y="2" width="130" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="b73225c8-8d18-45ac-bb12-d383988cf15b">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[TURNO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="3050" y="2" width="162" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="d7fb6efe-0df2-4f78-8f7a-6eb774124cc6">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[OPERADOR
+CONTROL FISICO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="3212" y="2" width="162" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="7dd5b531-3d25-4c19-a72e-a974a3d1c915">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[OPERADOR
+CONTROL DIGITAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="3374" y="2" width="166" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="11b3f150-0e81-4054-b4f4-f798a3ce29a5">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[OPERADOR
+AUDITOR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<elementGroup>
+				<textField isBlankWhenNull="true">
+					<reportElement x="32" y="0" width="88" height="40" uuid="25a79ea2-e1c7-4ee0-b0bf-d95afc130957">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ticket}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+			<textField>
+				<reportElement x="551" y="0" width="120" height="40" uuid="65cc1cf9-75ef-4897-b65b-97a30b2dcd16">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{id_contenedor_actual}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="671" y="0" width="130" height="40" uuid="3e8ef0de-8c71-4369-a2c1-125b85fe5e21">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_ejecucion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="109" height="40" uuid="9a7a585b-1b9d-4bf4-b56a-9c2e33c28d09">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_pedido}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="1260" y="0" width="100" height="40" uuid="32ec0d79-86e6-48fb-8c83-466eb932ebfe">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_id_cap_articulo_actual}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="0" width="161" height="40" uuid="187aba28-7e53-4bf6-ae5f-b5a6ac08e1ce">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_ubicacion_anterior}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="801" y="0" width="139" height="40" uuid="827b368a-8b3c-4c4d-9410-e37328af060c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hor_ejecucion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="1090" y="0" width="170" height="40" uuid="d6b72de4-47ea-42f1-bd7f-f7db4d986633">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_articulo_actual}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="1360" y="0" width="140" height="40" uuid="374bcff4-c6e1-4896-8d46-d561559ced16">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_cinta_actual}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="0" width="161" height="40" uuid="57e13da8-98f6-4dbc-a680-72ad07e1e076">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_ubicacion_actual}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="940" y="0" width="150" height="40" uuid="1ffa01f7-8268-4e7a-bafd-687ca8594c48">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{des_articulo_actual}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="1500" y="0" width="218" height="40" uuid="befd395e-69de-4310-8ef1-951f642e97d1">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{obs_movimiento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1718" y="0" width="130" height="40" uuid="eec0f615-5e7d-4428-b790-4f67a0e4cccf">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hor_correo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1848" y="0" width="130" height="40" uuid="c87a12f7-859d-4382-853b-d8a7f22cc8ae">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hor_respuesta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1978" y="0" width="130" height="40" uuid="ce58ba8c-1a2a-4eed-8d33-ce815bcd0322">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cumplimiento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2108" y="0" width="130" height="40" uuid="47963b66-cd21-4d66-8809-371260bc8b8c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_llegada_custodia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2238" y="0" width="130" height="40" uuid="d46554e8-08cd-438b-9376-1a9f4d622653">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora_salida_custodia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2368" y="0" width="130" height="40" uuid="e60dae3c-8ec8-4c94-8569-0e2faa2ae7fd">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remesa_ingreso_custodia_actual}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2498" y="0" width="130" height="40" uuid="0b3e0ac1-fcf3-411b-a854-6808cc2b7c58">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remesa_salida_custodia_actual}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2628" y="0" width="130" height="40" uuid="9b08afb7-5998-404d-b122-7bb0aaeaa53c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{est_pedido}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2758" y="0" width="162" height="40" uuid="26b7e36c-1d80-4a9a-a5fc-8f9c1a537ce0">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{solicitante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2920" y="0" width="130" height="40" uuid="9e7a33b6-3679-4272-b30c-8e7b9cea255c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turno}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3050" y="0" width="162" height="40" uuid="1b0e14c8-0045-4555-9420-d3bd861b311f">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rev_fisico}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3212" y="0" width="162" height="40" uuid="8da7e08e-d57a-4e9d-8824-375c075615bd">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rev_digital}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3374" y="0" width="162" height="40" uuid="55c6abc6-6828-494e-9956-e69ec65b3e17">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{auditor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

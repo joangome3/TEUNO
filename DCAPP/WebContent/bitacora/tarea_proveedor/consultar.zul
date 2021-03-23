@@ -1,0 +1,256 @@
+<?page title="Bitacora - Tareas programadas" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.tareaproveedor.consultar"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<custom-attributes
+									org.zkoss.zul.nativebar="false" />
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="150px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+											<space width="5px"></space>
+											<combobox width="100px"
+												id="cmbCliente"
+												model="@{zConsultar$consultar.obtenerClientes}"
+												readonly="false" disabled="false"
+												tooltiptext="Seleccione el cliente a consultar">
+												<comboitem
+													self="@{each=lista}" label="@{lista.getNom_empresa}"
+													value="@{lista.getId_empresa}">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<combobox width="100px"
+												id="cmbTipoServicio"
+												model="@{zConsultar$consultar.obtenerTipoServicio}"
+												readonly="false" disabled="false"
+												tooltiptext="Seleccione el servicio a consultar">
+												<comboitem
+													self="@{each=lista}" label="@{lista.getNom_tipo_servicio}"
+													value="@{lista.getId_tipo_servicio}">
+												</comboitem>
+											</combobox>
+											<combobox width="100px"
+												id="cmbUsuario" readonly="false" disabled="false"
+												model="@{zConsultar$consultar.obtenerUsuarios}"
+												tooltiptext="Seleccione el operador a consultar">
+												<comboitem
+													self="@{each=lista}" label="@{lista.verNombreCompleto}"
+													value="@{lista.getUse_usuario}">
+												</comboitem>
+											</combobox>
+											<datebox id="dtxFechaInicio"
+												format="dd/MM/yyyy HH:mm" width="153px"
+												tooltiptext="Seleccione la fecha a consultar">
+											</datebox>
+											<space width="22px"></space>
+											<datebox id="dtxFechaFin"
+												format="dd/MM/yyyy HH:mm" width="153px"
+												tooltiptext="Seleccione la fecha a consultar">
+											</datebox>
+											<space width="22px"></space>
+											<combobox width="150px"
+												id="cmbTurno" readonly="false" disabled="false"
+												tooltiptext="Seleccione el turno a consultar"
+												model="@{zConsultar$consultar.obtenerTurnos}"
+												visible="false">
+												<comboitem
+													self="@{each=lista}" label="@{lista.getNom_turno}"
+													value="@{lista.getId_turno}">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
+											<button id="btnActualizarEstado"
+												image="/img/botones/ButtonCheck1.png"
+												tooltiptext="Actualizar varios registros a estado cerrado." visible="false">
+											</button>
+											<button id="btnEliminarRegistros"
+												image="/img/botones/ButtonDeactivate2.png"
+												tooltiptext="Eliminar varios registros." visible="false">
+											</button>
+											<space width="20px"></space>
+											<combobox id="cmbEstado" width="100px" tooltiptext="Seleccione el estado a consultar">
+												<comboitem value="1" label="ABIERTO"></comboitem>
+												<comboitem value="2" label="CERRADO"></comboitem>
+											</combobox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<listbox mold="paging" id="lbxTareasProgramadas" vflex="true"
+			sizedByContent="true" width="100%"
+			model="@{zConsultar$consultar.obtenerTareasProgramadas}" multiple="true"
+			checkmark="false">
+			<listhead sizable="false" style="overflow: scroll;">
+				<listheader label="ID"
+					style="text-align: center !important;" visible="true">
+				</listheader>
+				<listheader label="CLIENTE"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TICKET" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="SERVICIO/CATEGORIA" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TIPO TAREA" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="SOLICITANTE" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="DESCRIPCION" align="center"
+					style="text-align: center !important;" width="200px">
+				</listheader>
+				<listheader label="FECHA INICIO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="FECHA FIN" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="ESTADO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="CUMPLIMIENTO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TURNO"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="OPERADOR REGISTRA"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="OPERADOR MODIFICA"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="COORDINADOR REVISA"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="OBSERVACION"
+					style="text-align: center !important;">
+				</listheader>
+			</listhead>
+			<listitem context="editPopup" self="@{each=lista}">
+				<listcell label="@{lista.getId_tarea_proveedor}"
+					style="@{lista.estiloId}" />
+				<listcell label="@{lista.getNom_cliente}" />
+				<listcell label="@{lista.getTicket_externo}" />
+				<listcell label="@{lista.getNom_tipo_servicio}" />
+				<listcell label="@{lista.getNom_tipo_tarea}" />
+				<listcell label="@{lista.mostrarSolicitante}"
+					image="@{lista.mostrarImagenSolicitante}"
+					style="@{lista.estiloImagenSolicitante}" />
+				<listcell label="@{lista.getDescripcion}" />
+				<listcell label="@{lista.mostrarFechaInicio}" />
+				<listcell label="@{lista.mostrarFechaFin}" />
+				<listcell label="@{lista.getNom_estado_bitacora}"
+					style="@{lista.estiloEstado}" />
+				<listcell label="@{lista.mostrarCumplimiento}"
+					style="@{lista.estiloCumplimiento}" />
+				<listcell label="@{lista.getNom_turno}"
+					style="text-align: center !important;" />
+				<listcell label="@{lista.mostrarUsuarioIngresa}"
+					image="@{lista.mostrarImagenUsuarioIngresa}"
+					style="@{lista.estiloImagenUsuarioIngresa}" />
+				<listcell label="@{lista.mostrarUsuarioModifica}"
+					image="@{lista.mostrarImagenUsuarioModifica}"
+					style="@{lista.estiloImagenUsuarioModifica}" />
+				<listcell label="@{lista.mostrarUsuarioRevisa}"
+					image="@{lista.mostrarImagenUsuarioRevisa}"
+					style="@{lista.estiloImagenUsuarioRevisa}" />
+				<listcell label="@{lista.mostrarObservacion}"
+					image="@{lista.mostrarImagenObservacion}"
+					style="@{lista.estiloImagenObservacion}" />	
+			</listitem>
+		</listbox>
+	</div>
+	<menupopup id="editPopup">
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar la tarea que se encuentra seleccionada, solo se permite modificar una tarea a la vez." />
+		<menuseparator />
+		<menuitem id="mEliminar" iconSclass="z-icon-times"
+			label=" - Eliminar"
+			tooltiptext="Permite eliminar las tareas que se encuentren seleccionadas, se pueden eliminar varias tareas a la vez." />
+		<menuseparator />
+		<menuitem id="mCerrar" iconSclass="z-icon-code"
+			label=" - Cerrar tarea"
+			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." />
+	</menupopup>
+	
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+			
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+	lbxTareasProgramadas.pagingChild.mold = "os".equals(lbxTareasProgramadas.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	<style>.z-listheader-checkable { visibility: hidden; }</style>
+</zk>

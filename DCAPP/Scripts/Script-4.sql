@@ -1,0 +1,1 @@
+select a.id_tipo_tarea, c.id_tipo_servicio, a.nom_tipo_tarea, a.des_tipo_tarea, a.est_tipo_tarea, a.usu_ingresa, a.fec_ingresa, a.usu_modifica, a.fec_modifica from sibod_tipo_tarea a, nocap_relacion_tipo_servicio_tipo_tarea c where (a.id_tipo_tarea = c.id_tipo_tarea) and c.id_tipo_servicio = '4' order by 1

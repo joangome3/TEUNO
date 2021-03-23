@@ -1,0 +1,15 @@
+eclipse.preferences.version=1
+encoding//WebContent/cintas/reportes/articulos2/FD08_Total_de_cintas_por_capacidad_y_ubicacion.jrxml=UTF-8
+encoding//WebContent/sibod/movimiento/articulos/A65_Registro_de_inventario_de_materiales.jrxml=UTF-8
+encoding//WebContent/sibod/movimiento/articulos2/A65_Registro_de_inventario_de_materiales.jrxml=UTF-8
+encoding//WebContent/sibod/movimiento/repuestos/repuestos.jrxml=UTF-8
+encoding//WebContent/sibod/movimiento/repuestos2/repuestos.jrxml=UTF-8
+encoding//src/bp/aplicaciones/controlador/bitacora/principal.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/cintas/principal.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/dashboard.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/mantenimientos/parametros/principal.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/mantenimientos/perfiles/consultar.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/mantenimientos/usuario/consultar.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/mantenimientos/usuario/nuevo.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/sibod/movimiento/principal.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/validar_datos.java=UTF-8

@@ -1,0 +1,8 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zReloj"
+	apply="bp.aplicaciones.controlador.sibod.dashboard.reloj">
+	<charts id="cReloj" type="gauge" plotBorderWidth="0"
+		plotShadow="false" hflex="1" title="" />
+	<timer id="timer" delay="1000" running="true" repeats="true" />
+</window>

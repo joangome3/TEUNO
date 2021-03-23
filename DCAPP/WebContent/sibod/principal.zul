@@ -1,0 +1,119 @@
+<?page title="Gestion de bodega" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.sibod.movimiento.principal">
+		<borderlayout>
+			<west size="25.8rem" collapsible="false"
+				title="GESTION DE BODEGA" border="none" autoscroll="true"
+				splittable="true" open="false">
+				<tree visible="true">
+					<treechildren>
+						<treeitem>
+							<treerow>
+								<treecell
+									image="/img/botones/ButtonArticles1.png"
+									label=" - Inventario de articulos" class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png" label=" - Consultas - Nuevo articulo"
+											id="tcOpcion1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+						<treeitem>
+							<treerow>
+								<treecell
+									image="/img/botones/ButtonMove1.png" label=" - Movimientos (A.65)"
+									class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png" label=" - Consultas"
+											id="tcOpcion2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonNew3.png"
+											label=" - Nuevo movimiento" id="tcOpcion3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+						<treeitem>
+							<treerow>
+								<treecell
+									image="/img/botones/ButtonReport3.png" label=" - Reportes"
+									class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport1.png"
+											label=" - Reporte de movimientos" id="tcReporte1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport1.png"
+											label=" - Reporte de baldosas" id="tcReporte2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport1.png"
+											label=" - Reporte de articulos" id="tcReporte3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem visible="false">
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport1.png"
+											label=" - Reporte de repuestos" id="tcReporte4"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+					</treechildren>
+				</tree>
+			</west>
+			<center>
+				<tabbox vflex="max" style="height: calc(100%);"
+					width="100%" visible="true" id="tTab">
+					<tabs></tabs>
+					<tabpanels vflex="max" style="height: calc(100%);"
+						width="100%" id="tPanel">
+					</tabpanels>
+				</tabbox>
+			</center>
+		</borderlayout>
+	</div>
+</zk>

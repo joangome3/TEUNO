@@ -1,0 +1,85 @@
+<?page title="DC Aplicaciones | Login" contentType="text/html; charset=UTF-8"?>
+<?link rel="shortcut icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="icon" href="/img/favicon/favicon.ico" type="image/x-icon"?>
+<?link rel="stylesheet" type="text/css" href="/css/normalize.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/login.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/login1.css"?>
+<?link rel="stylesheet" type="text/css" href="/css/fontawesome.css"?>
+<zk>
+	<div align="center" apply="bp.aplicaciones.controlador.login"
+		id="zLogin" class="div">
+		
+		<html>
+
+			<![CDATA[
+
+			<head> <meta charset="utf-8"> <title>DC Aplicaciones |
+			Inicio de sesion</title> <meta name="viewport"
+			content="width=device-width, initial-scale=1.0"> <meta
+			name="description" content="Sistema integrado de
+			aplicaciones del NOC Datacenter"> <meta name="author"
+			content="Jose Gomez"> </head> <body> <h1></h1> <div class="
+			w3l-login-form"> <img src="img/login/imgST3.svg" alt="Logo
+			DCAP" class="img-logo"></br>
+
+			<div class="input"> <input type="text" placeholder="Usuario"
+			id="username" name="username"
+			onkeypress="keyIngresar(event);" required /> <span><i
+			class="fa fa-user"></i></span> </div>
+
+			<div class="input"> <input type="password"
+			placeholder="Contraseña" id="password" name="password"
+			onkeypress="keyIngresar(event);" required /> <span><i
+			class="fa fa-lock"></i></span> </div>
+
+			<button onclick="btnIngresar();" class="btn_a">ENTRAR<i
+			class="fas fa-arrow-right"></i></button> </br></br> <a
+			href="#" title="Descargar manual"><img
+			src="img/login/imgPDF1.png" alt="Manual" class="img-pdf">
+			</a>
+
+			</div>
+
+			<div class="message_fx"> Construimos <span class="phrase">
+			un futuro mejor </span> </div>
+
+			<div class="url_fx"> <a href="https://www.teuno.com/" target="_blank"> <img
+			src="img/login/imgST3.png" alt="TEUNO" class="img_teuno">
+			</a></div>
+
+			</body>
+
+			]]>
+
+			<script type="text/javascript">
+				function btnIngresar() { var user =
+				document.getElementById("username").value; var pass =
+				document.getElementById("password").value; var txtUser =
+				zk.Widget.$("$txtUsuario"); txtUser.setValue(user);
+				txtUser.fireOnChange(); var txtPass =
+				zk.Widget.$("$txtContrasena"); txtPass.setValue(pass);
+				txtPass.fireOnChange();
+				zk.Widget.$("$cTimer").setRunning(true); } function
+				keyIngresar(e) { if (e.keyCode == 13) { btnIngresar(); }
+				}
+
+				$( ".input" ).focusin(function() { $( this ).find(
+				"span" ).animate({"opacity":"0"}, 200); });
+
+				$( ".input" ).focusout(function() { $( this ).find(
+				"span" ).animate({"opacity":"1"}, 300); });
+
+			</script>
+
+		</html>
+
+	</div>
+	<div visible="true">
+		<textbox id="txtUsuario" disabled="true"
+			class="z-textbox-not-use" />
+		<textbox type="password" id="txtContrasena"
+			class="z-textbox-not-use" disabled="true" />
+		<timer id="cTimer" delay="0" running="false" repeats="false" />
+	</div>
+
+</zk>

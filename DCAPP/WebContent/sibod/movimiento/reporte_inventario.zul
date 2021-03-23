@@ -1,0 +1,336 @@
+<?page title="SIBOD | Reporte General" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zReporte" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.sibod.movimiento.reporte_inventario">
+		<borderlayout height="100%">
+			<north autoscroll="true" collapsible="true"
+				splittable="true">
+				<grid>
+					<columns>
+						<column width="0%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="15%"></column>
+						<column width="10%"></column>
+						<column width="10%"></column>
+						<column width="15%"></column>
+					</columns>
+					<rows>
+						<row>
+							<space></space>
+							<label value="Cliente:" />
+							<cell colspan="2">
+								<space width="17px"></space>
+								<combobox width="150px" id="cmbEmpresa"
+									model="@{zReporte$reporte_inventario.obtenerEmpresas}"
+									readonly="true" autocomplete="false" autodrop="false"
+									buttonVisible="true" disabled="false">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_empresa}"
+										value="@{lista.getId_empresa}">
+									</comboitem>
+								</combobox>
+							</cell>
+							<label value="Articulo:"></label>
+							<cell colspan="2"
+								style="position: relative; left: -15px;">
+								<bandbox id="bdxArticulo" mold="rounded"
+									autodrop="true" disabled="true" width="150px" readonly="true"
+									style="font-weight: bold; color:black !important;">
+									<bandpopup width="45%">
+										<textbox width="200px"
+											id="txtBuscarArticulo" class="z-textbox-search-move"
+											placeholder="Ingrese palabra clave"
+											tooltiptext="Presione enter para realizar la búsqueda"
+											style="font-style: italic;">
+										</textbox>
+										<space width="20px"></space>
+										<image
+											src="/img/botones/ButtonPopup.png" tooltip="art"
+											style="cursor: help; width: 16px; height: 16px;" />
+										<div align="center">
+											<groupbox>
+												<caption
+													label="Lista de artículos">
+												</caption>
+												<div align="center">
+													<listbox
+														mold="paging" pageSize="3" id="lbxArticulos"
+														model="@{zReporte$reporte_inventario.obtenerArticulos}"
+														sizedByContent="true" width="100%">
+														<listhead
+															sizable="false" style="overflow: scroll;">
+															<listheader
+																label="ID">
+															</listheader>
+															<listheader
+																label="CODIGO">
+															</listheader>
+															<listheader
+																label="DESCRIPCION">
+															</listheader>
+															<listheader
+																label="CATEGORIA">
+															</listheader>
+															<listheader
+																label="UBICACION">
+															</listheader>
+															<listheader
+																label="STOCK" style="text-align: center !important;">
+															</listheader>
+															<listheader
+																label="ESTADO">
+															</listheader>
+														</listhead>
+														<listitem
+															self="@{each=lista}">
+															<listcell
+																label="@{lista.getId_articulo}">
+															</listcell>
+															<listcell
+																label="@{lista.getCod_articulo}">
+															</listcell>
+															<listcell
+																label="@{lista.getDes_articulo}">
+															</listcell>
+															<listcell
+																label="@{lista.getNom_categoria}">
+															</listcell>
+															<listcell
+																label="@{lista.getNom_ubicacion}">
+															</listcell>
+															<listcell
+																label="@{lista.getSto_articulo}">
+															</listcell>
+															<listcell
+																label="@{lista.mostrarEstado}">
+															</listcell>
+														</listitem>
+													</listbox>
+												</div>
+											</groupbox>
+										</div>
+									</bandpopup>
+								</bandbox>
+								<space width="5px"></space>
+								<checkbox id="chkArticulo"
+									label="Todos">
+								</checkbox>
+							</cell>
+							<label value="Categoria"></label>
+							<cell colspan="2">
+								<combobox
+									model="@{zReporte$reporte_inventario.obtenerCategorias}"
+									readonly="true" id="cmbCategoria" width="150px" disabled="true"
+									class="z-cmb-1">
+									<comboitem self="@{each=lista}"
+										label="@{lista.getNom_categoria}"
+										value="@{lista.getId_categoria}">
+									</comboitem>
+								</combobox>
+								<checkbox id="chkCategoria"
+									label="Todos">
+								</checkbox>
+							</cell>
+						</row>
+						<row>
+							<space></space>
+							<label value="Fecha Desde:"></label>
+							<cell colspan="2">
+								<datebox id="dtxFechaInicio"
+									format="dd/MM/yyyy" readonly="true" constraint="no empty"
+									width="150px">
+								</datebox>
+							</cell>
+							<label value="Fecha Hasta:"></label>
+							<cell colspan="2"
+								class="z-dtx-nuevo-movimiento">
+								<datebox id="dtxFechaFin"
+									format="dd/MM/yyyy" readonly="true" constraint="no empty"
+									width="150px">
+								</datebox>
+							</cell>
+							<label value="Movimiento:"></label>
+							<cell colspan="2">
+								<combobox readonly="true"
+									id="cmbMovimiento" width="150px" disabled="true"
+									class="z-cmb-1">
+									<comboitem label="INGRESO"
+										value="I">
+									</comboitem>
+									<comboitem label="EGRESO"
+										value="E">
+									</comboitem>
+								</combobox>
+								<checkbox id="chkMovimiento"
+									disabled="false" label="Todos">
+								</checkbox>
+							</cell>
+						</row>
+						<row>
+							<space></space>
+							<label value="Formato:"></label>
+							<cell colspan="2"
+								class="z-dtx-nuevo-movimiento">
+								<space width="27px"></space>
+								<combobox id="cmbFormato"
+									readonly="true" width="150px">
+									<comboitem label="PDF"
+										value="pdf" visible="false">
+									</comboitem>
+									<comboitem label="EXCEL"
+										value="xls">
+									</comboitem>
+									<comboitem label="CSV"
+										value="csv" visible="false">
+									</comboitem>
+								</combobox>
+							</cell>
+							<cell colspan="3" align="center">
+								<button label="" id="btnConsultar"
+									image="/img/botones/ButtonSearch1.png" tooltiptext="Consultar"
+									autodisable="self">
+								</button>
+								<space></space>
+								<button label="" id="btnLimpiar"
+									image="/img/botones/ButtonUpdate4.png" tooltiptext="Limpiar"
+									autodisable="self">
+								</button>
+							</cell>
+							<label value="Proveedor:"></label>
+							<cell colspan="2"
+								style="position: relative; left: -15px;">
+								<bandbox id="bdxSolicitantes"
+									mold="rounded" autodrop="true" width="150px" readonly="true"
+									style="font-weight: bold; color:black !important;"
+									disabled="true">
+									<bandpopup width="45%">
+										<textbox width="200px"
+											id="txtBuscarProveedor" class="z-textbox-search-move"
+											placeholder="Ingrese palabra clave"
+											tooltiptext="Presione enter para realizar la búsqueda"
+											style="font-style: italic;">
+										</textbox>
+										<space width="20px"></space>
+										<image
+											src="/img/botones/ButtonPopup.png" tooltip="con"
+											style="cursor: help; width: 16px; height: 16px;" />
+										<div align="center">
+											<groupbox>
+												<caption
+													label="Lista de proveedores">
+												</caption>
+												<div align="center">
+													<listbox
+														mold="paging" pageSize="4" id="lbxSolicitantes"
+														model="@{zReporte$reporte_inventario.obtenerSolicitantes}"
+														sizedByContent="true" width="100%">
+														<listhead
+															sizable="false" style="overflow: scroll;">
+															<listheader
+																label="ID">
+															</listheader>
+															<listheader
+																label="DOCUMENTO">
+															</listheader>
+															<listheader
+																label="NOMBRE">
+															</listheader>
+															<listheader
+																label="EMPRESA">
+															</listheader>
+															<listheader
+																label="ESTADO">
+															</listheader>
+														</listhead>
+														<listitem
+															self="@{each=lista}">
+															<listcell
+																label="@{lista.getId_solicitante}">
+															</listcell>
+															<listcell
+																label="@{lista.getNum_documento}">
+															</listcell>
+															<listcell
+																label="@{lista.toStringSolicitante}">
+															</listcell>
+															<listcell
+																label="@{lista.getNom_empresa}">
+															</listcell>
+															<listcell
+																label="@{lista.mostrarEstado}">
+															</listcell>
+														</listitem>
+													</listbox>
+												</div>
+											</groupbox>
+										</div>
+									</bandpopup>
+								</bandbox>
+								<space width="14px"></space>
+								<checkbox id="chkProveedor"
+									label="Todos">
+								</checkbox>
+							</cell>
+						</row>
+					</rows>
+				</grid>
+			</north>
+			<center>
+				<jasperreport id="reporte" height="100%"></jasperreport>
+			</center>
+		</borderlayout>
+	</div>
+	<popup id="art" width="450px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el artículo no se encuentra en la lista, valide que se
+				encuentre creado, aprobado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de artículos.
+				</span> </br> </br> <span style="color: black;
+				font-size: 12px; font-style: normal; font-weight:
+				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
+				manera rapida entre los artículos consultando por
+				código, descripción, categoría, ubicación, etc. Solo
+				escribiendo parte de la palabra en el campo buscar y
+				presionando la tecla Enter </br> 2.- Para mostrar todos
+				los artículos deje limpio el campo buscar y presione
+				la tecla Enter. </p> ]]>
+
+			</html>
+		</popup>
+		<popup id="con" width="450px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el proveedor no se encuentra en la lista, valide que se
+				encuentre creado, aprobado, activo y que mantenga una
+				relación creada para poderse usar desde la opción de
+				movimientos en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuración de solicitante/proveedores. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre los
+				proveedores consultando por numero de documento,
+				nombres, apellidos, empresa, etc. Solo escribiendo parte
+				de la palabra en el campo buscar y presionando la tecla
+				Enter </br> 2.- Para mostrar todos los proveedores deje
+				limpio el campo buscar y presione la tecla Enter. </p>
+				]]>
+	
+			</html>
+		</popup>
+	<zscript>
+	<![CDATA[
+            lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+            lbxSolicitantes.pagingChild.mold = "os".equals(lbxSolicitantes.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+</zk>

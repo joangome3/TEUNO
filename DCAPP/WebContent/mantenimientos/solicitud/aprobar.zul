@@ -1,0 +1,351 @@
+<?page title="Aprobar solicitud" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zAprobar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.solicitud.aprobar"
+		position="center, center" sizable="true" width="75%" height="65%"
+		maximizable="true" minimizable="false"
+		title=".:: Aprobar solicitud ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="true" />
+						<columns>
+							<column width="18%"></column>
+							<column width="40%"></column>
+							<column width="15%"></column>
+							<column width="32%"></column>
+						</columns>
+						<rows>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<space width="65px"></space>
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<space width="45px"></space>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<cell colspan="2">
+									<div align="center">
+										<label value="Configuración:"
+											class="z-label-1" />
+										<space width="105px"></space>
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtConfiguracion" constraint="no empty" disabled="true"
+													width="200px" rows="1" class="z-textbox-1" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="con"
+													style="cursor: help; width: 16px; height: 16px;" />
+												<space width="115px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<space width="75px"></space>
+										<label
+											value="Tipo de solicitud:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<space width="95px"></space>
+												<combobox width="250px"
+													id="cmbTipoSolicitud"
+													model="@{zAprobar$aprobar.obtenerTipoSolicitudes}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}"
+														label="@{lista.getNom_tipo_solicitud}"
+														value="@{lista.getId_tipo_solicitud}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="tip"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Campo:"
+											class="z-label-1" id="lCampo" visible="false" />
+										<space width="105px"></space>
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbCampo" model="@{zAprobar$aprobar.obtenerCampos}"
+													readonly="true" disabled="true" visible="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_campo}"
+														value="@{lista.getId_campo}">
+													</comboitem>
+												</combobox>
+												<image id="iCampo"
+													src="/img/botones/ButtonPopup.png" tooltip="camp"
+													style="cursor: help; width: 16px; height: 16px;"
+													visible="false" />
+												<space width="115px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<space width="55px"></space>
+										<label value="Estado actual:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<space width="65px"></space>
+												<hbox align="end">
+													<progressmeter
+														id="pgsEstado" value="0" width="180px" />
+													<label
+														id="lblEstado" value="En proceso"
+														style="font-style: normal; font-weight: bold;">
+													</label>
+												</hbox>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Nuevo estado:"
+											class="z-label-1" visible="true" />
+										<space width="115px"></space>
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbEstado" readonly="true" disabled="false"
+													style="font-weight: bold; color:black !important;">
+												</combobox>
+												<space width="135px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="4">
+									<div align="center">
+										<label
+											value="Detalle de la solicitud:" class="z-label-1"
+											visible="true" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario1" rows="7" width="700px"
+													class="z-textbox-3" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row visible="true">
+								<cell colspan="2">
+									<div align="center">
+										<space width="75px"></space>
+										<label value="Solicitante:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<space width="65px"></space>
+												<textbox
+													id="txtSolicitante" rows="1" width="260px" disabled="true"
+													class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<cell colspan="2"
+									class="z-dtx-solicitud">
+									<div align="center">
+										<label
+											value="Fecha de solicitud:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<datebox
+													id="dtxFechaSolicitud" constraint="no empty"
+													format="dd/MM/yyyy" disabled="true" width="120px"
+													class="z-textbox-1" />
+												<space width="65px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rAprobador0" visible="false">
+								<cell colspan="4">
+									<div align="center">
+										<grid>
+											<columns>
+												<column width="18%">
+												</column>
+												<column width="40%">
+												</column>
+												<column width="15%">
+												</column>
+												<column width="32%">
+												</column>
+											</columns>
+											<rows>
+												<row id="rAprobador1">
+													<cell colspan="4">
+														<div
+															align="center">
+															<label
+																value=" Comentario del Aprobador:" id="lAprobador1"
+																class="z-label-1" />
+															<vlayout>
+																<hlayout>
+																	<textbox
+																		id="txtComentario2" rows="7" width="700px"
+																		disabled="true" class="z-textbox-3" />
+																</hlayout>
+															</vlayout>
+														</div>
+													</cell>
+												</row>
+												<row id="rAprobador2">
+													<cell colspan="2">
+														<div
+															align="center">
+															<space
+																width="65px">
+															</space>
+															<label
+																value=" Aprobador:" id="lAprobador2" class="z-label-1" />
+															<vlayout>
+																<hlayout>
+																	<space
+																		width="65px">
+																	</space>
+																	<textbox
+																		id="txtAprobador" rows="1" width="270px"
+																		disabled="true" class="z-textbox-1" />
+																</hlayout>
+															</vlayout>
+														</div>
+													</cell>
+													<cell colspan="2"
+														class="z-dtx-solicitud">
+														<div
+															align="center">
+															<label
+																value=" Fecha de aprobación:" id="lAprobador3"
+																class="z-label-1" />
+															<vlayout>
+																<hlayout>
+																	<datebox
+																		id="dtxFechaAprobacion" constraint="no empty"
+																		format="dd/MM/yyyy" disabled="true"
+																		class="z-textbox-1" width="120px" />
+																	<space
+																		width="45px">
+																	</space>
+																</hlayout>
+															</vlayout>
+														</div>
+													</cell>
+												</row>
+												<row id="rAprobador3">
+												</row>
+												<row>
+													<space></space>
+												</row>
+											</rows>
+										</grid>
+									</div>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="tip" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				necesita que se muestre otro tipo de solicitud, <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> deberá solicitarlo al
+				administrador. </span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+		<popup id="camp" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;">
+				Solo los campos que se muestran en la lista <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> pueden ser actualizados.
+				</span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+		<popup id="con" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> En
+				este campo se visualiza el nombre de la configuración
+				desde la cual, <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> se
+				encuentra realizando la solicitud. </span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+		<popup id="reg" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> En
+				este campo se visualiza el codigo y nombre del registro
+				para el cual, <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> se
+				realizará la solicitud. </span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+	</window>
+</zk>

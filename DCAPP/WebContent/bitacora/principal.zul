@@ -1,0 +1,109 @@
+<?page title="Gestion de bitacora" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.bitacora.principal">
+		<borderlayout>
+			<west size="27.8rem" collapsible="false"
+				title="GESTION DE BITACORA" border="none" autoscroll="true"
+				splittable="false" open="false">
+				<tree visible="true">
+					<treechildren>
+						<treeitem>
+							<treerow>
+								<treecell
+									image="/img/botones/ButtonBitacore4.png" label=" - Log de eventos"
+									class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png"
+											label=" - Consultas" id="tcOpcion1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonNew3.png" label=" - Nuevo registro"
+											id="tcOpcion2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png" label=" - Reporte log de eventos"
+											id="tcReporte1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png" label=" - Reporte log de eventos detallado"
+											id="tcReporte3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+						<treeitem>
+							<treerow>
+								<treecell
+									image="/img/botones/ButtonAlarm3.png"
+									label=" - Actividades programadas" class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png"
+											label=" - Consultas" id="tcOpcion3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonNew3.png" label=" - Nueva actividad"
+											id="tcOpcion4"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png" label=" - Reporte actividades programadas"
+											id="tcReporte2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+					</treechildren>
+				</tree>
+			</west>
+			<center>
+				<tabbox vflex="max" style="height: calc(100%);"
+					width="100%" visible="true" id="tTab">
+					<tabs></tabs>
+					<tabpanels vflex="max" style="height: calc(100%);"
+						width="100%" id="tPanel">
+					</tabpanels>
+				</tabbox>
+			</center>
+		</borderlayout>
+	</div>
+</zk>

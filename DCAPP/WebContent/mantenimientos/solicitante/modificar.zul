@@ -1,0 +1,205 @@
+<?page title="Modificar solicitante" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.solicitante.modificar"
+		position="center, center" sizable="true" width="35%" height="85%"
+		maximizable="false" minimizable="false"
+		title=".:: Modificar solicitante ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="20px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label
+											value="* Tipo de documento:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbTipoDocumento"
+													model="@{zModificar$modificar.obtenerTipoDocumentos}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}"
+														label="@{lista.getNom_tipo_documento}"
+														value="@{lista.getId_tipo_documento}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="tip"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* #Documento:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtDocumento" class="z-textbox-2" width="200px" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="doc"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Nombres:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtNombres"
+													width="250px" rows="4" class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Apellidos:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtApellidos" width="250px" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Empresa:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<combobox width="200px"
+													id="cmbEmpresa"
+													model="@{zModificar$modificar.obtenerEmpresas}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_empresa}"
+														value="@{lista.getId_empresa}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="emp"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Comentario:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario" width="450px" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="doc" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;">El
+				numero de documento no puede repetirse con algun otro
+				que ya se haya registrado. Si se selecciona como tipo de
+				documento cedula, <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> el
+				sistema validará que el numero de documento ingresado
+				sea un numero real. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+		<popup id="tip" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				necesita que se muestre otro tipo de documento, <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> deberá solicitarlo al
+				administrador. </span> </p> ]]>
+				
+			</html>
+		</popup>
+		<popup id="emp" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la empresa no se muestra en la lista, valide que se
+				encuentre creada, relacionada a la configuracion de
+				solicitantes/proveedores y que no este inactiva en las
+				<span style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuraciones de
+				empresas. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+	</window>
+</zk>

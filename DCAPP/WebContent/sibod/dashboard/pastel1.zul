@@ -1,0 +1,8 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zPastel"
+	apply="bp.aplicaciones.controlador.sibod.dashboard.PieChart1">
+	<space></space>
+	<chartjs id="cPastel" />
+	<space></space>
+</window>

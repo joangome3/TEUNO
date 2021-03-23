@@ -1,0 +1,73 @@
+<?page title="Mantenimiento de parametros" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zParametros" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.parametros.parametros4">
+		<toolbar>
+			<button id="btnGrabar" image="/img/botones/ButtonSave.png"
+				tooltiptext="Grabar" autodisable="self" />
+		</toolbar>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row align="center">
+					<cell colspan="2">
+						<label value="Día:" class="z-label-1" />
+						<space width="25px"></space>
+						<combobox width="300px" id="cmbDia"
+							model="@{zParametros$parametros4.obtenerDias}" readonly="true"
+							disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getDescripcion}" value="@{lista.getId_dia}">
+							</comboitem>
+						</combobox>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<listbox mold="paging" id="lbxTareas" vflex="true"
+			sizedByContent="true" width="100%" multiple="true"
+			checkmark="true">
+			<listhead sizable="false" style="overflow: scroll;">
+				<listheader label="ID"
+					style="text-align: center !important;" visible="true">
+				</listheader>
+				<listheader label="CLIENTE"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="SERVICIO/CATEGORIA" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TIPO TAREA" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="DESCRIPCION" align="center"
+					style="text-align: center !important;" width="200px">
+				</listheader>
+				<listheader label="FECHA INICIO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="FECHA FIN" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="ESTADO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="CUMPLIMIENTO" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="TURNO"
+					style="text-align: center !important;">
+				</listheader>
+			</listhead>
+		</listbox>
+	</div>
+	<zscript>
+		<![CDATA[
+	            lbxTareas.pagingChild.mold = "os".equals(lbxTareas.pagingChild.mold) ? "default" : "os";
+	        ]]>
+	</zscript>
+</zk>

@@ -1,0 +1,412 @@
+<?page title="Gestion de cintas - Organizar articulos" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zOrganizar"
+		apply="bp.aplicaciones.controlador.cintas.organizar" vflex="max"
+		style="height: calc(100%);" width="100%">
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<grid>
+					<columns>
+						<column width="50%"></column>
+						<column width="5%"></column>
+						<column width="50%"></column>
+					</columns>
+					<rows>
+						<row class="m-row-a">
+							<panel hflex="1" title=""
+								style="height: 100vh;">
+								<panelchildren>
+									<hlayout hflex="1">
+										<div hflex="1">
+											<div hflex="1"
+												style="overflow:auto;position:relative">
+												<div align="left">
+													<space
+														width="25px">
+													</space>
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxUbicacion1" mold="rounded" autodrop="true"
+																width="250px" readonly="true">
+																<bandpopup
+																	width="45%">
+																	<panel
+																		title="">
+																		<panelchildren>
+																			<space
+																				width="15px">
+																			</space>
+																			<textbox
+																				width="280px" id="txtBuscarUbicacion1"
+																				placeholder="Ingrese palabra clave"
+																				tooltiptext="Presione enter para realizar la búsqueda"
+																				visible="true" style="font-style: italic;">
+																			</textbox>
+																			<space
+																				width="0px">
+																			</space>
+																			<image
+																				src="/img/botones/ButtonPopup.png" tooltip="con"
+																				style="cursor: help; width: 16px; height: 16px;"
+																				visible="true" />
+																			<div
+																				align="center">
+																				<listbox
+																					mold="paging" pageSize="10" id="lbxUbicaciones1"
+																					model="@{zOrganizar$organizar.obtenerUbicaciones1}"
+																					checkmark="false" vflex="true"
+																					sizedByContent="false" width="100%">
+																					<listhead
+																						sizable="false" style="overflow: scroll;">
+																						<listheader
+																							label="CLIENTE" style="text-align: center;">
+																						</listheader>
+																						<listheader
+																							label="UBICACIÓN" style="text-align: center;">
+																						</listheader>
+																						<listheader
+																							label="POSICIÓN" style="text-align: center;">
+																						</listheader>
+																					</listhead>
+																					<listitem
+																						self="@{each=lista}">
+																						<listcell
+																							label="@{lista.getNom_empresa}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getNom_ubicacion}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getPos_ubicacion}">
+																						</listcell>
+																					</listitem>
+																				</listbox>
+																			</div>
+																		</panelchildren>
+																	</panel>
+																</bandpopup>
+															</bandbox>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="100px" id="cmbCategoria1"
+																model="@{zOrganizar$organizar.obtenerCategorias1}"
+																readonly="true" disabled="true">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.getNom_categoria}"
+																	value="@{lista.getId_categoria}">
+																</comboitem>
+															</combobox>
+															<checkbox
+																id="chkCategoria1" label="Todos" checked="true">
+															</checkbox>
+														</hlayout>
+													</vlayout>
+													<grid>
+														<columns>
+															<column>
+																<div align="left">
+																	<button
+																		id="btnRefrescar1"
+																		image="/img/botones/ButtonRefresh.png"
+																		tooltiptext="Refrescar lista" autodisable="self" />
+																	<space
+																		width="15px">
+																	</space>
+																	<textbox
+																		placeholder="Ingrese palabra clave"
+																		style="font-style: italic;" width="200px"
+																		id="txtBuscarArticulo1">
+																	</textbox>
+																</div>
+															</column>
+															<column
+																align="right">
+																<div>
+																	<vlayout>
+																		<hlayout>
+																			<button
+																				autodisable="false" id="btnBajarItemIzquierda"
+																				image="/img/botones/ButtonDown3.png">
+																			</button>
+																			<button
+																				autodisable="false" id="btnSubirItemIzquierda"
+																				image="/img/botones/ButtonUp3.png">
+																			</button>
+																		</hlayout>
+																		<label
+																			id="lblArticulos1">
+																		</label>
+																	</vlayout>
+																</div>
+															</column>
+														</columns>
+													</grid>
+													<div align="center"
+														style="height: 72vh;">
+														<listbox
+															mold="paging" id="lbxArticulos1"
+															model="@{zOrganizar$organizar.obtenerArticulos1}"
+															vflex="true" sizedByContent="true" width="100%"
+															checkmark="true" multiple="true">
+															<listhead
+																sizable="false" style="overflow: scroll;">
+																<listheader
+																	label="CÓDIGO">
+																</listheader>
+																<listheader
+																	label="DESCRIPCIÓN">
+																</listheader>
+																<listheader
+																	label="TIPO">
+																</listheader>
+															</listhead>
+															<listitem
+																self="@{each=lista}" draggable="true"
+																droppable="true">
+																<listcell
+																	label="@{lista.getCod_articulo}">
+																</listcell>
+																<listcell
+																	label="@{lista.getDes_articulo}">
+																</listcell>
+																<listcell
+																	label="@{lista.getNom_categoria}">
+																</listcell>
+															</listitem>
+														</listbox>
+													</div>
+												</div>
+											</div>
+										</div>
+									</hlayout>
+								</panelchildren>
+							</panel>
+							<div align="center">
+								<button autodisable="false"
+									image="/img/botones/ButtonRight1.png"
+									id="btnPasarItemDerecha">
+								</button>
+								<button autodisable="false"
+									image="/img/botones/ButtonAllRight1.png"
+									id="btnPasarItemsDerecha">
+								</button>
+								<button autodisable="false"
+									image="/img/botones/ButtonLeft1.png"
+									id="btnPasarItemIzquierda">
+								</button>
+								<button autodisable="false"
+									image="/img/botones/ButtonAllLeft1.png"
+									id="btnPasarItemsIzquierda">
+								</button>
+							</div>
+							<panel hflex="1" title=""
+								style="height: 100vh;">
+								<panelchildren>
+									<hlayout hflex="1">
+										<div hflex="1">
+											<div hflex="1"
+												style="overflow:auto;position:relative">
+												<div align="left">
+													<space
+														width="25px">
+													</space>
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxUbicacion2" mold="rounded" autodrop="true"
+																width="250px" readonly="true">
+																<bandpopup
+																	width="45%">
+																	<panel
+																		title="">
+																		<panelchildren>
+																			<space
+																				width="15px">
+																			</space>
+																			<textbox
+																				width="280px" id="txtBuscarUbicacion2"
+																				placeholder="Ingrese palabra clave"
+																				tooltiptext="Presione enter para realizar la búsqueda"
+																				visible="true" style="font-style: italic;">
+																			</textbox>
+																			<space
+																				width="0px">
+																			</space>
+																			<image
+																				src="/img/botones/ButtonPopup.png" tooltip="con"
+																				style="cursor: help; width: 16px; height: 16px;"
+																				visible="true" />
+																			<div
+																				align="center">
+																				<listbox
+																					mold="paging" pageSize="10" id="lbxUbicaciones2"
+																					model="@{zOrganizar$organizar.obtenerUbicaciones2}"
+																					checkmark="false" vflex="true"
+																					sizedByContent="false" width="100%">
+																					<listhead
+																						sizable="false" style="overflow: scroll;">
+																						<listheader
+																							label="CLIENTE" style="text-align: center;">
+																						</listheader>
+																						<listheader
+																							label="UBICACIÓN" style="text-align: center;">
+																						</listheader>
+																						<listheader
+																							label="POSICIÓN" style="text-align: center;">
+																						</listheader>
+																					</listhead>
+																					<listitem
+																						self="@{each=lista}">
+																						<listcell
+																							label="@{lista.getNom_empresa}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getNom_ubicacion}">
+																						</listcell>
+																						<listcell
+																							label="@{lista.getPos_ubicacion}">
+																						</listcell>
+																					</listitem>
+																				</listbox>
+																			</div>
+																		</panelchildren>
+																	</panel>
+																</bandpopup>
+															</bandbox>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="100px" id="cmbCategoria2"
+																model="@{zOrganizar$organizar.obtenerCategorias2}"
+																readonly="true" disabled="true">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.getNom_categoria}"
+																	value="@{lista.getId_categoria}">
+																</comboitem>
+															</combobox>
+															<checkbox
+																id="chkCategoria2" label="Todos" checked="true">
+															</checkbox>
+														</hlayout>
+													</vlayout>
+													<grid>
+														<columns>
+															<column>
+																<div align="left">
+																	<button
+																		id="btnRefrescar2"
+																		image="/img/botones/ButtonRefresh.png"
+																		tooltiptext="Refrescar lista" autodisable="self" />
+																	<space
+																		width="15px">
+																		</space>
+																	<textbox
+																		placeholder="Ingrese palabra clave"
+																		style="font-style: italic;" width="200px"
+																		id="txtBuscarArticulo2">
+																	</textbox>
+																</div>
+															</column>
+															<column
+																align="right">
+																<div>
+																	<vlayout>
+																		<hlayout>
+																			<button
+																				autodisable="false" id="btnBajarItemDerecha"
+																				image="/img/botones/ButtonDown3.png">
+																			</button>
+																			<button
+																				autodisable="false" id="btnSubirItemDerecha"
+																				image="/img/botones/ButtonUp3.png">
+																			</button>
+																		</hlayout>
+																		<label
+																			id="lblArticulos2">
+																		</label>
+																	</vlayout>
+																</div>
+															</column>
+														</columns>
+													</grid>
+													<div align="center"
+														style="height: 72vh;">
+														<listbox
+															mold="paging" id="lbxArticulos2"
+															model="@{zOrganizar$organizar.obtenerArticulos2}"
+															vflex="true" sizedByContent="true" width="100%"
+															checkmark="true" multiple="true">
+															<listhead
+																sizable="false" style="overflow: scroll;">
+																<listheader
+																	label="CÓDIGO">
+																</listheader>
+																<listheader
+																	label="DESCRIPCIÓN">
+																</listheader>
+																<listheader
+																	label="TIPO">
+																</listheader>
+															</listhead>
+															<listitem
+																self="@{each=lista}" draggable="true"
+																droppable="true">
+																<listcell
+																	label="@{lista.getCod_articulo}">
+																</listcell>
+																<listcell
+																	label="@{lista.getDes_articulo}">
+																</listcell>
+																<listcell
+																	label="@{lista.getNom_categoria}">
+																</listcell>
+															</listitem>
+														</listbox>
+													</div>
+												</div>
+											</div>
+										</div>
+									</hlayout>
+								</panelchildren>
+							</panel>
+						</row>
+					</rows>
+				</grid>
+			</hlayout>
+		</vlayout>
+		<popup id="con" width="450px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				la ubicación no se encuentra en la lista, valide que se
+				encuentre creada, aprobada y activa para poderse usar
+				desde la opción de movimientos en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de ubicaciones. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre las
+				ubicaciones consultando por id, cliente, ubicación, etc.
+				Solo escribiendo parte de la palabra en el campo buscar
+				y presionando la tecla Enter </br> 2.- Para mostrar
+				todas las ubicaciones deje limpio el campo buscar y
+				presione la tecla Enter. </p> ]]>
+
+			</html>
+		</popup>
+		<zscript>
+		<![CDATA[
+	lbxUbicaciones1.pagingChild.mold = "os".equals(lbxUbicaciones1.pagingChild.mold) ? "default" : "os";
+	lbxUbicaciones2.pagingChild.mold = "os".equals(lbxUbicaciones2.pagingChild.mold) ? "default" : "os";
+	lbxArticulos1.pagingChild.mold = "os".equals(lbxArticulos1.pagingChild.mold) ? "default" : "os";
+	lbxArticulos2.pagingChild.mold = "os".equals(lbxArticulos2.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+		<style>.z-listheader-checkable { visibility: hidden; }</style>
+	</div>
+</zk>

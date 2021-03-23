@@ -1,0 +1,86 @@
+<?page title="Cambiar contraseña" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title=".:: Cambiar contraseña ::." border="normal"
+		id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.usuario.cambiar_contrasena"
+		width="25%">
+		<div>
+			<grid>
+				<columns>
+					<column width="6%"></column>
+					<column width="30%"></column>
+					<column width="60%"></column>
+					<column width="2%"></column>
+				</columns>
+				<rows>
+				<row>
+					<space></space>
+				</row>
+					<row>
+						<space></space>
+						<label value="* Contraseña:" />
+						<cell colspan="2">
+							<textbox id="txtContrasena1" width="140px"
+								type="password" />
+							<space width="20px"></space>
+							<image src="/img/botones/ButtonPopup.png"
+								tooltip="pass" style="cursor: help; width: 16px; height: 16px;" />
+						</cell>
+						<space></space>
+					</row>
+					<row>
+						<space></space>
+						<label value="* Confirmar contraseña:" />
+						<cell colspan="2">
+							<textbox id="txtContrasena2" width="140px"
+								type="password" />
+						</cell>
+						<space></space>
+					</row>
+					<row>
+						<space></space>
+						<space></space>
+						<cell colspan="2">
+							<hbox align="end">
+								<progressmeter id="pgsSeguridad"
+									value="0" width="100px" />
+								<label id="lblSeguridad"
+									value="Clave no segura"
+									style="font-style: italic; font-weight: bold;">
+								</label>
+							</hbox>
+						</cell>
+						<space></space>
+					</row>
+					<row align="center">
+						<cell colspan="4">
+							<button id="btnGrabar"
+								image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+								autodisable="self" class="z-button-change" />
+						</cell>
+					</row>
+					<row>
+					<space></space>
+				</row>
+				</rows>
+			</grid>
+		</div>
+		<popup id="pass" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				contraseña debe tener al menos entre 8 y 16 caracteres,
+				al menos un numero, al menos una minúscula, al menos una
+				mayúscula y al menos un caracter no alfanumérico. <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> La contraseña se cifrará
+				usando un algoritmo de 256 bits para garantizar la
+				seguridad del acceso a la aplicación. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+	</window>
+</zk>

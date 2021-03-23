@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte_de_distribucion_de_baldosas_BODEGA" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0ee78576-d84b-47a1-be7b-a12825845cd2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.exports.xls.font.size.fix.enabled" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.freeze.row" value="3"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="Data/Footnotes"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="false"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.report.description" value="Reporte de baldosas en bodega"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="138"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="856"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NOCAP"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#032E57">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#FBFDFF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="DS_Baldosas_Bodega" uuid="8db5d633-35bf-4abe-8b90-efd18ed911a4">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NOCAP"/>
+		<parameter name="localidad" class="java.lang.String"/>
+		<parameter name="categoria" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[select cod_articulo, c.sto_articulo from sibod_articulo a, sibod_categoria b, sibod_relacion_articulo_ubicacion c, sibod_ubicacion d, sibod_tipo_ubicacion e where (a.id_categoria = b.id_categoria) and (a.id_articulo = c.id_articulo) and (c.id_ubicacion = d.id_ubicacion) and (d.id_tip_ubicacion = e.id_tip_ubicacion) and (a.id_localidad =  $P{localidad} ) and (a.id_categoria =  $P{categoria} ) and (e.id_tip_ubicacion = '1') order by 2 DESC]]>
+		</queryString>
+		<field name="cod_articulo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="cod_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+		</field>
+		<field name="sto_articulo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.label" value="sto_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_relacion_articulo_ubicacion"/>
+		</field>
+	</subDataset>
+	<subDataset name="DS_Baldosas_Sala_Util" uuid="c395e55f-79e8-485f-9881-51a1c8d432d3">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NOCAP"/>
+		<parameter name="localidad" class="java.lang.String"/>
+		<parameter name="categoria" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[select cod_articulo, c.sto_articulo from sibod_articulo a, sibod_categoria b, sibod_relacion_articulo_ubicacion c, sibod_ubicacion d, sibod_tipo_ubicacion e where (a.id_categoria = b.id_categoria) and (a.id_articulo = c.id_articulo) and (c.id_ubicacion = d.id_ubicacion) and (d.id_tip_ubicacion = e.id_tip_ubicacion) and (a.id_localidad =   $P{localidad} ) and (a.id_categoria =   $P{categoria} ) and (e.id_tip_ubicacion = '3') order by 2 DESC]]>
+		</queryString>
+		<field name="cod_articulo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="cod_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+		</field>
+		<field name="sto_articulo" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.label" value="sto_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_relacion_articulo_ubicacion"/>
+		</field>
+	</subDataset>
+	<subDataset name="DS_Baldosas_Bodega%" uuid="41f481f4-fba1-4783-8bdd-96f8ae992ed4">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NOCAP"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="275"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="714"/>
+		<parameter name="localidad" class="java.lang.String"/>
+		<parameter name="categoria" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[select a.cod_articulo, (c.sto_articulo/ (select sum(c.sto_articulo) from sibod_articulo a, sibod_categoria b, sibod_relacion_articulo_ubicacion c, sibod_ubicacion d, sibod_tipo_ubicacion e where (a.id_categoria = b.id_categoria) and (a.id_articulo = c.id_articulo) and (c.id_ubicacion = d.id_ubicacion) and (d.id_tip_ubicacion = e.id_tip_ubicacion) and (a.id_localidad =   $P{localidad} ) and (a.id_categoria =   $P{categoria} ) and (e.id_tip_ubicacion = '1'))*100) as sto_articulo from sibod_articulo a, sibod_categoria b, sibod_relacion_articulo_ubicacion c, sibod_ubicacion d, sibod_tipo_ubicacion e where (a.id_categoria = b.id_categoria) and (a.id_articulo = c.id_articulo) and (c.id_ubicacion = d.id_ubicacion) and (d.id_tip_ubicacion = e.id_tip_ubicacion) and (a.id_localidad =  $P{localidad}  ) and (a.id_categoria =  $P{categoria}  ) and (e.id_tip_ubicacion = '1') order by 2 desc]]>
+		</queryString>
+		<field name="cod_articulo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="cod_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+		</field>
+		<field name="sto_articulo" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="sto_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_relacion_articulo_ubicacion"/>
+		</field>
+	</subDataset>
+	<subDataset name="DS_Baldosas_Sala_Util%" uuid="cd272dd9-6f22-4573-8696-93db34b7838a">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NOCAP"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="localidad" class="java.lang.String"/>
+		<parameter name="categoria" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select a.cod_articulo, (c.sto_articulo/ (select sum(c.sto_articulo) from sibod_articulo a, sibod_categoria b, sibod_relacion_articulo_ubicacion c, sibod_ubicacion d, sibod_tipo_ubicacion e where (a.id_categoria = b.id_categoria) and (a.id_articulo = c.id_articulo) and (c.id_ubicacion = d.id_ubicacion) and (d.id_tip_ubicacion = e.id_tip_ubicacion) and (a.id_localidad =   $P{localidad} ) and (a.id_categoria =   $P{categoria} ) and (e.id_tip_ubicacion = '3'))*100) as sto_articulo from sibod_articulo a, sibod_categoria b, sibod_relacion_articulo_ubicacion c, sibod_ubicacion d, sibod_tipo_ubicacion e where (a.id_categoria = b.id_categoria) and (a.id_articulo = c.id_articulo) and (c.id_ubicacion = d.id_ubicacion) and (d.id_tip_ubicacion = e.id_tip_ubicacion) and (a.id_localidad =  $P{localidad}  ) and (a.id_categoria =  $P{categoria}  ) and (e.id_tip_ubicacion = '3') order by 2 desc]]>
+		</queryString>
+		<field name="cod_articulo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="cod_articulo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="sibod_articulo"/>
+		</field>
+		<field name="sto_articulo" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="sto_articulo"/>
+		</field>
+	</subDataset>
+	<parameter name="p_usuario" class="java.lang.String"/>
+	<parameter name="p_localidad" class="java.lang.String"/>
+	<parameter name="localidad" class="java.lang.String"/>
+	<parameter name="p_ubicacion" class="java.lang.String"/>
+	<parameter name="ubicacion" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="p_categoria" class="java.lang.String"/>
+	<parameter name="categoria" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 1 from dual]]>
+	</queryString>
+	<field name="1" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="1"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="199" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="64" width="798" height="24" forecolor="#000000" backcolor="#000000" uuid="8db2d9aa-0689-47ad-bee0-a2d155a1b2ae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="20" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE DISTRIBUCIÓN DE BALDOSAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="110" width="89" height="24" forecolor="#000000" uuid="760ceb47-29e5-4928-ab8f-ffa83831bfb7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ubicación:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="283" y="95" width="89" height="15" forecolor="#000000" uuid="aa6a4fe9-2658-432d-832d-235c44bc7921"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="387" y="110" width="337" height="24" uuid="384010dc-7b29-46b0-871e-41134d08fa04"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_ubicacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="95" width="195" height="15" uuid="480c3b02-f6b8-4cc7-8395-f48d764676cb"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_localidad}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement key="" x="41" y="2" width="59" height="58" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="f0e5bfbd-ead8-4223-97bc-56a9721bbec2"/>
+				<imageExpression><![CDATA[($P{logo})]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="241" y="170" width="350" height="24" forecolor="#000000" backcolor="#000000" uuid="7d37efe6-4dcd-49f4-bc3a-acca8dd38edb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DISTRIBUCIÓN DE BALDOSAS EN BODEGA]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="191" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<componentElement>
+				<reportElement x="280" y="0" width="280" height="60" uuid="f89b8704-dfa1-4104-91b0-845a72c8e8d0">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="DS_Baldosas_Bodega" uuid="fab21a03-2846-4cb2-a8ae-bf59beb9a316">
+						<datasetParameter name="localidad">
+							<datasetParameterExpression><![CDATA[$P{localidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="categoria">
+							<datasetParameterExpression><![CDATA[$P{categoria}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="80" uuid="b68a7c7f-d273-4540-85de-dcb2289a0c02">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="80" height="30" forecolor="#FCFAFA" backcolor="#222B35" uuid="fc334841-2215-4a17-959e-3a902eb0757b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[ITEM]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="30" uuid="7a7f02f6-9654-4467-a333-2d1b2bd74da4"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="90c75583-939d-42f6-8600-613954f805a4">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="100" height="30" forecolor="#FCFAFA" backcolor="#222B35" uuid="3a4335c8-c66c-4495-a495-77e543844baf"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[TIPO]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" uuid="802aa65d-28a5-418e-8685-e25629e0ec3b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{cod_articulo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="b518740e-9660-4a35-bb1c-68a98140b932">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="100" height="30" forecolor="#FCFAFA" backcolor="#222B35" uuid="5f8f3d72-ac2d-499e-94c3-58995ac4eeb8"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font isBold="true"/>
+								</textElement>
+								<text><![CDATA[BP]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="100" height="30" uuid="a33bea1d-7997-4238-8b29-bd9a8feaebc0"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{sto_articulo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band height="392">
+			<pie3DChart>
+				<chart evaluationTime="Report" customizerClass="bp.aplicaciones.controlador.MyChartCustomizer" renderType="image" theme="aegean">
+					<reportElement x="150" y="40" width="530" height="309" uuid="54f5a648-f2a8-4028-bdb1-fac7bbe38c54">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Bottom"/>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="DS_Baldosas_Bodega" uuid="155e13c2-5d59-47f0-8d3f-82331325445b">
+							<datasetParameter name="localidad">
+								<datasetParameterExpression><![CDATA[$P{localidad}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="categoria">
+								<datasetParameterExpression><![CDATA[$P{categoria}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[$F{cod_articulo}]]></keyExpression>
+					<valueExpression><![CDATA[$F{sto_articulo}]]></valueExpression>
+				</pieDataset>
+				<pie3DPlot isShowLabels="true" isCircular="true" labelFormat="{0} ({2})" legendLabelFormat="{0}">
+					<plot foregroundAlpha="1.0">
+						<seriesColor seriesOrder="0" color="#FFCC00"/>
+						<seriesColor seriesOrder="1" color="#02076B"/>
+						<seriesColor seriesOrder="2" color="#048C12"/>
+						<seriesColor seriesOrder="3" color="#ACADAD"/>
+					</plot>
+					<itemLabel/>
+				</pie3DPlot>
+			</pie3DChart>
+			<staticText>
+				<reportElement mode="Transparent" x="245" y="10" width="350" height="24" forecolor="#000000" backcolor="#000000" uuid="521e5cf6-ebe5-444d-bb88-d095c9f8a9d9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[% BALDOSAS DISPONIBLES EN BODEGA]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

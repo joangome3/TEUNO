@@ -1,0 +1,14 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zBarra"
+	apply="bp.aplicaciones.controlador.bitacora.dashboard.panel3">
+	<space></space>
+	<chartjs id="cBarra" />
+	<space></space>
+	<div align="right">
+		<label
+			value="Se consideran como actividades programadas proximas a vencer, aquellas que su fecha de finalización sea menor a 5 días."
+			style="font-style: normal !important; font-weight: bold !important;">
+		</label>
+	</div>
+</window>

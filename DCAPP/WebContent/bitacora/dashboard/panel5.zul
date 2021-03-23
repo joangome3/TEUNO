@@ -1,0 +1,13 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<window id="zLabel"
+	apply="bp.aplicaciones.controlador.bitacora.dashboard.panel5" position="center,center">
+	<space></space>
+	<space></space>
+	<div align="center">
+		<label id="lCantidad" value="0"
+			style="font-size: 159px !important;">
+		</label>
+	</div>
+	<space></space>
+</window>
