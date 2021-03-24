@@ -2,12 +2,12 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window title=".:: Detalle del articulo ::."
-		position="center, center" sizable="false" width="250px" height="300px"
+		position="center, center" sizable="false" width="300px" height="300px"
 		maximizable="false" minimizable="false" shadow="false"
 		mode="overlapped" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.articulo.detalle"
 		id="zDetalle">
-		<div class="m-div-f" width="200px" height="200px">
+		<div class="m-div-f" width="220px" height="180px">
 			<listbox mold="paging" id="lbxEstados" vflex="true"
 				sizedByContent="false">
 				<listhead sizable="false" style="overflow: scroll;">

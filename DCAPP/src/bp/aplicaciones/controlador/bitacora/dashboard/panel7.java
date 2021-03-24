@@ -168,6 +168,7 @@ public class panel7 extends SelectorComposer<Component> {
 
 	public void cargarTareasProveedores(int dibujaLista)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
+		@SuppressWarnings("unused")
 		dao_tarea_proveedor dao = new dao_tarea_proveedor();
 		try {
 			//listaTareaProveedor1 = dao.obtenerTareasProveedores("", 6, 0, "", "", id_dc, "", "", 0, 0);

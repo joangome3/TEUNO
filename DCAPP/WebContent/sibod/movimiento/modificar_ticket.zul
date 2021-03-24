@@ -1,0 +1,77 @@
+<?page title="Modificar ticket de movimiento" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.sibod.movimiento.modificar_ticket"
+		position="center, center" sizable="true" width="40%" height="40%"
+		maximizable="false" minimizable="false"
+		title=".:: Modificar ticket movimiento ::." shadow="false"
+		mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<space height="2px"></space>
+			<toolbar class="m-toolbar">
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="50%"></column>
+							<column width="50%"></column>
+						</columns>
+						<rows>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<space width="25px"></space>
+										<label
+											value=" Ticket movimiento anterior:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtTicketAnterior" width="200px" rows="1"
+													class="z-textbox-2" readonly="true" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<space width="25px"></space>
+										<label
+											value="* Ticket movimiento actual:" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtTicketActual" width="200px" rows="1"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2" align="center">
+									<label id="lblInformacion1" value="" style="font-weight: bold !important;"></label>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2" align="center">
+									<label id="lblInformacion2" value="" style="font-weight: bold !important; font-style: normal !important;"></label>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+	</window>
+</zk>

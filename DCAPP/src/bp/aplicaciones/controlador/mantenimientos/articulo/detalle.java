@@ -106,7 +106,7 @@ public class detalle extends SelectorComposer<Component> {
 					j = listaEstados.size() + 1;
 				}
 			}
-			lCell.setStyle("text-align: center !important; font-style: italic !important;");
+			lCell.setStyle("text-align: center !important; font-style: normal !important;");
 			lItem.appendChild(lCell);
 			/* STOCK */
 			lCell = new Listcell();

@@ -94,6 +94,9 @@ public class Informativos {
 	private String mensaje_informativo_90 = "El/Los registros que intenta desactivar no son del tipo caja, o ya se encuentran inactivos.";
 	private String mensaje_informativo_91 = "El/Los registros que intenta activar no son del tipo caja, o ya se encuentran activos.";
 	private String mensaje_informativo_92 = "El registro debe estar activo antes de modificarlo.";
+	private String mensaje_informativo_93 = "Se modificara(n) ?1 registro(s) en el modulo de bodega y ?2 registro(s) en el modulo de bitacora.";
+	private String mensaje_informativo_94 = "Ocurrió un error al cargar la información.";
+	private String mensaje_informativo_95 = "Existe(n) ?1 registro(s) en el modulo de bodega y ?2 registro(s) en el modulo de bitacora, para el ticket ?3.";
 
 	public Informativos() {
 
@@ -466,5 +469,18 @@ public class Informativos {
 	public String getMensaje_informativo_92() {
 		return mensaje_informativo_92;
 	}
+
+	public String getMensaje_informativo_93() {
+		return mensaje_informativo_93;
+	}
+
+	public String getMensaje_informativo_94() {
+		return mensaje_informativo_94;
+	}
+	
+	public String getMensaje_informativo_95() {
+		return mensaje_informativo_95;
+	}
+
 
 }

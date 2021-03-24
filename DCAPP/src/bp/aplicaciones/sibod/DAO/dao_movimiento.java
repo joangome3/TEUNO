@@ -74,16 +74,18 @@ public class dao_movimiento {
 	}
 
 	public List<modelo_movimiento> obtenerMovimientos(String criterio, String fecha_inicio, String fecha_fin,
-			String localidad) throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+			String localidad, int tipo)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
 		List<modelo_movimiento> lista_movimientos = new ArrayList<modelo_movimiento>();
 		PreparedStatement consulta = null;
 		try {
-			consulta = conexion.abrir().prepareStatement("{CALL movimiento_obtenerMovimientos(?,?,?,?)}");
+			consulta = conexion.abrir().prepareStatement("{CALL movimiento_obtenerMovimientos(?,?,?,?,?)}");
 			consulta.setString(1, criterio);
 			consulta.setString(2, fecha_inicio);
 			consulta.setString(3, fecha_fin);
 			consulta.setString(4, localidad);
+			consulta.setInt(5, tipo);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				lista_movimientos.add(new modelo_movimiento(resultado.getLong("id_movimiento"),
@@ -258,4 +260,76 @@ public class dao_movimiento {
 		return nombre_estado;
 	}
 
+	public void modificarMovimiento(List<modelo_movimiento> listaMovimiento, List<modelo_bitacora> listaBitacora,
+			int tipo1, int tipo2) throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		try {
+			PreparedStatement consulta = null;
+			/* SE ACTUALIZA LOS MOVIMIENTOS */
+			for (int i = 0; i < listaMovimiento.size(); i++) {
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL movimiento_modificarMovimiento(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setString(1, listaMovimiento.get(i).getTck_movimiento());
+				consulta.setLong(2, listaMovimiento.get(i).getId_articulo());
+				consulta.setLong(3, listaMovimiento.get(i).getId_ubicacion());
+				consulta.setLong(4, listaMovimiento.get(i).getId_estado());
+				consulta.setString(5, listaMovimiento.get(i).getTip_movimiento());
+				consulta.setInt(6, listaMovimiento.get(i).getSto_anterior());
+				consulta.setInt(7, listaMovimiento.get(i).getSto_actual());
+				consulta.setInt(8, listaMovimiento.get(i).getCan_afectada());
+				consulta.setLong(9, listaMovimiento.get(i).getId_localidad());
+				consulta.setLong(10, listaMovimiento.get(i).getId_solicitante());
+				consulta.setLong(11, listaMovimiento.get(i).getId_usuario());
+				consulta.setString(12, listaMovimiento.get(i).getTur_movimiento());
+				consulta.setTimestamp(13, listaMovimiento.get(i).getFec_movimiento());
+				consulta.setString(14, listaMovimiento.get(i).getObs_movimiento().toUpperCase());
+				consulta.setString(15, listaMovimiento.get(i).getEst_movimiento());
+				consulta.setString(16, listaMovimiento.get(i).getUsu_modifica());
+				consulta.setTimestamp(17, listaMovimiento.get(i).getFec_modifica());
+				consulta.setLong(18, listaMovimiento.get(i).getId_movimiento());
+				consulta.setInt(19, tipo1);
+				consulta.executeUpdate();
+			}
+			/* SE ACTUALIZA LOS LOGS DE EVENTOS */
+			for (int i = 0; i < listaBitacora.size(); i++) {
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL bitacora_modificarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, listaBitacora.get(i).getId_cliente());
+				consulta.setString(2, listaBitacora.get(i).getTicket_externo().toUpperCase());
+				consulta.setLong(3, listaBitacora.get(i).getId_turno());
+				consulta.setLong(4, listaBitacora.get(i).getId_tipo_servicio());
+				consulta.setLong(5, listaBitacora.get(i).getId_tipo_tarea());
+				consulta.setLong(6, listaBitacora.get(i).getId_solicitante());
+				consulta.setString(7, listaBitacora.get(i).getDescripcion().toUpperCase());
+				consulta.setTimestamp(8, listaBitacora.get(i).getFec_inicio());
+				consulta.setTimestamp(9, listaBitacora.get(i).getFec_fin());
+				consulta.setLong(10, listaBitacora.get(i).getId_estado_bitacora());
+				consulta.setString(11, listaBitacora.get(i).getCumplimiento());
+				consulta.setLong(12, listaBitacora.get(i).getId_localidad());
+				consulta.setString(13, listaBitacora.get(i).getEst_bitacora());
+				consulta.setString(14, listaBitacora.get(i).getUsu_ingresa());
+				consulta.setTimestamp(15, listaBitacora.get(i).getFec_ingresa());
+				consulta.setString(16, listaBitacora.get(i).getUsu_modifica());
+				consulta.setTimestamp(17, listaBitacora.get(i).getFec_modifica());
+				consulta.setString(18, listaBitacora.get(i).getCor_revisa());
+				consulta.setTimestamp(19, listaBitacora.get(i).getFec_revision());
+				consulta.setString(20, listaBitacora.get(i).getObs_coordinador());
+				consulta.setLong(21, tipo2);
+				consulta.setLong(22, listaBitacora.get(i).getId_bitacora());
+				consulta.executeUpdate();
+			}
+			consulta.close();
+			conexion.abrir().commit();
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+
+	}
 }

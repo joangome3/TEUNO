@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
@@ -26,8 +25,10 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.Textbox;
@@ -35,11 +36,15 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_articulo;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_7;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_7;
+import bp.aplicaciones.mensajes.Error;
+import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.sibod.DAO.dao_movimiento;
 import bp.aplicaciones.sibod.modelo.modelo_movimiento;
 
@@ -60,6 +65,12 @@ public class consultar extends SelectorComposer<Component> {
 	Listbox lbxMovimientos;
 	@Wire
 	Popup pop1;
+	@Wire
+	Menuitem mModificar;
+	@Wire
+	Div winList;
+
+	Window window;
 
 	Popup pop = null;
 
@@ -76,6 +87,14 @@ public class consultar extends SelectorComposer<Component> {
 	List<modelo_articulo> listaArticulo1, listaArticulo2 = new ArrayList<modelo_articulo>();
 	List<modelo_estado_articulo> listaEstados = new ArrayList<modelo_estado_articulo>();
 	List<modelo_parametros_generales_7> listaParametros7 = new ArrayList<modelo_parametros_generales_7>();
+
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+	Fechas fechas = new Fechas();
+
+	Informativos informativos = new Informativos();
+	Error error = new Error();
+
+	boolean ingresa_a_modificar = false;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -97,7 +116,7 @@ public class consultar extends SelectorComposer<Component> {
 	public List<modelo_estado_articulo> obtenerEstados() {
 		return listaEstados;
 	}
-	
+
 	public List<modelo_parametros_generales_7> obtenerParametros7() {
 		return listaParametros7;
 	}
@@ -112,7 +131,7 @@ public class consultar extends SelectorComposer<Component> {
 					".:: Cargar estado ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
-	
+
 	public void cargarParametros7(long id_criticidad)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_parametros_generales_7 dao = new dao_parametros_generales_7();
@@ -155,7 +174,7 @@ public class consultar extends SelectorComposer<Component> {
 		String f_f = sdf.format(d2);
 		String criterio = "";
 		try {
-			listaMovimiento = dao.obtenerMovimientos(criterio, f_i, f_f, String.valueOf(id_dc));
+			listaMovimiento = dao.obtenerMovimientos(criterio, f_i, f_f, String.valueOf(id_dc), 1);
 			binder.loadComponent(lbxMovimientos);
 		} catch (SQLException e) {
 			Messagebox.show("Error al cargar los movimientos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
@@ -220,7 +239,7 @@ public class consultar extends SelectorComposer<Component> {
 		if (txtBuscar.getText().length() <= 0) {
 			criterio = "";
 			try {
-				listaMovimiento = dao.obtenerMovimientos(criterio, f_i, f_f, String.valueOf(id_dc));
+				listaMovimiento = dao.obtenerMovimientos(criterio, f_i, f_f, String.valueOf(id_dc), 1);
 				binder.loadComponent(lbxMovimientos);
 			} catch (SQLException e) {
 				Messagebox.show("Error al buscar en los movimientos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
@@ -230,7 +249,7 @@ public class consultar extends SelectorComposer<Component> {
 		if (!txtBuscar.getValue().equals("")) {
 			criterio = txtBuscar.getText();
 			try {
-				listaMovimiento = dao.obtenerMovimientos(criterio, f_i, f_f, String.valueOf(id_dc));
+				listaMovimiento = dao.obtenerMovimientos(criterio, f_i, f_f, String.valueOf(id_dc), 1);
 				binder.loadComponent(lbxMovimientos);
 			} catch (SQLException e) {
 				Messagebox.show("Error al buscar en los movimientos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
@@ -277,6 +296,49 @@ public class consultar extends SelectorComposer<Component> {
 		g.drawImage(bufferedImage, 0, 0, newW, newH, 0, 0, w, h, null);
 		g.dispose();
 		return bufim;
+	}
+
+	@Listen("onRightClick=#lbxMovimientos")
+	public void onRightClick$lbxMovimientos() throws Throwable {
+		if (lbxMovimientos.getSelectedItem() == null) {
+			return;
+		}
+		int indice = lbxMovimientos.getSelectedIndex();
+		cargarMovimientos();
+		int tamanio_lista = lbxMovimientos.getItemCount();
+		if (indice >= tamanio_lista) {
+			return;
+		}
+		lbxMovimientos.setSelectedIndex(indice);
+	}
+
+	@Listen("onClick=#mModificar")
+	public void onClick$btnmModificar() throws Throwable {
+		if (lbxMovimientos.getSelectedItem() == null) {
+			return;
+		}
+		if (ingresa_a_modificar == false) {
+			ingresa_a_modificar = true;
+			if (lbxMovimientos.getSelectedItems().size() > 1) {
+				ingresa_a_modificar = false;
+				Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+						Messagebox.OK, Messagebox.EXCLAMATION);
+				return;
+			}
+			int indice = lbxMovimientos.getSelectedIndex();
+			Sessions.getCurrent().setAttribute("movimiento", listaMovimiento.get(indice));
+			window = (Window) Executions.createComponents("/sibod/movimiento/modificar_ticket.zul", null, null);
+			if (window instanceof Window) {
+				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+					@Override
+					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+						ingresa_a_modificar = false;
+						cargarMovimientos();
+					}
+				});
+			}
+			window.setParent(winList);
+		}
 	}
 
 }

@@ -2,17 +2,17 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window title=".:: Imagen del articulo ::."
-		position="center, center" sizable="false" width="500px" height="550px"
+		position="center, center" sizable="false" width="600px" height="650px"
 		maximizable="false" minimizable="false" shadow="false"
 		mode="overlapped" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.articulo.foto"
 		id="zFoto">
-		<div class="m-div-f" width="450px" height="450px">
+		<div class="m-div-f" width="550px" height="550px">
 			<vlayout id="vPics" vflex="1">
 			<hlayout vflex="1" style="overflow: scroll;">
 				<div>
 					<image src="/img/principal/unnamed.jpg"
-						 style="cursor: none;" id="imgFoto" width="450px" height="450px">
+						 style="cursor: none;" id="imgFoto" width="550px" height="550px">
 					</image>
 				</div>
 				</hlayout>
