@@ -135,7 +135,7 @@ public class modificar extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
-		lTicketInterno2.setValue(txtTicketInterno.getText().length() + "/" + txtTicketInterno.getMaxlength());
+		lTicketInterno2.setValue(txtTicketInterno.getText().trim().length() + "/" + txtTicketInterno.getMaxlength());
 		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 		txtBuscarSolicitante.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -152,8 +152,9 @@ public class modificar extends SelectorComposer<Component> {
 		validarTurno();
 		txtTicketInterno.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtTicketInterno.setText(txtTicketInterno.getText().toUpperCase());
-				lTicketInterno2.setValue(txtTicketInterno.getText().length() + "/" + txtTicketInterno.getMaxlength());
+				txtTicketInterno.setText(txtTicketInterno.getText().trim().toUpperCase());
+				lTicketInterno2
+						.setValue(txtTicketInterno.getText().trim().length() + "/" + txtTicketInterno.getMaxlength());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -421,8 +422,8 @@ public class modificar extends SelectorComposer<Component> {
 		} else {
 			txtTicketInterno.setText("TB-000" + txtId.getText());
 		}
-		txtTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: italic;");
-		lTicketInterno2.setValue(txtTicketInterno.getText().length() + "/" + txtTicketInterno.getMaxlength());
+		txtTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: normal;");
+		lTicketInterno2.setValue(txtTicketInterno.getText().trim().length() + "/" + txtTicketInterno.getMaxlength());
 	}
 
 	public void setearDescripcion() {
@@ -605,8 +606,8 @@ public class modificar extends SelectorComposer<Component> {
 					txtTicketInterno.setDisabled(false);
 					txtTicketInterno.setText("");
 					lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-					lTicketInterno2.setValue(
-							txtTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+					lTicketInterno2.setValue(txtTicketInterno.getText().trim().length() + "/"
+							+ listaParametros9.get(0).getCant_caracteres());
 					txtTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 				} else {
 					lTicketInterno1.setValue("TICKET INTERNO:");
@@ -737,7 +738,7 @@ public class modificar extends SelectorComposer<Component> {
 		if (cmbTipoTarea.getSelectedItem() == null) {
 			return;
 		}
-		if (txtTicketInterno.getText().length() <= 0) {
+		if (txtTicketInterno.getText().trim().length() <= 0) {
 			txtTicketInterno.setFocus(true);
 			txtTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
@@ -747,7 +748,7 @@ public class modificar extends SelectorComposer<Component> {
 			cmbTipoTarea.setFocus(true);
 			Messagebox.show(
 					informativos.getMensaje_informativo_37().replace("-?", cmbTipoTarea.getSelectedItem().getLabel())
-							.replace("?-", txtTicketInterno.getText()),
+							.replace("?-", txtTicketInterno.getText().trim()),
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
 			cmbTipoTarea.setText("");
 			return;
@@ -758,9 +759,9 @@ public class modificar extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_tarea = false;
 		int totalTareas = consultasABaseDeDatos.validarSiExisteTareaRegistrada(
-				txtTicketInterno.getText().toString().toUpperCase(),
+				txtTicketInterno.getText().trim().toString().toUpperCase(),
 				cmbTipoTarea.getSelectedItem().getValue().toString());
-		if (!ticket_externo.equals(txtTicketInterno.getText().toUpperCase())) {
+		if (!ticket_externo.equals(txtTicketInterno.getText().trim().toUpperCase())) {
 			if (totalTareas > 0) {
 				existe_tarea = true;
 			} else {
@@ -790,8 +791,8 @@ public class modificar extends SelectorComposer<Component> {
 				txtTicketInterno.setDisabled(false);
 				txtTicketInterno.setText("");
 				lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-				lTicketInterno2.setValue(
-						txtTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+				lTicketInterno2.setValue(txtTicketInterno.getText().trim().length() + "/"
+						+ listaParametros9.get(0).getCant_caracteres());
 				txtTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 			} else {
 				lTicketInterno1.setValue("TICKET INTERNO:");
@@ -873,7 +874,7 @@ public class modificar extends SelectorComposer<Component> {
 			txtTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
 		}
-		if (txtTicketInterno.getText().length() <= 0) {
+		if (txtTicketInterno.getText().trim().length() <= 0) {
 			txtTicketInterno.setFocus(true);
 			txtTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
@@ -891,10 +892,11 @@ public class modificar extends SelectorComposer<Component> {
 		/* Se valida si la actividad programada ya se encuentra creada */
 		if (validarSiSeAceptaTicketRepetido(id_opcion,
 				Long.valueOf(cmbCliente.getSelectedItem().getValue().toString())) == false
-				&& !ticket_externo.equals(txtTicketInterno.getText().toUpperCase())) {
-			if (validarSiTareaProgramadaExiste(txtTicketInterno.getText()) == true) {
+				&& !ticket_externo.equals(txtTicketInterno.getText().trim().toUpperCase())) {
+			if (validarSiTareaProgramadaExiste(txtTicketInterno.getText().trim()) == true) {
 				txtTicketInterno.setFocus(true);
-				Messagebox.show(informativos.getMensaje_informativo_60().replace("?", txtTicketInterno.getText()),
+				Messagebox.show(
+						informativos.getMensaje_informativo_60().replace("?", txtTicketInterno.getText().trim()),
 						informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
 				return;
 			}
@@ -902,12 +904,19 @@ public class modificar extends SelectorComposer<Component> {
 		/*
 		 * Se valida si la actividad programada ya se encuentra creada para otro cliente
 		 */
-		if (validarSiTareaEsDeOtroCliente(txtTicketInterno.getText(),
+		if (validarSiTareaEsDeOtroCliente(txtTicketInterno.getText().trim(),
 				Long.valueOf(cmbCliente.getSelectedItem().getValue().toString())) == true
-				&& !ticket_externo.equals(txtTicketInterno.getText().toUpperCase())) {
+				&& !ticket_externo.equals(txtTicketInterno.getText().trim().toUpperCase())) {
 			txtTicketInterno.setFocus(true);
-			Messagebox.show(informativos.getMensaje_informativo_61().replace("?", txtTicketInterno.getText()),
+			Messagebox.show(informativos.getMensaje_informativo_61().replace("?", txtTicketInterno.getText().trim()),
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (validarSiExistePrimeroApertura(txtTicketInterno.getText().trim(),
+				Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()),
+				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString())) == false) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtTicketInterno.getText().trim()),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		/*
@@ -917,7 +926,7 @@ public class modificar extends SelectorComposer<Component> {
 		 * cmbTipoTarea.setFocus(true); Messagebox.show(
 		 * informativos.getMensaje_informativo_37().replace("-?",
 		 * cmbTipoTarea.getSelectedItem().getLabel()) .replace("?-",
-		 * txtTicketInterno.getText()), informativos.getMensaje_informativo_24(),
+		 * txtTicketInterno.getText().trim()), informativos.getMensaje_informativo_24(),
 		 * Messagebox.OK, Messagebox.EXCLAMATION); return; }
 		 */
 		if (txtDescripcion.getText().length() <= 0) {
@@ -994,7 +1003,7 @@ public class modificar extends SelectorComposer<Component> {
 									.setId_tarea_proveedor(modificar.this.tarea_proveedor.getId_tarea_proveedor());
 							tarea_proveedor
 									.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
-							tarea_proveedor.setTicket_externo(txtTicketInterno.getText().toUpperCase());
+							tarea_proveedor.setTicket_externo(txtTicketInterno.getText().trim().toUpperCase());
 							validarTurno();
 							tarea_proveedor.setId_turno(Long.valueOf(cmbTurno.getSelectedItem().getValue().toString()));
 							tarea_proveedor.setId_tipo_servicio(
@@ -1257,6 +1266,27 @@ public class modificar extends SelectorComposer<Component> {
 			existe_tarea_programada = false;
 		}
 		return existe_tarea_programada;
+	}
+
+	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea, long id_tipo_servicio)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que exista primero una apertura antes de que se guarde un
+		 * registro
+		 */
+		boolean existe_primero_apertura = true;
+		if ((id_tipo_servicio == 13 && id_tipo_tarea == 7) || (id_tipo_servicio == 14 && id_tipo_tarea == 7)
+				|| (id_tipo_servicio == 15 && id_tipo_tarea == 7) || (id_tipo_servicio == 10 && id_tipo_tarea == 8)
+				|| id_tipo_tarea == 1) {
+			existe_primero_apertura = true;
+		} else {
+			if (consultasABaseDeDatos.validarSiTareaProgramadaExiste(ticket_externo, "1") == 0) {
+				existe_primero_apertura = false;
+			} else {
+				existe_primero_apertura = true;
+			}
+		}
+		return existe_primero_apertura;
 	}
 
 }

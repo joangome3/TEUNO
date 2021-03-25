@@ -143,7 +143,7 @@ public class revision3 extends SelectorComposer<Component> {
 		lbxMovimientos.setEmptyMessage(informativos.getMensaje_informativo_2());
 		txtId.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtId.setText(txtId.getText().toUpperCase());
+				txtId.setText(txtId.getText().trim().toUpperCase());
 			}
 		});
 		txtOperador.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -888,9 +888,14 @@ public class revision3 extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
-		if (txtId.getText().length() <= 0) {
+		if (txtId.getText().trim().length() <= 0) {
 			txtId.setErrorMessage(validaciones.getMensaje_validacion_31());
 			txtId.setFocus(true);
+			return;
+		}
+		if (validarSiExistePrimeroApertura(txtId.getText().trim(), 1) == false) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtId.getText().trim()),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		if (cmbPedido.getSelectedItem() == null) {
@@ -1018,7 +1023,7 @@ public class revision3 extends SelectorComposer<Component> {
 							/* CABECERA */
 							modelo_movimiento_dn movimiento = new modelo_movimiento_dn();
 							movimiento.setId_movimiento(revision3.this.movimiento.getId_movimiento());
-							movimiento.setTck_movimiento(txtId.getText().toUpperCase());
+							movimiento.setTck_movimiento(txtId.getText().trim().toUpperCase());
 							movimiento.setTip_pedido(cmbPedido.getSelectedItem().getValue().toString());
 							movimiento.setFec_solicitud(fechas.obtenerTimestampDeDate(dtxFechaSolicitud.getValue()));
 							movimiento.setFec_respuesta(fechas.obtenerTimestampDeDate(dtxFechaRespuesta.getValue()));
@@ -1055,7 +1060,7 @@ public class revision3 extends SelectorComposer<Component> {
 							modelo_bitacora bitacora = new modelo_bitacora();
 							// Se debe crear un parametro para la configuracion de varios datos por defecto.
 							bitacora.setId_cliente(9);
-							bitacora.setTicket_externo(txtId.getText().toUpperCase());
+							bitacora.setTicket_externo(txtId.getText().trim().toUpperCase());
 							bitacora.setId_tipo_servicio(7);
 							bitacora.setId_tipo_tarea(14);
 							bitacora.setId_estado_bitacora(2);
@@ -1071,7 +1076,7 @@ public class revision3 extends SelectorComposer<Component> {
 									"SE REALIZA LA VALIDACION CRUZADA (REVISION POR PARTE DEL AUDITOR) DEL "
 											+ cmbPedido.getSelectedItem().getLabel().toString() + " DE "
 											+ listaMovimientoDetalle.size() + " CINTA(S), QUE SE DETALLAN EN EL TICKET "
-											+ txtId.getText());
+											+ txtId.getText().trim());
 							bitacora.setId_turno(id_turno);
 							bitacora.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
@@ -1111,7 +1116,7 @@ public class revision3 extends SelectorComposer<Component> {
 											listaRegistrosBitacora, secuencia);
 								}
 								setearIconoSolicitud();
-								if (txtId.getText().equals(revision3.this.movimiento.getTck_movimiento())
+								if (txtId.getText().trim().equals(revision3.this.movimiento.getTck_movimiento())
 										&& listaSolicitante.get(lbxSolicitantes.getSelectedIndex())
 												.getId_solicitante() == revision3.this.movimiento.getId_solicitante()) {
 									Messagebox.show(informativos.getMensaje_informativo_20(),
@@ -1628,6 +1633,19 @@ public class revision3 extends SelectorComposer<Component> {
 			}
 		}
 		return existe_solicitud_pendiente;
+	}
+	
+	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que exista primero una apertura antes de que se guarde un
+		 * registro
+		 */
+		boolean existe_primero_apertura = true;
+		if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, String.valueOf(id_tipo_tarea)) == 0) {
+			existe_primero_apertura = false;
+		}
+		return existe_primero_apertura;
 	}
 
 }

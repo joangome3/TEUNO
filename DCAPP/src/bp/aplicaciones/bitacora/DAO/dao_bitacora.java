@@ -97,7 +97,7 @@ public class dao_bitacora {
 		}
 		return totalTareas;
 	}
-	
+
 	public int validarSiExisteTareaRegistradaTareaProveedor(String ticket_externo, String id_tipo_tarea)
 			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		int totalTareas = 0;

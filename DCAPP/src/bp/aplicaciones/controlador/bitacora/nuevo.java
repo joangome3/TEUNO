@@ -129,7 +129,7 @@ public class nuevo extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
-		lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+		lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 		txtBuscarSolicitante.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -147,8 +147,9 @@ public class nuevo extends SelectorComposer<Component> {
 		validarTurno();
 		bdxTicketInterno.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				bdxTicketInterno.setText(bdxTicketInterno.getText().toUpperCase());
-				lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+				bdxTicketInterno.setText(bdxTicketInterno.getText().trim().toUpperCase().trim());
+				lTicketInterno2
+						.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -272,8 +273,8 @@ public class nuevo extends SelectorComposer<Component> {
 		} else {
 			bdxTicketInterno.setText("TB-000" + txtId.getText());
 		}
-		bdxTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: italic;");
-		lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+		bdxTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: normal;");
+		lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 	}
 
 	public void setearDescripcion() {
@@ -537,8 +538,8 @@ public class nuevo extends SelectorComposer<Component> {
 					bdxTicketInterno.setDisabled(false);
 					bdxTicketInterno.setText("");
 					lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-					lTicketInterno2.setValue(
-							bdxTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+					lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/"
+							+ listaParametros9.get(0).getCant_caracteres());
 					bdxTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 				} else {
 					lTicketInterno1.setValue("TICKET INTERNO:");
@@ -639,7 +640,7 @@ public class nuevo extends SelectorComposer<Component> {
 		if (cmbTipoTarea.getSelectedItem() == null) {
 			return;
 		}
-		if (bdxTicketInterno.getText().length() <= 0) {
+		if (bdxTicketInterno.getText().trim().length() <= 0) {
 			bdxTicketInterno.setFocus(true);
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
@@ -649,10 +650,42 @@ public class nuevo extends SelectorComposer<Component> {
 			cmbTipoTarea.setFocus(true);
 			Messagebox.show(
 					informativos.getMensaje_informativo_37().replace("-?", cmbTipoTarea.getSelectedItem().getLabel())
-							.replace("?-", bdxTicketInterno.getText()),
+							.replace("?-", bdxTicketInterno.getText().trim().trim()),
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
 			cmbTipoTarea.setText("");
 			return;
+		}
+		setearTicketTareaPlanificada();
+	}
+
+	public void setearTicketTareaPlanificada()
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		dao_tarea_proveedor dao2 = new dao_tarea_proveedor();
+		long secuencia2 = 0;
+		if (listaParametros1.size() > 0) {
+			secuencia2 = listaParametros1.get(0).getSecuencia_tarea_proveedor();
+		}
+		if (chkTicketInterno.isChecked()) {
+			if (!cmbUsuario.isDisabled()) {
+				secuencia2 = dao2.obtenerNuevoId();
+				if (listaParametros1.size() > 0) {
+					if (listaParametros1.get(0).getEtiqueta_tarea_proveedor() != null) {
+						bdxTicketInterno.setText(listaParametros1.get(0).getEtiqueta_tarea_proveedor() + secuencia2);
+						lTicketInterno2.setValue(
+								bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
+					} else {
+						bdxTicketInterno.setText("TA-000" + secuencia2);
+						lTicketInterno2.setValue(
+								bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
+					}
+				} else {
+					bdxTicketInterno.setText("TA-000" + secuencia2);
+					lTicketInterno2.setValue(
+							bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
+				}
+			} else {
+				setearTicketInterno();
+			}
 		}
 	}
 
@@ -660,7 +693,7 @@ public class nuevo extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_tarea = false;
 		int totalTareas = consultasABaseDeDatos.validarSiExisteTareaRegistrada(
-				bdxTicketInterno.getText().toString().toUpperCase(),
+				bdxTicketInterno.getText().trim().trim().toString().toUpperCase(),
 				cmbTipoTarea.getSelectedItem().getValue().toString());
 		if (totalTareas > 0) {
 			existe_tarea = true;
@@ -683,8 +716,8 @@ public class nuevo extends SelectorComposer<Component> {
 				bdxTicketInterno.setDisabled(false);
 				bdxTicketInterno.setText("");
 				lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-				lTicketInterno2.setValue(
-						bdxTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+				lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/"
+						+ listaParametros9.get(0).getCant_caracteres());
 				bdxTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 			} else {
 				lTicketInterno1.setValue("TICKET INTERNO:");
@@ -762,12 +795,12 @@ public class nuevo extends SelectorComposer<Component> {
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
 		}
-		if (bdxTicketInterno.getText().length() <= 0) {
+		if (bdxTicketInterno.getText().trim().length() <= 0) {
 			bdxTicketInterno.setFocus(true);
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
 		} /*
-			 * if (validarSiTicketPerteneceAlMismoCliente(bdxTicketInterno.getText().
+			 * if (validarSiTicketPerteneceAlMismoCliente(bdxTicketInterno.getText().trim().
 			 * toUpperCase(),
 			 * Long.valueOf(cmbCliente.getSelectedItem().getValue().toString())) == false) {
 			 * bdxTicketInterno.setText(""); id_tarea_proveedor = 0;
@@ -801,7 +834,14 @@ public class nuevo extends SelectorComposer<Component> {
 			cmbTipoTarea.setFocus(true);
 			Messagebox.show(
 					informativos.getMensaje_informativo_37().replace("-?", cmbTipoTarea.getSelectedItem().getLabel())
-							.replace("?-", bdxTicketInterno.getText()),
+							.replace("?-", bdxTicketInterno.getText().trim().trim()),
+					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (validarSiExistePrimeroApertura(bdxTicketInterno.getText().trim(),
+				Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()),
+				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString())) == false) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", bdxTicketInterno.getText().trim()),
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
@@ -869,8 +909,8 @@ public class nuevo extends SelectorComposer<Component> {
 		if (chkActividadProgramada.isChecked()) {
 			mensaje = informativos.getMensaje_informativo_35();
 			List<modelo_tarea_proveedor> lista = new ArrayList<modelo_tarea_proveedor>();
-			lista = consultasABaseDeDatos.cargarTareasProveedores(bdxTicketInterno.getText().toUpperCase(), 3, 0, "",
-					"", 0, "", "", 0, "", 0, 0);
+			lista = consultasABaseDeDatos.cargarTareasProveedores(bdxTicketInterno.getText().trim().toUpperCase(), 3, 0,
+					"", "", 0, "", "", 0, "", 0, 0);
 			if (lista.size() > 0) {
 				bdxTicketInterno.setFocus(true);
 				bdxTicketInterno.setErrorMessage(informativos.getMensaje_informativo_36());
@@ -909,7 +949,7 @@ public class nuevo extends SelectorComposer<Component> {
 							modelo_bitacora bitacora = new modelo_bitacora();
 							modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
 							bitacora.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
-							bitacora.setTicket_externo(bdxTicketInterno.getText().toUpperCase());
+							bitacora.setTicket_externo(bdxTicketInterno.getText().trim().toUpperCase());
 							validarTurno();
 							bitacora.setId_turno(Long.valueOf(cmbTurno.getSelectedItem().getValue().toString()));
 							bitacora.setId_tipo_servicio(
@@ -1027,7 +1067,8 @@ public class nuevo extends SelectorComposer<Component> {
 												tarea_proveedor.setTicket_externo("TA-000" + secuencia2);
 											}
 										} else {
-											tarea_proveedor.setTicket_externo(bdxTicketInterno.getText().toUpperCase());
+											tarea_proveedor
+													.setTicket_externo(bdxTicketInterno.getText().trim().toUpperCase());
 										}
 									}
 									dao1.insertarBitacora(bitacora, secuencia2, tarea_proveedor, secuencia2);
@@ -1069,7 +1110,7 @@ public class nuevo extends SelectorComposer<Component> {
 		limpiarCampos2();
 	}
 
-	public void limpiarCampos1() throws ClassNotFoundException, FileNotFoundException, IOException {
+	public void limpiarCampos1() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		obtenerId();
 		chkActividadProgramada.setChecked(false);
 		dtxFechaInicioProgramada.setValue(null);
@@ -1081,7 +1122,11 @@ public class nuevo extends SelectorComposer<Component> {
 			lTicketInterno1.setValue("TICKET INTERNO:");
 			bdxTicketInterno.setDisabled(true);
 			bdxTicketInterno.setMaxlength(20);
-			setearTicketInterno();
+			if (Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString()) == 11) {
+				setearTicketTareaPlanificada();
+			} else {
+				setearTicketInterno();
+			}
 		} else {
 			if (cmbCliente.getSelectedItem() != null) {
 				String id_empresa = cmbCliente.getSelectedItem().getValue().toString();
@@ -1089,8 +1134,8 @@ public class nuevo extends SelectorComposer<Component> {
 				if (listaParametros9.size() > 0) {
 					bdxTicketInterno.setDisabled(false);
 					lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-					lTicketInterno2.setValue(
-							bdxTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+					lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/"
+							+ listaParametros9.get(0).getCant_caracteres());
 					bdxTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 				} else {
 					lTicketInterno1.setValue("TICKET INTERNO:");
@@ -1138,7 +1183,7 @@ public class nuevo extends SelectorComposer<Component> {
 		setearUsuario();
 		lOperador.setValue("Operador registra:");
 		cmbUsuario.setDisabled(true);
-		bdxTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: italic;");
+		bdxTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: normal;");
 		cmbTipoTarea.setText("");
 		setearFechaHoraInicio();
 		setearFechaHoraFin();
@@ -1147,7 +1192,7 @@ public class nuevo extends SelectorComposer<Component> {
 			cmbCumplimiento.setSelectedIndex(0);
 		}
 		cmbCumplimiento.setDisabled(true);
-		lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+		lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 	}
@@ -1207,13 +1252,24 @@ public class nuevo extends SelectorComposer<Component> {
 		return rango_permitido;
 	}
 
-	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_servicio, long id_tipo_tarea) {
+	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea, long id_tipo_servicio)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		/*
 		 * El metodo valida que exista primero una apertura antes de que se guarde un
 		 * registro
 		 */
-		boolean existe_primero_apertura = false;
-		
+		boolean existe_primero_apertura = true;
+		if ((id_tipo_servicio == 13 && id_tipo_tarea == 7) || (id_tipo_servicio == 14 && id_tipo_tarea == 7)
+				|| (id_tipo_servicio == 15 && id_tipo_tarea == 7) || (id_tipo_servicio == 10 && id_tipo_tarea == 8)
+				|| id_tipo_tarea == 1) {
+			existe_primero_apertura = true;
+		} else {
+			if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, "1") == 0) {
+				existe_primero_apertura = false;
+			} else {
+				existe_primero_apertura = true;
+			}
+		}
 		return existe_primero_apertura;
 	}
 

@@ -135,7 +135,7 @@ public class modificar extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
-		lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+		lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 		txtBuscarSolicitante.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -152,8 +152,9 @@ public class modificar extends SelectorComposer<Component> {
 		validarTurno();
 		bdxTicketInterno.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				bdxTicketInterno.setText(bdxTicketInterno.getText().toUpperCase());
-				lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+				bdxTicketInterno.setText(bdxTicketInterno.getText().trim().toUpperCase());
+				lTicketInterno2
+						.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -420,8 +421,8 @@ public class modificar extends SelectorComposer<Component> {
 		} else {
 			bdxTicketInterno.setText("TB-000" + txtId.getText());
 		}
-		bdxTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: italic;");
-		lTicketInterno2.setValue(bdxTicketInterno.getText().length() + "/" + bdxTicketInterno.getMaxlength());
+		bdxTicketInterno.setStyle("text-align: center; font-weight: bold; font-style: normal;");
+		lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/" + bdxTicketInterno.getMaxlength());
 	}
 
 	public void setearDescripcion() {
@@ -676,8 +677,8 @@ public class modificar extends SelectorComposer<Component> {
 					bdxTicketInterno.setDisabled(false);
 					bdxTicketInterno.setText("");
 					lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-					lTicketInterno2.setValue(
-							bdxTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+					lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/"
+							+ listaParametros9.get(0).getCant_caracteres());
 					bdxTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 				} else {
 					lTicketInterno1.setValue("TICKET INTERNO:");
@@ -800,7 +801,7 @@ public class modificar extends SelectorComposer<Component> {
 		if (cmbTipoTarea.getSelectedItem() == null) {
 			return;
 		}
-		if (bdxTicketInterno.getText().length() <= 0) {
+		if (bdxTicketInterno.getText().trim().length() <= 0) {
 			bdxTicketInterno.setFocus(true);
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
@@ -810,7 +811,7 @@ public class modificar extends SelectorComposer<Component> {
 			cmbTipoTarea.setFocus(true);
 			Messagebox.show(
 					informativos.getMensaje_informativo_37().replace("-?", cmbTipoTarea.getSelectedItem().getLabel())
-							.replace("?-", bdxTicketInterno.getText()),
+							.replace("?-", bdxTicketInterno.getText().trim()),
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
 			cmbTipoTarea.setText("");
 			return;
@@ -821,9 +822,9 @@ public class modificar extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_tarea = false;
 		int totalTareas = consultasABaseDeDatos.validarSiExisteTareaRegistrada(
-				bdxTicketInterno.getText().toString().toUpperCase(),
+				bdxTicketInterno.getText().trim().toString().toUpperCase(),
 				cmbTipoTarea.getSelectedItem().getValue().toString());
-		if (!ticket_externo.equals(bdxTicketInterno.getText().toUpperCase())) {
+		if (!ticket_externo.equals(bdxTicketInterno.getText().trim().toUpperCase())) {
 			if (totalTareas > 0) {
 				existe_tarea = true;
 			} else {
@@ -853,8 +854,8 @@ public class modificar extends SelectorComposer<Component> {
 				bdxTicketInterno.setDisabled(false);
 				bdxTicketInterno.setText("");
 				lTicketInterno1.setValue("TICKET " + listaParametros9.get(0).getNom_ticket() + ":");
-				lTicketInterno2.setValue(
-						bdxTicketInterno.getText().length() + "/" + listaParametros9.get(0).getCant_caracteres());
+				lTicketInterno2.setValue(bdxTicketInterno.getText().trim().length() + "/"
+						+ listaParametros9.get(0).getCant_caracteres());
 				bdxTicketInterno.setMaxlength(listaParametros9.get(0).getCant_caracteres());
 			} else {
 				lTicketInterno1.setValue("TICKET INTERNO:");
@@ -941,16 +942,16 @@ public class modificar extends SelectorComposer<Component> {
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
 		}
-		if (bdxTicketInterno.getText().length() <= 0) {
+		if (bdxTicketInterno.getText().trim().length() <= 0) {
 			bdxTicketInterno.setFocus(true);
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
 		}
 		/*
-		 * if (validarSiTicketPerteneceAlMismoCliente(bdxTicketInterno.getText().
+		 * if (validarSiTicketPerteneceAlMismoCliente(bdxTicketInterno.getText().trim().
 		 * toUpperCase(),
 		 * Long.valueOf(cmbCliente.getSelectedItem().getValue().toString())) == false &&
-		 * ticket_externo != bdxTicketInterno.getText().toUpperCase()) {
+		 * ticket_externo != bdxTicketInterno.getText().trim().toUpperCase()) {
 		 * bdxTicketInterno.setText(""); id_tarea_proveedor = 0;
 		 * bdxTicketInterno.setErrorMessage( informativos.getMensaje_informativo_32() +
 		 * cmbCliente.getSelectedItem().getLabel()); bdxTicketInterno.setFocus(true);
@@ -1000,7 +1001,14 @@ public class modificar extends SelectorComposer<Component> {
 			cmbTipoTarea.setFocus(true);
 			Messagebox.show(
 					informativos.getMensaje_informativo_37().replace("-?", cmbTipoTarea.getSelectedItem().getLabel())
-							.replace("?-", bdxTicketInterno.getText()),
+							.replace("?-", bdxTicketInterno.getText().trim()),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (validarSiExistePrimeroApertura(bdxTicketInterno.getText().trim(),
+				Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()),
+				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString())) == false) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", bdxTicketInterno.getText().trim()),
 					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
@@ -1083,7 +1091,7 @@ public class modificar extends SelectorComposer<Component> {
 							modelo_bitacora bitacora = new modelo_bitacora();
 							bitacora.setId_bitacora(modificar.this.bitacora.getId_bitacora());
 							bitacora.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
-							bitacora.setTicket_externo(bdxTicketInterno.getText().toUpperCase());
+							bitacora.setTicket_externo(bdxTicketInterno.getText().trim().toUpperCase());
 							validarTurno();
 							bitacora.setId_turno(Long.valueOf(cmbTurno.getSelectedItem().getValue().toString()));
 							bitacora.setId_tipo_servicio(
@@ -1280,6 +1288,27 @@ public class modificar extends SelectorComposer<Component> {
 			es_el_mismo_cliente = false;
 		}
 		return es_el_mismo_cliente;
+	}
+	
+	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea, long id_tipo_servicio)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que exista primero una apertura antes de que se guarde un
+		 * registro
+		 */
+		boolean existe_primero_apertura = true;
+		if ((id_tipo_servicio == 13 && id_tipo_tarea == 7) || (id_tipo_servicio == 14 && id_tipo_tarea == 7)
+				|| (id_tipo_servicio == 15 && id_tipo_tarea == 7) || (id_tipo_servicio == 10 && id_tipo_tarea == 8)
+				|| id_tipo_tarea == 1) {
+			existe_primero_apertura = true;
+		} else {
+			if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, "1") == 0) {
+				existe_primero_apertura = false;
+			} else {
+				existe_primero_apertura = true;
+			}
+		}
+		return existe_primero_apertura;
 	}
 
 }

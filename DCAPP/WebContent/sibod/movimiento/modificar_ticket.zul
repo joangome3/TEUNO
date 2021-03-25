@@ -3,7 +3,7 @@
 <zk>
 	<window border="normal" id="zModificar" closable="true"
 		apply="bp.aplicaciones.controlador.sibod.movimiento.modificar_ticket"
-		position="center, center" sizable="true" width="40%" height="40%"
+		position="center, center" sizable="true" width="650px" height="450px"
 		maximizable="false" minimizable="false"
 		title=".:: Modificar ticket movimiento ::." shadow="false"
 		mode="overlapped" focus="true"
@@ -31,7 +31,7 @@
 									<div align="center">
 										<space width="25px"></space>
 										<label
-											value=" Ticket movimiento anterior:" class="z-label-1" />
+											value=" Ticket movimiento anterior" class="z-label-1" />
 										<vlayout>
 											<hlayout>
 												<textbox
@@ -47,7 +47,7 @@
 									<div align="center">
 										<space width="25px"></space>
 										<label
-											value="* Ticket movimiento actual:" class="z-label-1" />
+											value="* Ticket movimiento actual" class="z-label-1" />
 										<vlayout>
 											<hlayout>
 												<textbox
@@ -59,11 +59,27 @@
 								</cell>
 							</row>
 							<row>
+								<cell colspan="2">
+									<div align="center">
+										<space width="25px"></space>
+										<label
+											value="* Comentario" class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtComentario" width="450px" rows="4"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row visible="false">
 								<cell colspan="2" align="center">
 									<label id="lblInformacion1" value="" style="font-weight: bold !important;"></label>
 								</cell>
 							</row>
-							<row>
+							<row visible="false">
 								<cell colspan="2" align="center">
 									<label id="lblInformacion2" value="" style="font-weight: bold !important; font-style: normal !important;"></label>
 								</cell>

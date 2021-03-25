@@ -156,7 +156,7 @@ public class nuevo extends SelectorComposer<Component> {
 		});
 		txtTicket.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtTicket.setText(txtTicket.getText().toUpperCase());
+				txtTicket.setText(txtTicket.getText().trim().toUpperCase());
 			}
 		});
 		obtenerId();
@@ -860,9 +860,16 @@ public class nuevo extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
-		if (txtTicket.getText().length() <= 0) {
+		if (txtTicket.getText().trim().length() <= 0) {
 			txtTicket.setErrorMessage("Ingrese el ticket.");
 			return;
+		}
+		if (!chkTicket.isChecked()) {
+			if (validarSiExistePrimeroApertura(txtTicket.getText().trim(), 1) == false) {
+				Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtTicket.getText().trim()),
+						informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+				return;
+			}
 		}
 		if (dtxFecha.getValue() == null) {
 			Messagebox.show("seleccione una fecha.", ".:: Guardar articulo ::.", Messagebox.OK, Messagebox.EXCLAMATION);
@@ -971,7 +978,7 @@ public class nuevo extends SelectorComposer<Component> {
 								if (chkTicket.isChecked()) {
 									movimiento.setTck_movimiento(null);
 								} else {
-									movimiento.setTck_movimiento(txtTicket.getText().toUpperCase());
+									movimiento.setTck_movimiento(txtTicket.getText().trim().toUpperCase());
 								}
 								movimiento.setId_usuario(id_user);
 								movimiento.setId_localidad(id_dc);
@@ -1154,6 +1161,19 @@ public class nuevo extends SelectorComposer<Component> {
 		bitacora = new modelo_bitacora();
 		txtTicket.setReadonly(true);
 		chkTicket.setChecked(true);
+	}
+
+	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que exista primero una apertura antes de que se guarde un
+		 * registro
+		 */
+		boolean existe_primero_apertura = true;
+		if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, String.valueOf(id_tipo_tarea)) == 0) {
+			existe_primero_apertura = false;
+		}
+		return existe_primero_apertura;
 	}
 
 }

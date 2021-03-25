@@ -47,7 +47,7 @@ public class modificar_ticket extends SelectorComposer<Component> {
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtTicketAnterior, txtTicketActual;
+	Textbox txtTicketAnterior, txtTicketActual, txtComentario;
 	@Wire
 	Label lblInformacion1, lblInformacion2;
 
@@ -98,7 +98,12 @@ public class modificar_ticket extends SelectorComposer<Component> {
 		binder.loadAll();
 		txtTicketActual.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtTicketActual.setText(txtTicketActual.getText().toUpperCase());
+				txtTicketActual.setText(txtTicketActual.getText().trim().toUpperCase());
+			}
+		});
+		txtComentario.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				txtComentario.setText(txtComentario.getText().toUpperCase());
 			}
 		});
 		setearFechaActual();
@@ -234,21 +239,21 @@ public class modificar_ticket extends SelectorComposer<Component> {
 
 	public void setearInformacion2() throws WrongValueException, NumberFormatException, ClassNotFoundException,
 			FileNotFoundException, IOException, SQLException {
-		if (txtTicketActual.getText().length() <= 0) {
+		if (txtTicketActual.getText().trim().length() <= 0) {
 			lblInformacion2.setValue("");
 			return;
 		}
-		if (txtTicketAnterior.getText().equals(txtTicketActual.getText())) {
+		if (txtTicketAnterior.getText().equals(txtTicketActual.getText().trim())) {
 			lblInformacion2.setValue("");
 			return;
 		}
-		total_registros_bitacora_actual = cantidadRegistrosEnListaBitacora(txtTicketActual.getText());
-		total_registros_bodega_actual = cantidadRegistrosEnListaMovimiento(txtTicketActual.getText());
+		total_registros_bitacora_actual = cantidadRegistrosEnListaBitacora(txtTicketActual.getText().trim());
+		total_registros_bodega_actual = cantidadRegistrosEnListaMovimiento(txtTicketActual.getText().trim());
 		if (total_registros_bitacora_actual > 0 && total_registros_bodega_actual > 0) {
 			lblInformacion2.setValue(informativos.getMensaje_informativo_95()
 					.replace("?1", String.valueOf(total_registros_bodega_actual))
 					.replace("?2", String.valueOf(total_registros_bitacora_actual))
-					.replace("?3", txtTicketActual.getText().toUpperCase()));
+					.replace("?3", txtTicketActual.getText().trim().toUpperCase()));
 		} else {
 			lblInformacion2.setValue("");
 		}
@@ -273,12 +278,16 @@ public class modificar_ticket extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
-		if (txtTicketActual.getText().length() <= 0) {
+		if (txtTicketActual.getText().trim().length() <= 0) {
 			txtTicketActual.setErrorMessage("Ingrese el ticket.");
 			return;
 		}
-		if (txtTicketAnterior.getText().equals(txtTicketActual.getText())) {
+		if (txtTicketAnterior.getText().equals(txtTicketActual.getText().trim())) {
 			txtTicketActual.setErrorMessage("El ticket actual debe ser diferente del anterior.");
+			return;
+		}
+		if (txtComentario.getText().length() <= 0) {
+			txtComentario.setErrorMessage("Ingrese un comentario.");
 			return;
 		}
 		Messagebox.show(informativos.getMensaje_informativo_16(), informativos.getMensaje_informativo_24(),
@@ -291,13 +300,18 @@ public class modificar_ticket extends SelectorComposer<Component> {
 									txtTicketAnterior.getText());
 							total_registros_bodega_anterior = cantidadRegistrosEnListaMovimiento(
 									txtTicketAnterior.getText());
+							String comentario = "";
 							for (int i = 0; i < listaMovimiento.size(); i++) {
-								listaMovimiento.get(i).setTck_movimiento(txtTicketActual.getText());
+								listaMovimiento.get(i).setTck_movimiento(txtTicketActual.getText().trim());
+								comentario = listaMovimiento.get(i).getObs_movimiento();
+								listaMovimiento.get(i).setObs_movimiento(comentario + " - " + txtComentario.getText());
 								listaMovimiento.get(i).setUsu_modifica(user);
 								listaMovimiento.get(i).setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							}
 							for (int i = 0; i < listaBitacora.size(); i++) {
-								listaBitacora.get(i).setTicket_externo(txtTicketActual.getText());
+								listaBitacora.get(i).setTicket_externo(txtTicketActual.getText().trim());
+								comentario = listaBitacora.get(i).getDescripcion();
+								listaBitacora.get(i).setDescripcion(comentario + " - " + txtComentario.getText());
 								listaBitacora.get(i).setUsu_modifica(user);
 								listaBitacora.get(i).setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							}
