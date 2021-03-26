@@ -28,6 +28,7 @@ public class conexion {
 				throw new ClassNotFoundException(ex.getMessage());
 			}
 		}
+		/* Se anade comentario */
 		return cnx;
 	}
 
