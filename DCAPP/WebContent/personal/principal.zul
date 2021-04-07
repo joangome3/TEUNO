@@ -1,0 +1,81 @@
+<?page title="Gestion de personal" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.personal.principal">
+		<borderlayout>
+			<west size="27.8rem" collapsible="false"
+				title="GESTION DE PERSONAL" border="none" autoscroll="true"
+				splittable="false" open="false">
+				<tree visible="true">
+					<treechildren>
+						<treeitem>
+							<treerow>
+								<treecell
+									image="/img/botones/ButtonSolicitud2.png" label=" - Solicitud de ingreso (A.16)"
+									class="log-trcell">
+								</treecell>
+							</treerow>
+							<treechildren>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png"
+											label=" - Consultar solicitudes" id="tcOpcion1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonNew3.png"
+											label=" - Nueva solicitud" id="tcOpcion2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem visible="false">
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonPersonal2.png" label=" - Registro de permanencia"
+											id="tcOpcion3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png" label=" - Reporte de tareas"
+											id="tcReporte1"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png" label=" - Reporte de ingreso personal"
+											id="tcReporte3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+							</treechildren>
+						</treeitem>
+					</treechildren>
+				</tree>
+			</west>
+			<center>
+				<tabbox vflex="max" style="height: calc(100%);"
+					width="100%" visible="true" id="tTab">
+					<tabs></tabs>
+					<tabpanels vflex="max" style="height: calc(100%);"
+						width="100%" id="tPanel">
+					</tabpanels>
+				</tabbox>
+			</center>
+		</borderlayout>
+	</div>
+</zk>

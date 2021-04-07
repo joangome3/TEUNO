@@ -61,14 +61,14 @@ public class dashboard extends SelectorComposer<Component> {
 	@Wire
 	Image imgCape, imgCintas, imgSibod, imgMantenimientos;
 	@Wire
-	Menu tMenu1, tMenu2, tMenu3, tMenu4, tCape, tBodega, tCintas, tControlCambio, tMantenimientos;
+	Menu tMenu1, tMenu2, tMenu3, tMenu4, tCape, tBodega, tCintas, tControlCambio, tMantenimientos, tPersonal;
 	@Wire
 	Menuitem tcMantenimientoUsuarios, tcMantenimientoPerfiles, tcMantenimientoLocalidades, tcMantenimientoParametros,
 			tcMantenimientoEmpresas, tcMantenimientoUbicaciones1, tcMantenimientoSolicitantesProveedores,
 			tcMantenimientoCategorias1, tcMantenimientoSesiones, tcMantenimientoRespaldos, tcMantenimientoCapacidades,
 			tcMantenimientoCategorias2, tcMantenimientoUbicaciones2, tcMantenimientoSolicitudes,
 			tcMantenimientoInformativos, tcBodega, tcBitacora, tcControlCambioGenerar, tcCintas, tcAcercaDe, tcDBodega,
-			tcDBitacora;
+			tcDBitacora, tcPersonal;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -90,7 +90,7 @@ public class dashboard extends SelectorComposer<Component> {
 
 	String mlocalidades, mparametros, mperfiles, musuarios, mempresas, msolicitantes, mcategorias1, mubicaciones1,
 			marticulos, msesiones, mrespaldos, mcapacidades, mcategorias2, mubicaciones2, msolicitudes, minformativos;
-	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas;
+	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas, oPersonal;
 
 	List<modelo_solicitud> listaSolicitud = new ArrayList<modelo_solicitud>();
 	List<modelo_movimiento_dn> listaMovimientoDN = new ArrayList<modelo_movimiento_dn>();
@@ -487,6 +487,11 @@ public class dashboard extends SelectorComposer<Component> {
 			} else {
 				ocintas = "N";
 			}
+			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "5", 2) == true) {
+				oPersonal = "S";
+			} else {
+				oPersonal = "N";
+			}
 		} catch (SQLException e) {
 			Messagebox.show(
 					"Error al cargar los permisos de las opciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
@@ -611,6 +616,12 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tcCintas.setDisabled(true);
 			tcCintas.setTooltiptext("No tiene permisos para usar esta opción.");
+		}
+		if (oPersonal.equals("S")) {
+			tcPersonal.setDisabled(false);
+		} else {
+			tcPersonal.setDisabled(true);
+			tcPersonal.setTooltiptext("No tiene permisos para usar esta opción.");
 		}
 	}
 
@@ -856,6 +867,41 @@ public class dashboard extends SelectorComposer<Component> {
 			Tabpanel tabpanel = new Tabpanel();
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/sibod/principal.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * PERSONAL
+	 */
+
+	@Listen("onClick=#tcPersonal")
+	public void onClick$tcPersonal() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcPersonal.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcPersonal.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE PERSONAL");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcPersonal.getId());
+			tab.setImage("/img/botones/ButtonPersonal2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/personal/principal.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);
