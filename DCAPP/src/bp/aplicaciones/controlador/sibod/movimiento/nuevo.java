@@ -998,7 +998,12 @@ public class nuevo extends SelectorComposer<Component> {
 								bitacora = new modelo_bitacora();
 								// Se debe crear un parametro para la configuracion de varios datos por defecto.
 								bitacora.setId_cliente(setearEmpresaDesdeUbicacion(movimiento.getId_ubicacion()));
-								bitacora.setId_tipo_servicio(6);
+								if (chkTicket.isChecked()) {
+									bitacora.setId_tipo_servicio(6);
+								} else {
+									bitacora.setId_tipo_servicio(obtenerIdTipoServicioAPartirDeTicket(
+											txtTicket.getText().trim().toUpperCase(), 1, id_dc));
+								}
 								bitacora.setId_tipo_tarea(7);
 								bitacora.setId_estado_bitacora(2);
 								bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(fechas.obtenerFechaArmada(
@@ -1174,6 +1179,13 @@ public class nuevo extends SelectorComposer<Component> {
 			existe_primero_apertura = false;
 		}
 		return existe_primero_apertura;
+	}
+
+	public long obtenerIdTipoServicioAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_servicio = 0;
+		id_tipo_servicio = consultasABaseDeDatos.obtenerIdTipoServicioAPartirDeTicket(ticket, id_tipo_tarea, id_dc);
+		return id_tipo_servicio;
 	}
 
 }

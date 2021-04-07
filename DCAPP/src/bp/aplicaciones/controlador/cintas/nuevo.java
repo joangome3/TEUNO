@@ -908,8 +908,7 @@ public class nuevo extends SelectorComposer<Component> {
 							bitacora.setCumplimiento("C");
 							bitacora.setDescripcion(bdxSolicitantes.getText() + " SOLICITA SE REALICE EL "
 									+ cmbPedido.getSelectedItem().getLabel().toString() + " DE "
-									+ listaMovimientoDetalle.size() + " CINTA(S), QUE SE DETALLAN EN EL TICKET "
-									+ txtId.getText().trim());
+									+ listaMovimientoDetalle.size() + " CINTA(S)");
 							bitacora.setId_turno(id_turno);
 							bitacora.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());

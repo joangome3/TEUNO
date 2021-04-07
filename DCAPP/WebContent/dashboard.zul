@@ -50,7 +50,7 @@
 									</menuitem>
 									<menuseparator visible="false" />
 									<menuitem
-										image="/img/botones/ButtonDiners3.png"
+										image="/img/botones/ButtonDiners5.png"
 										label=" - Gestión de cintas" id="tcCintas"
 										tooltiptext="Módulo creado para la gestión de cintas del cliente Diners."
 										height="35px" class="m-bitacora m-item_a">

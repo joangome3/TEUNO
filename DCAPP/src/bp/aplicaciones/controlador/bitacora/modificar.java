@@ -1007,7 +1007,8 @@ public class modificar extends SelectorComposer<Component> {
 		}
 		if (validarSiExistePrimeroApertura(bdxTicketInterno.getText().trim(),
 				Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()),
-				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString())) == false) {
+				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString())) == false
+				&& validarSiUsuarioEsRevisor() == false) {
 			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", bdxTicketInterno.getText().trim()),
 					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
@@ -1289,7 +1290,7 @@ public class modificar extends SelectorComposer<Component> {
 		}
 		return es_el_mismo_cliente;
 	}
-	
+
 	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea, long id_tipo_servicio)
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		/*

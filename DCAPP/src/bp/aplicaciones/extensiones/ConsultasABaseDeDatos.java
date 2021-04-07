@@ -77,6 +77,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.sibod.DAO.dao_movimiento;
 
 public class ConsultasABaseDeDatos {
 
@@ -163,10 +164,12 @@ public class ConsultasABaseDeDatos {
 	 */
 
 	public int validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(String codigo, String fecha_inicio,
-			String fecha_fin, long categoria) throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+			String fecha_fin, long categoria)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_articulo_dn dao = new dao_articulo_dn();
 		int totalArticulos = 0;
-		totalArticulos = dao.validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(codigo, fecha_inicio, fecha_fin, categoria);
+		totalArticulos = dao.validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(codigo, fecha_inicio, fecha_fin,
+				categoria);
 		return totalArticulos;
 	}
 
@@ -868,7 +871,12 @@ public class ConsultasABaseDeDatos {
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_bitacora dao = new dao_bitacora();
 		int totalTareas = 0;
-		totalTareas = dao.validarSiExisteTareaRegistrada(ticket_externo, id_tipo_tarea);
+		try {
+			totalTareas = dao.validarSiExisteTareaRegistrada(ticket_externo, id_tipo_tarea);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 		return totalTareas;
 	}
 
@@ -882,7 +890,12 @@ public class ConsultasABaseDeDatos {
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_bitacora dao = new dao_bitacora();
 		int totalTareas = 0;
-		totalTareas = dao.validarSiExisteTareaRegistradaTareaProveedor(ticket_externo, id_tipo_tarea);
+		try {
+			totalTareas = dao.validarSiExisteTareaRegistradaTareaProveedor(ticket_externo, id_tipo_tarea);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 		return totalTareas;
 	}
 
@@ -895,7 +908,12 @@ public class ConsultasABaseDeDatos {
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_bitacora dao = new dao_bitacora();
 		int totalTareasVencidas = 0;
-		totalTareasVencidas = dao.validarSiExistenTareasProgramadasVencidas(estado);
+		try {
+			totalTareasVencidas = dao.validarSiExistenTareasProgramadasVencidas(estado);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 		return totalTareasVencidas;
 	}
 
@@ -908,7 +926,12 @@ public class ConsultasABaseDeDatos {
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_bitacora dao = new dao_bitacora();
 		int totalTurnosCreados = 0;
-		totalTurnosCreados = dao.validarSiTareasAutomaticasSeCrearon(fecha_inicio, fecha_fin);
+		try {
+			totalTurnosCreados = dao.validarSiTareasAutomaticasSeCrearon(fecha_inicio, fecha_fin);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 		return totalTurnosCreados;
 	}
 
@@ -965,8 +988,36 @@ public class ConsultasABaseDeDatos {
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_tarea_proveedor dao = new dao_tarea_proveedor();
 		int totalTareasProgramadas = 0;
-		totalTareasProgramadas = dao.validarSiTareaProgramadaExiste(ticket_externo, id_tipo_tarea);
+		try {
+			totalTareasProgramadas = dao.validarSiTareaProgramadaExiste(ticket_externo, id_tipo_tarea);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 		return totalTareasProgramadas;
+	}
+
+	/*
+	 * Modulo de bodega
+	 * 
+	 */
+
+	/*
+	 * * Metodo que devuelve el id del tipo de servicio a partir del ticket
+	 * 
+	 */
+
+	public long obtenerIdTipoServicioAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		dao_movimiento dao = new dao_movimiento();
+		long id_tipo_servicio = 0;
+		try {
+			id_tipo_servicio = dao.obtenerIdTipoServicioAPartirDeTicket(ticket, id_tipo_tarea, id_dc);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return id_tipo_servicio;
 	}
 
 }

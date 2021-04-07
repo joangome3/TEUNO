@@ -1016,8 +1016,7 @@ public class revision1 extends SelectorComposer<Component> {
 							bitacora.setDescripcion(
 									"SE REALIZA LA VALIDACION CRUZADA (REVISION POR OPERADOR EN TURNO) DEL "
 											+ cmbPedido.getSelectedItem().getLabel().toString() + " DE "
-											+ listaMovimientoDetalle.size() + " CINTA(S), QUE SE DETALLAN EN EL TICKET "
-											+ txtId.getText().trim());
+											+ listaMovimientoDetalle.size() + " CINTA(S)");
 							bitacora.setId_turno(id_turno);
 							bitacora.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
@@ -1475,7 +1474,7 @@ public class revision1 extends SelectorComposer<Component> {
 		listaMovimientoDetalle = new ArrayList<modelo_movimiento_detalle_dn>();
 		binder.loadComponent(lbxMovimientos);
 	}
-	
+
 	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea)
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		/*

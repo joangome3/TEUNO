@@ -209,7 +209,7 @@ public class modificar_ticket extends SelectorComposer<Component> {
 		long id_tipo_tarea = 7;
 		long id_tipo_servicio = 6;
 		String use_usuario = "";
-		listaBitacora = consultasABaseDeDatos.cargarBitacoras(criterio, 6, id_tipo_tarea, "", turno, id_dc,
+		listaBitacora = consultasABaseDeDatos.cargarBitacoras(criterio, 5, id_tipo_tarea, "", turno, id_dc,
 				fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario, Integer.valueOf("0"));
 		total_registros = listaBitacora.size();
 		return total_registros;

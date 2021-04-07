@@ -35,6 +35,8 @@ import bp.aplicaciones.mantenimientos.DAO.dao_relacion_perfil;
 import bp.aplicaciones.mantenimientos.DAO.dao_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
+import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_informativo;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
@@ -91,11 +93,14 @@ public class dashboard extends SelectorComposer<Component> {
 	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas;
 
 	List<modelo_solicitud> listaSolicitud = new ArrayList<modelo_solicitud>();
+	List<modelo_movimiento_dn> listaMovimientoDN = new ArrayList<modelo_movimiento_dn>();
 	List<modelo_parametros_generales_1> listaParametros = new ArrayList<modelo_parametros_generales_1>();
 
 	modelo_usuario usuario = new modelo_usuario();
 
-	int sAbiertas = 0, sRevision = 0, sPendienteEjecucion = 0, sPendienteActualizacion = 0;
+	int sAbiertas = 0, sRevision = 0, sPendienteEjecucion = 0, sPendienteActualizacion = 0,
+			sMovimientoCintasValidacionOperadorEnTurnoActual = 0, sMovimientoCintasValidacionOperadorEnTurnoT1 = 0,
+			sMovimientoCintasValidacionOperadorAuditor = 0;
 
 	String usup = "";
 
@@ -113,7 +118,9 @@ public class dashboard extends SelectorComposer<Component> {
 		inicializarPermisosOpciones();
 		validarPermisosOpciones();
 		cargarSolicitudes();
+		cargarMovimientosDN();
 		inicializarSolicitudesPendientes();
+		inicializarValidacionesCruzadasPendientesModuloCintas();
 		cargarParametros();
 		onClick$tcDBitacora();
 		cargarInformativos();
@@ -124,7 +131,7 @@ public class dashboard extends SelectorComposer<Component> {
 		dao_informativo dao = new dao_informativo();
 		List<modelo_informativo> listaInformativo = new ArrayList<modelo_informativo>();
 		listaInformativo = dao.obtenerInformativos("", 6, 0, 0, "", "");
-		if(listaInformativo.size() == 0) {
+		if (listaInformativo.size() == 0) {
 			return;
 		}
 		Sessions.getCurrent().setAttribute("listaInformativo", listaInformativo);
@@ -210,7 +217,7 @@ public class dashboard extends SelectorComposer<Component> {
 		}
 	}
 
-	public void cargarSolicitudes()  {
+	public void cargarSolicitudes() {
 		dao_solicitud dao = new dao_solicitud();
 		String criterio = "";
 		try {
@@ -234,6 +241,11 @@ public class dashboard extends SelectorComposer<Component> {
 		}
 	}
 
+	public void cargarMovimientosDN() throws ClassNotFoundException, FileNotFoundException, IOException {
+		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+		listaMovimientoDN = consultasABaseDeDatos.cargarMovimientosDN("", "", "", String.valueOf(id_dc), 0, 5, "");
+	}
+
 	public void inicializarSolicitudesPendientes() {
 		sAbiertas = 0;
 		sRevision = 0;
@@ -241,23 +253,42 @@ public class dashboard extends SelectorComposer<Component> {
 		sPendienteActualizacion = 0;
 		for (int i = 0; i < listaSolicitud.size(); i++) {
 			if (listaSolicitud.get(i).getEst_solicitud().equals("P")) {
-				sAbiertas = sAbiertas + 1;
+				sAbiertas += 1;
 			}
 			if (listaSolicitud.get(i).getEst_solicitud().equals("R")) {
-				sRevision = sRevision + 1;
+				sRevision += 1;
 			}
 			if (listaSolicitud.get(i).getEst_solicitud().equals("S")) {
-				sPendienteEjecucion = sPendienteEjecucion + 1;
+				sPendienteEjecucion += 1;
 			}
 			if (listaSolicitud.get(i).getEst_solicitud().equals("T")) {
-				sPendienteActualizacion = sPendienteActualizacion + 1;
+				sPendienteActualizacion += 1;
+			}
+		}
+	}
+
+	public void inicializarValidacionesCruzadasPendientesModuloCintas() {
+		sMovimientoCintasValidacionOperadorEnTurnoActual = 0;
+		sMovimientoCintasValidacionOperadorEnTurnoT1 = 0;
+		sMovimientoCintasValidacionOperadorAuditor = 0;
+		for (int i = 0; i < listaMovimientoDN.size(); i++) {
+			if (listaMovimientoDN.get(i).getEst_validacion().equals("RV1")) {
+				sMovimientoCintasValidacionOperadorEnTurnoActual += 1;
+			}
+			if (listaMovimientoDN.get(i).getEst_validacion().equals("RV2")) {
+				sMovimientoCintasValidacionOperadorEnTurnoT1 += 1;
+			}
+			if (listaMovimientoDN.get(i).getEst_validacion().equals("RV3")) {
+				sMovimientoCintasValidacionOperadorAuditor += 1;
 			}
 		}
 	}
 
 	@Listen("onCreate = #zDashboard")
 	public void init() {
-		String tAbiertas = "", tRevision = "", tPendienteEjecucion = "", tPendienteActualizacion = "";
+		String tAbiertas = "", tRevision = "", tPendienteEjecucion = "", tPendienteActualizacion = "",
+				tMovimientoCintasValidacionOperadorEnTurnoActual = "",
+				tMovimientoCintasValidacionOperadorEnTurnoT1 = "", tMovimientoCintasValidacionOperadorAuditor = "";
 		if (sAbiertas == 0) {
 			tAbiertas = "* No existen solicitudes abiertas";
 		} else {
@@ -278,8 +309,29 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tPendienteActualizacion = "* " + sPendienteActualizacion + " solicitud(es) pendiente(s) de actualización";
 		}
-		Clients.showNotification(tAbiertas + ".<br/>" + tRevision + ".<br/>" + tPendienteEjecucion + ".<br/>"
-				+ tPendienteActualizacion + ".<br/>", "info", dSolicitudes, "after_start", 5000);
+		if (sMovimientoCintasValidacionOperadorEnTurnoActual == 0) {
+			tMovimientoCintasValidacionOperadorEnTurnoActual = "* No existen req/mov que validar en el turno actual";
+		} else {
+			tMovimientoCintasValidacionOperadorEnTurnoActual = "* " + sMovimientoCintasValidacionOperadorEnTurnoActual
+					+ " req/mov(s) en validación por turno actual";
+		}
+		if (sMovimientoCintasValidacionOperadorEnTurnoT1 == 0) {
+			tMovimientoCintasValidacionOperadorEnTurnoT1 = "* No existen req/mov que validar en el turno T1";
+		} else {
+			tMovimientoCintasValidacionOperadorEnTurnoT1 = "* " + sMovimientoCintasValidacionOperadorEnTurnoT1
+					+ " req/mov(s) en validación por turno T1";
+		}
+		if (sMovimientoCintasValidacionOperadorAuditor == 0) {
+			tMovimientoCintasValidacionOperadorAuditor = "* No existen req/mov que validar por auditoría";
+		} else {
+			tMovimientoCintasValidacionOperadorAuditor = "* " + sMovimientoCintasValidacionOperadorAuditor
+					+ " req/mov(s) en validación por auditoría";
+		}
+		Clients.showNotification("<b> ** Control de solicitudes ** </b>" + "<br/>" + tAbiertas + ".<br/>" + tRevision
+				+ ".<br/>" + tPendienteEjecucion + ".<br/>" + tPendienteActualizacion + ".<br/>"
+				+ "<b> ** Gestión de cintas ** </b>" + "<br/>" + tMovimientoCintasValidacionOperadorEnTurnoActual
+				+ ".<br/>" + tMovimientoCintasValidacionOperadorEnTurnoT1 + ".<br/>"
+				+ tMovimientoCintasValidacionOperadorAuditor + ".<br/>", "info", dSolicitudes, "after_start", 5000);
 	}
 
 	@Listen("onClick=#tDashboard")
@@ -756,7 +808,7 @@ public class dashboard extends SelectorComposer<Component> {
 						tab.setClosable(true);
 						tab.setSelected(true);
 						tab.setId("Tab:" + tcCintas.getId());
-						tab.setImage("/img/botones/ButtonDiners4.png");
+						tab.setImage("/img/botones/ButtonDiners5.png");
 						tTab.getTabs().appendChild(tab);
 						// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
 						Tabpanel tabpanel = new Tabpanel();

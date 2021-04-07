@@ -181,12 +181,10 @@ public class dao_movimiento {
 				bitacora.setDescripcion("SE REALIZA EL " + tipoDePedido + " DE "
 						+ listaMovimiento.get(i).getCan_afectada() + " ARTICULO(S) "
 						+ setearNombreEstadoArticulo(listaMovimiento.get(i).getId_estado()) + "(S) "
-						+ setearNombreArticulo(
-								listaMovimiento.get(i).getId_articulo(), listaMovimiento.get(i).getId_localidad())
-						+ " " + palabra + " LA UBICACION "
-						+ setearNombreUbicacion(listaMovimiento.get(i).getId_ubicacion(),
+						+ setearNombreArticulo(listaMovimiento.get(i).getId_articulo(),
 								listaMovimiento.get(i).getId_localidad())
-						+ " Y SE GESTIONO CON EL TICKET " + tck_listaMovimiento);
+						+ " " + palabra + " LA UBICACION " + setearNombreUbicacion(
+								listaMovimiento.get(i).getId_ubicacion(), listaMovimiento.get(i).getId_localidad()));
 				consulta.setString(8, bitacora.getDescripcion().toUpperCase());
 				consulta.setTimestamp(9, bitacora.getFec_inicio());
 				consulta.setTimestamp(10, bitacora.getFec_fin());
@@ -222,6 +220,18 @@ public class dao_movimiento {
 			id_empresa = listaUbicacion.get(0).getId_empresa();
 		}
 		return id_empresa;
+	}
+
+	public long obtenerIdTipoServicioAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_servicio = 0;
+		dao_bitacora dao = new dao_bitacora();
+		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
+		listaBitacora = dao.obtenerBitacoras(ticket, 7, id_tipo_tarea, "", "", id_dc, "", "", 0, "", 0);
+		if (listaBitacora.size() > 0) {
+			id_tipo_servicio = listaBitacora.get(0).getId_tipo_servicio();
+		}
+		return id_tipo_servicio;
 	}
 
 	public String setearNombreUbicacion(long id_ubicacion, long id_dc)
