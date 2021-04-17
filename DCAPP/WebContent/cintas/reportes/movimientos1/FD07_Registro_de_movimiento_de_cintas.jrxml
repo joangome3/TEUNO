@@ -65,25 +65,11 @@
 		else ''
 	end) as fec_cinta_actual,
 	smd.obs_movimiento,
-	replace(date_format(smd.fec_solicitud, '%d-%m-%Y %H:%i:%s'),
-	'00:00:00',
-	date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')) as hor_correo,
-	replace(date_format(smd.fec_respuesta, '%d-%m-%Y %H:%i:%s'),
-	'00:00:00',
-	date_format(from_unixtime(smd.hor_respuesta / 1000) , '%H:%i:%s')) as hor_respuesta,
+	STR_TO_DATE(replace(date_format(smd.fec_solicitud, '%d-%m-%Y %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000), '%H:%i:%s')), '%d-%m-%Y %H:%i:%s') as hor_correo,
+	STR_TO_DATE(replace(date_format(smd.fec_respuesta, '%d-%m-%Y %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_respuesta / 1000) , '%H:%i:%s')), '%d-%m-%Y %H:%i:%s') as hor_respuesta,
 	(case
-		when ((convert(date_format(from_unixtime(smd.hor_respuesta / 1000), '%i'),
-		int) - convert(date_format(from_unixtime(smd.hor_solicitud / 1000), '%i'),
-		int) >= 0)
-		and (convert(date_format(from_unixtime(smd.hor_respuesta / 1000), '%i'),
-		int) - convert(date_format(from_unixtime(smd.hor_solicitud / 1000), '%i'),
-		int) <= 15)
-		and (convert(date_format(smd.fec_respuesta, '%d'),
-		int) - convert(date_format(smd.fec_solicitud, '%d'),
-		int) = 0)
-		and (convert(date_format(from_unixtime(smd.hor_respuesta / 1000), '%H'),
-		int) - convert(date_format(from_unixtime(smd.hor_solicitud / 1000), '%H'),
-		int) = 0)) then 'DENTRO DEL SLA (15 minutos)'
+		when (TIMESTAMPDIFF(minute, STR_TO_DATE(replace(date_format(smd.fec_solicitud, '%d-%m-%Y %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000), '%H:%i:%s')), '%d-%m-%Y %H:%i:%s'), STR_TO_DATE(replace(date_format(smd.fec_respuesta, '%d-%m-%Y %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_respuesta / 1000) , '%H:%i:%s')), '%d-%m-%Y %H:%i:%s')) >= 0
+		and (TIMESTAMPDIFF(minute, STR_TO_DATE(replace(date_format(smd.fec_solicitud, '%d-%m-%Y %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000), '%H:%i:%s')), '%d-%m-%Y %H:%i:%s'), STR_TO_DATE(replace(date_format(smd.fec_respuesta, '%d-%m-%Y %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_respuesta / 1000) , '%H:%i:%s')), '%d-%m-%Y %H:%i:%s')) <= 15)) then 'DENTRO DEL SLA (15 minutos)'
 		else 'FUERA DEL SLA (15 minutos)'
 	end) as cumplimiento,
 	(CONCAT( FLOOR(hour(TIMEDIFF(convert(replace(date_format(smd.fec_solicitud, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')), datetime), convert(replace(date_format(smd.fec_ejecucion, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s')), datetime))) / 24), ' dias, ', mod(hour(TIMEDIFF(convert(replace(date_format(smd.fec_solicitud, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')), datetime), convert(replace(date_format(smd.fec_ejecucion, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s')), datetime) )), 24), ' horas, ', minute(TIMEDIFF(convert(replace(date_format(smd.fec_solicitud, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_solicitud / 1000) , '%H:%i:%s')), datetime), convert(replace(date_format(smd.fec_ejecucion, '%Y-%m-%d %H:%i:%s'), '00:00:00', date_format(from_unixtime(smd.hor_ejecucion / 1000) , '%H:%i:%s')), datetime) )), ' minutos')) as tiempo_ejecucion_solicitado,
@@ -195,10 +181,10 @@ where
 		<property name="com.jaspersoft.studio.field.label" value="obs_movimiento"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_movimiento_dn"/>
 	</field>
-	<field name="hor_correo" class="java.lang.String">
+	<field name="hor_correo" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="hor_correo"/>
 	</field>
-	<field name="hor_respuesta" class="java.lang.String">
+	<field name="hor_respuesta" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="hor_respuesta"/>
 	</field>
 	<field name="cumplimiento" class="java.lang.String">

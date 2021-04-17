@@ -121,7 +121,7 @@
 													<div
 														align="center">
 														<listbox
-															mold="paging" pageSize="5" id="lbxSolicitantes"
+															mold="paging" pageSize="10" id="lbxSolicitantes"
 															model="@{zNuevo$nuevo.obtenerSolicitantes}"
 															sizedByContent="false" width="100%">
 															<listhead

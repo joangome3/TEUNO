@@ -33,7 +33,7 @@
 	<parameter name="logo" class="java.lang.String"/>
 	<parameter name="empresa" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT d.id_ubicacion, d.pos_ubicacion as orden,  e.nom_tip_ubicacion, c.pos_ubicacion, a.id_articulo, a.cod_articulo, a.des_articulo, (CASE WHEN a.si_ing_fec_inicio_fin = "S" and a.es_fecha = "S" THEN (CASE WHEN a.fec_fin is not null THEN CONCAT('F.I: ', DATE_FORMAT(a.fec_inicio, '%d/%m/%Y'), ' ', 'F.F: ', DATE_FORMAT(a.fec_fin, '%d/%m/%Y')) ELSE DATE_FORMAT(a.fec_inicio, '%d/%m/%Y') END) WHEN a.si_ing_fec_inicio_fin = 'S' and a.es_fecha = 'N' THEN (select CONCAT (n.nom_tip_respaldo, ' / ',m.dia_respaldo) from sibod_respaldo m, sibod_tipo_respaldo n where m.id_respaldo = a.id_fec_respaldo and m.id_tip_respaldo = n.id_tip_respaldo LIMIT 1) ELSE '' END) as fec_inicio, (SELECT CONCAT(g.nom_tip_respaldo, ' / ', h.dia_respaldo) FROM sibod_tipo_respaldo g, sibod_respaldo h WHERE (g.id_tip_respaldo = h.id_tip_respaldo) and h.id_respaldo = a.tip_respaldo limit 1) as tip_respaldo, (SELECT j.nom_capacidad FROM sibod_capacidad j WHERE j.id_capacidad = a.capacidad limit 1) as capacidad, b.nom_categoria FROM sibod_articulo_dn a, sibod_categoria_dn b, sibod_ubicacion_dn c, sibod_relacion_articulo_ubicacion_dn d, sibod_tipo_ubicacion e, sibod_empresa f, sibod_localidad i WHERE (a.id_categoria = b.id_categoria) and (a.id_articulo = d.id_articulo) and (c.id_tip_ubicacion = e.id_tip_ubicacion) and (c.id_ubicacion = d.id_ubicacion) and (c.id_empresa = f.id_empresa) and (a.id_localidad = i.id_localidad) and f.id_empresa = $P{empresa}  and	(a.id_articulo = $P{articulo} or $P{articulo} is null)  and (a.id_categoria  = $P{categoria} or $P{categoria} is null)  and (c.id_ubicacion  = $P{ubicacion} or $P{ubicacion} is null) and a.id_localidad = $P{localidad} and substring(a.est_articulo, 1, 1) = 'A'
+		<![CDATA[SELECT d.id_ubicacion, d.pos_ubicacion as orden,  e.nom_tip_ubicacion, c.pos_ubicacion as posicion, a.id_articulo, a.cod_articulo, a.des_articulo, (CASE WHEN a.si_ing_fec_inicio_fin = "S" and a.es_fecha = "S" THEN (CASE WHEN a.fec_fin is not null THEN CONCAT('F.I: ', DATE_FORMAT(a.fec_inicio, '%d/%m/%Y'), ' ', 'F.F: ', DATE_FORMAT(a.fec_fin, '%d/%m/%Y')) ELSE DATE_FORMAT(a.fec_inicio, '%d/%m/%Y') END) WHEN a.si_ing_fec_inicio_fin = 'S' and a.es_fecha = 'N' THEN (select CONCAT (n.nom_tip_respaldo, ' / ',m.dia_respaldo) from sibod_respaldo m, sibod_tipo_respaldo n where m.id_respaldo = a.id_fec_respaldo and m.id_tip_respaldo = n.id_tip_respaldo LIMIT 1) ELSE '' END) as fec_inicio, (SELECT CONCAT(g.nom_tip_respaldo, ' / ', h.dia_respaldo) FROM sibod_tipo_respaldo g, sibod_respaldo h WHERE (g.id_tip_respaldo = h.id_tip_respaldo) and h.id_respaldo = a.tip_respaldo limit 1) as tip_respaldo, (SELECT j.nom_capacidad FROM sibod_capacidad j WHERE j.id_capacidad = a.capacidad limit 1) as capacidad, b.nom_categoria FROM sibod_articulo_dn a, sibod_categoria_dn b, sibod_ubicacion_dn c, sibod_relacion_articulo_ubicacion_dn d, sibod_tipo_ubicacion e, sibod_empresa f, sibod_localidad i WHERE (a.id_categoria = b.id_categoria) and (a.id_articulo = d.id_articulo) and (c.id_tip_ubicacion = e.id_tip_ubicacion) and (c.id_ubicacion = d.id_ubicacion) and (c.id_empresa = f.id_empresa) and (a.id_localidad = i.id_localidad) and f.id_empresa = $P{empresa}  and	(a.id_articulo = $P{articulo} or $P{articulo} is null)  and (a.id_categoria  = $P{categoria} or $P{categoria} is null)  and (c.id_ubicacion  = $P{ubicacion} or $P{ubicacion} is null) and a.id_localidad = $P{localidad} and substring(a.est_articulo, 1, 1) = 'A'
 	and substring(d.est_relacion, 1, 1) = 'A'  order by 1, 2]]>
 	</queryString>
 	<field name="id_ubicacion" class="java.lang.Long">
@@ -48,8 +48,8 @@
 		<property name="com.jaspersoft.studio.field.label" value="nom_tip_ubicacion"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_tipo_ubicacion"/>
 	</field>
-	<field name="pos_ubicacion" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value="pos_ubicacion"/>
+	<field name="posicion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="posicion"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sibod_ubicacion_dn"/>
 	</field>
 	<field name="id_articulo" class="java.lang.Long">
@@ -367,7 +367,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pos_ubicacion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="510" y="0" width="80" height="25" uuid="827b368a-8b3c-4c4d-9410-e37328af060c">

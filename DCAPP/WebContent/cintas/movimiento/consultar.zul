@@ -3,7 +3,7 @@
 <zk>
 	<div id="zConsultar" width="100%" vflex="1"
 		apply="bp.aplicaciones.controlador.cintas.consultar" align="center"
-		visible="true" style="overflow-y: scroll;">
+		visible="true" >
 		<div id="winList" class="m-div-c"></div>
 		<grid>
 			<columns>
@@ -36,7 +36,7 @@
 											<combobox
 												id="cmbTipoBusqueda" readonly="true" width="200px"
 												tooltiptext="Seleccione en que lista desea realizar la consulta."
-												style="font-weight: bold !important; color:black !important; font-style: italic !important;">
+												style="font-weight: bold !important; color:black !important; font-style: italic !important;" visible="false">
 												<comboitem
 													label="LISTA PRINCIPAL" value="LP">
 												</comboitem>
@@ -104,11 +104,9 @@
 				</row>
 			</rows>
 		</grid>
-		<div align="center">
-			<listbox mold="paging" pageSize="10" id="lbxMovimientos"
+		<listbox mold="paging" pageSize="25" id="lbxMovimientos"
 				span="true" sizedByContent="true" width="100%"
-				model="@{zConsultar$consultar.obtenerMovimientos}"
-				style="overflow-y: scroll;">
+				model="@{zConsultar$consultar.obtenerMovimientos}" vflex="true">
 				<listhead sizable="false" style="overflow: scroll;"
 					columnsgroup="true">
 					<listheader label="ID"
@@ -166,8 +164,7 @@
 					<listcell label="@{lista.getObs_movimiento}" />
 				</listitem>
 			</listbox>
-		</div>
-		<div align="center" style="height: calc(84%); overflow: scroll;" >
+		<div align="center" style="height: calc(84%); overflow: scroll;"  visible="false">
 			<hlayout vflex="max" hflex="min">
 				<groupbox hflex="1" closable="false">
 					<caption label="REGISTRO ANTES DE PEDIDO"></caption>

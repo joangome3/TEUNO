@@ -275,7 +275,7 @@ public class nuevo extends SelectorComposer<Component> {
 	public void cargarSolicitantes(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_solicitante dao = new dao_solicitante();
 		try {
-			listaSolicitante = dao.obtenerSolicitantes(criterio, 2, String.valueOf(id_dc), "1", 0);
+			listaSolicitante = dao.obtenerSolicitantes(criterio, 8, String.valueOf(id_dc), "1", 0);
 			binder.loadComponent(lbxSolicitantes);
 		} catch (SQLException e) {
 			Messagebox.show("Error al cargar los solicitantes. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),

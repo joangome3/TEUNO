@@ -217,7 +217,7 @@ public class nuevo extends SelectorComposer<Component> {
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaUsuario = consultasABaseDeDatos.cargarUsuarios(String.valueOf(id_dc), 4, 0);
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 2, String.valueOf(id_dc),
+		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
 				String.valueOf(id_opcion), 0);
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
 		listaEstado = consultasABaseDeDatos.cargarEstadosBitacora("", 1, String.valueOf(id_dc));
@@ -386,7 +386,7 @@ public class nuevo extends SelectorComposer<Component> {
 	@Listen("onOK=#txtBuscarSolicitante")
 	public void onOK$txtBuscarSolicitante()
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes(txtBuscarSolicitante.getText().toUpperCase(), 2,
+		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes(txtBuscarSolicitante.getText().toUpperCase(), 8,
 				String.valueOf(id_dc), String.valueOf(id_opcion), 0);
 		bdxSolicitantes.setText("");
 		lbxSolicitantes.clearSelection();
@@ -862,7 +862,7 @@ public class nuevo extends SelectorComposer<Component> {
 		bdxSolicitantes.setText("");
 		txtBuscarSolicitante.setText("");
 		lbxSolicitantes.clearSelection();
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 2, String.valueOf(id_dc),
+		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
 				String.valueOf(id_opcion), 0);
 		binder.loadComponent(lbxSolicitantes);
 		setearTicketInterno();

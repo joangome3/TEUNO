@@ -35,14 +35,20 @@ import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_7;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_8;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_9;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
+import bp.aplicaciones.mantenimientos.DAO.dao_rack;
 import bp.aplicaciones.mantenimientos.DAO.dao_relacion_campo;
 import bp.aplicaciones.mantenimientos.DAO.dao_respaldo;
 import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
 import bp.aplicaciones.mantenimientos.DAO.dao_solicitud;
 import bp.aplicaciones.mantenimientos.DAO.dao_tarea_periodica;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_aprobador;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_dispositivo;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_servicio;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_solicitud;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_tarea;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_trabajo;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.DAO.dao_turno;
 import bp.aplicaciones.mantenimientos.DAO.dao_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
@@ -64,14 +70,20 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_7;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_8;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_9;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
+import bp.aplicaciones.mantenimientos.modelo.modelo_rack;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_campo_mantenimiento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_respaldo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitante;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tarea_periodica;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_aprobador;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_dispositivo;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_tarea;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_trabajo;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
@@ -1018,6 +1030,131 @@ public class ConsultasABaseDeDatos {
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 		return id_tipo_servicio;
+	}
+
+	/*
+	 * Modulo de personal
+	 * 
+	 */
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los tipos de ingreso
+	 * 
+	 */
+
+	public List<modelo_tipo_ingreso> cargarTipoIngresos(String criterio)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_ingreso dao = new dao_tipo_ingreso();
+		List<modelo_tipo_ingreso> listaTipoIngreso = new ArrayList<modelo_tipo_ingreso>();
+		try {
+			listaTipoIngreso = dao.obtenerTipoIngresos(criterio);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaTipoIngreso;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los tipos de aprobador
+	 * 
+	 */
+
+	public List<modelo_tipo_aprobador> cargarTipoAprobadores(String criterio)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_aprobador dao = new dao_tipo_aprobador();
+		List<modelo_tipo_aprobador> listaTipoAprobador = new ArrayList<modelo_tipo_aprobador>();
+		try {
+			listaTipoAprobador = dao.obtenerTipoAprobadores(criterio);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaTipoAprobador;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los tipos de trabajo
+	 * 
+	 */
+
+	public List<modelo_tipo_trabajo> cargarTipoTrabajos(String criterio)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_trabajo dao = new dao_tipo_trabajo();
+		List<modelo_tipo_trabajo> listaTipoTrabajo = new ArrayList<modelo_tipo_trabajo>();
+		try {
+			listaTipoTrabajo = dao.obtenerTipoTrabajos(criterio);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaTipoTrabajo;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los tipos de dispositivo
+	 * 
+	 */
+
+	public List<modelo_tipo_dispositivo> cargarTipoDispositivos(String criterio)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_dispositivo dao = new dao_tipo_dispositivo();
+		List<modelo_tipo_dispositivo> listaTipoDispositivo = new ArrayList<modelo_tipo_dispositivo>();
+		try {
+			listaTipoDispositivo = dao.obtenerTipoDispositivos(criterio);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaTipoDispositivo;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los racks
+	 * 
+	 */
+
+	public List<modelo_rack> cargarRacks(String criterio, long id_localidad)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_rack dao = new dao_rack();
+		List<modelo_rack> listaRack = new ArrayList<modelo_rack>();
+		try {
+			listaRack = dao.obtenerRacks(criterio, id_localidad);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaRack;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los tipos de ubicaciones
+	 * 
+	 */
+
+	public List<modelo_tipo_ubicacion> cargarTipoUbicaciones(String criterio)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_ubicacion dao = new dao_tipo_ubicacion();
+		List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
+		try {
+			listaTipoUbicacion = dao.obtenerTipoUbicaciones(criterio);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaTipoUbicacion;
 	}
 
 }

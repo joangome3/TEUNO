@@ -258,7 +258,7 @@ public class revision3 extends SelectorComposer<Component> {
 
 	public void setearSolicitante(long id_solicitante)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 2, String.valueOf(id_dc),
+		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
 				String.valueOf(id_opcion), 0);
 		binder.loadComponent(lbxSolicitantes);
 		Iterator<modelo_solicitante> it = listaSolicitante.iterator();
@@ -286,7 +286,7 @@ public class revision3 extends SelectorComposer<Component> {
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 2, String.valueOf(id_dc),
+		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
 				String.valueOf(id_opcion), 0);
 		listaEmpresa = consultasABaseDeDatos.cargarEmpresas("", 2, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
 		listaTurno = consultasABaseDeDatos.cargarTurnos("A");
@@ -548,22 +548,27 @@ public class revision3 extends SelectorComposer<Component> {
 				|| tmxHoraSolicitud.getValue() == null || tmxHoraRespuesta.getValue() == null) {
 			return;
 		}
-		int dia_fecha_solicitud = fechas.obtenerEnteroDelDiaAPartirUnaFecha(dtxFechaSolicitud.getValue());
-		int dia_fecha_respuesta = fechas.obtenerEnteroDelDiaAPartirUnaFecha(dtxFechaRespuesta.getValue());
-		int hora_fecha_solicitud = fechas.obtenerEnteroDeLaHoraAPartirUnaFecha(tmxHoraSolicitud.getValue());
-		int hora_fecha_respuesta = fechas.obtenerEnteroDeLaHoraAPartirUnaFecha(tmxHoraRespuesta.getValue());
-		int minutos_fecha_solicitud = fechas.obtenerEnteroDeLosMinutosAPartirUnaFecha(tmxHoraSolicitud.getValue());
-		int minutos_fecha_respuesta = fechas.obtenerEnteroDeLosMinutosAPartirUnaFecha(tmxHoraRespuesta.getValue());
-		int diferencia_dias = dia_fecha_respuesta - dia_fecha_solicitud;
-		int diferencia_horas = hora_fecha_respuesta - hora_fecha_solicitud;
-		int diferencia_minutos = minutos_fecha_respuesta - minutos_fecha_solicitud;
-		if ((diferencia_minutos <= 15 && diferencia_minutos >= 0) && diferencia_dias == 0 && diferencia_horas == 0) {
+		Date fecha_1 = fechas.obtenerFechaArmada(dtxFechaSolicitud.getValue(), dtxFechaSolicitud.getValue().getMonth(),
+				dtxFechaSolicitud.getValue().getDay(), tmxHoraSolicitud.getValue().getHours(),
+				tmxHoraSolicitud.getValue().getMinutes(), 0);
+		Date fecha_2 = fechas.obtenerFechaArmada(dtxFechaRespuesta.getValue(), dtxFechaRespuesta.getValue().getMonth(),
+				dtxFechaRespuesta.getValue().getDay(), tmxHoraRespuesta.getValue().getHours(),
+				tmxHoraRespuesta.getValue().getMinutes(), 0);
+		float diferencia_minutos = obtenerDiferenciaEnMinutosYSegundos(fecha_1, fecha_2);
+		if ((diferencia_minutos <= 15.0 && diferencia_minutos >= 0.0)) {
 			lblRespuesta.setVisible(true);
 			lblRespuesta.setValue(informativos.getMensaje_informativo_63());
 		} else {
 			lblRespuesta.setVisible(true);
 			lblRespuesta.setValue(informativos.getMensaje_informativo_64());
 		}
+	}
+
+	private float obtenerDiferenciaEnMinutosYSegundos(Date fechaInicio, Date fechaTermino) {
+		float segundos = (float) ((fechaTermino.getTime() / 1000) - (fechaInicio.getTime() / 1000));
+		if (segundos < 60)
+			return segundos;
+		return segundos / 60;
 	}
 
 	@Listen("onBlur=#tmxHoraRespuesta")
