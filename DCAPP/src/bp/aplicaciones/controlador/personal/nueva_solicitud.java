@@ -33,8 +33,9 @@ import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
-import bp.aplicaciones.bitacora.DAO.dao_bitacora;
+import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_registra_turno;
+import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
@@ -46,6 +47,9 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
+import bp.aplicaciones.personal.DAO.dao_solicitud_personal;
+import bp.aplicaciones.personal.modelo.modelo_detalle_solicitud_personal;
+import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_11;
@@ -115,6 +119,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	Date fecha_inicio_turno_extendido = null;
 	Date fecha_fin_turno_extendido = null;
 
+	Date fecha_ingresa_formulario = null;
+
 	long id = 0;
 	long id_opcion = 5;
 	long id_turno = 0;
@@ -138,8 +144,12 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
 		obtenerId();
+		lbxSolicitantes.setEmptyMessage(informativos.getMensaje_informativo_2());
+		lbxProveedores1.setEmptyMessage(informativos.getMensaje_informativo_2());
+		lbxProveedores2.setEmptyMessage(informativos.getMensaje_informativo_2());
 		inicializarListas();
 		setearFechaActual();
+		setearFechaIngresaFormulario();
 		setearFechaHoraSolicitud();
 		setearFechaHoraRespuesta();
 		setearFechaHoraInicio();
@@ -219,7 +229,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	}
 
 	public void obtenerId() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_bitacora dao = new dao_bitacora();
+		dao_solicitud_personal dao = new dao_solicitud_personal();
 		try {
 			id = dao.obtenerNuevoId();
 			txtId.setText(String.valueOf(id));
@@ -230,6 +240,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	}
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
 		listaUsuario = consultasABaseDeDatos.cargarUsuarios(String.valueOf(id_dc), 4, 0);
 		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
 				String.valueOf(id_opcion), 0);
@@ -295,7 +306,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	public void setearFechaHoraSolicitud() {
 		Date d = null;
-		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), 0, 0, 0);
+		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), new Date().getHours(),
+				new Date().getMinutes(), 0);
 		dtxFechaSolicitud.setValue(d);
 	}
 
@@ -307,7 +319,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	public void setearFechaHoraInicio() {
 		Date d = null;
-		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), 0, 0, 0);
+		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), new Date().getHours(),
+				new Date().getMinutes(), 0);
 		dtxFechaInicio.setValue(d);
 	}
 
@@ -315,6 +328,13 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		Date d = null;
 		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), 0, 0, 0);
 		dtxFechaFin.setValue(d);
+	}
+
+	public void setearFechaIngresaFormulario() {
+		Date d = null;
+		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), new Date().getHours(),
+				new Date().getMinutes(), 0);
+		fecha_ingresa_formulario = d;
 	}
 
 	public void validarTurno() {
@@ -396,6 +416,29 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 			existen_tareas_vencidas = false;
 		}
 		return existen_tareas_vencidas;
+	}
+
+	public boolean validarSiExisteSolicitudPersonal(String ticket)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		boolean existe_solicitud = false;
+		int totalSolicitudes = consultasABaseDeDatos.validarSiExisteSolicitudPersonal(ticket);
+		if (totalSolicitudes > 0) {
+			existe_solicitud = true;
+		} else {
+			existe_solicitud = false;
+		}
+		return existe_solicitud;
+	}
+
+	public boolean validarSiTareaProgramadaExiste(String ticket_externo)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		boolean existe_tarea_programada = false;
+		if (consultasABaseDeDatos.validarSiTareaProgramadaExiste(ticket_externo, String.valueOf(1)) > 0) {
+			existe_tarea_programada = true;
+		} else {
+			existe_tarea_programada = false;
+		}
+		return existe_tarea_programada;
 	}
 
 	@Listen("onSelect=#cmbCliente")
@@ -671,6 +714,11 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
+		if (validarSiExisteSolicitudPersonal(txtTicket.getText().toUpperCase().trim()) == true) {
+			Messagebox.show(informativos.getMensaje_informativo_97().replace("?1", txtTicket.getText().trim()),
+					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
 		if (cmbTipoIngreso.getSelectedItem() == null) {
 			cmbTipoIngreso.setFocus(true);
 			cmbTipoIngreso.setErrorMessage(validaciones.getMensaje_validacion_33());
@@ -704,7 +752,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 				dtxFechaRespuesta.getValue().getMinutes(), 0);
 		if (d2.before(d1)) {
 			dtxFechaSolicitud.setFocus(true);
-			dtxFechaSolicitud.setErrorMessage(validaciones.getMensaje_validacion_10());
+			dtxFechaSolicitud.setErrorMessage(validaciones.getMensaje_validacion_26());
 			return;
 		}
 		if (dtxFechaInicio.getValue() == null) {
@@ -750,7 +798,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		}
 		if (lbxProveedores2.getItems().size() == 0) {
 			bdxProveedores.setFocus(true);
-			bdxProveedores.setErrorMessage(validaciones.getMensaje_validacion_33());
+			bdxProveedores.setErrorMessage(validaciones.getMensaje_validacion_34());
 			return;
 		}
 		Messagebox.show(mensaje, informativos.getMensaje_informativo_17(), Messagebox.OK | Messagebox.CANCEL,
@@ -758,9 +806,113 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
-
+							long secuencia1 = 0, secuencia2 = 0;
+							dao_solicitud_personal dao = new dao_solicitud_personal();
+							modelo_solicitud_personal solicitud = new modelo_solicitud_personal();
+							/* Se inicializa el objeto solicitud */
+							solicitud.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
+							solicitud.setTicket(txtTicket.getText().toUpperCase().trim());
+							solicitud.setId_tipo_ingreso(
+									Long.valueOf(cmbTipoIngreso.getSelectedItem().getValue().toString()));
+							solicitud.setId_tipo_aprobador(
+									Long.valueOf(cmbTipoAprobador.getSelectedItem().getValue().toString()));
+							solicitud.setId_solicitante(
+									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
+							solicitud.setFec_solicitud(fechas.obtenerTimestampDeDate(dtxFechaSolicitud.getValue()));
+							solicitud.setFec_respuesta(fechas.obtenerTimestampDeDate(dtxFechaRespuesta.getValue()));
+							solicitud.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
+							solicitud.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaFin.getValue()));
+							solicitud.setArea(bdxArea.getText().toUpperCase().trim());
+							solicitud.setRack(bdxRack.getText().toUpperCase().trim());
+							solicitud.setId_tipo_trabajo(
+									Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()));
+							solicitud.setDescripcion(txtDescripcion.getText().toUpperCase().trim());
+							solicitud.setId_localidad(id_dc);
+							solicitud.setEst_solicitud("NE");
+							solicitud.setUsu_ingresa(user);
+							solicitud.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							/* Se inicializa el objeto detalle solicitud */
+							List<modelo_detalle_solicitud_personal> detalle = new ArrayList<modelo_detalle_solicitud_personal>();
+							Listcell lCell;
+							Combobox cmBox;
+							for (int i = 0; i < lbxProveedores2.getItems().size(); i++) {
+								modelo_detalle_solicitud_personal dt = new modelo_detalle_solicitud_personal();
+								lCell = (Listcell) lbxProveedores2.getItemAtIndex(i).getChildren().get(0);
+								dt.setId_proveedor(Long.valueOf(lCell.getLabel().toString()));
+								lCell = (Listcell) lbxProveedores2.getItemAtIndex(i).getChildren().get(4);
+								cmBox = (Combobox) lCell.getChildren().get(0);
+								dt.setId_dispositivo(Long.valueOf(cmBox.getSelectedItem().getValue().toString()));
+								dt.setEst_detalle_solicitud("NE");
+								dt.setUsu_ingresa(user);
+								dt.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+								detalle.add(dt);
+							}
+							/* Se inicializa el objeto bitacora */
+							modelo_bitacora bitacora = new modelo_bitacora();
+							bitacora.setTicket_externo(txtTicket.getText().toUpperCase().trim());
+							bitacora.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
+							bitacora.setId_solicitante(
+									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
+							bitacora.setId_tipo_servicio(2);
+							bitacora.setId_tipo_tarea(7);
+							bitacora.setId_estado_bitacora(2);
+							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(fechas.obtenerFechaArmada(
+									fecha_ingresa_formulario, fecha_ingresa_formulario.getMonth(),
+									fecha_ingresa_formulario.getDate(), fecha_ingresa_formulario.getHours(),
+									fecha_ingresa_formulario.getMinutes(), 0)));
+							bitacora.setFec_fin(fechas
+									.obtenerTimestampDeDate(fechas.obtenerFechaArmada(new Date(), new Date().getMonth(),
+											new Date().getDate(), new Date().getHours(), new Date().getMinutes(), 0)));
+							bitacora.setCumplimiento("C");
+							bitacora.setDescripcion(
+									"SE REGISTRA LA SOLICITUD DE INGRESO DE PERSONAL, DONDE SE REALIZARÁ "
+											+ txtDescripcion.getText().trim() + ", EN LA(S) SIGUIENTE(S) ÁREA(S) "
+											+ bdxArea.getText() + ", y RACK(S) " + bdxRack.getText());
+							bitacora.setId_turno(id_turno);
+							bitacora.setId_localidad(id_dc);
+							bitacora.setEst_bitacora("AE");
+							bitacora.setUsu_ingresa(user);
+							bitacora.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							if (listaParametros1.size() > 0) {
+								secuencia1 = listaParametros1.get(0).getSecuencia_bitacora();
+							}
+							/* Se inicializa el objeto tarea proveedor */
+							modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
+							tarea_proveedor.setTicket_externo(txtTicket.getText().toUpperCase().trim());
+							tarea_proveedor
+									.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
+							tarea_proveedor.setId_solicitante(
+									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
+							tarea_proveedor.setId_tipo_servicio(2);
+							tarea_proveedor.setId_tipo_tarea(1);
+							tarea_proveedor.setId_estado_bitacora(1);
+							tarea_proveedor.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
+							tarea_proveedor.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaFin.getValue()));
+							tarea_proveedor.setCumplimiento("C");
+							tarea_proveedor.setDescripcion(
+									"SE REGISTRA LA SOLICITUD DE INGRESO DE PERSONAL, DONDE SE REALIZARÁ "
+											+ txtDescripcion.getText().trim() + ", EN LA(S) SIGUIENTE(S) ÁREA(S) "
+											+ bdxArea.getText() + ", y RACK(S) " + bdxRack.getText());
+							tarea_proveedor.setId_turno(id_turno);
+							tarea_proveedor.setId_localidad(id_dc);
+							tarea_proveedor.setEst_tarea_proveedor("AE");
+							tarea_proveedor.setUsu_ingresa(user);
+							tarea_proveedor.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							if (listaParametros1.size() > 0) {
+								secuencia2 = listaParametros1.get(0).getSecuencia_tarea_proveedor();
+							}
+							int bandera = 0;
+							if (validarSiTareaProgramadaExiste(txtTicket.getText().toUpperCase().trim()) == true) {
+								bandera = 0;
+							} else {
+								bandera = 1;
+							}
 							try {
-
+								dao.insertarSolicitudPersonal(solicitud, detalle, bitacora, secuencia1, tarea_proveedor,
+										secuencia2, bandera);
+								Messagebox.show(informativos.getMensaje_informativo_20(),
+										informativos.getMensaje_informativo_17(), Messagebox.OK,
+										Messagebox.EXCLAMATION);
 								limpiarCampos1();
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(),
@@ -795,12 +947,33 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	public void limpiarCampos1() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		obtenerId();
-
+		cmbCliente.setText("");
+		txtTicket.setText("");
+		cmbTipoIngreso.setText("");
+		cmbTipoAprobador.setText("");
+		bdxSolicitantes.setText("");
+		txtBuscarSolicitante.setText("");
+		lbxSolicitantes.clearSelection();
+		setearFechaIngresaFormulario();
+		setearFechaHoraSolicitud();
+		setearFechaHoraRespuesta();
+		setearFechaHoraInicio();
+		setearFechaHoraFin();
+		bdxArea.setText("");
+		bdxArea.setTooltiptext("");
+		bdxRack.setText("");
+		bdxRack.setTooltiptext("");
+		cmbTipoTrabajo.setText("");
+		txtDescripcion.setText("");
+		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
+		bdxProveedores.setText("");
+		txtBuscarProveedor.setText("");
+		lbxProveedores1.clearSelection();
+		borrarListaProveedores();
 	}
 
-	public void limpiarCampos2() throws ClassNotFoundException, FileNotFoundException, IOException {
-		obtenerId();
-
+	public void limpiarCampos2() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		limpiarCampos1();
 	}
 
 	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea)
@@ -814,6 +987,14 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 			existe_primero_apertura = false;
 		}
 		return existe_primero_apertura;
+	}
+
+	public void borrarListaProveedores() {
+		Listitem lItem;
+		for (int i = lbxProveedores2.getItemCount() - 1; i >= 0; i--) {
+			lItem = (Listitem) lbxProveedores2.getItemAtIndex(i);
+			lbxProveedores2.removeItemAt(lItem.getIndex());
+		}
 	}
 
 }

@@ -50,6 +50,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 
 @SuppressWarnings({ "serial", "deprecation" })
 public class consultar_solicitud extends SelectorComposer<Component> {
@@ -90,6 +91,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	List<modelo_turno> listaTurno = new ArrayList<modelo_turno>();
 	List<modelo_registra_turno> listaRegistroTurno = new ArrayList<modelo_registra_turno>();
 	List<modelo_parametros_generales_5> listaParametros5 = new ArrayList<modelo_parametros_generales_5>();
+	List<modelo_solicitud_personal> listaSolicitudPersonal = new ArrayList<modelo_solicitud_personal>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	Fechas fechas = new Fechas();
@@ -165,6 +167,10 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		return listaRegistroTurno;
 	}
 
+	public List<modelo_solicitud_personal> obtenerSolicitudes() {
+		return listaSolicitudPersonal;
+	}
+
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
 		listaCliente = consultasABaseDeDatos.cargarEmpresas("", 6, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
@@ -196,9 +202,9 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
-//		listaSolicitudPersonal = consultasABaseDeDatos.cargarTareasProveedores(criterio, 1, id_cliente, "", turno,
-//				id_dc, fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario, id_estado,
-//				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio,
+				fecha_fin, fecha_inicio, fecha_fin, id_dc,
+				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		binder.loadComponent(lbxSolicitudesPersonal);
 	}
 
