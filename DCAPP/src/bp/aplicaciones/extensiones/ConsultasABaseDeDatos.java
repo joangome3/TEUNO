@@ -89,8 +89,6 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
-import bp.aplicaciones.personal.DAO.dao_solicitud_personal;
-import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 import bp.aplicaciones.sibod.DAO.dao_movimiento;
 
 public class ConsultasABaseDeDatos {
@@ -1157,46 +1155,6 @@ public class ConsultasABaseDeDatos {
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 		return listaTipoUbicacion;
-	}
-
-	/*
-	 * Metodo que permite validar si existe ya creada una solicitud de personal
-	 * 
-	 */
-
-	public int validarSiExisteSolicitudPersonal(String ticket)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		dao_solicitud_personal dao = new dao_solicitud_personal();
-		int totalSolicitudes = 0;
-		try {
-			totalSolicitudes = dao.validarSiExisteSolicitudPersonal(ticket);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return totalSolicitudes;
-	}
-	
-	/*
-	 * *
-	 * 
-	 * Metodo que devuelve las solicitudes de personal
-	 * 
-	 */
-
-	public List<modelo_solicitud_personal> cargarSolicitudesPersonal(String criterio, int tipo, long id_cliente,
-			String fecha_solicitud_1, String fecha_solicitud_2, String fecha_inicio, String fecha_fin, long id_localidad,
-			int limite)
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitud_personal dao = new dao_solicitud_personal();
-		List<modelo_solicitud_personal> listaSolicitudPersonal = new ArrayList<modelo_solicitud_personal>();
-		try {
-			listaSolicitudPersonal = dao.obtenerSolicitudesPersonal(criterio, tipo, id_cliente, fecha_solicitud_1, fecha_solicitud_2, fecha_inicio, fecha_fin, id_localidad, limite);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return listaSolicitudPersonal;
 	}
 
 }
