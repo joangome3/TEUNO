@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -20,6 +21,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Messagebox;
@@ -38,6 +40,7 @@ import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_bitacora;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_tarea;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Informativos;
@@ -48,6 +51,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_11;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_12;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_9;
+import bp.aplicaciones.mantenimientos.modelo.modelo_rack;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitante;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
 
@@ -73,7 +77,11 @@ public class nuevo extends SelectorComposer<Component> {
 	@Wire
 	Listbox lbxSolicitantes;
 	@Wire
-	Bandbox bdxSolicitantes;
+	Bandbox bdxSolicitantes, bdxArea, bdxRack;
+	@Wire
+	Div winList;
+
+	Window window;
 
 	List<modelo_empresa> listaCliente = new ArrayList<modelo_empresa>();
 	List<modelo_solicitante> listaSolicitante = new ArrayList<modelo_solicitante>();
@@ -88,6 +96,8 @@ public class nuevo extends SelectorComposer<Component> {
 	List<modelo_turno> listaTurnos1 = new ArrayList<modelo_turno>();
 	List<modelo_turno> listaTurnos2 = new ArrayList<modelo_turno>();
 	List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
+	List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
+	List<modelo_rack> listaRack = new ArrayList<modelo_rack>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	Fechas fechas = new Fechas();
@@ -99,6 +109,8 @@ public class nuevo extends SelectorComposer<Component> {
 	Date fecha_actual = null;
 	Date fecha_inicio = null;
 	Date fecha_fin = null;
+
+	boolean ingresa_a_area_rack = false;
 
 	long id = 0;
 	long id_opcion = 3;
@@ -119,7 +131,7 @@ public class nuevo extends SelectorComposer<Component> {
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
 		lTicketInterno2.setValue(txtTicketInterno.getText().trim().length() + "/" + txtTicketInterno.getMaxlength());
-		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
+		txtDescripcion.setText("");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 		txtBuscarSolicitante.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
@@ -249,7 +261,7 @@ public class nuevo extends SelectorComposer<Component> {
 	}
 
 	public void setearDescripcion() {
-		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
+		txtDescripcion.setText("");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 	}
 
@@ -880,7 +892,7 @@ public class nuevo extends SelectorComposer<Component> {
 		}
 		cmbCumplimiento.setDisabled(true);
 		lTicketInterno2.setValue(txtTicketInterno.getText().trim().length() + "/" + txtTicketInterno.getMaxlength());
-		txtDescripcion.setText("PROVEEDOR: \nTAREA: \n¡REA DE TRABAJO: \nOTRO DETALLE: ");
+		txtDescripcion.setText("");
 		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 	}
 
@@ -964,6 +976,81 @@ public class nuevo extends SelectorComposer<Component> {
 			}
 		}
 		return existe_primero_apertura;
+	}
+
+	@Listen("onClick=#bdxArea")
+	public void onClick$bdxArea() throws Throwable {
+		if (ingresa_a_area_rack == false) {
+			ingresa_a_area_rack = true;
+			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
+			window = (Window) Executions.createComponents("/personal/solicitud/area.zul", null, null);
+			if (window instanceof Window) {
+				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+						ingresa_a_area_rack = false;
+						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
+								.getAttribute("lista_area");
+						if (listaTipoUbicacion.size() == 0) {
+							return;
+						}
+						setearAreas(listaTipoUbicacion);
+					}
+				});
+			}
+			window.setParent(winList);
+		}
+	}
+
+	@Listen("onClick=#bdxRack")
+	public void onClick$bdxRack() throws Throwable {
+		if (ingresa_a_area_rack == false) {
+			ingresa_a_area_rack = true;
+			Sessions.getCurrent().setAttribute("lista_rack", listaRack);
+			window = (Window) Executions.createComponents("/personal/solicitud/rack.zul", null, null);
+			if (window instanceof Window) {
+				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+						ingresa_a_area_rack = false;
+						listaRack = (List<modelo_rack>) Sessions.getCurrent().getAttribute("lista_rack");
+						if (listaRack.size() == 0) {
+							return;
+						}
+						setearRacks(listaRack);
+					}
+				});
+			}
+			window.setParent(winList);
+		}
+	}
+
+	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
+		String tipo_ubicacion = "";
+		for (int i = 0; i < listaTipoUbicacion.size(); i++) {
+			if (i == 0) {
+				tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+			} else {
+				tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+			}
+		}
+		bdxArea.setText(tipo_ubicacion);
+		bdxArea.setTooltiptext(tipo_ubicacion);
+	}
+
+	public void setearRacks(List<modelo_rack> listaRack) {
+		String rack = "";
+		for (int i = 0; i < listaRack.size(); i++) {
+			if (i == 0) {
+				rack = listaRack.get(i).getCoord_rack();
+			} else {
+				rack = rack + ", " + listaRack.get(i).getCoord_rack();
+			}
+		}
+		bdxRack.setText(rack);
+		bdxRack.setTooltiptext(rack);
 	}
 
 }

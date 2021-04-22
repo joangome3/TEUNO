@@ -34,8 +34,8 @@ public class Validaciones {
 	private String mensaje_validacion_30 = "Añada un articulo a la lista.";
 	private String mensaje_validacion_31 = "Ingrese el ticket.";
 	private String mensaje_validacion_32 = "Seleccione el tipo de solicitud.";
-	private String mensaje_validacion_33 = "Seleccione un campo.";
-	
+	private String mensaje_validacion_33 = "Seleccione un item.";
+	private String mensaje_validacion_34 = "Añada un proveedor a la lista.";
 
 	public String getMensaje_validacion_1() {
 		return mensaje_validacion_1;
@@ -128,45 +128,49 @@ public class Validaciones {
 	public String getMensaje_validacion_23() {
 		return mensaje_validacion_23;
 	}
-	
+
 	public String getMensaje_validacion_24() {
 		return mensaje_validacion_24;
 	}
-	
+
 	public String getMensaje_validacion_25() {
 		return mensaje_validacion_25;
 	}
-	
+
 	public String getMensaje_validacion_26() {
 		return mensaje_validacion_26;
 	}
-	
+
 	public String getMensaje_validacion_27() {
 		return mensaje_validacion_27;
 	}
-	
+
 	public String getMensaje_validacion_28() {
 		return mensaje_validacion_28;
 	}
-	
+
 	public String getMensaje_validacion_29() {
 		return mensaje_validacion_29;
 	}
-	
+
 	public String getMensaje_validacion_30() {
 		return mensaje_validacion_30;
 	}
-	
+
 	public String getMensaje_validacion_31() {
 		return mensaje_validacion_31;
 	}
-	
+
 	public String getMensaje_validacion_32() {
 		return mensaje_validacion_32;
 	}
-	
+
 	public String getMensaje_validacion_33() {
 		return mensaje_validacion_33;
+	}
+
+	public String getMensaje_validacion_34() {
+		return mensaje_validacion_34;
 	}
 
 }

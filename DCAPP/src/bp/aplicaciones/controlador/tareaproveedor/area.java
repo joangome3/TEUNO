@@ -1,4 +1,4 @@
-package bp.aplicaciones.controlador.personal;
+package bp.aplicaciones.controlador.tareaproveedor;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

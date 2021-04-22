@@ -155,6 +155,12 @@
 				<listheader label="DESCRIPCION" align="center"
 					style="text-align: center !important;" width="200px">
 				</listheader>
+				<listheader label="AREA" align="center"
+					style="text-align: center !important;" width="200px">
+				</listheader>
+				<listheader label="RACK" align="center"
+					style="text-align: center !important;" width="200px">
+				</listheader>
 				<listheader label="FECHA INICIO" align="center"
 					style="text-align: center !important;">
 				</listheader>
@@ -194,6 +200,12 @@
 					image="@{lista.mostrarImagenSolicitante}"
 					style="@{lista.estiloImagenSolicitante}" />
 				<listcell label="@{lista.getDescripcion}" />
+				<listcell label="@{lista.mostrarArea}"
+					image="@{lista.mostrarImagenArea}"
+					style="@{lista.estiloImagenArea}" />
+				<listcell label="@{lista.mostrarRack}"
+					image="@{lista.mostrarImagenRack}"
+					style="@{lista.estiloImagenRack}" />
 				<listcell label="@{lista.mostrarFechaInicio}" />
 				<listcell label="@{lista.mostrarFechaFin}" />
 				<listcell label="@{lista.getNom_estado_bitacora}"

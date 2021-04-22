@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import java.util.Iterator;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
@@ -44,7 +44,7 @@ public class rack extends SelectorComposer<Component> {
 	@Wire
 	Window zRack;
 	@Wire
-	Button btnGrabar, btnCancelar;
+	Button btnGrabar, btnCancelar, btnAnadir;
 	@Wire
 	Listbox lbxRack1, lbxRack2;
 	@Wire
@@ -151,8 +151,34 @@ public class rack extends SelectorComposer<Component> {
 		if (lbxRack1.getSelectedItem() == null) {
 			return;
 		}
-		int indice = lbxRack1.getSelectedIndex();
-		bdxRack.setText(listaRack1.get(indice).getCoord_rack());
+		if (lbxRack1.getSelectedItems().size() > 1) {
+			bdxRack.setText("");
+			setearRacks(lbxRack1);
+		} else {
+			int indice = lbxRack1.getSelectedIndex();
+			bdxRack.setText("");
+			bdxRack.setText(listaRack1.get(indice).getCoord_rack());
+		}
+	}
+
+	public void setearRacks(Listbox lbxRacks) {
+		Listitem lItem;
+		Listcell lCell;
+		String rack = "";
+		int i = 0;
+		Iterator<Listitem> it = lbxRacks.getSelectedItems().iterator();
+		while (it.hasNext()) {
+			lItem = it.next();
+			lCell = (Listcell) lItem.getChildren().get(1);
+			if (i == 0) {
+				rack = lCell.getLabel();
+			} else {
+				rack = rack + ", " + lCell.getLabel();
+			}
+			i++;
+		}
+		bdxRack.setText(rack);
+		bdxRack.setTooltiptext(rack);
 	}
 
 	@Listen("onOK=#txtBuscarRack")
@@ -166,7 +192,13 @@ public class rack extends SelectorComposer<Component> {
 	@Listen("onDoubleClick=#lbxRack1")
 	public void onDoubleClick$lbxRack1()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		onClick$btnAnadir();
+		// onClick$btnAnadir();
+	}
+
+	@Listen("onClick=#btnAnadir")
+	public void onClick$btnAnadir()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		anadirItems();
 	}
 
 	public boolean validarItemEnLista(long id_rack) {
@@ -186,62 +218,62 @@ public class rack extends SelectorComposer<Component> {
 		return existe;
 	}
 
-	public void onClick$btnAnadir()
-			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+	public void anadirItems() throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		if (lbxRack1.getSelectedItem() == null) {
 			return;
 		}
-		int indice = lbxRack1.getSelectedIndex();
-		if (validarItemEnLista(listaRack1.get(indice).getId_rack()) == true) {
-			Messagebox.show("El area ya se encuentra en la lista.", ".:: Nueva solicitud ::.", Messagebox.OK,
-					Messagebox.EXCLAMATION);
-			return;
-		}
-		listaRack2.add(listaRack1.get(indice));
-		Listitem lItem;
-		Listcell lCell;
-		Button btnEliminar;
-		lItem = new Listitem();
-		/* ID */
-		lCell = new Listcell();
-		lCell.setLabel(String.valueOf(listaRack1.get(indice).getId_rack()));
-		lCell.setStyle("text-align: center !important;");
-		lItem.appendChild(lCell);
-		/* COORDENADA */
-		lCell = new Listcell();
-		lCell.setLabel(listaRack1.get(indice).getCoord_rack());
-		lCell.setStyle("text-align: center !important;");
-		lItem.appendChild(lCell);
-		/* CLIENTE */
-		lCell = new Listcell();
-		lCell.setLabel(listaRack1.get(indice).getNom_cliente());
-		lItem.appendChild(lCell);
-		/* ACCION */
-		lCell = new Listcell();
-		btnEliminar = new Button();
-		btnEliminar.setImage("/img/botones/ButtonClose.png");
-		btnEliminar.setTooltiptext("Eliminar");
-		btnEliminar.setAutodisable("self");
-		btnEliminar.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
-			public void onEvent(Event event) throws Exception {
-				Listitem lItem;
-				Listcell lCell;
-				lItem = (Listitem) btnEliminar.getParent().getParent();
-				lCell = (Listcell) lItem.getChildren().get(0);
-				lbxRack2.removeItemAt(lItem.getIndex());
-				for (int i = 0; i < listaRack2.size(); i++) {
-					if (listaRack2.get(i).getId_rack() == Long.valueOf(lCell.getLabel().toString())) {
-						listaRack2.remove(i);
-						i = listaRack2.size() + 1;
+		Iterator<Listitem> it = lbxRack1.getSelectedItems().iterator();
+		while (it.hasNext()) {
+			Listitem lItem;
+			Listcell lCell;
+			lItem = it.next();
+			int indice = lItem.getIndex();
+			if (validarItemEnLista(listaRack1.get(indice).getId_rack()) == false) {
+				listaRack2.add(listaRack1.get(indice));
+				Button btnEliminar;
+				lItem = new Listitem();
+				/* ID */
+				lCell = new Listcell();
+				lCell.setLabel(String.valueOf(listaRack1.get(indice).getId_rack()));
+				lCell.setStyle("text-align: center !important;");
+				lItem.appendChild(lCell);
+				/* COORDENADA */
+				lCell = new Listcell();
+				lCell.setLabel(listaRack1.get(indice).getCoord_rack());
+				lCell.setStyle("text-align: center !important;");
+				lItem.appendChild(lCell);
+				/* CLIENTE */
+				lCell = new Listcell();
+				lCell.setLabel(listaRack1.get(indice).getNom_cliente());
+				lItem.appendChild(lCell);
+				/* ACCION */
+				lCell = new Listcell();
+				btnEliminar = new Button();
+				btnEliminar.setImage("/img/botones/ButtonClose.png");
+				btnEliminar.setTooltiptext("Eliminar");
+				btnEliminar.setAutodisable("self");
+				btnEliminar.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+					public void onEvent(Event event) throws Exception {
+						Listitem lItem;
+						Listcell lCell;
+						lItem = (Listitem) btnEliminar.getParent().getParent();
+						lCell = (Listcell) lItem.getChildren().get(0);
+						lbxRack2.removeItemAt(lItem.getIndex());
+						for (int i = 0; i < listaRack2.size(); i++) {
+							if (listaRack2.get(i).getId_rack() == Long.valueOf(lCell.getLabel().toString())) {
+								listaRack2.remove(i);
+								i = listaRack2.size() + 1;
+							}
+						}
 					}
-				}
+				});
+				lCell.appendChild(btnEliminar);
+				lCell.setStyle("text-align: center !important;");
+				lItem.appendChild(lCell);
+				/* ANADIR ITEM A LISTBOX */
+				lbxRack2.appendChild(lItem);
 			}
-		});
-		lCell.appendChild(btnEliminar);
-		lCell.setStyle("text-align: center !important;");
-		lItem.appendChild(lCell);
-		/* ANADIR ITEM A LISTBOX */
-		lbxRack2.appendChild(lItem);
+		}
 		/* LIMPIAR CAMPOS */
 		lbxRack1.clearSelection();
 		bdxRack.setText("");

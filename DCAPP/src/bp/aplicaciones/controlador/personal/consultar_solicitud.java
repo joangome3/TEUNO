@@ -3,17 +3,12 @@ package bp.aplicaciones.controlador.personal;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -24,32 +19,34 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Center;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Include;
 
-import bp.aplicaciones.bitacora.DAO.dao_tarea_proveedor;
 import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_registra_turno;
-import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
-import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
-import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
-import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 
 @SuppressWarnings({ "serial", "deprecation" })
 public class consultar_solicitud extends SelectorComposer<Component> {
@@ -90,6 +87,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	List<modelo_turno> listaTurno = new ArrayList<modelo_turno>();
 	List<modelo_registra_turno> listaRegistroTurno = new ArrayList<modelo_registra_turno>();
 	List<modelo_parametros_generales_5> listaParametros5 = new ArrayList<modelo_parametros_generales_5>();
+	List<modelo_solicitud_personal> listaSolicitudPersonal = new ArrayList<modelo_solicitud_personal>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	Fechas fechas = new Fechas();
@@ -165,6 +163,10 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		return listaRegistroTurno;
 	}
 
+	public List<modelo_solicitud_personal> obtenerSolicitudes() {
+		return listaSolicitudPersonal;
+	}
+
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
 		listaCliente = consultasABaseDeDatos.cargarEmpresas("", 6, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
@@ -178,17 +180,12 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
 		String criterio = txtBuscar.getText();
-		String turno = "";
 		long id_cliente = 0;
-		long id_estado = 1;
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
 		}
 		if (cmbTurno.getSelectedItem() != null) {
 			turno = cmbTurno.getSelectedItem().getValue().toString();
-		}
-		if (cmbEstado.getSelectedItem() != null) {
-			id_estado = Long.valueOf(cmbEstado.getSelectedItem().getValue().toString());
 		}
 		if (dtxFechaInicio.getValue() != null) {
 			fecha_inicio = fechas.obtenerFechaFormateada(dtxFechaInicio.getValue(), "yyyy-MM-dd HH:mm:ss");
@@ -196,9 +193,9 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
-//		listaSolicitudPersonal = consultasABaseDeDatos.cargarTareasProveedores(criterio, 1, id_cliente, "", turno,
-//				id_dc, fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario, id_estado,
-//				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio,
+				fecha_fin, fecha_inicio, fecha_fin, id_dc,
+				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		binder.loadComponent(lbxSolicitudesPersonal);
 	}
 
@@ -323,77 +320,29 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	public void setearFechaInicio() {
 		Date fechaActual = new Date();
 		Date primerDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth(), 1);
-		LocalDateTime localDateTime = null;
-		LocalDate localDate = primerDiaMes.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		int year = localDate.getYear();
-		localDateTime = LocalDateTime.of(year, 1, 1, 0, 0);
-		Date d = null;
-		d = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		dtxFechaInicio.setValue(d);
+		dtxFechaInicio.setValue(primerDiaMes);
 	}
 
 	public void setearFechaFin() {
 		Date fechaActual = new Date();
-		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0);
-		LocalDateTime localDateTime = null;
-		LocalDate localDate = ultimoDiaMes.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		int year = localDate.getYear();
-		localDateTime = LocalDateTime.of(year, 12, 31, 23, 59);
-		Date d = null;
-		d = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		dtxFechaFin.setValue(d);
+		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0, 23, 59, 0);
+		dtxFechaFin.setValue(ultimoDiaMes);
 	}
 
-	public void buscarSolicitudesPersonal(String criterio, int tipo, long id_cliente, String fecha, String turno,
-			String fecha_inicio, String fecha_fin, long id_estado)
+	public void buscarSolicitudesPersonal(String criterio, int tipo, long id_cliente, String fecha_solicitud_i,
+			String fecha_solicitud_f, String fecha_inicio, String fecha_fin, long id_dc)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
-//		if (txtBuscar.getText().length() <= 0) {
-//			listaSolicitudPersonal = consultasABaseDeDatos.cargarTareasProveedores(criterio, tipo, id_cliente, fecha,
-//					turno, id_dc, fecha_inicio, fecha_fin, id_estado,
-//					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
-//		}
-//		if (!txtBuscar.getValue().equals("")) {
-//			listaSolicitudPersonal = consultasABaseDeDatos.cargarTareasProveedores(criterio, tipo, id_cliente, fecha,
-//					turno, id_dc, fecha_inicio, fecha_fin, id_estado,
-//					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
-//		}
+		if (txtBuscar.getText().length() <= 0) {
+			listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, tipo, id_cliente,
+					fecha_solicitud_i, fecha_solicitud_f, fecha_inicio, fecha_fin, id_dc,
+					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		}
+		if (!txtBuscar.getValue().equals("")) {
+			listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, tipo, id_cliente,
+					fecha_solicitud_i, fecha_solicitud_f, fecha_inicio, fecha_fin, id_dc,
+					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		}
 		binder.loadComponent(lbxSolicitudesPersonal);
-	}
-
-	@Listen("onClick=#mModificar")
-	public void onClickmModificar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		onDoubleClicklbxSolicitudesPersonal();
-	}
-
-	@Listen("onDoubleClick=#lbxSolicitudesPersonal")
-	public void onDoubleClicklbxSolicitudesPersonal()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
-			return;
-		}
-		if (ingresa_a_modificar == false) {
-			ingresa_a_modificar = true;
-			if (lbxSolicitudesPersonal.getSelectedItems().size() > 1) {
-				ingresa_a_modificar = false;
-				Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
-						Messagebox.OK, Messagebox.EXCLAMATION);
-				return;
-			}
-			int indice = lbxSolicitudesPersonal.getSelectedIndex();
-			// Sessions.getCurrent().setAttribute("tarea_proveedor",
-			// listaSolicitudPersonal.get(indice));
-			window = (Window) Executions.createComponents("/bitacora/tarea_proveedor/modificar.zul", null, null);
-			if (window instanceof Window) {
-				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-					@Override
-					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-						ingresa_a_modificar = false;
-						consultarSolicitudesPersonal();
-					}
-				});
-			}
-			window.setParent(winList);
-		}
 	}
 
 	@Listen("onClick=#btnRefrescar")
@@ -435,12 +384,8 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		String fecha_inicio = "", fecha_fin = "";
 		String criterio = txtBuscar.getText();
 		long id_cliente = 0;
-		long id_estado = 1;
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
-		}
-		if (cmbEstado.getSelectedItem() != null) {
-			id_estado = Long.valueOf(cmbEstado.getSelectedItem().getValue().toString());
 		}
 		if (dtxFechaInicio.getValue() != null) {
 			fecha_inicio = fechas.obtenerFechaFormateada(dtxFechaInicio.getValue(), "yyyy-MM-dd HH:mm:ss");
@@ -448,260 +393,12 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
-		buscarSolicitudesPersonal(criterio, 1, id_cliente, "", "", fecha_inicio, fecha_fin, id_estado);
+		buscarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio, fecha_fin, "", "", id_dc);
 	}
 
 	@Listen("onClick=#mCerrar")
 	public void onClickmCerrar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		onClickbtnActualizarEstado();
-	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Listen("onClick=#btnActualizarEstado")
-	public void onClickbtnActualizarEstado()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
-			Messagebox.show(informativos.getMensaje_informativo_3(), informativos.getMensaje_informativo_24(),
-					Messagebox.OK, Messagebox.INFORMATION);
-			return;
-		}
-		List<modelo_tarea_proveedor> _listaSolicitudPersonal;
-		_listaSolicitudPersonal = actualizarEstadoConPermiso();
-		if (cumple_condicion_modificar == false) {
-			Messagebox.show(informativos.getMensaje_informativo_29(), informativos.getMensaje_informativo_24(),
-					Messagebox.OK, Messagebox.EXCLAMATION);
-			return;
-		}
-		if (_listaSolicitudPersonal.size() == 0 && cumple_condicion_modificar == true) {
-			Messagebox.show(informativos.getMensaje_informativo_28(), informativos.getMensaje_informativo_24(),
-					Messagebox.OK, Messagebox.INFORMATION);
-			return;
-		}
-		Messagebox.show(informativos.getMensaje_informativo_16(), informativos.getMensaje_informativo_24(),
-				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
-					@Override
-					public void onEvent(Event event) throws Exception {
-						if (event.getName().equals("onOK")) {
-							dao_tarea_proveedor dao = new dao_tarea_proveedor();
-							try {
-								// dao.cambiarEstadoSolicitudesPersonalMasivo(_listaSolicitudPersonal);
-								Messagebox.show(informativos.getMensaje_informativo_20(),
-										informativos.getMensaje_informativo_24(), Messagebox.OK,
-										Messagebox.EXCLAMATION);
-								recargarlistaSolicitudPersonalDespuesActualizar();
-							} catch (Exception e) {
-								Messagebox.show(error.getMensaje_error_4(), informativos.getMensaje_informativo_24(),
-										Messagebox.OK, Messagebox.ERROR);
-							}
-						} else {
-							binder.loadComponent(lbxSolicitudesPersonal);
-						}
-					}
-				});
-	}
-
-	@Listen("onClick=#mEliminar")
-	public void onClickmEliminar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		onClickbtnEliminarRegistros();
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Listen("onClick=#btnEliminarRegistros")
-	public void onClickbtnEliminarRegistros()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
-			Messagebox.show(informativos.getMensaje_informativo_3(), informativos.getMensaje_informativo_27(),
-					Messagebox.OK, Messagebox.INFORMATION);
-			return;
-		}
-		List<modelo_tarea_proveedor> _listaSolicitudPersonal;
-		_listaSolicitudPersonal = eliminarRegistroConPermiso();
-		if (cumple_condicion_eliminar == false) {
-			Messagebox.show(informativos.getMensaje_informativo_31(), informativos.getMensaje_informativo_27(),
-					Messagebox.OK, Messagebox.EXCLAMATION);
-			return;
-		}
-		if (_listaSolicitudPersonal.size() == 0 && cumple_condicion_eliminar == true) {
-			Messagebox.show(informativos.getMensaje_informativo_30(), informativos.getMensaje_informativo_27(),
-					Messagebox.OK, Messagebox.INFORMATION);
-			return;
-		}
-		boolean existe_tarea_en_log_eventos = false;
-		Iterator<modelo_tarea_proveedor> it = _listaSolicitudPersonal.iterator();
-		while (it.hasNext()) {
-			modelo_tarea_proveedor tarea_proveedor = it.next();
-			if (validarSiTareaExiste(tarea_proveedor.getTicket_externo()) == true) {
-				existe_tarea_en_log_eventos = true;
-				break;
-			}
-		}
-		if (existe_tarea_en_log_eventos == true) {
-			Messagebox.show(informativos.getMensaje_informativo_62(), informativos.getMensaje_informativo_27(),
-					Messagebox.OK, Messagebox.INFORMATION);
-			return;
-		}
-		Messagebox.show(informativos.getMensaje_informativo_16(), informativos.getMensaje_informativo_27(),
-				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
-					@Override
-					public void onEvent(Event event) throws Exception {
-						if (event.getName().equals("onOK")) {
-							dao_tarea_proveedor dao = new dao_tarea_proveedor();
-							try {
-								dao.eliminarTareasProgranadasMasivo(_listaSolicitudPersonal);
-								Messagebox.show(informativos.getMensaje_informativo_59(),
-										informativos.getMensaje_informativo_27(), Messagebox.OK,
-										Messagebox.EXCLAMATION);
-								recargarlistaSolicitudPersonalDespuesEliminar();
-							} catch (Exception e) {
-								Messagebox.show(error.getMensaje_error_4(), informativos.getMensaje_informativo_27(),
-										Messagebox.OK, Messagebox.ERROR);
-							}
-						}
-					}
-				});
-	}
-
-	public boolean consultarPermisoUsuario() {
-		boolean tiene_permiso = false;
-		Iterator<modelo_parametros_generales_5> it = listaParametros5.iterator();
-		while (it.hasNext()) {
-			modelo_parametros_generales_5 modelo = it.next();
-			if (modelo.getId_usuario() == id_user) {
-				tiene_permiso = true;
-				break;
-			}
-		}
-		return tiene_permiso;
-	}
-
-	public boolean consultarPermisoServicio(long id_tipo_servicio)
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		boolean tiene_permiso = false;
-		List<modelo_parametros_generales_10> listaParametros = new ArrayList<modelo_parametros_generales_10>();
-		listaParametros = consultasABaseDeDatos.cargarParametros10(String.valueOf(id_opcion),
-				String.valueOf(id_tipo_servicio), String.valueOf(id_dc), 1);
-		Iterator<modelo_parametros_generales_10> it = listaParametros.iterator();
-		while (it.hasNext()) {
-			modelo_parametros_generales_10 modelo = it.next();
-			if (modelo.getId_tipo_servicio() == id_tipo_servicio) {
-				if (modelo.getSe_puede_eliminar().equals("S")) {
-					tiene_permiso = true;
-				} else {
-					tiene_permiso = false;
-				}
-				break;
-			}
-		}
-		return tiene_permiso;
-	}
-
-	public List<modelo_tarea_proveedor> actualizarEstadoSinPermiso() {
-		List<modelo_tarea_proveedor> _listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-		Iterator<Listitem> it = lbxSolicitudesPersonal.getSelectedItems().iterator();
-		cumple_condicion_modificar = false;
-//		while (it.hasNext()) {
-//			modelo_tarea_proveedor registro = new modelo_tarea_proveedor();
-//			Listitem item = it.next();
-//			int indice = item.getIndex();
-//			Date d1 = listaSolicitudPersonal.get(indice).getFec_inicio();
-//			Date d2 = listaSolicitudPersonal.get(indice).getFec_fin();
-//			if ((fecha_inicio.before(d1) || fecha_inicio.equals(d1)) && (d1.before(d2) || d1.equals(d2))
-//					&& (d2.before(fecha_fin) || d2.equals(fecha_fin))) {
-//				registro = listaSolicitudPersonal.get(indice);
-//				if (registro.getId_estado_bitacora() == 1) {
-//					modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
-//					tarea_proveedor = registro.clone();
-//					tarea_proveedor.setId_estado_bitacora(2);
-//					tarea_proveedor.setUsu_modifica(user);
-//					tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
-//					_listaSolicitudPersonal.add(tarea_proveedor);
-//				}
-//				cumple_condicion_modificar = true;
-//			} else {
-//				_listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-//				cumple_condicion_modificar = false;
-//				break;
-//			}
-//		}
-		return _listaSolicitudPersonal;
-	}
-
-	public List<modelo_tarea_proveedor> actualizarEstadoConPermiso() {
-		List<modelo_tarea_proveedor> _listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-		Iterator<Listitem> it = lbxSolicitudesPersonal.getSelectedItems().iterator();
-		cumple_condicion_modificar = false;
-//		while (it.hasNext()) {
-//			modelo_tarea_proveedor registro = new modelo_tarea_proveedor();
-//			Listitem item = it.next();
-//			int indice = item.getIndex();
-//			registro = listaSolicitudPersonal.get(indice);
-//			if (registro.getId_estado_bitacora() == 1) {
-//				modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
-//				tarea_proveedor = registro.clone();
-//				tarea_proveedor.setId_estado_bitacora(2);
-//				tarea_proveedor.setUsu_modifica(user);
-//				tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
-//				_listaSolicitudPersonal.add(tarea_proveedor);
-//			}
-//			cumple_condicion_modificar = true;
-//		}
-		return _listaSolicitudPersonal;
-	}
-
-	public List<modelo_tarea_proveedor> eliminarRegistroSinPermiso()
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		List<modelo_tarea_proveedor> _listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-		Iterator<Listitem> it = lbxSolicitudesPersonal.getSelectedItems().iterator();
-		cumple_condicion_eliminar = false;
-//		while (it.hasNext()) {
-//			modelo_tarea_proveedor registro = new modelo_tarea_proveedor();
-//			Listitem item = it.next();
-//			int indice = item.getIndex();
-//			Date d1 = listaSolicitudPersonal.get(indice).getFec_inicio();
-//			Date d2 = listaSolicitudPersonal.get(indice).getFec_fin();
-//			if ((fecha_inicio.before(d1) || fecha_inicio.equals(d1)) && (d1.before(d2) || d1.equals(d2))
-//					&& (d2.before(fecha_fin) || d2.equals(fecha_fin))) {
-//				registro = listaSolicitudPersonal.get(indice);
-//				if (consultarPermisoServicio(registro.getId_tipo_servicio()) == true) {
-//					_listaSolicitudPersonal.add(registro);
-//				} else {
-//					_listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-//					cumple_condicion_eliminar = true;
-//					break;
-//				}
-//				cumple_condicion_eliminar = true;
-//			} else {
-//				_listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-//				cumple_condicion_eliminar = false;
-//				break;
-//			}
-//		}
-		return _listaSolicitudPersonal;
-	}
-
-	public List<modelo_tarea_proveedor> eliminarRegistroConPermiso() {
-		List<modelo_tarea_proveedor> _listaSolicitudPersonal = new ArrayList<modelo_tarea_proveedor>();
-		Iterator<Listitem> it = lbxSolicitudesPersonal.getSelectedItems().iterator();
-		cumple_condicion_eliminar = false;
-//		while (it.hasNext()) {
-//			modelo_tarea_proveedor registro = new modelo_tarea_proveedor();
-//			Listitem item = it.next();
-//			int indice = item.getIndex();
-//			registro = listaSolicitudPersonal.get(indice);
-//			_listaSolicitudPersonal.add(registro);
-//			cumple_condicion_eliminar = true;
-//		}
-		return _listaSolicitudPersonal;
-	}
-
-	public void recargarlistaSolicitudPersonalDespuesActualizar()
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		consultarSolicitudesPersonal();
-	}
-
-	public void recargarlistaSolicitudPersonalDespuesEliminar()
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		consultarSolicitudesPersonal();
 	}
 
 	public boolean validarSiTareaExiste(String ticket_externo)
@@ -715,6 +412,73 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			existe_tarea = false;
 		}
 		return existe_tarea;
+	}
+
+	@Listen("onRightClick=#lbxMovimientos")
+	public void onRightClick$lbxMovimientos() throws Throwable {
+		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
+			return;
+		}
+		int indice = lbxSolicitudesPersonal.getSelectedIndex();
+		consultarSolicitudesPersonal();
+		;
+		int tamanio_lista = lbxSolicitudesPersonal.getItemCount();
+		if (indice >= tamanio_lista) {
+			return;
+		}
+		lbxSolicitudesPersonal.setSelectedIndex(indice);
+	}
+
+	@Listen("onClick=#mModificar")
+	public void onClickmModificar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxSolicitudesPersonal.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxSolicitudesPersonal.getSelectedIndex();
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		long id_solicitud = listaSolicitudPersonal.get(indice).getId_solicitud();
+		String ticket = listaSolicitudPersonal.get(indice).getTicket();
+		Sessions.getCurrent().setAttribute("solicitud_personal", listaSolicitudPersonal.get(indice));
+		crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket);
+	}
+
+	public void crearPestanaParaRevision(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + id_solicitud)) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + id_solicitud);
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE PERSONAL - MODIFICAR | SOLICITUD " + ticket);
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + id_solicitud);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/personal/solicitud/modificar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

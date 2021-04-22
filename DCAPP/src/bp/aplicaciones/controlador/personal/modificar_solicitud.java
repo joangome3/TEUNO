@@ -62,12 +62,12 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_dispositivo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ingreso;
 
 @SuppressWarnings({ "serial", "deprecation" })
-public class nueva_solicitud extends SelectorComposer<Component> {
+public class modificar_solicitud extends SelectorComposer<Component> {
 
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zNuevo;
+	Window zModificar;
 	@Wire
 	Button btnGrabar, btnCancelar, btnLimpiar;
 	@Wire
@@ -130,11 +130,16 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	boolean es_turno_extendido = false;
 
+	String ticket = "";
+
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
 	long id_dc = (long) Sessions.getCurrent().getAttribute("id_dc");
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
+
+	modelo_solicitud_personal solicitud_personal = (modelo_solicitud_personal) Sessions.getCurrent()
+			.getAttribute("solicitud_personal");
 
 	validar_datos validar = new validar_datos();
 
@@ -143,18 +148,17 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
-		obtenerId();
+		setearFechaActual();
+		setearFechaIngresaFormulario();
+		Sessions.getCurrent().removeAttribute("solicitud_personal");
+		ticket = solicitud_personal.getTicket();
 		lbxSolicitantes.setEmptyMessage(informativos.getMensaje_informativo_2());
 		lbxProveedores1.setEmptyMessage(informativos.getMensaje_informativo_2());
 		lbxProveedores2.setEmptyMessage(informativos.getMensaje_informativo_2());
 		inicializarListas();
-		setearFechaActual();
-		setearFechaIngresaFormulario();
-		setearFechaHoraSolicitud();
-		setearFechaHoraRespuesta();
-		setearFechaHoraInicio();
-		setearFechaHoraFin();
 		validarTurno();
+		cargarInformacionCabecera();
+		cargarInformacionDetalle(String.valueOf(solicitud_personal.getId_solicitud()));
 		txtTicket.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
 				txtTicket.setText(txtTicket.getText().trim().toUpperCase().trim());
@@ -166,9 +170,6 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 				lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 			}
 		});
-		if (cmbEstado.getItems().size() > 1) {
-			cmbEstado.setSelectedIndex(1);
-		}
 		setearUsuario();
 	}
 
@@ -262,6 +263,154 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		binder.loadComponent(cmbTipoIngreso);
 		binder.loadComponent(cmbTipoAprobador);
 		binder.loadComponent(cmbTipoTrabajo);
+	}
+
+	public void cargarInformacionCabecera() throws ClassNotFoundException, FileNotFoundException, IOException {
+		txtId.setText(String.valueOf(solicitud_personal.getId_solicitud()));
+		setearCliente(solicitud_personal.getId_cliente());
+		setearTipoAprobador(solicitud_personal.getId_tipo_aprobador());
+		setearSolicitante(solicitud_personal.getId_solicitante());
+		txtTicket.setText(solicitud_personal.getTicket());
+		setearTipoIngreso(solicitud_personal.getId_tipo_ingreso());
+		dtxFechaSolicitud.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_solicitud().getTime()));
+		dtxFechaRespuesta.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_respuesta().getTime()));
+		if (solicitud_personal.getEst_solicitud().equals("NE")) {
+			cmbEstado.setText("NO EJECUTADO");
+		} else {
+			cmbEstado.setText("EJECUTADO");
+		}
+		dtxFechaInicio.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_inicio().getTime()));
+		dtxFechaFin.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_fin().getTime()));
+		bdxArea.setText(solicitud_personal.getArea());
+		bdxArea.setTooltiptext(solicitud_personal.getArea());
+		bdxRack.setText(solicitud_personal.getRack());
+		bdxRack.setTooltiptext(solicitud_personal.getRack());
+		setearTipoTrabajo(solicitud_personal.getId_tipo_trabajo());
+		txtDescripcion.setText(solicitud_personal.getDescripcion());
+		lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
+	}
+
+	public void cargarInformacionDetalle(String id_solicitud)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		List<modelo_detalle_solicitud_personal> listaDetalleSolicitudPersonal = consultasABaseDeDatos
+				.cargarDetalleSolicitudPersonal(id_solicitud, 2);
+		listaTipoDispositivo = consultasABaseDeDatos.cargarTipoDispositivos("");
+		for (int i = 0; i < listaDetalleSolicitudPersonal.size(); i++) {
+			Listitem lItem;
+			Listcell lCell;
+			Combobox cmbDispositivo;
+			Comboitem cItem;
+			Button btnEliminar;
+			lItem = new Listitem();
+			/* ID */
+			lCell = new Listcell();
+			lCell.setLabel(String.valueOf(listaDetalleSolicitudPersonal.get(i).getId_proveedor()));
+			lCell.setStyle("text-align: center !important;");
+			lItem.appendChild(lCell);
+			/* DOCUMENTO */
+			lCell = new Listcell();
+			lCell.setLabel(listaDetalleSolicitudPersonal.get(i).getNum_documento_proveedor());
+			lCell.setStyle("text-align: center !important;");
+			lItem.appendChild(lCell);
+			/* NOMBRE */
+			lCell = new Listcell();
+			lCell.setLabel(listaDetalleSolicitudPersonal.get(i).getNom_proveedor());
+			lItem.appendChild(lCell);
+			/* EMPRESA */
+			lCell = new Listcell();
+			lCell.setLabel(listaDetalleSolicitudPersonal.get(i).getNom_emp_proveedor());
+			lCell.setStyle("text-align: center !important;");
+			lItem.appendChild(lCell);
+			/* DISPOSITIVO */
+			lCell = new Listcell();
+			cmbDispositivo = new Combobox();
+			for (int j = 0; j < listaTipoDispositivo.size(); j++) {
+				cItem = new Comboitem();
+				cItem.setLabel(listaTipoDispositivo.get(j).getNom_tipo_dispositivo());
+				cItem.setValue(listaTipoDispositivo.get(j).getId_tipo_dispositivo());
+				cmbDispositivo.appendChild(cItem);
+			}
+			Iterator<modelo_tipo_dispositivo> it = listaTipoDispositivo.iterator();
+			while (it.hasNext()) {
+				modelo_tipo_dispositivo tipo_dispositivo = it.next();
+				if (tipo_dispositivo.getId_tipo_dispositivo() == listaDetalleSolicitudPersonal.get(i)
+						.getId_dispositivo()) {
+					cmbDispositivo.setText(tipo_dispositivo.getNom_tipo_dispositivo());
+					break;
+				}
+			}
+			cmbDispositivo.setReadonly(true);
+			cmbDispositivo.setWidth("160px");
+			lCell.appendChild(cmbDispositivo);
+			lCell.setStyle("text-align: center !important;");
+			lItem.appendChild(lCell);
+			/* ACCION */
+			lCell = new Listcell();
+			btnEliminar = new Button();
+			btnEliminar.setImage("/img/botones/ButtonClose.png");
+			btnEliminar.setTooltiptext("Eliminar");
+			btnEliminar.setAutodisable("self");
+			btnEliminar.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+				public void onEvent(Event event) throws Exception {
+					Listitem lItem;
+					lItem = (Listitem) btnEliminar.getParent().getParent();
+					lbxProveedores2.removeItemAt(lItem.getIndex());
+				}
+			});
+			lCell.appendChild(btnEliminar);
+			lCell.setStyle("text-align: center !important;");
+			lItem.appendChild(lCell);
+			/* ANADIR ITEM A LISTBOX */
+			lbxProveedores2.appendChild(lItem);
+		}
+	}
+
+	public void setearCliente(long id_empresa) {
+		Iterator<modelo_empresa> it = listaCliente.iterator();
+		while (it.hasNext()) {
+			modelo_empresa empresa = it.next();
+			if (empresa.getId_empresa() == id_empresa) {
+				cmbCliente.setText(empresa.getNom_empresa());
+				break;
+			}
+		}
+	}
+
+	public void setearTipoDispositivo(long id_tipo_dispositivo) {
+
+	}
+
+	public void setearTipoIngreso(long id_tipo_ingreso) {
+		Iterator<modelo_tipo_ingreso> it = listaTipoIngreso.iterator();
+		while (it.hasNext()) {
+			modelo_tipo_ingreso tipo_ingreso = it.next();
+			if (tipo_ingreso.getId_tipo_ingreso() == id_tipo_ingreso) {
+				cmbTipoIngreso.setText(tipo_ingreso.getNom_tipo_ingreso());
+				break;
+			}
+		}
+	}
+
+	public void setearTipoAprobador(long id_tipo_aprobador) {
+		Iterator<modelo_tipo_aprobador> it = listaTipoAprobador.iterator();
+		while (it.hasNext()) {
+			modelo_tipo_aprobador tipo_aprobador = it.next();
+			if (tipo_aprobador.getId_tipo_aprobador() == id_tipo_aprobador) {
+				cmbTipoAprobador.setText(tipo_aprobador.getNom_tipo_aprobador());
+				break;
+			}
+		}
+	}
+
+	public void setearTipoTrabajo(long id_tipo_trabajo) {
+		Iterator<modelo_tipo_trabajo> it = listaTipoTrabajo.iterator();
+		while (it.hasNext()) {
+			modelo_tipo_trabajo tipo_trabajo = it.next();
+			if (tipo_trabajo.getId_tipo_trabajo() == id_tipo_trabajo) {
+				cmbTipoTrabajo.setText(tipo_trabajo.getNom_tipo_trabajo());
+				break;
+			}
+		}
 	}
 
 	public void setearSolicitante(long id_solicitante)
@@ -685,12 +834,12 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		String mensaje = informativos.getMensaje_informativo_16();
 		if (validarSiSeIniciaTurno() == false) {
-			Messagebox.show(informativos.getMensaje_informativo_33(), informativos.getMensaje_informativo_17(),
+			Messagebox.show(informativos.getMensaje_informativo_33(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		if (validarSiExistenTareasVencidas() == true) {
-			Messagebox.show(informativos.getMensaje_informativo_38(), informativos.getMensaje_informativo_17(),
+			Messagebox.show(informativos.getMensaje_informativo_38(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
@@ -711,12 +860,13 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		}
 		if (validarSiExistePrimeroApertura(txtTicket.getText().trim(), 1) == false) {
 			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtTicket.getText().trim()),
-					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
-		if (validarSiExisteSolicitudPersonal(txtTicket.getText().toUpperCase().trim()) == true) {
+		if (validarSiExisteSolicitudPersonal(txtTicket.getText().toUpperCase().trim()) == true
+				&& !ticket.equals(txtTicket.getText().toUpperCase().trim())) {
 			Messagebox.show(informativos.getMensaje_informativo_97().replace("?1", txtTicket.getText().trim()),
-					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		if (cmbTipoIngreso.getSelectedItem() == null) {
@@ -801,7 +951,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 			bdxProveedores.setErrorMessage(validaciones.getMensaje_validacion_34());
 			return;
 		}
-		Messagebox.show(mensaje, informativos.getMensaje_informativo_17(), Messagebox.OK | Messagebox.CANCEL,
+		Messagebox.show(mensaje, informativos.getMensaje_informativo_24(), Messagebox.OK | Messagebox.CANCEL,
 				Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
@@ -810,6 +960,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 							dao_solicitud_personal dao = new dao_solicitud_personal();
 							modelo_solicitud_personal solicitud = new modelo_solicitud_personal();
 							/* Se inicializa el objeto solicitud */
+							solicitud.setId_solicitud(solicitud_personal.getId_solicitud());
 							solicitud.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
 							solicitud.setTicket(txtTicket.getText().toUpperCase().trim());
 							solicitud.setId_tipo_ingreso(
@@ -828,9 +979,9 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 									Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()));
 							solicitud.setDescripcion(txtDescripcion.getText().toUpperCase().trim());
 							solicitud.setId_localidad(id_dc);
-							solicitud.setEst_solicitud("NE");
-							solicitud.setUsu_ingresa(user);
-							solicitud.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							solicitud.setEst_solicitud(cmbEstado.getSelectedItem().getValue().toString());
+							solicitud.setUsu_modifica(user);
+							solicitud.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							/* Se inicializa el objeto detalle solicitud */
 							List<modelo_detalle_solicitud_personal> detalle = new ArrayList<modelo_detalle_solicitud_personal>();
 							Listcell lCell;
@@ -842,7 +993,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 								lCell = (Listcell) lbxProveedores2.getItemAtIndex(i).getChildren().get(4);
 								cmBox = (Combobox) lCell.getChildren().get(0);
 								dt.setId_dispositivo(Long.valueOf(cmBox.getSelectedItem().getValue().toString()));
-								dt.setEst_detalle_solicitud("NE");
+								dt.setEst_detalle_solicitud(cmbEstado.getSelectedItem().getValue().toString());
 								dt.setUsu_ingresa(user);
 								dt.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 								detalle.add(dt);
@@ -865,7 +1016,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 											new Date().getDate(), new Date().getHours(), new Date().getMinutes(), 0)));
 							bitacora.setCumplimiento("C");
 							bitacora.setDescripcion(
-									"SE REGISTRA LA SOLICITUD DE INGRESO DE PERSONAL, DONDE SE REALIZARÁ "
+									"SE MODIFICA LA SOLICITUD DE INGRESO DE PERSONAL, DONDE SE REALIZARÁ "
 											+ txtDescripcion.getText().trim() + ", EN LA(S) SIGUIENTE(S) ÁREA(S) "
 											+ bdxArea.getText() + ", y RACK(S) " + bdxRack.getText());
 							bitacora.setId_turno(id_turno);
@@ -877,7 +1028,14 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 								secuencia1 = listaParametros1.get(0).getSecuencia_bitacora();
 							}
 							/* Se inicializa el objeto tarea proveedor */
+							List<modelo_tarea_proveedor> lista_tarea_proveedor = consultasABaseDeDatos
+									.cargarTareasProveedores(txtTicket.getText().toUpperCase().trim(), 4, 0, "", "",
+											id_dc, "", "", 0, "", 0, 0);
 							modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
+							if (lista_tarea_proveedor.size() > 0) {
+								tarea_proveedor
+										.setId_tarea_proveedor(lista_tarea_proveedor.get(0).getId_tarea_proveedor());
+							}
 							tarea_proveedor.setTicket_externo(txtTicket.getText().toUpperCase().trim());
 							tarea_proveedor
 									.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
@@ -908,15 +1066,15 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 								bandera = 1;
 							}
 							try {
-								dao.insertarSolicitudPersonal(solicitud, detalle, bitacora, secuencia1, tarea_proveedor,
-										secuencia2, bandera);
+								dao.modificarSolicitudPersonal(solicitud, detalle, bitacora, secuencia1,
+										tarea_proveedor, secuencia2, bandera);
 								Messagebox.show(informativos.getMensaje_informativo_20(),
-										informativos.getMensaje_informativo_17(), Messagebox.OK,
+										informativos.getMensaje_informativo_24(), Messagebox.OK,
 										Messagebox.EXCLAMATION);
-								limpiarCampos1();
+								// limpiarCampos1();
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(),
-										informativos.getMensaje_informativo_17() + e.getMessage(), Messagebox.OK,
+										informativos.getMensaje_informativo_24() + e.getMessage(), Messagebox.OK,
 										Messagebox.EXCLAMATION);
 							}
 						}
@@ -927,18 +1085,18 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zNuevo));
+		Events.postEvent(new Event("onClose", zModificar));
 	}
 
 	@Listen("onClick=#btnLimpiar")
 	public void onClick$btnLimpiar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		if (validarSiSeIniciaTurno() == false) {
-			Messagebox.show(informativos.getMensaje_informativo_33(), informativos.getMensaje_informativo_17(),
+			Messagebox.show(informativos.getMensaje_informativo_33(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		if (validarSiExistenTareasVencidas() == true) {
-			Messagebox.show(informativos.getMensaje_informativo_38(), informativos.getMensaje_informativo_17(),
+			Messagebox.show(informativos.getMensaje_informativo_38(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}

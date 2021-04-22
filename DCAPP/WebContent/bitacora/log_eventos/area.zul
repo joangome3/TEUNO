@@ -1,8 +1,8 @@
-<?page title="Areas - Gestion de personal" contentType="text/html;charset=UTF-8"?>
+<?page title="Areas - Gestion de bitacora" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window border="normal" id="zArea" closable="true"
-		apply="bp.aplicaciones.controlador.personal.area"
+		apply="bp.aplicaciones.controlador.bitacora.area"
 		position="center, center" sizable="true" width="650px" height="550px"
 		maximizable="false" minimizable="false" title=".:: Area ::."
 		shadow="false" mode="overlapped" focus="true"

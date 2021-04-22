@@ -29,6 +29,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 	private String nom_tipo_tarea;
 	private long id_solicitante;
 	private String nom_solicitante;
+	private String area;
+	private String rack;
 	private String descripcion;
 	private Timestamp fec_inicio;
 	private Timestamp fec_fin;
@@ -84,6 +86,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 * @param id_turno
 	 * @param id_tipo_servicio
 	 * @param id_tipo_tarea
+	 * @param area
+	 * @param rack
 	 * @param descripcion
 	 * @param fec_inicio
 	 * @param fec_fin
@@ -100,10 +104,10 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 * @param obs_coordinador
 	 */
 	public modelo_tarea_proveedor(long id_tarea_proveedor, long id_cliente, String ticket_externo, long id_turno,
-			long id_tipo_servicio, long id_tipo_tarea, String descripcion, Timestamp fec_inicio, Timestamp fec_fin,
-			long id_estado_bitacora, String cumplimiento, long id_localidad, String est_tarea_proveedor,
-			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica, String cor_revisa,
-			Timestamp fec_revision, String obs_coordinador) {
+			long id_tipo_servicio, long id_tipo_tarea, String area, String rack, String descripcion,
+			Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora, String cumplimiento, long id_localidad,
+			String est_tarea_proveedor, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
+			Timestamp fec_modifica, String cor_revisa, Timestamp fec_revision, String obs_coordinador) {
 		super();
 		this.id_tarea_proveedor = id_tarea_proveedor;
 		this.id_cliente = id_cliente;
@@ -111,6 +115,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 		this.id_turno = id_turno;
 		this.id_tipo_servicio = id_tipo_servicio;
 		this.id_tipo_tarea = id_tipo_tarea;
+		this.area = area;
+		this.rack = rack;
 		this.descripcion = descripcion;
 		this.fec_inicio = fec_inicio;
 		this.fec_fin = fec_fin;
@@ -140,6 +146,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 * @param nom_tipo_tarea
 	 * @param id_solicitante
 	 * @param nom_solicitante
+	 * @param area
+	 * @param rack
 	 * @param descripcion
 	 * @param fec_inicio
 	 * @param fec_fin
@@ -162,12 +170,12 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 */
 	public modelo_tarea_proveedor(long id_tarea_proveedor, long id_cliente, String nom_cliente, String ticket_externo,
 			long id_turno, String nom_turno, long id_tipo_servicio, String nom_tipo_servicio, long id_tipo_tarea,
-			String nom_tipo_tarea, long id_solicitante, String nom_solicitante, String descripcion,
-			Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora, String nom_estado_bitacora,
-			String cumplimiento, long id_localidad, String nom_localidad, String est_tarea_proveedor,
-			String usu_ingresa, String nom_usuario_ingresa, Timestamp fec_ingresa, String usu_modifica,
-			String nom_usuario_modifica, Timestamp fec_modifica, String cor_revisa, String nom_usuario_revisa,
-			Timestamp fec_revision, String obs_coordinador) {
+			String nom_tipo_tarea, long id_solicitante, String nom_solicitante, String area, String rack,
+			String descripcion, Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora,
+			String nom_estado_bitacora, String cumplimiento, long id_localidad, String nom_localidad,
+			String est_tarea_proveedor, String usu_ingresa, String nom_usuario_ingresa, Timestamp fec_ingresa,
+			String usu_modifica, String nom_usuario_modifica, Timestamp fec_modifica, String cor_revisa,
+			String nom_usuario_revisa, Timestamp fec_revision, String obs_coordinador) {
 		super();
 		this.id_tarea_proveedor = id_tarea_proveedor;
 		this.id_cliente = id_cliente;
@@ -181,6 +189,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 		this.nom_tipo_tarea = nom_tipo_tarea;
 		this.id_solicitante = id_solicitante;
 		this.nom_solicitante = nom_solicitante;
+		this.area = area;
+		this.rack = rack;
 		this.descripcion = descripcion;
 		this.fec_inicio = fec_inicio;
 		this.fec_fin = fec_fin;
@@ -368,6 +378,34 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 */
 	public void setNom_solicitante(String nom_solicitante) {
 		this.nom_solicitante = nom_solicitante;
+	}
+
+	/**
+	 * @return the area
+	 */
+	public String getArea() {
+		return area;
+	}
+
+	/**
+	 * @param area the area to set
+	 */
+	public void setArea(String area) {
+		this.area = area;
+	}
+
+	/**
+	 * @return the rack
+	 */
+	public String getRack() {
+		return rack;
+	}
+
+	/**
+	 * @param rack the rack to set
+	 */
+	public void setRack(String rack) {
+		this.rack = rack;
 	}
 
 	/**
@@ -638,19 +676,20 @@ public class modelo_tarea_proveedor implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "modelo_tarea_proveedor [id_tarea_proveedor=" + id_tarea_proveedor + ", id_cliente=" + id_cliente
-				+ ", nom_cliente=" + nom_cliente + ", ticket_externo=" + ticket_externo + ", id_turno=" + id_turno
-				+ ", nom_turno=" + nom_turno + ", id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio="
-				+ nom_tipo_servicio + ", id_tipo_tarea=" + id_tipo_tarea + ", nom_tipo_tarea=" + nom_tipo_tarea
-				+ ", id_solicitante=" + id_solicitante + ", nom_solicitante=" + nom_solicitante + ", descripcion="
-				+ descripcion + ", fec_inicio=" + fec_inicio + ", fec_fin=" + fec_fin + ", id_estado_bitacora="
-				+ id_estado_bitacora + ", nom_estado_bitacora=" + nom_estado_bitacora + ", cumplimiento=" + cumplimiento
-				+ ", id_localidad=" + id_localidad + ", nom_localidad=" + nom_localidad + ", est_tarea_proveedor="
-				+ est_tarea_proveedor + ", usu_ingresa=" + usu_ingresa + ", nom_usuario_ingresa=" + nom_usuario_ingresa
-				+ ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", nom_usuario_modifica="
-				+ nom_usuario_modifica + ", fec_modifica=" + fec_modifica + ", cor_revisa=" + cor_revisa
-				+ ", nom_usuario_revisa=" + nom_usuario_revisa + ", fec_revision=" + fec_revision + ", obs_coordinador="
-				+ obs_coordinador + "]";
+		return "modelo_tarea_proveedor [consultasABaseDeDatos=" + consultasABaseDeDatos + ", fechas=" + fechas
+				+ ", id_tarea_proveedor=" + id_tarea_proveedor + ", id_cliente=" + id_cliente + ", nom_cliente="
+				+ nom_cliente + ", ticket_externo=" + ticket_externo + ", id_turno=" + id_turno + ", nom_turno="
+				+ nom_turno + ", id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio=" + nom_tipo_servicio
+				+ ", id_tipo_tarea=" + id_tipo_tarea + ", nom_tipo_tarea=" + nom_tipo_tarea + ", id_solicitante="
+				+ id_solicitante + ", nom_solicitante=" + nom_solicitante + ", area=" + area + ", rack=" + rack
+				+ ", descripcion=" + descripcion + ", fec_inicio=" + fec_inicio + ", fec_fin=" + fec_fin
+				+ ", id_estado_bitacora=" + id_estado_bitacora + ", nom_estado_bitacora=" + nom_estado_bitacora
+				+ ", cumplimiento=" + cumplimiento + ", id_localidad=" + id_localidad + ", nom_localidad="
+				+ nom_localidad + ", est_tarea_proveedor=" + est_tarea_proveedor + ", usu_ingresa=" + usu_ingresa
+				+ ", nom_usuario_ingresa=" + nom_usuario_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica="
+				+ usu_modifica + ", nom_usuario_modifica=" + nom_usuario_modifica + ", fec_modifica=" + fec_modifica
+				+ ", cor_revisa=" + cor_revisa + ", nom_usuario_revisa=" + nom_usuario_revisa + ", fec_revision="
+				+ fec_revision + ", obs_coordinador=" + obs_coordinador + "]";
 	}
 
 	public String mostrarEstado() {
@@ -714,6 +753,22 @@ public class modelo_tarea_proveedor implements Cloneable {
 		}
 		return observacion;
 	}
+	
+	public String mostrarArea() {
+		String _area = "";
+		if (area != null) {
+			_area = getArea();
+		}
+		return _area;
+	}
+
+	public String mostrarRack() {
+		String _rack = "";
+		if (rack != null) {
+			_rack = getArea();
+		}
+		return _rack;
+	}
 
 	public String mostrarFechaInicio() {
 		String fecha = "-";
@@ -764,6 +819,22 @@ public class modelo_tarea_proveedor implements Cloneable {
 	public String mostrarImagenObservacion() {
 		String imagen = "";
 		if (obs_coordinador == null) {
+			imagen = "/img/botones/ButtonError.png";
+		}
+		return imagen;
+	}
+	
+	public String mostrarImagenArea() {
+		String imagen = "";
+		if (area == null) {
+			imagen = "/img/botones/ButtonError.png";
+		}
+		return imagen;
+	}
+
+	public String mostrarImagenRack() {
+		String imagen = "";
+		if (rack == null) {
 			imagen = "/img/botones/ButtonError.png";
 		}
 		return imagen;
@@ -838,6 +909,22 @@ public class modelo_tarea_proveedor implements Cloneable {
 	public String estiloImagenObservacion() {
 		String estilo = "";
 		if (obs_coordinador == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		}
+		return estilo;
+	}
+	
+	public String estiloImagenArea() {
+		String estilo = "";
+		if (area == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		}
+		return estilo;
+	}
+
+	public String estiloImagenRack() {
+		String estilo = "";
+		if (rack == null) {
 			estilo = "text-align: center !important; color: transparent;";
 		}
 		return estilo;

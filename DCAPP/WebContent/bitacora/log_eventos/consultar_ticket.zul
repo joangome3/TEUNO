@@ -141,12 +141,10 @@
 					</row>
 				</rows>
 			</grid>
-			<vlayout vflex="1">
-			<hlayout vflex="1" style="overflow: scroll;">
 			<listbox mold="paging" id="lbxTareasProgramadas"
 				vflex="true" sizedByContent="true"
 				model="@{zConsultar$consultar_ticket.obtenerTareasProgramadas}"
-				multiple="true" checkmark="false">
+				multiple="true" checkmark="false" width="100%" pageSize="5">
 				<listhead sizable="false" style="overflow: scroll;">
 					<listheader label="ID"
 						style="text-align: center !important;" visible="true">
@@ -167,6 +165,12 @@
 						style="text-align: center !important;">
 					</listheader>
 					<listheader label="DESCRIPCION" align="center"
+						style="text-align: center !important;" width="200px">
+					</listheader>
+					<listheader label="AREA" align="center"
+						style="text-align: center !important;" width="200px">
+					</listheader>
+					<listheader label="RACK" align="center"
 						style="text-align: center !important;" width="200px">
 					</listheader>
 					<listheader label="FECHA INICIO" align="center"
@@ -202,6 +206,12 @@
 						image="@{lista.mostrarImagenSolicitante}"
 						style="@{lista.estiloImagenSolicitante}" />
 					<listcell label="@{lista.getDescripcion}" />
+					<listcell label="@{lista.mostrarArea}"
+						image="@{lista.mostrarImagenArea}"
+						style="@{lista.estiloImagenArea}" />
+					<listcell label="@{lista.mostrarRack}"
+						image="@{lista.mostrarImagenRack}"
+						style="@{lista.estiloImagenRack}" />
 					<listcell label="@{lista.mostrarFechaInicio}" />
 					<listcell label="@{lista.mostrarFechaFin}" />
 					<listcell label="@{lista.getNom_estado_bitacora}"
@@ -218,8 +228,6 @@
 						style="@{lista.estiloImagenUsuarioModifica}" />
 				</listitem>
 			</listbox>
-			</hlayout>
-			</vlayout>
 		</div>
 			<popup id="cons" width="300px">
 		<html>

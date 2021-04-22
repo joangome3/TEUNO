@@ -2,14 +2,15 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window id="zRevision" position="center, center" sizable="true"
-		maximizable="false" minimizable="false"
-		title="a" class="w-tittle_a"
+		maximizable="false" minimizable="false" title="a" class="w-tittle_a"
 		apply="bp.aplicaciones.controlador.cintas.revision1">
 		<div width="100%">
 			<div class="m-div-a">
 				<label class="m-label-a" value="MOVIMIENTOS - "></label>
-				<label class="m-label-a" value="REVISION DE OPERADOR EN TURNO"
-					style="font-style: normal; color: #FFD500; font-weight: bold;" id="lTitulo">
+				<label class="m-label-a"
+					value="REVISION DE OPERADOR EN TURNO"
+					style="font-style: normal; color: #FFD500; font-weight: bold;"
+					id="lTitulo">
 				</label>
 			</div>
 			<space height="1px"></space>
@@ -19,11 +20,11 @@
 					autodisable="self" />
 				<button id="btnLimpiar"
 					image="/img/botones/ButtonClean1.png" tooltiptext="Limpiar campos"
-					autodisable="self" visible="false"/>
+					autodisable="self" visible="false" />
 			</toolbar>
-					<div id="winList" class="m-div-c"></div>
-					<borderlayout style="height: 82vh;">
-			<center style="overflow: scroll;">
+			<div id="winList" class="m-div-c"></div>
+			<borderlayout style="height: 82vh;">
+				<center style="overflow: scroll;">
 					<grid>
 						<columns>
 							<column width="18%"></column>
@@ -33,7 +34,7 @@
 						</columns>
 						<rows>
 							<row>
-								<label value="TICKET PROACTIVANET:" />
+								<label value="TICKET:" />
 								<cell colspan="1">
 									<space width="5px"></space>
 									<textbox id="txtId" width="225px"
@@ -297,110 +298,124 @@
 							</row>
 							<row>
 								<cell colspan="4">
-									<listbox mold="paging" pageSize="100" id="lbxMovimientos"
-					span="true" sizedByContent="true" width="100%"
-					model="@{zRevision$revision1.obtenerMovimientoDetalles}" multiple="true"
-					checkmark="false" autopaging="false">
-					<listhead sizable="false">
-						<listheader label="ID" align="center" width="5%"
-							style="text-align: center !important;" visible="false">
-						</listheader>
-						<listheader label="¿ACTUALIZA INVENTARIO?"
-							style="text-align: center !important;" visible="true">
-						</listheader>
-						<listheader label="CODIGO"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="DESCRIPCION"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="UBICACION" align="center"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="FECHA INICIO RESPALDO"
-							style="text-align: center !important;" width="300px">
-						</listheader>
-						<listheader label="FECHA FIN RESPALDO"
-							style="text-align: center !important;" width="11%">
-						</listheader>
-						<listheader label="TIPO RESPALDO"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="ID CONTENEDOR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="HORA LLEGADA CUSTODIA"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="HORA SALIDA CUSTODIA"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader
-							label="REMESA INGRESO CUSTODIA - NOC"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="REMESA SALIDA NOC - CUSTODIA"
-							style="text-align: center !important;">
-						</listheader>
-					</listhead>
-					<listitem context="editPopup"
-						self="@{each=lista}">
-						<listcell label="@{lista.getId_articulo}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarActualizaInventario}"
-							style="@{lista.estiloActualizaInventario}">
-						</listcell>
-						<listcell
-							label="@{lista.getCod_articulo_actual}">
-						</listcell>
-						<listcell
-							label="@{lista.getDes_articulo_actual}">
-						</listcell>
-						<listcell
-							label="@{lista.getNom_ubicacion_actual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarFechaInicioActual}"
-							style="@{lista.estiloImagenFechaInicioActual}"
-							image="@{lista.mostrarImagenFechaInicioActual}">
-						</listcell>
-						<listcell label="@{lista.mostrarFechaFinActual}"
-							style="@{lista.estiloImagenFechaFinActual}"
-							image="@{lista.mostrarImagenFechaFinActual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarTipoRespaldoActual}"
-							style="@{lista.estiloImagenTipoRespaldoActual}"
-							image="@{lista.mostrarImagenTipoRespaldoActual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarIdContenedorActual}"
-							style="@{lista.estiloImagenIdContenedorActual}"
-							image="@{lista.mostrarImagenIdContenedorActual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarHoraIngresoCustodiaActual}"
-							style="@{lista.estiloImagenHoraIngresoCustodiaActual}"
-							image="@{lista.mostrarImagenHoraIngresoCustodiaActual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarHoraSalidaCustodiaActual}"
-							style="@{lista.estiloImagenHoraSalidaCustodiaActual}"
-							image="@{lista.mostrarImagenHoraSalidaCustodiaActual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarRemesaIngresoActual}"
-							style="@{lista.estiloImagenRemesaIngresoActual}"
-							image="@{lista.mostrarImagenRemesaIngresoActual}">
-						</listcell>
-						<listcell
-							label="@{lista.mostrarRemesaSalidaActual}"
-							style="@{lista.estiloImagenRemesaSalidaActual}"
-							image="@{lista.mostrarImagenRemesaSalidaActual}">
-						</listcell>
-					</listitem>
-				</listbox>
+									<listbox mold="paging"
+										pageSize="500" id="lbxMovimientos" span="true"
+										sizedByContent="true" width="100%"
+										model="@{zRevision$revision1.obtenerMovimientoDetalles}"
+										multiple="true" checkmark="false" autopaging="false">
+										<listhead sizable="false">
+											<listheader label="ID"
+												align="center" width="5%"
+												style="text-align: center !important;" visible="false">
+											</listheader>
+											<listheader
+												label="¿ACTUALIZA INVENTARIO?"
+												style="text-align: center !important;" visible="true">
+											</listheader>
+											<listheader label="CODIGO"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="DESCRIPCION"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="UBICACION" align="center"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="FECHA INICIO RESPALDO"
+												style="text-align: center !important;" width="300px">
+											</listheader>
+											<listheader
+												label="FECHA FIN RESPALDO"
+												style="text-align: center !important;" width="11%">
+											</listheader>
+											<listheader
+												label="TIPO RESPALDO"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="ID CONTENEDOR"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="HORA LLEGADA CUSTODIA"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="HORA SALIDA CUSTODIA"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="REMESA INGRESO CUSTODIA - NOC"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="REMESA SALIDA NOC - CUSTODIA"
+												style="text-align: center !important;">
+											</listheader>
+										</listhead>
+										<listitem context="editPopup"
+											self="@{each=lista}">
+											<listcell
+												label="@{lista.getId_articulo}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarActualizaInventario}"
+												style="@{lista.estiloActualizaInventario}">
+											</listcell>
+											<listcell
+												label="@{lista.getCod_articulo_actual}">
+											</listcell>
+											<listcell
+												label="@{lista.getDes_articulo_actual}">
+											</listcell>
+											<listcell
+												label="@{lista.getNom_ubicacion_actual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarFechaInicioActual}"
+												style="@{lista.estiloImagenFechaInicioActual}"
+												image="@{lista.mostrarImagenFechaInicioActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarFechaFinActual}"
+												style="@{lista.estiloImagenFechaFinActual}"
+												image="@{lista.mostrarImagenFechaFinActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarTipoRespaldoActual}"
+												style="@{lista.estiloImagenTipoRespaldoActual}"
+												image="@{lista.mostrarImagenTipoRespaldoActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarIdContenedorActual}"
+												style="@{lista.estiloImagenIdContenedorActual}"
+												image="@{lista.mostrarImagenIdContenedorActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarHoraIngresoCustodiaActual}"
+												style="@{lista.estiloImagenHoraIngresoCustodiaActual}"
+												image="@{lista.mostrarImagenHoraIngresoCustodiaActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarHoraSalidaCustodiaActual}"
+												style="@{lista.estiloImagenHoraSalidaCustodiaActual}"
+												image="@{lista.mostrarImagenHoraSalidaCustodiaActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarRemesaIngresoActual}"
+												style="@{lista.estiloImagenRemesaIngresoActual}"
+												image="@{lista.mostrarImagenRemesaIngresoActual}">
+											</listcell>
+											<listcell
+												label="@{lista.mostrarRemesaSalidaActual}"
+												style="@{lista.estiloImagenRemesaSalidaActual}"
+												image="@{lista.mostrarImagenRemesaSalidaActual}">
+											</listcell>
+										</listitem>
+									</listbox>
 								</cell>
 							</row>
 							<row>
@@ -411,8 +426,8 @@
 							</row>
 						</rows>
 					</grid>
-					</center>
-					</borderlayout>
+				</center>
+			</borderlayout>
 		</div>
 		<menupopup id="editPopup">
 			<menuitem id="mModificar" iconSclass="z-icon-edit"
@@ -422,12 +437,12 @@
 			<menuitem id="mEliminar" iconSclass="z-icon-times"
 				label=" - Eliminar"
 				tooltiptext="Permite eliminar el articulo que se encuentra seleccionado, solo se permite eliminar una registro a la vez." />
-			<menuseparator visible="true" id="mSeparador1"/>
+			<menuseparator visible="true" id="mSeparador1" />
 			<menuitem id="mSiActualizaInventario"
 				iconSclass="z-icon-unlock" label=" - Si actualiza inventario"
 				tooltiptext="Permite indicar que al guardar el registro el articulo si se actualizara en el inventario, se permite realizar a varios registros a la vez."
 				visible="true" />
-			<menuseparator visible="true" id="mSeparador2"/>
+			<menuseparator visible="true" id="mSeparador2" />
 			<menuitem id="mNoActualizaInventario"
 				iconSclass="z-icon-lock" label=" - No actualiza inventario"
 				tooltiptext="Permite indicar que al guardar el registro el articulo no se actualizara en el inventario, se permite realizar a varios registros a la vez."
@@ -437,7 +452,6 @@
 		<popup id="con" width="450px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				el proveedor no se encuentra en la lista, valide que se
 				encuentre creado, aprobado, activo y que mantenga una
@@ -454,14 +468,12 @@
 				Enter </br> 2.- Para mostrar todos los proveedores deje
 				limpio el campo buscar y presione la tecla Enter. </p>
 				]]>
-				
 
 			</html>
 		</popup>
 		<popup id="art" width="450px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				el artículo no se encuentra en la lista, valide que se
 				encuentre creado, aprobado y activo en la <span
@@ -476,14 +488,12 @@
 				presionando la tecla Enter </br> 2.- Para mostrar todos
 				los artículos deje limpio el campo buscar y presione la
 				tecla Enter. </p> ]]>
-				
 
 			</html>
 		</popup>
 		<popup id="cli" width="400px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				el cliente no se encuentra en la lista, valide que se
 				encuentre creado, aprobado, activo y que mantenga una
@@ -495,7 +505,6 @@
 				normal; font-weight: bold;"> TIPS: </span> </br> 1.- Los
 				artículos que se cargaran en el campo artículo serán
 				deacuerdo al cliente que se seleccione. </p> ]]>
-				
 
 			</html>
 		</popup>

@@ -98,7 +98,8 @@ public class dao_tarea_proveedor {
 						resultado.getString("nom_turno"), resultado.getLong("id_tipo_servicio"),
 						resultado.getString("nom_tipo_servicio"), resultado.getLong("id_tipo_tarea"),
 						resultado.getString("nom_tipo_tarea"), resultado.getLong("id_solicitante"),
-						resultado.getString("nom_solicitante"), resultado.getString("descripcion"),
+						resultado.getString("nom_solicitante"), resultado.getString("area"),
+						resultado.getString("rack"), resultado.getString("descripcion"),
 						resultado.getTimestamp("fec_inicio"), resultado.getTimestamp("fec_fin"),
 						resultado.getLong("id_estado_bitacora"), resultado.getString("nom_estado_bitacora"),
 						resultado.getString("cumplimiento"), resultado.getLong("id_localidad"),
@@ -133,8 +134,8 @@ public class dao_tarea_proveedor {
 		}
 		try {
 			PreparedStatement consulta = null;
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, id1);
 			consulta.setLong(2, tarea_proveedor.getId_cliente());
 			consulta.setString(3, tarea_proveedor.getTicket_externo().toUpperCase());
@@ -142,15 +143,17 @@ public class dao_tarea_proveedor {
 			consulta.setLong(5, tarea_proveedor.getId_tipo_servicio());
 			consulta.setLong(6, tarea_proveedor.getId_tipo_tarea());
 			consulta.setLong(7, tarea_proveedor.getId_solicitante());
-			consulta.setString(8, tarea_proveedor.getDescripcion().toUpperCase());
-			consulta.setTimestamp(9, tarea_proveedor.getFec_inicio());
-			consulta.setTimestamp(10, tarea_proveedor.getFec_fin());
-			consulta.setLong(11, tarea_proveedor.getId_estado_bitacora());
-			consulta.setString(12, tarea_proveedor.getCumplimiento());
-			consulta.setLong(13, tarea_proveedor.getId_localidad());
-			consulta.setString(14, tarea_proveedor.getEst_tarea_proveedor());
-			consulta.setString(15, tarea_proveedor.getUsu_ingresa());
-			consulta.setTimestamp(16, tarea_proveedor.getFec_ingresa());
+			consulta.setString(8, tarea_proveedor.getRack());
+			consulta.setString(9, tarea_proveedor.getArea());
+			consulta.setString(10, tarea_proveedor.getDescripcion().toUpperCase());
+			consulta.setTimestamp(11, tarea_proveedor.getFec_inicio());
+			consulta.setTimestamp(12, tarea_proveedor.getFec_fin());
+			consulta.setLong(13, tarea_proveedor.getId_estado_bitacora());
+			consulta.setString(14, tarea_proveedor.getCumplimiento());
+			consulta.setLong(15, tarea_proveedor.getId_localidad());
+			consulta.setString(16, tarea_proveedor.getEst_tarea_proveedor());
+			consulta.setString(17, tarea_proveedor.getUsu_ingresa());
+			consulta.setTimestamp(18, tarea_proveedor.getFec_ingresa());
 			consulta.executeUpdate();
 			consulta.close();
 		} catch (SQLException ex) {
@@ -169,29 +172,31 @@ public class dao_tarea_proveedor {
 		try {
 			PreparedStatement consulta = null;
 			consulta = conexion.abrir().prepareStatement(
-					"{CALL tarea_proveedor_modificarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+					"{CALL tarea_proveedor_modificarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, tarea_proveedor.getId_cliente());
 			consulta.setString(2, tarea_proveedor.getTicket_externo().toUpperCase());
 			consulta.setLong(3, tarea_proveedor.getId_turno());
 			consulta.setLong(4, tarea_proveedor.getId_tipo_servicio());
 			consulta.setLong(5, tarea_proveedor.getId_tipo_tarea());
 			consulta.setLong(6, tarea_proveedor.getId_solicitante());
-			consulta.setString(7, tarea_proveedor.getDescripcion().toUpperCase());
-			consulta.setTimestamp(8, tarea_proveedor.getFec_inicio());
-			consulta.setTimestamp(9, tarea_proveedor.getFec_fin());
-			consulta.setLong(10, tarea_proveedor.getId_estado_bitacora());
-			consulta.setString(11, tarea_proveedor.getCumplimiento());
-			consulta.setLong(12, tarea_proveedor.getId_localidad());
-			consulta.setString(13, tarea_proveedor.getEst_tarea_proveedor());
-			consulta.setString(14, tarea_proveedor.getUsu_ingresa());
-			consulta.setTimestamp(15, tarea_proveedor.getFec_ingresa());
-			consulta.setString(16, tarea_proveedor.getUsu_modifica());
-			consulta.setTimestamp(17, tarea_proveedor.getFec_modifica());
-			consulta.setString(18, tarea_proveedor.getCor_revisa());
-			consulta.setTimestamp(19, tarea_proveedor.getFec_revision());
-			consulta.setString(20, tarea_proveedor.getObs_coordinador());
-			consulta.setLong(21, tipo);
-			consulta.setLong(22, tarea_proveedor.getId_tarea_proveedor());
+			consulta.setString(7, tarea_proveedor.getRack());
+			consulta.setString(8, tarea_proveedor.getArea());
+			consulta.setString(9, tarea_proveedor.getDescripcion().toUpperCase());
+			consulta.setTimestamp(10, tarea_proveedor.getFec_inicio());
+			consulta.setTimestamp(11, tarea_proveedor.getFec_fin());
+			consulta.setLong(12, tarea_proveedor.getId_estado_bitacora());
+			consulta.setString(13, tarea_proveedor.getCumplimiento());
+			consulta.setLong(14, tarea_proveedor.getId_localidad());
+			consulta.setString(15, tarea_proveedor.getEst_tarea_proveedor());
+			consulta.setString(16, tarea_proveedor.getUsu_ingresa());
+			consulta.setTimestamp(17, tarea_proveedor.getFec_ingresa());
+			consulta.setString(18, tarea_proveedor.getUsu_modifica());
+			consulta.setTimestamp(19, tarea_proveedor.getFec_modifica());
+			consulta.setString(20, tarea_proveedor.getCor_revisa());
+			consulta.setTimestamp(21, tarea_proveedor.getFec_revision());
+			consulta.setString(22, tarea_proveedor.getObs_coordinador());
+			consulta.setLong(23, tipo);
+			consulta.setLong(24, tarea_proveedor.getId_tarea_proveedor());
 			consulta.executeUpdate();
 			consulta.close();
 			conexion.abrir().commit();

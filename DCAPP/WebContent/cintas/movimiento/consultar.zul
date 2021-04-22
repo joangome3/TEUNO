@@ -112,7 +112,7 @@
 					<listheader label="ID"
 						style="text-align: center !important;">
 					</listheader>
-					<listheader label="TICKET PROACTIVANET"
+					<listheader label="TICKET"
 						style="text-align: center !important;">
 					</listheader>
 					<listheader label="FECHA Y HORA REGISTRO DE PEDIDO"

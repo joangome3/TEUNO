@@ -6,6 +6,7 @@
 		position="center, center" sizable="true" width="100%" height="100%"
 		maximizable="false" minimizable="false" title="a"
 		class="w-tittle_a">
+		<div id="winList" class="m-div-c"></div>
 		<div height="103%" width="110%">
 			<div class="m-div-a">
 				<label class="m-label-a"
@@ -84,13 +85,13 @@
 								<space></space>
 								<cell colspan="2">
 									<div align="left">
-										<space width="28px"></space>
+										<space width="55px"></space>
 										<label value="TICKET INTERNO:"
 											class="z-label-1" id="lTicketInterno1"
 											style="font-style: normal; position: relative; left: -2.2rem !important;" />
 										<vlayout>
 											<hlayout>
-												<space width="15px"></space>
+												<space width="45px"></space>
 												<textbox
 													id="txtTicketInterno" disabled="true" readonly="false"
 													width="120px" style="font-style: normal !important;" maxlength="20">
@@ -102,7 +103,7 @@
 												</checkbox>
 											</hlayout>
 											<label id="lTicketInterno2"
-												style="position: relative; left: 9.0rem; top: -1.1rem; color:red; font-weight: bold;"
+												style="position: relative; left: 11.5rem; top: -1.1rem; color:red; font-weight: bold;"
 												value="0/20">
 											</label>
 										</vlayout>
@@ -238,6 +239,61 @@
 													</comboitem>
 												</combobox>
 												<space width="12px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<space></space>
+							</row>
+							<row>
+								<space></space>
+								<cell colspan="1">
+									<div align="center">
+										<space width="25px"></space>
+										<label value="Area:"
+											class="z-label-1" style="font-style: normal;" />
+										<vlayout>
+											<hlayout>
+												<bandbox id="bdxArea" width="135px" readonly="true"></bandbox>
+												<space width="10px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<space></space>
+								<cell colspan="1">
+									<div align="center">
+										<space width="25px"></space>
+										<label value="Rack:"
+											class="z-label-1" style="font-style: normal;" />
+										<vlayout>
+											<hlayout>
+												<bandbox id="bdxRack" width="135px" readonly="true"></bandbox>
+												<space width="10px"></space>
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<space></space>
+								<cell colspan="1">
+									<div align="center">
+										<space width="15px"></space>
+										<label value="Proveedor:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<space width="10px"></space>
+												<combobox width="125px"
+													id="cmbProveedor"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_tipo_trabajo}"
+														value="@{lista.getId_tipo_trabajo}">
+													</comboitem>
+												</combobox>
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="cli"
+													style="cursor: help; width: 12px; height: 12px;" />
 											</hlayout>
 										</vlayout>
 									</div>

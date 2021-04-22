@@ -98,6 +98,7 @@ public class Informativos {
 	private String mensaje_informativo_94 = "Ocurrió un error al cargar la información.";
 	private String mensaje_informativo_95 = "Existe(n) ?1 registro(s) en el modulo de bodega y ?2 registro(s) en el modulo de bitacora, para el ticket ?3.";
 	private String mensaje_informativo_96 = "No existe una tarea de tipo apertura para el ticket ?1, debe primero crear la apertura antes de realizar esta acción.";
+	private String mensaje_informativo_97 = "Ya existe una solicitud de personal creada para el ticket ?1.";
 
 	public Informativos() {
 
@@ -485,6 +486,10 @@ public class Informativos {
 
 	public String getMensaje_informativo_96() {
 		return mensaje_informativo_96;
+	}
+	
+	public String getMensaje_informativo_97() {
+		return mensaje_informativo_97;
 	}
 
 }

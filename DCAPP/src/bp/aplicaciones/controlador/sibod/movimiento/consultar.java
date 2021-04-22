@@ -148,7 +148,7 @@ public class consultar extends SelectorComposer<Component> {
 	public void cargarFechas() {
 		Date fechaActual = new Date();
 		Date primerDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth(), 1);
-		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0);
+		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0, 23, 59, 0);
 		dtxFechaInicio.setValue(primerDiaMes);
 		dtxFechaFin.setValue(ultimoDiaMes);
 	}

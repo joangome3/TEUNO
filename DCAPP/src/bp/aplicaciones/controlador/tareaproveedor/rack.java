@@ -1,4 +1,4 @@
-package bp.aplicaciones.controlador.personal;
+package bp.aplicaciones.controlador.tareaproveedor;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,27 +30,27 @@ import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
-import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
+import bp.aplicaciones.mantenimientos.modelo.modelo_rack;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
 import bp.aplicaciones.sibod.modelo.modelo_movimiento;
 
 @SuppressWarnings({ "serial", "deprecation" })
-public class area extends SelectorComposer<Component> {
+public class rack extends SelectorComposer<Component> {
 
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zArea;
+	Window zRack;
 	@Wire
 	Button btnGrabar, btnCancelar, btnAnadir;
 	@Wire
-	Listbox lbxArea1, lbxArea2;
+	Listbox lbxRack1, lbxRack2;
 	@Wire
-	Bandbox bdxArea;
+	Bandbox bdxRack;
 	@Wire
-	Textbox txtBuscarArea;
+	Textbox txtBuscarRack;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
@@ -59,8 +59,7 @@ public class area extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 	modelo_movimiento movimiento = (modelo_movimiento) Sessions.getCurrent().getAttribute("movimiento");
 	@SuppressWarnings("unchecked")
-	List<modelo_tipo_ubicacion> listaArea3 = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
-			.getAttribute("lista_area");
+	List<modelo_rack> listaRack3 = (List<modelo_rack>) Sessions.getCurrent().getAttribute("lista_rack");
 
 	validar_datos validar = new validar_datos();
 
@@ -73,47 +72,50 @@ public class area extends SelectorComposer<Component> {
 	Informativos informativos = new Informativos();
 	Error error = new Error();
 
-	List<modelo_tipo_ubicacion> listaArea1 = new ArrayList<modelo_tipo_ubicacion>();
-	List<modelo_tipo_ubicacion> listaArea2 = new ArrayList<modelo_tipo_ubicacion>();
+	List<modelo_rack> listaRack1 = new ArrayList<modelo_rack>();
+	List<modelo_rack> listaRack2 = new ArrayList<modelo_rack>();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
-		lbxArea1.setEmptyMessage(informativos.getMensaje_informativo_2());
-		lbxArea2.setEmptyMessage(informativos.getMensaje_informativo_2());
+		lbxRack1.setEmptyMessage(informativos.getMensaje_informativo_2());
 		inicializarListas();
-		if (listaArea3.size() > 0) {
-			setearAreas(listaArea3);
+		if (listaRack3.size() > 0) {
+			setearRacks(listaRack3);
 		}
 	}
 
-	public List<modelo_tipo_ubicacion> obtenerTipoUbicaciones() {
-		return listaArea1;
+	public List<modelo_rack> obtenerRacks() {
+		return listaRack1;
 	}
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaArea1 = consultasABaseDeDatos.cargarTipoUbicaciones("");
-		binder.loadComponent(lbxArea1);
+		listaRack1 = consultasABaseDeDatos.cargarRacks("", id_dc);
+		binder.loadComponent(lbxRack1);
 	}
 
-	public void setearAreas(List<modelo_tipo_ubicacion> listaArea3) {
-		for (int i = 0; i < listaArea3.size(); i++) {
-			listaArea2.add(listaArea3.get(i));
+	public void setearRacks(List<modelo_rack> listaRack3) {
+		for (int i = 0; i < listaRack3.size(); i++) {
+			listaRack2.add(listaRack3.get(i));
 			Listitem lItem;
 			Listcell lCell;
 			Button btnEliminar;
 			lItem = new Listitem();
 			/* ID */
 			lCell = new Listcell();
-			lCell.setLabel(String.valueOf(listaArea3.get(i).getId_tipo_ubicacion()));
+			lCell.setLabel(String.valueOf(listaRack3.get(i).getId_rack()));
 			lCell.setStyle("text-align: center !important;");
 			lItem.appendChild(lCell);
-			/* NOMBRE */
+			/* COORDENADA */
 			lCell = new Listcell();
-			lCell.setLabel(listaArea3.get(i).getNom_tipo_ubicacion());
+			lCell.setLabel(listaRack3.get(i).getCoord_rack());
 			lCell.setStyle("text-align: center !important;");
+			lItem.appendChild(lCell);
+			/* CLIENTE */
+			lCell = new Listcell();
+			lCell.setLabel(listaRack3.get(i).getNom_cliente());
 			lItem.appendChild(lCell);
 			/* ACCION */
 			lCell = new Listcell();
@@ -127,11 +129,11 @@ public class area extends SelectorComposer<Component> {
 					Listcell lCell;
 					lItem = (Listitem) btnEliminar.getParent().getParent();
 					lCell = (Listcell) lItem.getChildren().get(0);
-					lbxArea2.removeItemAt(lItem.getIndex());
-					for (int i = 0; i < listaArea2.size(); i++) {
-						if (listaArea2.get(i).getId_tipo_ubicacion() == Long.valueOf(lCell.getLabel().toString())) {
-							listaArea2.remove(i);
-							i = listaArea2.size() + 1;
+					lbxRack2.removeItemAt(lItem.getIndex());
+					for (int i = 0; i < listaRack2.size(); i++) {
+						if (listaRack2.get(i).getId_rack() == Long.valueOf(lCell.getLabel().toString())) {
+							listaRack2.remove(i);
+							i = listaRack2.size() + 1;
 						}
 					}
 				}
@@ -140,31 +142,31 @@ public class area extends SelectorComposer<Component> {
 			lCell.setStyle("text-align: center !important;");
 			lItem.appendChild(lCell);
 			/* ANADIR ITEM A LISTBOX */
-			lbxArea2.appendChild(lItem);
+			lbxRack2.appendChild(lItem);
 		}
 	}
 
-	@Listen("onSelect=#lbxArea1")
-	public void onSelect$lbxArea1() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		if (lbxArea1.getSelectedItem() == null) {
+	@Listen("onSelect=#lbxRack1")
+	public void onSelect$lbxRack1() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (lbxRack1.getSelectedItem() == null) {
 			return;
 		}
-		if (lbxArea1.getSelectedItems().size() > 1) {
-			bdxArea.setText("");
-			setearAreas(lbxArea1);
+		if (lbxRack1.getSelectedItems().size() > 1) {
+			bdxRack.setText("");
+			setearRacks(lbxRack1);
 		} else {
-			int indice = lbxArea1.getSelectedIndex();
-			bdxArea.setText("");
-			bdxArea.setText(listaArea1.get(indice).getNom_tipo_ubicacion());
+			int indice = lbxRack1.getSelectedIndex();
+			bdxRack.setText("");
+			bdxRack.setText(listaRack1.get(indice).getCoord_rack());
 		}
 	}
 
-	public void setearAreas(Listbox lbxAreas) {
+	public void setearRacks(Listbox lbxRacks) {
 		Listitem lItem;
 		Listcell lCell;
 		String rack = "";
 		int i = 0;
-		Iterator<Listitem> it = lbxAreas.getSelectedItems().iterator();
+		Iterator<Listitem> it = lbxRacks.getSelectedItems().iterator();
 		while (it.hasNext()) {
 			lItem = it.next();
 			lCell = (Listcell) lItem.getChildren().get(1);
@@ -175,20 +177,20 @@ public class area extends SelectorComposer<Component> {
 			}
 			i++;
 		}
-		bdxArea.setText(rack);
-		bdxArea.setTooltiptext(rack);
+		bdxRack.setText(rack);
+		bdxRack.setTooltiptext(rack);
 	}
 
-	@Listen("onOK=#txtBuscarArea")
-	public void onOK$txtBuscarArea() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		listaArea1 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim());
-		bdxArea.setText("");
-		lbxArea1.clearSelection();
-		binder.loadComponent(lbxArea1);
+	@Listen("onOK=#txtBuscarRack")
+	public void onOK$txtBuscarRack() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		listaRack1 = consultasABaseDeDatos.cargarRacks(txtBuscarRack.getText().toUpperCase().trim(), id_dc);
+		bdxRack.setText("");
+		lbxRack1.clearSelection();
+		binder.loadComponent(lbxRack1);
 	}
 
-	@Listen("onDoubleClick=#lbxArea1")
-	public void onDoubleClick$lbxArea1()
+	@Listen("onDoubleClick=#lbxRack1")
+	public void onDoubleClick$lbxRack1()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		// onClick$btnAnadir();
 	}
@@ -199,46 +201,50 @@ public class area extends SelectorComposer<Component> {
 		anadirItems();
 	}
 
-	public boolean validarItemEnLista(long id_area) {
+	public boolean validarItemEnLista(long id_rack) {
 		boolean existe = false;
 		Listitem lItem;
 		Listcell lCell;
 		long id;
-		for (int i = 0; i < lbxArea2.getItems().size(); i++) {
-			lItem = lbxArea2.getItemAtIndex(i);
+		for (int i = 0; i < lbxRack2.getItems().size(); i++) {
+			lItem = lbxRack2.getItemAtIndex(i);
 			lCell = (Listcell) lItem.getChildren().get(0);
 			id = Long.valueOf(lCell.getLabel().toString());
-			if (id_area == id) {
+			if (id_rack == id) {
 				existe = true;
-				i = lbxArea2.getItems().size() + 1;
+				i = lbxRack2.getItems().size() + 1;
 			}
 		}
 		return existe;
 	}
 
 	public void anadirItems() throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		if (lbxArea1.getSelectedItem() == null) {
+		if (lbxRack1.getSelectedItem() == null) {
 			return;
 		}
-		Iterator<Listitem> it = lbxArea1.getSelectedItems().iterator();
+		Iterator<Listitem> it = lbxRack1.getSelectedItems().iterator();
 		while (it.hasNext()) {
 			Listitem lItem;
 			Listcell lCell;
 			lItem = it.next();
 			int indice = lItem.getIndex();
-			if (validarItemEnLista(listaArea1.get(indice).getId_tipo_ubicacion()) == false) {
-				listaArea2.add(listaArea1.get(indice));
+			if (validarItemEnLista(listaRack1.get(indice).getId_rack()) == false) {
+				listaRack2.add(listaRack1.get(indice));
 				Button btnEliminar;
 				lItem = new Listitem();
 				/* ID */
 				lCell = new Listcell();
-				lCell.setLabel(String.valueOf(listaArea1.get(indice).getId_tipo_ubicacion()));
+				lCell.setLabel(String.valueOf(listaRack1.get(indice).getId_rack()));
 				lCell.setStyle("text-align: center !important;");
 				lItem.appendChild(lCell);
-				/* NOMBRE */
+				/* COORDENADA */
 				lCell = new Listcell();
-				lCell.setLabel(listaArea1.get(indice).getNom_tipo_ubicacion());
+				lCell.setLabel(listaRack1.get(indice).getCoord_rack());
 				lCell.setStyle("text-align: center !important;");
+				lItem.appendChild(lCell);
+				/* CLIENTE */
+				lCell = new Listcell();
+				lCell.setLabel(listaRack1.get(indice).getNom_cliente());
 				lItem.appendChild(lCell);
 				/* ACCION */
 				lCell = new Listcell();
@@ -252,11 +258,11 @@ public class area extends SelectorComposer<Component> {
 						Listcell lCell;
 						lItem = (Listitem) btnEliminar.getParent().getParent();
 						lCell = (Listcell) lItem.getChildren().get(0);
-						lbxArea2.removeItemAt(lItem.getIndex());
-						for (int i = 0; i < listaArea2.size(); i++) {
-							if (listaArea2.get(i).getId_tipo_ubicacion() == Long.valueOf(lCell.getLabel().toString())) {
-								listaArea2.remove(i);
-								i = listaArea2.size() + 1;
+						lbxRack2.removeItemAt(lItem.getIndex());
+						for (int i = 0; i < listaRack2.size(); i++) {
+							if (listaRack2.get(i).getId_rack() == Long.valueOf(lCell.getLabel().toString())) {
+								listaRack2.remove(i);
+								i = listaRack2.size() + 1;
 							}
 						}
 					}
@@ -265,13 +271,13 @@ public class area extends SelectorComposer<Component> {
 				lCell.setStyle("text-align: center !important;");
 				lItem.appendChild(lCell);
 				/* ANADIR ITEM A LISTBOX */
-				lbxArea2.appendChild(lItem);
+				lbxRack2.appendChild(lItem);
 			}
 		}
 		/* LIMPIAR CAMPOS */
-		lbxArea1.clearSelection();
-		bdxArea.setText("");
-		txtBuscarArea.setText("");
+		lbxRack1.clearSelection();
+		bdxRack.setText("");
+		txtBuscarRack.setText("");
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -283,8 +289,8 @@ public class area extends SelectorComposer<Component> {
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
 							try {
-								Sessions.getCurrent().setAttribute("lista_area", listaArea2);
-								Events.postEvent(new Event("onClose", zArea));
+								Sessions.getCurrent().setAttribute("lista_rack", listaRack2);
+								Events.postEvent(new Event("onClose", zRack));
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(),
 										informativos.getMensaje_informativo_1() + e.getMessage(), Messagebox.OK,
@@ -297,7 +303,7 @@ public class area extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zArea));
+		Events.postEvent(new Event("onClose", zRack));
 	}
 
 }

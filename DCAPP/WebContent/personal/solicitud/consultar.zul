@@ -88,9 +88,15 @@
 												</comboitem>
 											</combobox>
 											<space width="10px"></space>
-											<combobox id="cmbEstado" width="150px" tooltiptext="Seleccione el estado a consultar">
-												<comboitem value="1" label="ABIERTO"></comboitem>
-												<comboitem value="2" label="CERRADO"></comboitem>
+											<combobox id="cmbEstado"
+												width="150px" tooltiptext="Seleccione el estado a consultar"
+												visible="false">
+												<comboitem value="1"
+													label="ABIERTO">
+												</comboitem>
+												<comboitem value="2"
+													label="CERRADO">
+												</comboitem>
 											</combobox>
 										</cell>
 									</row>
@@ -102,9 +108,8 @@
 			</rows>
 		</grid>
 		<listbox mold="paging" id="lbxSolicitudesPersonal" vflex="true"
-			sizedByContent="true" width="100%"
-			 multiple="true"
-			checkmark="false">
+			sizedByContent="true" width="100%" multiple="true" checkmark="false"
+			model="@{zConsultar$consultar_solicitud.obtenerSolicitudes}">
 			<listhead sizable="false" style="overflow: scroll;">
 				<listheader label="ID"
 					style="text-align: center !important;" visible="true">
@@ -127,6 +132,12 @@
 				<listheader label="DESCRIPCION" align="center"
 					style="text-align: center !important;" width="200px">
 				</listheader>
+				<listheader label="FECHA SOLICITUD" align="center"
+					style="text-align: center !important;">
+				</listheader>
+				<listheader label="FECHA RESPUESTA" align="center"
+					style="text-align: center !important;">
+				</listheader>
 				<listheader label="FECHA INICIO" align="center"
 					style="text-align: center !important;">
 				</listheader>
@@ -136,40 +147,26 @@
 				<listheader label="AREA" align="center"
 					style="text-align: center !important;" width="200px">
 				</listheader>
-				<listheader label="TURNO"
-					style="text-align: center !important;">
-				</listheader>
-				<listheader label="ESTADO" align="center"
-					style="text-align: center !important;">
+				<listheader label="RACK" align="center"
+					style="text-align: center !important;" width="200px">
 				</listheader>
 			</listhead>
-			<listitem context="editPopup">
-				<listcell label="1" style="text-align: center !important;"></listcell>
-				<listcell label="RF001234567" style="text-align: center !important;"></listcell>
-				<listcell label="EXCEPCION" style="text-align: center !important;"></listcell>
-				<listcell label="BANCO PICHINCHA" style="text-align: center !important;"></listcell>
-				<listcell label="FERNANDO TASINTUÑA" style="text-align: center !important;"></listcell>
-				<listcell label="GESTION DE INFRAESTRUCTURA" style="text-align: center !important;"></listcell>
-				<listcell label="ACTUALIZACION DE SERVIDOR" style="text-align: center !important;"></listcell>
-				<listcell label="07-04-2021 10:00" style="text-align: center !important;"></listcell>
-				<listcell label="07-04-2021 20:00" style="text-align: center !important;"></listcell>
-				<listcell label="SALA UTIL, CENTRO DE COMPUTO, Q55" style="text-align: center !important;"></listcell>
-				<listcell label="T2 (12 HRS)" style="text-align: center !important;"></listcell>
-				<listcell label="NO EJECUTADO" style="text-align: center !important;"></listcell>
-			</listitem>
-			<listitem context="editPopup">
-				<listcell label="2" style="text-align: center !important;"></listcell>
-				<listcell label="RF001435568" style="text-align: center !important;"></listcell>
-				<listcell label="EXCEPCION" style="text-align: center !important;"></listcell>
-				<listcell label="BANCO GENERAL RUMIÑAHUI" style="text-align: center !important;"></listcell>
-				<listcell label="PABLO CAMPANA" style="text-align: center !important;"></listcell>
-				<listcell label="GESTION DE INFRAESTRUCTURA" style="text-align: center !important;"></listcell>
-				<listcell label="MANTENIMIENTO PREVENTIVO DE SERVIDORES" style="text-align: center !important;"></listcell>
-				<listcell label="11-04-2021 10:00" style="text-align: center !important;"></listcell>
-				<listcell label="11-04-2021 20:00" style="text-align: center !important;"></listcell>
-				<listcell label="SALA UTIL, CENTRO DE COMPUTO, Q55" style="text-align: center !important;"></listcell>
-				<listcell label="T3 (12 HRS)" style="text-align: center !important;"></listcell>
-				<listcell label="NO EJECUTADO" style="text-align: center !important;"></listcell>
+			<listitem context="editPopup" self="@{each=lista}">
+				<listcell label="@{lista.getId_solicitud}"
+					style="text-align: center !important;" />
+				<listcell label="@{lista.getTicket}" />
+				<listcell label="@{lista.getNom_tipo_ingreso}"
+					style="text-align: center !important;" />
+				<listcell label="@{lista.getNom_cliente}" />
+				<listcell label="@{lista.getNom_solicitante}" />
+				<listcell label="@{lista.getNom_tipo_trabajo}" />
+				<listcell label="@{lista.getDescripcion}" />
+				<listcell label="@{lista.mostrarFechaSolicitud}" />
+				<listcell label="@{lista.mostrarFechaRespuesta}" />
+				<listcell label="@{lista.mostrarFechaInicio}" />
+				<listcell label="@{lista.mostrarFechaFin}" />
+				<listcell label="@{lista.getArea}" />
+				<listcell label="@{lista.getRack}" />
 			</listitem>
 		</listbox>
 	</div>
@@ -185,7 +182,7 @@
 		<menuitem id="mCerrar" iconSclass="z-icon-code"
 			label=" - Cerrar tarea"
 			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." />
-		</menupopup>
+	</menupopup>
 	<popup id="cons" width="300px">
 		<html>
 
@@ -199,7 +196,7 @@
 			deje limpio el campo y presione la tecla Enter. </br> 3.-
 			Puede usar el boton refrescar para actualizar la información
 			de la lista. </p> ]]>
-			
+
 			</html>
 	</popup>
 	<zscript>
