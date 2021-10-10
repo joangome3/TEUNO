@@ -1000,8 +1000,11 @@ public class nuevo extends SelectorComposer<Component> {
 								bitacora.setId_cliente(setearEmpresaDesdeUbicacion(movimiento.getId_ubicacion()));
 								if (chkTicket.isChecked()) {
 									bitacora.setId_tipo_servicio(6);
+									bitacora.setId_tipo_clasificacion(5);
 								} else {
 									bitacora.setId_tipo_servicio(obtenerIdTipoServicioAPartirDeTicket(
+											txtTicket.getText().trim().toUpperCase(), 1, id_dc));
+									bitacora.setId_tipo_clasificacion(obtenerIdTipoClasificacionAPartirDeTicket(
 											txtTicket.getText().trim().toUpperCase(), 1, id_dc));
 								}
 								bitacora.setId_tipo_tarea(7);
@@ -1126,6 +1129,7 @@ public class nuevo extends SelectorComposer<Component> {
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {
+		setearFechaIngresaFormulario();
 		cmbEmpresa.setText("");
 		bdxSolicitantes.setText("");
 		bdxSolicitantes.setTooltiptext("");
@@ -1186,6 +1190,14 @@ public class nuevo extends SelectorComposer<Component> {
 		long id_tipo_servicio = 0;
 		id_tipo_servicio = consultasABaseDeDatos.obtenerIdTipoServicioAPartirDeTicket(ticket, id_tipo_tarea, id_dc);
 		return id_tipo_servicio;
+	}
+
+	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_clasificacion = 0;
+		id_tipo_clasificacion = consultasABaseDeDatos.obtenerIdTipoClasificacionAPartirDeTicket(ticket, id_tipo_tarea,
+				id_dc);
+		return id_tipo_clasificacion;
 	}
 
 }

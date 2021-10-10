@@ -33,9 +33,24 @@
 												image="/img/botones/ButtonRefresh.png"
 												tooltiptext="Refrescar lista" autodisable="self" />
 											<space width="20px"></space>
+											<combobox width="155px"
+												id="cmbCategoria"
+												model="@{zConsultar$consultar.obtenerCategorias}"
+												readonly="false" disabled="false">
+												<comboitem
+													self="@{each=lista}" label="@{lista.getNom_categoria}"
+													value="@{lista.getId_categoria}">
+												</comboitem>
+											</combobox>
+											<bandbox id="bdxUbicacion"
+												mold="rounded" autodrop="true" width="250px" readonly="true"
+												popup="pUbicacion">
+											</bandbox>
+											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="205px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;"
+												sclass="demo-search-inp">
 											</textbox>
 											<space width="5px"></space>
 											<combobox id="cmbEstado"
@@ -85,102 +100,138 @@
 				</row>
 			</rows>
 		</grid>
-		<vlayout vflex="1">
-			<hlayout vflex="1" style="overflow: scroll;">
-				<listbox id="lbxArticulos" mold="paging"
-					sizedByContent="true" width="100%" vflex="true"
-					model="@{zConsultar$consultar.obtenerArticulos}" multiple="true">
+		<listbox id="lbxArticulos" mold="paging" sizedByContent="true"
+			width="100%" vflex="1"
+			model="@{zConsultar$consultar.obtenerArticulos}" multiple="true">
+			<listhead sizable="false" style="overflow: scroll;">
+				<listheader visible="false"></listheader>
+				<listheader label="ID"
+					style="text-align: center !important;" visible="false">
+				</listheader>
+				<listheader label="CODIGO" />
+				<listheader label="DESCRIPCION" />
+				<listheader label="CLIENTE"
+					style="text-align: center !important;" />
+				<listheader label="CATEGORIA" />
+				<listheader label="UBICACION"
+					style="text-align: center !important;" />
+				<listheader label="STOCK"
+					style="text-align: center !important;" visible="false" />
+				<listheader label="CAPACIDAD"
+					style="text-align: center !important;" />
+				<listheader label="FECHA INICIO RESPALDO"
+					style="text-align: center !important;" />
+				<listheader label="FECHA FIN RESPALDO"
+					style="text-align: center !important;" />
+				<listheader label="TIPO RESPALDO"
+					style="text-align: center !important;" />
+				<listheader label="ID CONTENEDOR"
+					style="text-align: center !important;" />
+				<listheader label="ESTADO"
+					style="text-align: center !important;" />
+			</listhead>
+			<listitem self="@{each=lista}" context="editPopup">
+				<listcell image="@{lista.mostrarImagenEstadoSolicitud}"
+					style="text-align: center !important;" />
+				<listcell label="@{lista.getId_articulo}"
+					style="text-align: center !important;" />
+				<listcell label="@{lista.getCod_articulo}" />
+				<listcell label="@{lista.getDes_articulo}" />
+				<listcell label="@{lista.getNom_empresa}" />
+				<listcell label="@{lista.getNom_categoria}"
+					style="text-align: center !important;" />
+				<listcell label="@{lista.getNom_ubicacion}" />
+				<listcell label="@{lista.getSto_articulo}" />
+				<listcell image="@{lista.mostrarImagenCapacidad}"
+					label="@{lista.mostrarCapacidad}"
+					style="text-align: center !important;" />
+				<listcell image="@{lista.mostrarImagenFechaInicio}"
+					label="@{lista.mostrarFechaInicio}"
+					style="text-align: center !important;" />
+				<listcell image="@{lista.mostrarImagenFechaFin}"
+					label="@{lista.mostrarFechaFin}"
+					style="text-align: center !important;" />
+				<listcell image="@{lista.mostrarImagenTipoDeRespaldo}"
+					label="@{lista.mostrarTipoDeRespaldo}"
+					style="@{lista.estiloImagenTipoDeRespaldo}" />
+				<listcell image="@{lista.mostrarImagenIdContenedor}"
+					label="@{lista.mostrarIdContenedor}"
+					style="@{lista.estiloImagenIdContenedor}" />
+				<listcell label="@{lista.mostrarEstado}"
+					style="@{lista.estiloMostrarEstado}" />
+			</listitem>
+		</listbox>
+
+		<popup id="pUbicacion" width="800px">
+			<space width="15px"></space>
+			<textbox width="280px" id="txtBuscarUbicacion"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" />
+			<div align="center">
+				<listbox mold="paging" pageSize="8" id="lbxUbicaciones"
+					model="@{zConsultar$consultar.obtenerUbicaciones}"
+					sizedByContent="false" width="100%">
 					<listhead sizable="false"
 						style="overflow: scroll;">
-						<listheader visible="false"></listheader>
-						<listheader label="ID"
-							style="text-align: center !important;" visible="false">
-						</listheader>
-						<listheader label="CODIGO" />
-						<listheader label="DESCRIPCION" />
 						<listheader label="CLIENTE"
-							style="text-align: center !important;" />
-						<listheader label="CATEGORIA" />
-						<listheader label="UBICACION"
-							style="text-align: center !important;" />
-						<listheader label="STOCK"
-							style="text-align: center !important;" visible="false" />
-						<listheader label="CAPACIDAD"
-							style="text-align: center !important;" />
-						<listheader label="FECHA INICIO RESPALDO"
-							style="text-align: center !important;" />
-						<listheader label="FECHA FIN RESPALDO"
-							style="text-align: center !important;" />
-						<listheader label="TIPO RESPALDO"
-							style="text-align: center !important;" />
-						<listheader label="ID CONTENEDOR"
-							style="text-align: center !important;" />
-						<listheader label="ESTADO"
-							style="text-align: center !important;" />
+							style="text-align: center;">
+						</listheader>
+						<listheader label="UBICACIÓN"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="POSICIÓN"
+							style="text-align: center;">
+						</listheader>
 					</listhead>
-					<listitem self="@{each=lista}" context="editPopup">
-						<listcell image="@{lista.mostrarImagenEstadoSolicitud}" style="text-align: center !important;"/>
-						<listcell label="@{lista.getId_articulo}" style="text-align: center !important;"/>
-						<listcell label="@{lista.getCod_articulo}" />
-						<listcell label="@{lista.getDes_articulo}" />
-						<listcell label="@{lista.getNom_empresa}" />
-						<listcell label="@{lista.getNom_categoria}"
-							style="text-align: center !important;" />
-						<listcell label="@{lista.getNom_ubicacion}" />
-						<listcell label="@{lista.getSto_articulo}" />
-						<listcell
-							image="@{lista.mostrarImagenCapacidad}"
-							label="@{lista.mostrarCapacidad}"
-							style="text-align: center !important;" />
-						<listcell
-							image="@{lista.mostrarImagenFechaInicio}"
-							label="@{lista.mostrarFechaInicio}"
-							style="text-align: center !important;" />
-						<listcell image="@{lista.mostrarImagenFechaFin}"
-							label="@{lista.mostrarFechaFin}"
-							style="text-align: center !important;" />
-						<listcell
-							image="@{lista.mostrarImagenTipoDeRespaldo}"
-							label="@{lista.mostrarTipoDeRespaldo}"
-							style="@{lista.estiloImagenTipoDeRespaldo}" />
-						<listcell
-							image="@{lista.mostrarImagenIdContenedor}"
-							label="@{lista.mostrarIdContenedor}"
-							style="@{lista.estiloImagenIdContenedor}" />
-						<listcell label="@{lista.mostrarEstado}" style="@{lista.estiloMostrarEstado}" />
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getNom_empresa}" style="text-align: center !important;" >
+						</listcell>
+						<listcell label="@{lista.getNom_ubicacion}" style="text-align: center !important;" >
+						</listcell>
+						<listcell label="@{lista.getPos_ubicacion}" style="text-align: center !important;" >
+						</listcell>
 					</listitem>
 				</listbox>
-			</hlayout>
-		</vlayout>
+			</div>
+		</popup>
+
 	</div>
-	
+
 	<menupopup id="editPopup">
 		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
 			label=" - Seguimiento"
-			tooltiptext="Permite visualizar el estado de la solicitud." disabled="true" visible="false"/>
-		<menuseparator id="mSeparador1" visible="false"/>
+			tooltiptext="Permite visualizar el estado de la solicitud."
+			disabled="false" visible="true" />
+		<menuseparator id="mSeparador1" visible="true" />
 		<menuitem id="mSolicitar" iconSclass="z-icon-check"
 			label=" - Solicitar"
-			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador." disabled="true" visible="false"/>
+			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador."
+			disabled="false" visible="true" />
+		<menuseparator id="mSeparador4" visible="true" />
 		<menuitem id="mAccion" iconSclass="z-icon-check"
 			label=" - Accion"
-			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador." disabled="true" visible="false"/>
+			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador."
+			disabled="true" visible="false" />
 		<menuitem id="mModificar" iconSclass="z-icon-edit"
 			label=" - Modificar"
-			tooltiptext="Permite modificar la informacion de solo los registros que son cajas."/>
+			tooltiptext="Permite modificar la informacion de solo los registros que son cajas." />
 		<menuseparator id="mSeparador2" />
 		<menuitem id="mActivar" iconSclass="z-icon-font"
 			label=" - Activar"
-			tooltiptext="Permite activar los registros que solo sean del tipo caja."/>
+			tooltiptext="Permite activar los registros que solo sean del tipo caja." />
 		<menuseparator id="mSeparador3" />
 		<menuitem id="mInactivar" iconSclass="z-icon-italic"
 			label=" - Inactivar"
-			tooltiptext="Permite desactivar los registros que solo sean del tipo caja."/>
+			tooltiptext="Permite desactivar los registros que solo sean del tipo caja." />
 	</menupopup>
-	
+
 	<popup id="cons" width="300px">
 		<html>
-			
+
 			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
 			puede usar este campo para realizar consultas entre los
 			registros. </br> </br> <span style="color: black; font-size:
@@ -191,12 +242,13 @@
 			deje limpio el campo y presione la tecla Enter. </br> 3.-
 			Puede usar el boton refrescar para actualizar la información
 			de la lista. </p> ]]>
-			
+
 			</html>
 	</popup>
 	<zscript>
 	<![CDATA[
 	lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+	lbxUbicaciones.pagingChild.mold = "os".equals(lbxUbicaciones.pagingChild.mold) ? "default" : "os";
 ]]>
 	</zscript>
 </zk>

@@ -185,14 +185,14 @@ public class dao_bitacora {
 	}
 
 	public List<modelo_bitacora> obtenerBitacoras(String criterio, int tipo, long id, String fecha, String turno,
-			long localidad, String fecha_inicio, String fecha_fin, long id_tipo_servicio, String use_usuario,
+			long localidad, String fecha_inicio, String fecha_fin, long id_tipo_servicio, long id_tipo_tarea, String use_usuario,
 			int limite) throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
 		List<modelo_bitacora> lista_bitacoras = new ArrayList<modelo_bitacora>();
 		PreparedStatement consulta = null;
 		try {
 			consulta = conexion.abrir()
-					.prepareStatement("{CALL bitacora_obtenerBitacoras(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+					.prepareStatement("{CALL bitacora_obtenerBitacoras(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 			consulta.setString(1, criterio.toUpperCase());
 			consulta.setInt(2, tipo);
 			consulta.setLong(3, id);
@@ -202,21 +202,24 @@ public class dao_bitacora {
 			consulta.setString(7, fecha_inicio);
 			consulta.setString(8, fecha_fin);
 			consulta.setLong(9, id_tipo_servicio);
-			consulta.setString(10, use_usuario);
-			consulta.setInt(11, limite);
+			consulta.setLong(10, id_tipo_tarea);
+			consulta.setString(11, use_usuario);
+			consulta.setInt(12, limite);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				lista_bitacoras.add(new modelo_bitacora(resultado.getLong("id_bitacora"),
 						resultado.getLong("id_cliente"), resultado.getString("nom_cliente"),
 						resultado.getString("ticket_externo"), resultado.getLong("id_turno"),
 						resultado.getString("nom_turno"), resultado.getLong("id_tipo_servicio"),
-						resultado.getString("nom_tipo_servicio"), resultado.getLong("id_tipo_tarea"),
+						resultado.getString("nom_tipo_servicio"), resultado.getLong("id_tipo_clasificacion"),
+						resultado.getString("nom_tipo_clasificacion"), resultado.getLong("id_tipo_tarea"),
 						resultado.getString("nom_tipo_tarea"), resultado.getLong("id_solicitante"),
 						resultado.getString("nom_solicitante"), resultado.getString("area"),
 						resultado.getString("rack"), resultado.getString("descripcion"),
 						resultado.getTimestamp("fec_inicio"), resultado.getTimestamp("fec_fin"),
 						resultado.getLong("id_estado_bitacora"), resultado.getString("nom_estado_bitacora"),
-						resultado.getString("cumplimiento"), resultado.getLong("id_localidad"),
+						resultado.getString("cumplimiento"), resultado.getString("cumplimientoSLA"),
+						resultado.getString("comentarioCumplimientoSLA"), resultado.getLong("id_localidad"),
 						resultado.getString("nom_localidad"), resultado.getString("est_bitacora"),
 						resultado.getString("usu_ingresa"), resultado.getString("nom_usuario_ingresa"),
 						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
@@ -250,26 +253,31 @@ public class dao_bitacora {
 				} else {
 					id1 = secuencia;
 				}
-				consulta = conexion.abrir()
-						.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				consulta.setLong(1, id1);
 				consulta.setLong(2, listaTareas.get(i).getId_cliente());
 				consulta.setString(3, etiqueta.toUpperCase() + id1);
 				consulta.setLong(4, listaTareas.get(i).getId_turno());
 				consulta.setLong(5, listaTareas.get(i).getId_tipo_servicio());
-				consulta.setLong(6, listaTareas.get(i).getId_tipo_tarea());
-				consulta.setLong(7, listaTareas.get(i).getId_solicitante());
-				consulta.setString(8, listaTareas.get(i).getArea());
-				consulta.setString(9, listaTareas.get(i).getRack());
-				consulta.setString(10, listaTareas.get(i).getDescripcion().toUpperCase());
-				consulta.setTimestamp(11, listaTareas.get(i).getFec_inicio());
-				consulta.setTimestamp(12, listaTareas.get(i).getFec_fin());
-				consulta.setLong(13, listaTareas.get(i).getId_estado_bitacora());
-				consulta.setString(14, listaTareas.get(i).getCumplimiento());
-				consulta.setLong(15, listaTareas.get(i).getId_localidad());
-				consulta.setString(16, listaTareas.get(i).getEst_bitacora());
-				consulta.setString(17, listaTareas.get(i).getUsu_ingresa());
-				consulta.setTimestamp(18, listaTareas.get(i).getFec_ingresa());
+				consulta.setLong(6, listaTareas.get(i).getId_tipo_clasificacion());
+				consulta.setLong(7, listaTareas.get(i).getId_tipo_tarea());
+				consulta.setLong(8, listaTareas.get(i).getId_solicitante());
+				consulta.setString(9, listaTareas.get(i).getArea());
+				consulta.setString(10, listaTareas.get(i).getRack());
+				consulta.setString(11, listaTareas.get(i).getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, listaTareas.get(i).getFec_inicio());
+				consulta.setTimestamp(13, listaTareas.get(i).getFec_fin());
+				consulta.setLong(14, listaTareas.get(i).getId_estado_bitacora());
+				consulta.setString(15, listaTareas.get(i).getCumplimiento());
+				consulta.setString(16, listaTareas.get(i).getCumplimientoSLA());
+				consulta.setString(17, listaTareas.get(i).getComentarioCumplimientoSLA());
+				consulta.setLong(18, listaTareas.get(i).getId_localidad());
+				consulta.setString(19, listaTareas.get(i).getEst_bitacora());
+				consulta.setString(20, listaTareas.get(i).getUsu_ingresa());
+				consulta.setTimestamp(21, listaTareas.get(i).getFec_ingresa());
+				consulta.setString(22, listaTareas.get(i).getUsu_modifica());
+				consulta.setTimestamp(23, listaTareas.get(i).getFec_modifica());
 				consulta.executeUpdate();
 				conexion.abrir().commit();
 			}
@@ -297,26 +305,31 @@ public class dao_bitacora {
 		}
 		try {
 			PreparedStatement consulta = null;
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, id1);
 			consulta.setLong(2, bitacora.getId_cliente());
 			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
 			consulta.setLong(4, bitacora.getId_turno());
 			consulta.setLong(5, bitacora.getId_tipo_servicio());
-			consulta.setLong(6, bitacora.getId_tipo_tarea());
-			consulta.setLong(7, bitacora.getId_solicitante());
-			consulta.setString(8, bitacora.getArea());
-			consulta.setString(9, bitacora.getRack());
-			consulta.setString(10, bitacora.getDescripcion().toUpperCase());
-			consulta.setTimestamp(11, bitacora.getFec_inicio());
-			consulta.setTimestamp(12, bitacora.getFec_fin());
-			consulta.setLong(13, bitacora.getId_estado_bitacora());
-			consulta.setString(14, bitacora.getCumplimiento());
-			consulta.setLong(15, bitacora.getId_localidad());
-			consulta.setString(16, bitacora.getEst_bitacora());
-			consulta.setString(17, bitacora.getUsu_ingresa());
-			consulta.setTimestamp(18, bitacora.getFec_ingresa());
+			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(7, bitacora.getId_tipo_tarea());
+			consulta.setLong(8, bitacora.getId_solicitante());
+			consulta.setString(9, bitacora.getArea());
+			consulta.setString(10, bitacora.getRack());
+			consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(12, bitacora.getFec_inicio());
+			consulta.setTimestamp(13, bitacora.getFec_fin());
+			consulta.setLong(14, bitacora.getId_estado_bitacora());
+			consulta.setString(15, bitacora.getCumplimiento());
+			consulta.setString(16, bitacora.getCumplimientoSLA());
+			consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(18, bitacora.getId_localidad());
+			consulta.setString(19, bitacora.getEst_bitacora());
+			consulta.setString(20, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(21, bitacora.getFec_ingresa());
+			consulta.setString(22, bitacora.getUsu_modifica());
+			consulta.setTimestamp(23, bitacora.getFec_modifica());
 			consulta.executeUpdate();
 			consulta.close();
 		} catch (SQLException ex) {
@@ -351,48 +364,56 @@ public class dao_bitacora {
 		try {
 			PreparedStatement consulta = null;
 			/* SE REGISTRA LA ACTIVIDAD EN LOG DE EVENTOS */
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, id1);
 			consulta.setLong(2, bitacora.getId_cliente());
 			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
 			consulta.setLong(4, bitacora.getId_turno());
 			consulta.setLong(5, bitacora.getId_tipo_servicio());
-			consulta.setLong(6, bitacora.getId_tipo_tarea());
-			consulta.setLong(7, bitacora.getId_solicitante());
-			consulta.setString(8, bitacora.getArea());
-			consulta.setString(9, bitacora.getRack());
-			consulta.setString(10, bitacora.getDescripcion().toUpperCase());
-			consulta.setTimestamp(11, bitacora.getFec_inicio());
-			consulta.setTimestamp(12, bitacora.getFec_fin());
-			consulta.setLong(13, bitacora.getId_estado_bitacora());
-			consulta.setString(14, bitacora.getCumplimiento());
-			consulta.setLong(15, bitacora.getId_localidad());
-			consulta.setString(16, bitacora.getEst_bitacora());
-			consulta.setString(17, bitacora.getUsu_ingresa());
-			consulta.setTimestamp(18, bitacora.getFec_ingresa());
+			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(7, bitacora.getId_tipo_tarea());
+			consulta.setLong(8, bitacora.getId_solicitante());
+			consulta.setString(9, bitacora.getArea());
+			consulta.setString(10, bitacora.getRack());
+			consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(12, bitacora.getFec_inicio());
+			consulta.setTimestamp(13, bitacora.getFec_fin());
+			consulta.setLong(14, bitacora.getId_estado_bitacora());
+			consulta.setString(15, bitacora.getCumplimiento());
+			consulta.setString(16, bitacora.getCumplimientoSLA());
+			consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(18, bitacora.getId_localidad());
+			consulta.setString(19, bitacora.getEst_bitacora());
+			consulta.setString(20, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(21, bitacora.getFec_ingresa());
+			consulta.setString(22, bitacora.getUsu_modifica());
+			consulta.setTimestamp(23, bitacora.getFec_modifica());
 			consulta.executeUpdate();
 			/* SE REGISTRA LA TAREA DE PROVEEDOR */
 			consulta = conexion.abrir().prepareStatement(
-					"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+					"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, id1);
 			consulta.setLong(2, tarea_proveedor.getId_cliente());
 			consulta.setString(3, tarea_proveedor.getTicket_externo().toUpperCase());
 			consulta.setLong(4, tarea_proveedor.getId_turno());
 			consulta.setLong(5, tarea_proveedor.getId_tipo_servicio());
-			consulta.setLong(6, tarea_proveedor.getId_tipo_tarea());
-			consulta.setLong(7, tarea_proveedor.getId_solicitante());
-			consulta.setString(8, tarea_proveedor.getArea());
-			consulta.setString(9, tarea_proveedor.getRack());
-			consulta.setString(10, tarea_proveedor.getDescripcion().toUpperCase());
-			consulta.setTimestamp(11, tarea_proveedor.getFec_inicio());
-			consulta.setTimestamp(12, tarea_proveedor.getFec_fin());
-			consulta.setLong(13, tarea_proveedor.getId_estado_bitacora());
-			consulta.setString(14, tarea_proveedor.getCumplimiento());
-			consulta.setLong(15, tarea_proveedor.getId_localidad());
-			consulta.setString(16, tarea_proveedor.getEst_tarea_proveedor());
-			consulta.setString(17, tarea_proveedor.getUsu_ingresa());
-			consulta.setTimestamp(18, tarea_proveedor.getFec_ingresa());
+			consulta.setLong(6, tarea_proveedor.getId_tipo_clasificacion());
+			consulta.setLong(7, tarea_proveedor.getId_tipo_tarea());
+			consulta.setLong(8, tarea_proveedor.getId_solicitante());
+			consulta.setString(9, tarea_proveedor.getArea());
+			consulta.setString(10, tarea_proveedor.getRack());
+			consulta.setString(11, tarea_proveedor.getDescripcion().toUpperCase());
+			consulta.setTimestamp(12, tarea_proveedor.getFec_inicio());
+			consulta.setTimestamp(13, tarea_proveedor.getFec_fin());
+			consulta.setLong(14, tarea_proveedor.getId_estado_bitacora());
+			consulta.setString(15, tarea_proveedor.getCumplimiento());
+			consulta.setLong(16, tarea_proveedor.getId_localidad());
+			consulta.setString(17, tarea_proveedor.getEst_tarea_proveedor());
+			consulta.setString(18, tarea_proveedor.getUsu_ingresa());
+			consulta.setTimestamp(19, tarea_proveedor.getFec_ingresa());
+			consulta.setString(20, tarea_proveedor.getUsu_modifica());
+			consulta.setTimestamp(21, tarea_proveedor.getFec_modifica());
 			consulta.executeUpdate();
 			/* SI NO OCURRE ALGUN INCONVENIENTE SE REALIZA EL GUARDADO EN LA BD */
 			consulta.close();
@@ -415,31 +436,34 @@ public class dao_bitacora {
 		try {
 			PreparedStatement consulta = null;
 			consulta = conexion.abrir().prepareStatement(
-					"{CALL bitacora_modificarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+					"{CALL bitacora_modificarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, bitacora.getId_cliente());
 			consulta.setString(2, bitacora.getTicket_externo().toUpperCase());
 			consulta.setLong(3, bitacora.getId_turno());
 			consulta.setLong(4, bitacora.getId_tipo_servicio());
-			consulta.setLong(5, bitacora.getId_tipo_tarea());
-			consulta.setLong(6, bitacora.getId_solicitante());
-			consulta.setString(7, bitacora.getArea());
-			consulta.setString(8, bitacora.getRack());
-			consulta.setString(9, bitacora.getDescripcion().toUpperCase());
-			consulta.setTimestamp(10, bitacora.getFec_inicio());
-			consulta.setTimestamp(11, bitacora.getFec_fin());
-			consulta.setLong(12, bitacora.getId_estado_bitacora());
-			consulta.setString(13, bitacora.getCumplimiento());
-			consulta.setLong(14, bitacora.getId_localidad());
-			consulta.setString(15, bitacora.getEst_bitacora());
-			consulta.setString(16, bitacora.getUsu_ingresa());
-			consulta.setTimestamp(17, bitacora.getFec_ingresa());
-			consulta.setString(18, bitacora.getUsu_modifica());
-			consulta.setTimestamp(19, bitacora.getFec_modifica());
-			consulta.setString(20, bitacora.getCor_revisa());
-			consulta.setTimestamp(21, bitacora.getFec_revision());
-			consulta.setString(22, bitacora.getObs_coordinador());
-			consulta.setLong(23, tipo);
-			consulta.setLong(24, bitacora.getId_bitacora());
+			consulta.setLong(5, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(6, bitacora.getId_tipo_tarea());
+			consulta.setLong(7, bitacora.getId_solicitante());
+			consulta.setString(8, bitacora.getArea());
+			consulta.setString(9, bitacora.getRack());
+			consulta.setString(10, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(11, bitacora.getFec_inicio());
+			consulta.setTimestamp(12, bitacora.getFec_fin());
+			consulta.setLong(13, bitacora.getId_estado_bitacora());
+			consulta.setString(14, bitacora.getCumplimiento());
+			consulta.setString(15, bitacora.getCumplimientoSLA());
+			consulta.setString(16, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(17, bitacora.getId_localidad());
+			consulta.setString(18, bitacora.getEst_bitacora());
+			consulta.setString(19, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(20, bitacora.getFec_ingresa());
+			consulta.setString(21, bitacora.getUsu_modifica());
+			consulta.setTimestamp(22, bitacora.getFec_modifica());
+			consulta.setString(23, bitacora.getCor_revisa());
+			consulta.setTimestamp(24, bitacora.getFec_revision());
+			consulta.setString(25, bitacora.getObs_coordinador());
+			consulta.setLong(26, tipo);
+			consulta.setLong(27, bitacora.getId_bitacora());
 			consulta.executeUpdate();
 			consulta.close();
 			conexion.abrir().commit();

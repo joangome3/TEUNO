@@ -108,6 +108,7 @@ public class modificar extends SelectorComposer<Component> {
 	List<modelo_estado_articulo> listaEstados1 = new ArrayList<modelo_estado_articulo>();
 	List<modelo_estado_articulo> listaEstados2 = new ArrayList<modelo_estado_articulo>();
 	List<modelo_parametros_generales_1> listaParametros = new ArrayList<modelo_parametros_generales_1>();
+	List<modelo_articulo> listaArticulo = new ArrayList<modelo_articulo>();
 
 	long id = 0;
 	long id_mantenimiento = 6;
@@ -252,7 +253,12 @@ public class modificar extends SelectorComposer<Component> {
 	}
 
 	public void cargarDatos() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		img_actual = articulo.getImg_articulo();
+		cargarArticulos(String.valueOf(articulo.getId_articulo()), "", "");
+		if (listaArticulo.size() > 0) {
+			if (listaArticulo.get(0).getImg_articulo() != null) {
+				img_actual = listaArticulo.get(0).getImg_articulo();
+			}
+		}
 		txtId.setText(String.valueOf(articulo.getId_articulo()));
 		txtCodigo.setText(articulo.getCod_articulo());
 		txtDescripcion.setText(articulo.getDes_articulo());
@@ -459,11 +465,28 @@ public class modificar extends SelectorComposer<Component> {
 		}
 	}
 
-	public void cargarImagen() throws SQLException, IOException {
-		if (articulo.getImg_articulo() != null) {
-			InputStream in = articulo.getImg_articulo().getBinaryStream();
-			BufferedImage image = ImageIO.read(in);
-			img1.setContent(image);
+	public void cargarArticulos(String criterio, String empresa, String estado)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_articulo dao = new dao_articulo();
+		try {
+			listaArticulo = dao.obtenerArticulos2(criterio, String.valueOf(id_dc), empresa, 13, 0);
+		} catch (SQLException e) {
+			Messagebox.show("Error al cargar los articulos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
+					".:: Ver foto ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+	}
+
+	public void cargarImagen() throws SQLException, IOException, ClassNotFoundException {
+		cargarArticulos(String.valueOf(articulo.getId_articulo()), "", "");
+		if (listaArticulo.size() > 0) {
+			if (listaArticulo.get(0).getImg_articulo() != null) {
+				InputStream in = listaArticulo.get(0).getImg_articulo().getBinaryStream();
+				BufferedImage image = ImageIO.read(in);
+				img1.setContent(image);
+				modificar.this.articulo.setImg_articulo(listaArticulo.get(0).getImg_articulo());
+			} else {
+				img1.setSrc("/img/principal/unnamed.jpg");
+			}
 		} else {
 			img1.setSrc("/img/principal/unnamed.jpg");
 		}

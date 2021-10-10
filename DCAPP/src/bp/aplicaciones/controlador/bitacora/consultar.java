@@ -3,6 +3,9 @@ package bp.aplicaciones.controlador.bitacora;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -10,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -19,14 +21,21 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Center;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Include;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -36,20 +45,28 @@ import bp.aplicaciones.bitacora.DAO.dao_bitacora;
 import bp.aplicaciones.bitacora.DAO.dao_registra_turno;
 import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_registra_turno;
+import bp.aplicaciones.controlador.mail;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
+import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
+import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tarea_periodica;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_tarea;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.sibod.DAO.dao_mail;
+import bp.aplicaciones.sibod.modelo.modelo_mail_destinatarios;
+import bp.aplicaciones.sibod.modelo.modelo_mail_parametros;
+import net.sf.jasperreports.engine.JRException;
 
 @SuppressWarnings({ "serial", "deprecation" })
 public class consultar extends SelectorComposer<Component> {
@@ -65,11 +82,11 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Listbox lbxBitacora;
 	@Wire
-	Combobox cmbLimite, cmbCliente, cmbTurno, cmbTipoServicio, cmbUsuario;
+	Combobox cmbLimite, cmbCliente, cmbTurno, cmbTipoServicio, cmbUsuario, cmbTipoTarea;
 	@Wire
 	Datebox dtxFechaInicio, dtxFechaFin;
 	@Wire
-	Menuitem mModificar, mEliminar, mCerrar;
+	Menuitem mModificar, mEliminar, mCerrar, mCerrarRegistro;
 	@Wire
 	Div winList;
 
@@ -88,6 +105,7 @@ public class consultar extends SelectorComposer<Component> {
 	List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
 	List<modelo_empresa> listaCliente = new ArrayList<modelo_empresa>();
 	List<modelo_tipo_servicio> listaTipoServicio = new ArrayList<modelo_tipo_servicio>();
+	List<modelo_tipo_tarea> listaTipoTarea = new ArrayList<modelo_tipo_tarea>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
 	List<modelo_turno> listaTurno = new ArrayList<modelo_turno>();
 	List<modelo_registra_turno> listaRegistroTurno = new ArrayList<modelo_registra_turno>();
@@ -150,7 +168,7 @@ public class consultar extends SelectorComposer<Component> {
 		}
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(txtBuscar.getText().toUpperCase());
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
 		setearRegistroDeTurnos();
@@ -170,6 +188,10 @@ public class consultar extends SelectorComposer<Component> {
 
 	public List<modelo_tipo_servicio> obtenerTipoServicio() {
 		return listaTipoServicio;
+	}
+
+	public List<modelo_tipo_tarea> obtenerTipoTarea() {
+		return listaTipoTarea;
 	}
 
 	public List<modelo_turno> obtenerTurnos() {
@@ -192,11 +214,13 @@ public class consultar extends SelectorComposer<Component> {
 		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
 		listaCliente = consultasABaseDeDatos.cargarEmpresas("", 6, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
 		listaTipoServicio = consultasABaseDeDatos.cargarTipoDeServicios("", 1, 0, 0);
+		listaTipoTarea = consultasABaseDeDatos.cargarTipoDeTareas("", 1, 0, 0);
 		listaTurno = consultasABaseDeDatos.cargarTurnos("A");
 		listaParametros5 = consultasABaseDeDatos.cargarParametros5("", String.valueOf(id_opcion), 2);
 		listaUsuario = consultasABaseDeDatos.cargarUsuarios(String.valueOf(id_dc), 4, 0);
 		binder.loadComponent(cmbCliente);
 		binder.loadComponent(cmbTipoServicio);
+		binder.loadComponent(cmbTipoTarea);
 		binder.loadComponent(cmbTurno);
 		binder.loadComponent(cmbUsuario);
 	}
@@ -208,12 +232,16 @@ public class consultar extends SelectorComposer<Component> {
 		String turno = "";
 		long id_cliente = 0;
 		long id_tipo_servicio = 0;
+		long id_tipo_tarea = 0;
 		String use_usuario = "";
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
 		}
 		if (cmbTipoServicio.getSelectedItem() != null) {
 			id_tipo_servicio = Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString());
+		}
+		if (cmbTipoTarea.getSelectedItem() != null) {
+			id_tipo_tarea = Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString());
 		}
 		if (cmbUsuario.getSelectedItem() != null) {
 			use_usuario = cmbUsuario.getSelectedItem().getValue().toString();
@@ -228,12 +256,13 @@ public class consultar extends SelectorComposer<Component> {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
 		listaBitacora = consultasABaseDeDatos.cargarBitacoras(criterio, 1, id_cliente, "", turno, id_dc, fecha_inicio,
-				fecha_fin, id_tipo_servicio, use_usuario,
+				fecha_fin, id_tipo_servicio, id_tipo_tarea, use_usuario,
 				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		binder.loadComponent(lbxBitacora);
 	}
 
-	public void setearRegistroDeTurnos() throws ClassNotFoundException, FileNotFoundException, IOException {
+	public void setearRegistroDeTurnos()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException, JRException {
 		String fecha_actual = fechas.obtenerFechaFormateada(new Date(), "yyyy-MM-dd");
 		listaRegistroTurno = consultasABaseDeDatos.cargarRegistroTurnos("", 2, id_turno, fecha_actual, id_dc);
 		if (listaRegistroTurno.size() == 0) {
@@ -254,6 +283,80 @@ public class consultar extends SelectorComposer<Component> {
 				btnNuevo.setDisabled(true);
 			}
 		}
+	}
+
+	public void enviarCorreoConAdjunto()
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException, JRException {
+		Fechas fechas = new Fechas();
+		mail mail = new mail();
+		dao_mail dao = new dao_mail();
+		String destinatarios[] = null;
+		String remitente = "", clave = "", asunto = "", cuerpo = "", host = "", starttls = "", port = "", auth = "",
+				ssl = "", debug = "";
+		List<modelo_mail_parametros> lista_parametros = new ArrayList<modelo_mail_parametros>();
+		List<modelo_mail_destinatarios> lista_destinatarios = new ArrayList<modelo_mail_destinatarios>();
+		lista_parametros = dao.obtenerParametros("1", 2);
+		if (lista_parametros.size() == 1) {
+			remitente = lista_parametros.get(0).getMail_remitente();
+			clave = lista_parametros.get(0).getPass_remitente();
+			host = lista_parametros.get(0).getSmtp_host();
+			starttls = lista_parametros.get(0).getSmtp_starttls();
+			port = lista_parametros.get(0).getSmtp_puerto();
+			auth = lista_parametros.get(0).getSmtp_auth();
+			debug = lista_parametros.get(0).getSmtp_debug();
+			ssl = lista_parametros.get(0).getSmtp_trust();
+			lista_destinatarios = dao.obtenerDestinatarios(String.valueOf(lista_parametros.get(0).getId_parametro()),
+					1);
+		} else {
+			return;
+		}
+		if (lista_destinatarios.size() > 0) {
+			destinatarios = new String[lista_destinatarios.size()];
+			for (int i = 0; i < lista_destinatarios.size(); i++) {
+				destinatarios[i] = lista_destinatarios.get(i).getEmail_destinatario();
+			}
+		} else {
+			return;
+		}
+		dao_localidad dao1 = new dao_localidad();
+		List<modelo_localidad> localidad = new ArrayList<modelo_localidad>();
+		localidad = dao1.obtenerLocalidades(String.valueOf(id_dc), 1, 0, 0);
+		if (localidad.size() == 0) {
+			return;
+		}
+		asunto = "DC - REGISTROS ABIERTOS EN REPORTE SERVICIOS POSTVENTA DATACENTER - "
+				+ fechas.obtenerFechaFormateada(new Date(), "yyyy-MM-dd");
+		cuerpo = "<p><strong>Estimad@s,</strong></p>\r\n"
+				+ "<p>Se adjunta el reporte \"FO-PV-07 Registro servicios postventa Datacenter\" con los registros que se encuentran <strong>abiertos</strong> desde el <strong>"
+				+ fechas.obtenerFechaFormateada(cargarFechaHoraInicio(), "yyyy-MM-dd") + " hasta el "
+				+ fechas.obtenerFechaFormateada(cargarFechaHoraFin(), "yyyy-MM-dd") + "</strong>.</p>";
+		mail.enviarMailMasivoConAdjunto(remitente, clave, destinatarios, asunto, cuerpo, host, starttls, port, auth,
+				ssl, debug, id_dc, localidad.get(0).getNom_localidad(), cargarFechaHoraInicio(), cargarFechaHoraFin());
+
+	}
+
+	public Date cargarFechaHoraInicio() {
+		Date fechaActual = new Date();
+		Date primerDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth(), 1);
+		LocalDateTime localDateTime = null;
+		LocalDate localDate = primerDiaMes.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year = localDate.getYear();
+		localDateTime = LocalDateTime.of(year, primerDiaMes.getMonth() + 1, primerDiaMes.getDate(), 0, 0);
+		Date d = null;
+		d = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		return d;
+	}
+
+	public Date cargarFechaHoraFin() {
+		Date fechaActual = new Date();
+		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0);
+		LocalDateTime localDateTime = null;
+		LocalDate localDate = ultimoDiaMes.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year = localDate.getYear();
+		localDateTime = LocalDateTime.of(year, ultimoDiaMes.getMonth() + 1, ultimoDiaMes.getDate(), 23, 59);
+		Date d = null;
+		d = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		return d;
 	}
 
 	public void inicializarPermisos() {
@@ -417,16 +520,16 @@ public class consultar extends SelectorComposer<Component> {
 	}
 
 	public void buscarBitacoras(String criterio, int tipo, long id_cliente, String fecha, String turno,
-			String fecha_inicio, String fecha_fin, long id_tipo_servicio, String use_usuario)
+			String fecha_inicio, String fecha_fin, long id_tipo_servicio, long id_tipo_tarea, String use_usuario)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		if (txtBuscar.getText().length() <= 0) {
 			listaBitacora = consultasABaseDeDatos.cargarBitacoras(criterio, tipo, id_cliente, fecha, turno, id_dc,
-					fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario,
+					fecha_inicio, fecha_fin, id_tipo_servicio, id_tipo_tarea, use_usuario,
 					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		}
 		if (!txtBuscar.getValue().equals("")) {
 			listaBitacora = consultasABaseDeDatos.cargarBitacoras(criterio, tipo, id_cliente, fecha, turno, id_dc,
-					fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario,
+					fecha_inicio, fecha_fin, id_tipo_servicio, id_tipo_tarea, use_usuario,
 					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		}
 		binder.loadComponent(lbxBitacora);
@@ -449,6 +552,11 @@ public class consultar extends SelectorComposer<Component> {
 
 	@Listen("onSelect=#cmbTipoServicio")
 	public void onSelect$cmbTipoServicio() throws ClassNotFoundException, FileNotFoundException, IOException {
+		consultarBitacora();
+	}
+
+	@Listen("onSelect=#cmbTipoTarea")
+	public void onSelect$cmbTipoTarea() throws ClassNotFoundException, FileNotFoundException, IOException {
 		consultarBitacora();
 	}
 
@@ -477,12 +585,16 @@ public class consultar extends SelectorComposer<Component> {
 		String criterio = txtBuscar.getText();
 		long id_cliente = 0;
 		long id_tipo_servicio = 0;
+		long id_tipo_tarea = 0;
 		String use_usuario = "";
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
 		}
 		if (cmbTipoServicio.getSelectedItem() != null) {
 			id_tipo_servicio = Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString());
+		}
+		if (cmbTipoTarea.getSelectedItem() != null) {
+			id_tipo_tarea = Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString());
 		}
 		if (cmbUsuario.getSelectedItem() != null) {
 			use_usuario = cmbUsuario.getSelectedItem().getValue().toString();
@@ -493,18 +605,20 @@ public class consultar extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
-		buscarBitacoras(criterio, 1, id_cliente, "", "", fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario);
+		buscarBitacoras(criterio, 1, id_cliente, "", "", fecha_inicio, fecha_fin, id_tipo_servicio, id_tipo_tarea,
+				use_usuario);
 	}
 
 	@Listen("onClick=#mCerrar")
-	public void onClickmCerrar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+	public void onClickmCerrar()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException, JRException {
 		onClickbtnActualizarEstado();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnActualizarEstado")
 	public void onClickbtnActualizarEstado()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException, JRException {
 		if (lbxBitacora.getSelectedItem() == null) {
 			Messagebox.show(informativos.getMensaje_informativo_3(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.INFORMATION);
@@ -559,14 +673,15 @@ public class consultar extends SelectorComposer<Component> {
 	}
 
 	@Listen("onClick=#mEliminar")
-	public void onClickmEliminar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+	public void onClickmEliminar()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException, JRException {
 		onClickbtnEliminarRegistros();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnEliminarRegistros")
 	public void onClickbtnEliminarRegistros()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException, JRException {
 		if (lbxBitacora.getSelectedItem() == null) {
 			Messagebox.show(informativos.getMensaje_informativo_3(), informativos.getMensaje_informativo_27(),
 					Messagebox.OK, Messagebox.INFORMATION);
@@ -970,6 +1085,8 @@ public class consultar extends SelectorComposer<Component> {
 						@Override
 						public void onEvent(Event event) throws Exception {
 							if (event.getName().equals("onOK")) {
+								System.out.println(System.getProperty("user.dir"));
+								// enviarCorreoConAdjunto();
 								if (validarSiSeIniciaTurno() == false) {
 									String nombre_usuario = "";
 									if (listaRegistroTurno.size() > 0) {
@@ -1187,8 +1304,11 @@ public class consultar extends SelectorComposer<Component> {
 			modelo_bitacora bitacora = new modelo_bitacora();
 			bitacora.setId_cliente(tarea_periodica.getId_cliente());
 			bitacora.setId_turno(id_turno);
-			//bitacora.setId_solicitante(id_user);
+			// bitacora.setId_solicitante(id_user);
 			bitacora.setId_tipo_servicio(tarea_periodica.getId_tipo_servicio());
+			if (bitacora.getId_tipo_servicio() == 13) {
+				bitacora.setId_tipo_clasificacion(2);
+			}
 			bitacora.setId_tipo_tarea(tarea_periodica.getId_tipo_tarea());
 			bitacora.setDescripcion(tarea_periodica.getDescripcion());
 			bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(tarea_periodica.getFec_inicio()));
@@ -1252,38 +1372,127 @@ public class consultar extends SelectorComposer<Component> {
 		return id_estado;
 	}
 
+//	@Listen("onRightClick=#lbxBitacora")
+//	public void onRightClick$lbxMovimientos() throws Throwable {
+//		if (lbxBitacora.getSelectedItem() == null) {
+//			return;
+//		}
+//		int indice = lbxBitacora.getSelectedIndex();
+//		consultarBitacora();
+//		int tamanio_lista = lbxBitacora.getItemCount();
+//		if (indice >= tamanio_lista) {
+//			return;
+//		}
+//		lbxBitacora.setSelectedIndex(indice);
+//	}
+
 	@Listen("onClick=#mModificar")
 	public void onClickmModificar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		onDoubleClicklbxBitacora();
+		if (lbxBitacora.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxBitacora.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxBitacora.getSelectedIndex();
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		long id_bitacora = listaBitacora.get(indice).getId_bitacora();
+		String ticket = listaBitacora.get(indice).getTicket_externo();
+		Sessions.getCurrent().setAttribute("bitacora", listaBitacora.get(indice));
+		crearPestanaParaModificar(tTab, tPanel, id_bitacora, ticket);
 	}
 
-	@Listen("onDoubleClick=#lbxBitacora")
-	public void onDoubleClicklbxBitacora()
+	@Listen("onClick=#mCerrarRegistro")
+	public void onClickmCerrarRegistro()
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		if (lbxBitacora.getSelectedItem() == null) {
 			return;
 		}
-		if (ingresa_a_modificar == false) {
-			ingresa_a_modificar = true;
-			if (lbxBitacora.getSelectedItems().size() > 1) {
-				ingresa_a_modificar = false;
-				Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
-						Messagebox.OK, Messagebox.EXCLAMATION);
+		if (lbxBitacora.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxBitacora.getSelectedIndex();
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		long id_bitacora = listaBitacora.get(indice).getId_bitacora();
+		String ticket = listaBitacora.get(indice).getTicket_externo();
+		if (listaBitacora.get(indice).getId_tipo_tarea() != 1) {
+			Messagebox.show(informativos.getMensaje_informativo_117(), informativos.getMensaje_informativo_116(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		Sessions.getCurrent().setAttribute("bitacora", listaBitacora.get(indice));
+		crearPestanaParaCerrarRegistro(tTab, tPanel, id_bitacora, ticket);
+	}
+
+	public void crearPestanaParaModificar(Tabbox tTab, Tabpanels tPanel, long id_bitacora, String ticket) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab - LE:" + id_bitacora)) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab - LE:" + id_bitacora);
+				tab2.focus();
+				tab2.setSelected(true);
 				return;
 			}
-			int indice = lbxBitacora.getSelectedIndex();
-			Sessions.getCurrent().setAttribute("bitacora", listaBitacora.get(indice));
-			window = (Window) Executions.createComponents("/bitacora/log_eventos/modificar.zul", null, null);
-			if (window instanceof Window) {
-				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-					@Override
-					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-						ingresa_a_modificar = false;
-						consultarBitacora();
-					}
-				});
+			Tab tab = new Tab();
+			tab.setLabel("LOG DE EVENTOS - MODIFICAR | REGISTRO " + ticket);
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab - LE:" + id_bitacora);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/bitacora/log_eventos/modificar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void crearPestanaParaCerrarRegistro(Tabbox tTab, Tabpanels tPanel, long id_bitacora, String ticket) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab - LEC:" + id_bitacora)) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab - LEC:" + id_bitacora);
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
 			}
-			window.setParent(winList);
+			Tab tab = new Tab();
+			tab.setLabel("LOG DE EVENTOS - CERRAR | REGISTRO " + ticket);
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab - LEC:" + id_bitacora);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/bitacora/log_eventos/cerrar_registro.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -1294,7 +1503,7 @@ public class consultar extends SelectorComposer<Component> {
 		List<modelo_parametros_generales_10> listaParametros10 = new ArrayList<modelo_parametros_generales_10>();
 		listaParametros10 = consultasABaseDeDatos.cargarParametros10(String.valueOf(id_opcion), "",
 				String.valueOf(id_dc), 2);
-		listaBitacora = consultasABaseDeDatos.cargarBitacoras("", 3, 0, "", "", id_dc, "", "", 0, "", 0);
+		listaBitacora = consultasABaseDeDatos.cargarBitacoras("", 3, 0, "", "", id_dc, "", "", 0, 0, "", 0);
 		listaTipoServicio = consultasABaseDeDatos.cargarTipoDeServicios("", 1, 0, 0);
 		dao_bitacora dao = new dao_bitacora();
 		long id_bitacora = 0;

@@ -210,7 +210,7 @@ public class modificar_ticket extends SelectorComposer<Component> {
 		long id_tipo_servicio = 6;
 		String use_usuario = "";
 		listaBitacora = consultasABaseDeDatos.cargarBitacoras(criterio, 5, id_tipo_tarea, "", turno, id_dc,
-				fecha_inicio, fecha_fin, id_tipo_servicio, use_usuario, Integer.valueOf("0"));
+				fecha_inicio, fecha_fin, id_tipo_servicio, 0, use_usuario, Integer.valueOf("0"));
 		total_registros = listaBitacora.size();
 		return total_registros;
 	}
@@ -286,6 +286,11 @@ public class modificar_ticket extends SelectorComposer<Component> {
 			txtTicketActual.setErrorMessage("El ticket actual debe ser diferente del anterior.");
 			return;
 		}
+		if (validarSiExistePrimeroApertura(txtTicketActual.getText().trim(), 1) == false) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtTicketActual.getText().trim()),
+					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
 		if (txtComentario.getText().length() <= 0) {
 			txtComentario.setErrorMessage("Ingrese un comentario.");
 			return;
@@ -311,6 +316,10 @@ public class modificar_ticket extends SelectorComposer<Component> {
 							for (int i = 0; i < listaBitacora.size(); i++) {
 								listaBitacora.get(i).setTicket_externo(txtTicketActual.getText().trim());
 								comentario = listaBitacora.get(i).getDescripcion();
+								listaBitacora.get(i).setId_tipo_servicio(obtenerIdTipoServicioAPartirDeTicket(
+										txtTicketActual.getText().trim().toUpperCase(), 1, id_dc));
+								listaBitacora.get(i).setId_tipo_clasificacion(obtenerIdTipoClasificacionAPartirDeTicket(
+										txtTicketActual.getText().trim().toUpperCase(), 1, id_dc));
 								listaBitacora.get(i).setDescripcion(comentario + " - " + txtComentario.getText());
 								listaBitacora.get(i).setUsu_modifica(user);
 								listaBitacora.get(i).setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
@@ -362,6 +371,34 @@ public class modificar_ticket extends SelectorComposer<Component> {
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
 		Events.postEvent(new Event("onClose", zModificar));
+	}
+
+	public long obtenerIdTipoServicioAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_servicio = 0;
+		id_tipo_servicio = consultasABaseDeDatos.obtenerIdTipoServicioAPartirDeTicket(ticket, id_tipo_tarea, id_dc);
+		return id_tipo_servicio;
+	}
+
+	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_clasificacion = 0;
+		id_tipo_clasificacion = consultasABaseDeDatos.obtenerIdTipoClasificacionAPartirDeTicket(ticket, id_tipo_tarea,
+				id_dc);
+		return id_tipo_clasificacion;
+	}
+
+	public boolean validarSiExistePrimeroApertura(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que exista primero una apertura antes de que se guarde un
+		 * registro
+		 */
+		boolean existe_primero_apertura = true;
+		if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, String.valueOf(id_tipo_tarea)) == 0) {
+			existe_primero_apertura = false;
+		}
+		return existe_primero_apertura;
 	}
 
 }

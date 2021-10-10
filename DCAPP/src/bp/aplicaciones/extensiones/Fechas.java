@@ -1,6 +1,7 @@
 package bp.aplicaciones.extensiones;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -79,6 +80,16 @@ public class Fechas {
 		Timestamp timestamp = new Timestamp(fecha.getTime());
 		dato = timestamp.getTime();
 		return dato;
+	}
+
+	public Date obtenerDateDeUnString(String dateText, String formato) {
+		SimpleDateFormat DATA_FORMAT = new SimpleDateFormat(formato);
+		try {
+			return DATA_FORMAT.parse(dateText);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

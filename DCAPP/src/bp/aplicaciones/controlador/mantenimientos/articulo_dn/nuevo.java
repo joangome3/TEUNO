@@ -110,17 +110,17 @@ public class nuevo extends SelectorComposer<Component> {
 		lbxUbicaciones.setEmptyMessage(informativos.getMensaje_informativo_2());
 		txtCodigo.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtCodigo.setText(txtCodigo.getText().toUpperCase());
+				txtCodigo.setText(txtCodigo.getText().toUpperCase().trim());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtDescripcion.setText(txtDescripcion.getText().toUpperCase());
+				txtDescripcion.setText(txtDescripcion.getText().toUpperCase().trim());
 			}
 		});
 		txtIDContenedor.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtIDContenedor.setText(txtIDContenedor.getText().toUpperCase());
+				txtIDContenedor.setText(txtIDContenedor.getText().toUpperCase().trim());
 			}
 		});
 		txtCantidad.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -438,8 +438,8 @@ public class nuevo extends SelectorComposer<Component> {
 							modelo_articulo_dn articulo = new modelo_articulo_dn();
 							articulo.setId_categoria(
 									Long.parseLong(cmbCategoria.getSelectedItem().getValue().toString()));
-							articulo.setCod_articulo(txtCodigo.getText().toString());
-							articulo.setDes_articulo(txtDescripcion.getText().toString());
+							articulo.setCod_articulo(txtCodigo.getText().toString().trim());
+							articulo.setDes_articulo(txtDescripcion.getText().toString().trim());
 							articulo.setId_localidad(
 									Long.parseLong(cmbLocalidad.getSelectedItem().getValue().toString()));
 							if (vcapacidad.equals("S")) {
@@ -517,45 +517,64 @@ public class nuevo extends SelectorComposer<Component> {
 								}
 							}
 							if (vfechainicio.equals("S")) {
-									if (chkIngresaFecha.isChecked()) {
-										if (chkEsFecha.isChecked()) {
+								if (chkIngresaFecha.isChecked()) {
+									if (chkEsFecha.isChecked()) {
+										/*
+										 * Se valida si un articulo tiene el mismo codigo, fecha inicio
+										 * 
+										 */
+										String fecha_inicio = fechas.obtenerFechaFormateada(dtxFechaInicio.getValue(),
+												"yyyy/MM/dd");
+										if (dtxFechaFin.getValue() == null) {
+											int totalArticulos = consultasABaseDeDatos
+													.validarSiCodigoYFechaDeInicioDeArticuloExiste(txtCodigo.getText(),
+															fecha_inicio, articulo.getId_categoria());
+											if (totalArticulos > 0) {
+												Messagebox.show(informativos.getMensaje_informativo_18(),
+														informativos.getMensaje_informativo_17(), Messagebox.OK,
+														Messagebox.INFORMATION);
+												return;
+											}
+										} else {
 											/*
-											 * Se valida si un articulo tiene el mismo codigo, fecha inicio
-											 * 
+											 * Se valida si un articulo tiene el mismo codigo, fecha inicio y fecha de
+											 * fin
 											 */
-											String fecha_inicio = fechas
-													.obtenerFechaFormateada(dtxFechaInicio.getValue(), "yyyy/MM/dd");
-											if (dtxFechaFin.getValue() == null) {
-												int totalArticulos = consultasABaseDeDatos
-														.validarSiCodigoYFechaDeInicioDeArticuloExiste(
-																txtCodigo.getText(), fecha_inicio, articulo.getId_categoria());
-												if (totalArticulos > 0) {
-													Messagebox.show(informativos.getMensaje_informativo_18(),
-															informativos.getMensaje_informativo_17(), Messagebox.OK,
-															Messagebox.INFORMATION);
-													return;
-												}
-											} else {
-												/*
-												 * Se valida si un articulo tiene el mismo codigo, fecha inicio y fecha
-												 * de fin
-												 */
-												String fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(),
-														"yyyy/MM/dd");
-												int totalArticulos = consultasABaseDeDatos
-														.validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(
-																txtCodigo.getText(), fecha_inicio, fecha_fin, articulo.getId_categoria());
-												if (totalArticulos > 0) {
-													Messagebox.show(informativos.getMensaje_informativo_19(),
-															informativos.getMensaje_informativo_17(), Messagebox.OK,
-															Messagebox.INFORMATION);
-													return;
-												}
+											String fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(),
+													"yyyy/MM/dd");
+											int totalArticulos = consultasABaseDeDatos
+													.validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(
+															txtCodigo.getText(), fecha_inicio, fecha_fin,
+															articulo.getId_categoria());
+											if (totalArticulos > 0) {
+												Messagebox.show(informativos.getMensaje_informativo_19(),
+														informativos.getMensaje_informativo_17(), Messagebox.OK,
+														Messagebox.INFORMATION);
+												return;
 											}
 										}
 									}
+								}
 							}
-							articulo.setEst_articulo("AE");
+							/*
+							 * Se valida si el codigo ingresado esta registrado anteriormente
+							 */
+							int bandera = 0;
+							List<modelo_articulo_dn> _listaArticulo = new ArrayList<modelo_articulo_dn>();
+							_listaArticulo = consultasABaseDeDatos.cargarArticulosDN(
+									txtCodigo.getText().toUpperCase().trim(), id_dc, "", 13, 0, "", "");
+							if (_listaArticulo.size() > 0) {
+								if (articulo.getId_categoria() == 1) {
+									bandera = 1;
+									articulo.setEst_articulo("PAC");
+								} else {
+									bandera = 0;
+									articulo.setEst_articulo("AE");
+								}
+							} else {
+								bandera = 0;
+								articulo.setEst_articulo("AE");
+							}
 							articulo.setUsu_ingresa(user);
 							articulo.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							/*
@@ -582,9 +601,17 @@ public class nuevo extends SelectorComposer<Component> {
 							}
 							try {
 								dao.insertarArticulo(articulo, listaRelacionArticulos);
-								Messagebox.show(informativos.getMensaje_informativo_20(),
-										informativos.getMensaje_informativo_17(), Messagebox.OK,
-										Messagebox.EXCLAMATION);
+								if (bandera == 0) {
+									Messagebox.show(informativos.getMensaje_informativo_20(),
+											informativos.getMensaje_informativo_17(), Messagebox.OK,
+											Messagebox.EXCLAMATION);
+								} else {
+									Messagebox.show(
+											informativos.getMensaje_informativo_106().replace("?",
+													txtCodigo.getText().toUpperCase().trim()),
+											informativos.getMensaje_informativo_17(), Messagebox.OK,
+											Messagebox.EXCLAMATION);
+								}
 								limpiarCampos();
 								obtenerId();
 							} catch (Exception e) {

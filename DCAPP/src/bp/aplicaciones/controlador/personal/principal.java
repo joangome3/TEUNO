@@ -26,7 +26,7 @@ public class principal extends SelectorComposer<Component> {
 	@Wire
 	Window zConsultar;
 	@Wire
-	Treecell tcOpcion1, tcOpcion2, tcOpcion3, tcReporte1, tcReporte2;
+	Treecell tcOpcion1, tcOpcion2, tcOpcion3, tcOpcion4, tcReporte1, tcReporte2, tcReporte3;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -48,6 +48,38 @@ public class principal extends SelectorComposer<Component> {
 	/**
 	 * CONSUlTAR SOLICITUDES
 	 */
+	
+	@Listen("onClick=#tcOpcion4")
+	public void onClick$tcOpcion4() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcOpcion4.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcOpcion4.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE PERSONAL | CONSULTAR SOLICITUDES (NORMAL)");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcOpcion4.getId());
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setWidth("100%");
+			tabpanel.setHeight("100%");
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/personal/solicitud/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Listen("onClick=#tcOpcion1")
 	public void onClick$tcOpcion1() {
@@ -60,18 +92,17 @@ public class principal extends SelectorComposer<Component> {
 				return;
 			}
 			Tab tab = new Tab();
-			tab.setLabel("GESTION DE PERSONAL | CONSULTAR SOLICITUDES");
+			tab.setLabel("GESTION DE PERSONAL | CONSULTAR SOLICITUDES (CALENDARIO)");
 			tab.setClosable(true);
 			tab.setSelected(true);
 			tab.setId("Tab:" + tcOpcion1.getId());
 			tab.setImage("/img/botones/ButtonSearch4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
-			Include include = new Include("/personal/solicitud/consultar.zul");
+			Include include = new Include("/personal/solicitud/calendario.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);
@@ -100,9 +131,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonNew4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/personal/solicitud/nuevo.zul");
 			Center c = new Center();
@@ -133,9 +163,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonPersonal2.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/personal/registro_permanencia/consultar.zul");
 			Center c = new Center();
@@ -166,11 +195,10 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonReport4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
-			Include include = new Include("/personal/reporte_personal_1.zul");
+			Include include = new Include("/personal/reporte_tareas1.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);
@@ -199,11 +227,42 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonReport4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
-			Include include = new Include("/personal/reporte_personal_2.zul");
+			Include include = new Include("/personal/reporte_ingreso_personal1.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Listen("onClick=#tcReporte3")
+	public void onClick$tcReporte3() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcReporte3.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcReporte3.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE PERSONAL - REPORTES | ACCESO DE PERMANENCIA");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcReporte3.getId());
+			tab.setImage("/img/botones/ButtonReport4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setWidth("100%");
+			tabpanel.setHeight("100%");
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/personal/reporte_acceso_permanencia1.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

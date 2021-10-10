@@ -36,7 +36,7 @@
 												<space width="20px"></space>
 												<textbox id="txtBuscar"
 													width="150px" placeholder="Ingrese palabra clave"
-													tooltip="cons" style="font-style: italic;">
+													tooltip="cons" style="font-style: italic;" sclass="demo-search-inp">
 												</textbox>
 												<space width="5px"></space>
 												<combobox width="100px"
@@ -124,7 +124,7 @@
 												<space width="20px"></space>
 												<combobox id="cmbEstado"
 													width="100px"
-													tooltiptext="Seleccione el estado a consultar">
+													tooltiptext="Seleccione el estado a consultar" readonly="true">
 													<comboitem value="1"
 														label="ABIERTO">
 													</comboitem>
@@ -141,11 +141,13 @@
 					</row>
 				</rows>
 			</grid>
+			<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
 			<listbox mold="paging" id="lbxTareasProgramadas"
-				vflex="true" sizedByContent="true"
+				vflex="1" sizedByContent="true"
 				model="@{zConsultar$consultar_ticket.obtenerTareasProgramadas}"
 				multiple="true" checkmark="false" width="100%" pageSize="5">
-				<listhead sizable="false" style="overflow: scroll;">
+				<listhead sizable="false" style="overflow-y: scroll;">
 					<listheader label="ID"
 						style="text-align: center !important;" visible="true">
 					</listheader>
@@ -165,7 +167,7 @@
 						style="text-align: center !important;">
 					</listheader>
 					<listheader label="DESCRIPCION" align="center"
-						style="text-align: center !important;" width="200px">
+						style="text-align: center !important;" width="500px">
 					</listheader>
 					<listheader label="AREA" align="center"
 						style="text-align: center !important;" width="200px">
@@ -228,6 +230,8 @@
 						style="@{lista.estiloImagenUsuarioModifica}" />
 				</listitem>
 			</listbox>
+			</hlayout>
+		</vlayout>
 		</div>
 			<popup id="cons" width="300px">
 		<html>

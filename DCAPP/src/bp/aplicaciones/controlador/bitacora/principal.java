@@ -26,7 +26,7 @@ public class principal extends SelectorComposer<Component> {
 	@Wire
 	Window zConsultar;
 	@Wire
-	Treecell tcOpcion1, tcOpcion2, tcOpcion3, tcOpcion4, tcReporte1, tcReporte2, tcReporte3;
+	Treecell tcOpcion1, tcOpcion2, tcOpcion3, tcOpcion4, tcReporte1, tcReporte2, tcReporte3, tcReporte4;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -67,9 +67,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonSearch4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/log_eventos/consultar.zul");
 			Center c = new Center();
@@ -100,9 +99,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonNew4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/log_eventos/nuevo.zul");
 			Center c = new Center();
@@ -133,9 +131,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonReport4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/log_eventos/reporte_bitacora_1.zul");
 			Center c = new Center();
@@ -166,11 +163,42 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonReport4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/log_eventos/reporte_bitacora_3.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Listen("onClick=#tcReporte4")
+	public void onClick$tcReporte4() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcReporte4.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcReporte4.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE BITACORA - REPORTES | REGISTRO SERVICIOS POSTVENTA DATACENTER");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcReporte4.getId());
+			tab.setImage("/img/botones/ButtonReport4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setWidth("100%");
+			tabpanel.setHeight("100%");
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/bitacora/log_eventos/reporte_bitacora_4.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);
@@ -203,9 +231,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonSearch4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/tarea_proveedor/consultar.zul");
 			Center c = new Center();
@@ -236,9 +263,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonNew4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/tarea_proveedor/nuevo.zul");
 			Center c = new Center();
@@ -269,9 +295,8 @@ public class principal extends SelectorComposer<Component> {
 			tab.setImage("/img/botones/ButtonReport4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
-			tabpanel.setVflex("max");
 			tabpanel.setWidth("100%");
-			tabpanel.setStyle("height: calc(100%);");
+			tabpanel.setHeight("100%");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/bitacora/tarea_proveedor/reporte_tarea_proveedor_1.zul");
 			Center c = new Center();

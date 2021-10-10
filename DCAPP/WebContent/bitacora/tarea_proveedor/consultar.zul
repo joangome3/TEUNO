@@ -33,7 +33,8 @@
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="150px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;"
+												sclass="demo-search-inp">
 											</textbox>
 											<space width="5px"></space>
 											<combobox width="100px"
@@ -107,18 +108,27 @@
 													value="1000">
 												</comboitem>
 											</combobox>
-											<button id="btnActualizarEstado"
+											<button
+												id="btnActualizarEstado"
 												image="/img/botones/ButtonCheck1.png"
-												tooltiptext="Actualizar varios registros a estado cerrado." visible="false">
+												tooltiptext="Actualizar varios registros a estado cerrado."
+												visible="false">
 											</button>
-											<button id="btnEliminarRegistros"
+											<button
+												id="btnEliminarRegistros"
 												image="/img/botones/ButtonDeactivate2.png"
 												tooltiptext="Eliminar varios registros." visible="false">
 											</button>
 											<space width="20px"></space>
-											<combobox id="cmbEstado" width="100px" tooltiptext="Seleccione el estado a consultar">
-												<comboitem value="1" label="ABIERTO"></comboitem>
-												<comboitem value="2" label="CERRADO"></comboitem>
+											<combobox id="cmbEstado"
+												width="100px"
+												tooltiptext="Seleccione el estado a consultar" readonly="true">
+												<comboitem value="1"
+													label="ABIERTO">
+												</comboitem>
+												<comboitem value="2"
+													label="CERRADO">
+												</comboitem>
 											</combobox>
 										</cell>
 									</row>
@@ -129,11 +139,13 @@
 				</row>
 			</rows>
 		</grid>
-		<listbox mold="paging" id="lbxTareasProgramadas" vflex="true"
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+		<listbox mold="paging" id="lbxTareasProgramadas" vflex="1"
 			sizedByContent="true" width="100%"
-			model="@{zConsultar$consultar.obtenerTareasProgramadas}" multiple="true"
-			checkmark="false">
-			<listhead sizable="false" style="overflow: scroll;">
+			model="@{zConsultar$consultar.obtenerTareasProgramadas}"
+			multiple="true" checkmark="false">
+			<listhead sizable="false" style="overflow-y: scroll;">
 				<listheader label="ID"
 					style="text-align: center !important;" visible="true">
 				</listheader>
@@ -146,6 +158,9 @@
 				<listheader label="SERVICIO/CATEGORIA" align="center"
 					style="text-align: center !important;">
 				</listheader>
+				<listheader label="CLASIFICACIÓN" align="center"
+					style="text-align: center !important;" width="450px">
+				</listheader>
 				<listheader label="TIPO TAREA" align="center"
 					style="text-align: center !important;">
 				</listheader>
@@ -153,7 +168,7 @@
 					style="text-align: center !important;">
 				</listheader>
 				<listheader label="DESCRIPCION" align="center"
-					style="text-align: center !important;" width="200px">
+					style="text-align: center !important;" width="500px">
 				</listheader>
 				<listheader label="AREA" align="center"
 					style="text-align: center !important;" width="200px">
@@ -168,13 +183,13 @@
 					style="text-align: center !important;">
 				</listheader>
 				<listheader label="ESTADO" align="center"
-					style="text-align: center !important;">
+					style="text-align: center !important;" visible="true">
 				</listheader>
 				<listheader label="CUMPLIMIENTO" align="center"
-					style="text-align: center !important;">
+					style="text-align: center !important;" visible="false">
 				</listheader>
 				<listheader label="TURNO"
-					style="text-align: center !important;">
+					style="text-align: center !important;" visible="false">
 				</listheader>
 				<listheader label="OPERADOR REGISTRA"
 					style="text-align: center !important;">
@@ -183,10 +198,10 @@
 					style="text-align: center !important;">
 				</listheader>
 				<listheader label="COORDINADOR REVISA"
-					style="text-align: center !important;">
+					style="text-align: center !important;" visible="false">
 				</listheader>
 				<listheader label="OBSERVACION"
-					style="text-align: center !important;">
+					style="text-align: center !important;" visible="false">
 				</listheader>
 			</listhead>
 			<listitem context="editPopup" self="@{each=lista}">
@@ -195,6 +210,9 @@
 				<listcell label="@{lista.getNom_cliente}" />
 				<listcell label="@{lista.getTicket_externo}" />
 				<listcell label="@{lista.getNom_tipo_servicio}" />
+				<listcell label="@{lista.getNom_tipo_clasificacion}" 
+						  image="@{lista.mostrarImagenClasificacion}"
+					      style="@{lista.estiloImagenClasificacion}" />
 				<listcell label="@{lista.getNom_tipo_tarea}" />
 				<listcell label="@{lista.mostrarSolicitante}"
 					image="@{lista.mostrarImagenSolicitante}"
@@ -225,9 +243,11 @@
 					style="@{lista.estiloImagenUsuarioRevisa}" />
 				<listcell label="@{lista.mostrarObservacion}"
 					image="@{lista.mostrarImagenObservacion}"
-					style="@{lista.estiloImagenObservacion}" />	
+					style="@{lista.estiloImagenObservacion}" />
 			</listitem>
 		</listbox>
+		</hlayout>
+		</vlayout>
 	</div>
 	<menupopup id="editPopup">
 		<menuitem id="mModificar" iconSclass="z-icon-edit"
@@ -242,7 +262,7 @@
 			label=" - Cerrar tarea"
 			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." />
 	</menupopup>
-	
+
 	<popup id="cons" width="300px">
 		<html>
 

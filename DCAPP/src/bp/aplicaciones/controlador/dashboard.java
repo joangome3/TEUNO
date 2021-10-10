@@ -748,7 +748,7 @@ public class dashboard extends SelectorComposer<Component> {
 						// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
 						Tabpanel tabpanel = new Tabpanel();
 						tPanel.appendChild(tabpanel);
-						Include include = new Include("/control_cambio/consultar.zul");
+						Include include = new Include("/control_cambio/calendario.zul");
 						Center c = new Center();
 						// c.setAutoscroll(true);
 						c.appendChild(include);
@@ -777,7 +777,7 @@ public class dashboard extends SelectorComposer<Component> {
 					// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
 					Tabpanel tabpanel = new Tabpanel();
 					tPanel.appendChild(tabpanel);
-					Include include = new Include("/control_cambio/consultar.zul");
+					Include include = new Include("/control_cambio/calendario.zul");
 					Center c = new Center();
 					// c.setAutoscroll(true);
 					c.appendChild(include);

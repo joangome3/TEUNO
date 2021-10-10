@@ -25,6 +25,7 @@ import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menuseparator;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
@@ -37,9 +38,11 @@ import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
+import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_respaldo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
+import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 
@@ -53,11 +56,15 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Button btnNuevo, btnRefrescar;
 	@Wire
-	Textbox txtBuscar;
+	Textbox txtBuscar, txtBuscarUbicacion;
 	@Wire
 	Listbox lbxArticulos;
 	@Wire
-	Combobox cmbLimite, cmbEstado;
+	Bandbox bdxUbicacion;
+	@Wire
+	Listbox lbxUbicaciones;
+	@Wire
+	Combobox cmbCategoria, cmbLimite, cmbEstado;
 	@Wire
 	Menuitem mSeguimiento, mSolicitar, mAccion, mModificar, mActivar, mInactivar;
 	@Wire
@@ -86,6 +93,8 @@ public class consultar extends SelectorComposer<Component> {
 	validar_datos validar = new validar_datos();
 
 	List<modelo_articulo_dn> listaArticulo = new ArrayList<modelo_articulo_dn>();
+	List<modelo_categoria_dn> listaCategoria = new ArrayList<modelo_categoria_dn>();
+	List<modelo_ubicacion_dn> listaUbicacion = new ArrayList<modelo_ubicacion_dn>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
 	List<modelo_respaldo> listaRespaldo = new ArrayList<modelo_respaldo>();
 	List<modelo_capacidad> listaCapacidad = new ArrayList<modelo_capacidad>();
@@ -106,6 +115,7 @@ public class consultar extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
+		lbxUbicaciones.setEmptyMessage(informativos.getMensaje_informativo_2());
 		cmbLimite.setSelectedIndex(2);
 		cmbEstado.setSelectedIndex(0);
 		cargarPerfil();
@@ -130,13 +140,21 @@ public class consultar extends SelectorComposer<Component> {
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(txtBuscar.getText().toUpperCase());
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
 	}
 
 	public List<modelo_articulo_dn> obtenerArticulos() {
 		return listaArticulo;
+	}
+
+	public List<modelo_categoria_dn> obtenerCategorias() {
+		return listaCategoria;
+	}
+
+	public List<modelo_ubicacion_dn> obtenerUbicaciones() {
+		return listaUbicacion;
 	}
 
 	public void cargarPerfil() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -146,9 +164,13 @@ public class consultar extends SelectorComposer<Component> {
 	public void inicializarListas() throws WrongValueException, Throwable {
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
 				cmbEstado.getSelectedItem().getValue().toString(), 1,
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), "", "");
+				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), "0", "0");
 		listaRespaldo = consultasABaseDeDatos.cargarRespaldosDN("", 0, "", "", 0);
 		listaCapacidad = consultasABaseDeDatos.cargarCapacidadesDN("", 1, 0, 0);
+		listaCategoria = consultasABaseDeDatos.cargarCategoriasDN("", id_dc, 4, 0, 10);
+		listaUbicacion = consultasABaseDeDatos.cargarUbicacionesDN("", id_dc, 6, 0, 0, 0, 10);
+		binder.loadComponent(cmbCategoria);
+		binder.loadComponent(lbxUbicaciones);
 		binder.loadComponent(lbxArticulos);
 	}
 
@@ -241,6 +263,16 @@ public class consultar extends SelectorComposer<Component> {
 		}
 	}
 
+	@Listen("onSelect=#cmbCategoria")
+	public void onSelect$cmbCategoria() throws Throwable {
+		try {
+			buscarArticulos();
+		} catch (Exception e) {
+			Messagebox.show(error.getMensaje_error_2(), informativos.getMensaje_informativo_1(), Messagebox.OK,
+					Messagebox.EXCLAMATION);
+		}
+	}
+
 	@Listen("onSelect=#cmbEstado")
 	public void onSelect$cmbEstado() throws Throwable {
 		try {
@@ -251,17 +283,53 @@ public class consultar extends SelectorComposer<Component> {
 		}
 	}
 
+	@Listen("onOK=#txtBuscarUbicacion")
+	public void onOKtxtBuscarUbicacion()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		bdxUbicacion.setText("");
+		bdxUbicacion.setTooltiptext("");
+		listaUbicacion = consultasABaseDeDatos.cargarUbicacionesDN(txtBuscarUbicacion.getText().toString(), id_dc, 6, 0,
+				0, 0, 10);
+		lbxUbicaciones.clearSelection();
+		binder.loadComponent(lbxUbicaciones);
+	}
+
+	@Listen("onSelect=#lbxUbicaciones")
+	public void onSelectlbxUbicaciones() throws Throwable {
+		if (lbxUbicaciones.getSelectedItem() == null) {
+			bdxUbicacion.setText("");
+			bdxUbicacion.setTooltiptext("");
+		} else {
+			int index = lbxUbicaciones.getSelectedIndex();
+			bdxUbicacion.setText(listaUbicacion.get(index).getNom_ubicacion() + " - "
+					+ listaUbicacion.get(index).getPos_ubicacion());
+			bdxUbicacion.setTooltiptext(listaUbicacion.get(index).getNom_ubicacion() + " - "
+					+ listaUbicacion.get(index).getPos_ubicacion());
+		}
+		buscarArticulos();
+	}
+
 	public void buscarArticulos() throws WrongValueException, Throwable {
-		String criterio = txtBuscar.getText();
+		String criterio = txtBuscar.getText().trim();
+		long id_categoria = 0;
+		long id_ubicacion = 0;
+		if (cmbCategoria.getSelectedItem() != null) {
+			id_categoria = Long.valueOf(cmbCategoria.getSelectedItem().getValue().toString());
+		}
+		if (lbxUbicaciones.getSelectedItem() != null) {
+			id_ubicacion = listaUbicacion.get(lbxUbicaciones.getSelectedIndex()).getId_ubicacion();
+		}
 		if (txtBuscar.getText().length() <= 0) {
 			listaArticulo = consultasABaseDeDatos.cargarArticulosDN(criterio, id_dc,
 					cmbEstado.getSelectedItem().getValue().toString(), 1,
-					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), "", "");
+					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), String.valueOf(id_categoria),
+					String.valueOf(id_ubicacion));
 		}
 		if (!txtBuscar.getValue().equals("")) {
 			listaArticulo = consultasABaseDeDatos.cargarArticulosDN(criterio, id_dc,
 					cmbEstado.getSelectedItem().getValue().toString(), 1,
-					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), "", "");
+					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), String.valueOf(id_categoria),
+					String.valueOf(id_ubicacion));
 		}
 		binder.loadComponent(lbxArticulos);
 	}
@@ -330,17 +398,31 @@ public class consultar extends SelectorComposer<Component> {
 		if (lbxArticulos.getSelectedItem() == null) {
 			return;
 		}
+		int indice = lbxArticulos.getSelectedIndex();
+		if (!listaArticulo.get(indice).getEst_articulo().equals("PAC")) {
+			if (validarSiExisteSolicitudCreada(listaArticulo.get(indice).getId_articulo()) == false) {
+				if (validarSiExisteSolicitudPendienteActualizacion(
+						listaArticulo.get(indice).getId_articulo()) == false) {
+					Messagebox.show(informativos.getMensaje_informativo_108(), informativos.getMensaje_informativo_24(),
+							Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
+			}
+		}
 		if (ingresa_a_accion == true) {
 			return;
 		}
-		int indice = lbxArticulos.getSelectedIndex();
 		modelo_solicitud solicitud = new modelo_solicitud();
 		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
 				listaArticulo.get(indice).getId_articulo(), 7);
 		if (solicitud == null) {
+			Messagebox.show(informativos.getMensaje_informativo_109(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		} else {
 			if (solicitud.getId_solicitud() == 0) {
+				Messagebox.show(informativos.getMensaje_informativo_109(), informativos.getMensaje_informativo_24(),
+						Messagebox.OK, Messagebox.EXCLAMATION);
 				return;
 			}
 		}
@@ -368,15 +450,36 @@ public class consultar extends SelectorComposer<Component> {
 		if (lbxArticulos.getSelectedItem() == null) {
 			return;
 		}
-		if (ingresa_a_accion == true) {
+		if (lbxArticulos.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		int indice = lbxArticulos.getSelectedIndex();
+		if (!listaArticulo.get(indice).getEst_articulo().equals("PAC")) {
+			if (validarSiExisteSolicitudCreada(listaArticulo.get(indice).getId_articulo()) == false) {
+				if (validarSiExisteSolicitudPendienteActualizacion(
+						listaArticulo.get(indice).getId_articulo()) == true) {
+					Messagebox.show(informativos.getMensaje_informativo_110(), informativos.getMensaje_informativo_24(),
+							Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				} else {
+					Messagebox.show(informativos.getMensaje_informativo_108(), informativos.getMensaje_informativo_24(),
+							Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
+			}
+		}
+		if (ingresa_a_accion == true) {
+			return;
+		}
 		modelo_solicitud solicitud = new modelo_solicitud();
 		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
 				listaArticulo.get(indice).getId_articulo(), 7);
 		if (solicitud != null) {
 			if (solicitud.getId_solicitud() != 0) {
+				Messagebox.show(informativos.getMensaje_informativo_110(), informativos.getMensaje_informativo_24(),
+						Messagebox.OK, Messagebox.EXCLAMATION);
 				return;
 			}
 		}
@@ -447,6 +550,13 @@ public class consultar extends SelectorComposer<Component> {
 			Messagebox.show(informativos.getMensaje_informativo_92(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
+		}
+		if (listaArticulo.get(indice).getEst_articulo().equals("PAC")) {
+			if (validarSiExisteSolicitudPendienteActualizacion(listaArticulo.get(indice).getId_articulo()) == false) {
+				Messagebox.show(informativos.getMensaje_informativo_107(), informativos.getMensaje_informativo_24(),
+						Messagebox.OK, Messagebox.EXCLAMATION);
+				return;
+			}
 		}
 		if (ingresa_a_accion == true) {
 			return;

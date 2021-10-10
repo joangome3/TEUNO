@@ -163,15 +163,16 @@ public class dao_movimiento {
 					id1 = secuencia;
 				}
 				consulta = conexion.abrir()
-						.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				consulta.setLong(1, id1);
 				consulta.setLong(2, setearEmpresaDesdeUbicacion(listaMovimiento.get(i).getId_ubicacion(),
 						listaMovimiento.get(i).getId_localidad()));
 				consulta.setString(3, tck_listaMovimiento);
 				consulta.setLong(4, bitacora.getId_turno());
 				consulta.setLong(5, bitacora.getId_tipo_servicio());
-				consulta.setLong(6, bitacora.getId_tipo_tarea());
-				consulta.setLong(7, bitacora.getId_solicitante());
+				consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+				consulta.setLong(7, bitacora.getId_tipo_tarea());
+				consulta.setLong(8, bitacora.getId_solicitante());
 				String tipoDePedido = "INGRESO";
 				String palabra = "EN";
 				if (listaMovimiento.get(i).getTip_movimiento().equals("E")) {
@@ -185,20 +186,25 @@ public class dao_movimiento {
 								listaMovimiento.get(i).getId_localidad())
 						+ " " + palabra + " LA UBICACION " + setearNombreUbicacion(
 								listaMovimiento.get(i).getId_ubicacion(), listaMovimiento.get(i).getId_localidad()));
-				consulta.setString(8, bitacora.getDescripcion().toUpperCase());
-				consulta.setTimestamp(9, bitacora.getFec_inicio());
-				consulta.setTimestamp(10, bitacora.getFec_fin());
-				consulta.setLong(11, bitacora.getId_estado_bitacora());
-				consulta.setString(12, bitacora.getCumplimiento());
-				consulta.setLong(13, bitacora.getId_localidad());
-				consulta.setString(14, bitacora.getEst_bitacora());
-				consulta.setString(15, bitacora.getUsu_ingresa());
-				consulta.setTimestamp(16, bitacora.getFec_ingresa());
+				consulta.setString(9, bitacora.getArea());
+				consulta.setString(10, bitacora.getRack());
+				consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, bitacora.getFec_inicio());
+				consulta.setTimestamp(13, bitacora.getFec_fin());
+				consulta.setLong(14, bitacora.getId_estado_bitacora());
+				consulta.setString(15, bitacora.getCumplimiento());
+				consulta.setString(16, bitacora.getCumplimientoSLA());
+				consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+				consulta.setLong(18, bitacora.getId_localidad());
+				consulta.setString(19, bitacora.getEst_bitacora());
+				consulta.setString(20, bitacora.getUsu_ingresa());
+				consulta.setTimestamp(21, bitacora.getFec_ingresa());
+				consulta.setString(22, bitacora.getUsu_modifica());
+				consulta.setTimestamp(23, bitacora.getFec_modifica());
 				consulta.executeUpdate();
 				consulta.close();
 				conexion.abrir().commit();
 			}
-			consulta.close();
 		} catch (SQLException ex) {
 			conexion.abrir().rollback();
 			throw new SQLException(ex);
@@ -227,11 +233,23 @@ public class dao_movimiento {
 		long id_tipo_servicio = 0;
 		dao_bitacora dao = new dao_bitacora();
 		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
-		listaBitacora = dao.obtenerBitacoras(ticket, 7, id_tipo_tarea, "", "", id_dc, "", "", 0, "", 0);
+		listaBitacora = dao.obtenerBitacoras(ticket, 7, id_tipo_tarea, "", "", id_dc, "", "", 0, 0, "", 0);
 		if (listaBitacora.size() > 0) {
 			id_tipo_servicio = listaBitacora.get(0).getId_tipo_servicio();
 		}
 		return id_tipo_servicio;
+	}
+	
+	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_clasificacion = 0;
+		dao_bitacora dao = new dao_bitacora();
+		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
+		listaBitacora = dao.obtenerBitacoras(ticket, 7, id_tipo_tarea, "", "", id_dc, "", "", 0, 0, "", 0);
+		if (listaBitacora.size() > 0) {
+			id_tipo_clasificacion = listaBitacora.get(0).getId_tipo_clasificacion();
+		}
+		return id_tipo_clasificacion;
 	}
 
 	public String setearNombreUbicacion(long id_ubicacion, long id_dc)
@@ -304,29 +322,34 @@ public class dao_movimiento {
 			/* SE ACTUALIZA LOS LOGS DE EVENTOS */
 			for (int i = 0; i < listaBitacora.size(); i++) {
 				consulta = conexion.abrir().prepareStatement(
-						"{CALL bitacora_modificarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						"{CALL bitacora_modificarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				consulta.setLong(1, listaBitacora.get(i).getId_cliente());
 				consulta.setString(2, listaBitacora.get(i).getTicket_externo().toUpperCase());
 				consulta.setLong(3, listaBitacora.get(i).getId_turno());
 				consulta.setLong(4, listaBitacora.get(i).getId_tipo_servicio());
-				consulta.setLong(5, listaBitacora.get(i).getId_tipo_tarea());
-				consulta.setLong(6, listaBitacora.get(i).getId_solicitante());
-				consulta.setString(7, listaBitacora.get(i).getDescripcion().toUpperCase());
-				consulta.setTimestamp(8, listaBitacora.get(i).getFec_inicio());
-				consulta.setTimestamp(9, listaBitacora.get(i).getFec_fin());
-				consulta.setLong(10, listaBitacora.get(i).getId_estado_bitacora());
-				consulta.setString(11, listaBitacora.get(i).getCumplimiento());
-				consulta.setLong(12, listaBitacora.get(i).getId_localidad());
-				consulta.setString(13, listaBitacora.get(i).getEst_bitacora());
-				consulta.setString(14, listaBitacora.get(i).getUsu_ingresa());
-				consulta.setTimestamp(15, listaBitacora.get(i).getFec_ingresa());
-				consulta.setString(16, listaBitacora.get(i).getUsu_modifica());
-				consulta.setTimestamp(17, listaBitacora.get(i).getFec_modifica());
-				consulta.setString(18, listaBitacora.get(i).getCor_revisa());
-				consulta.setTimestamp(19, listaBitacora.get(i).getFec_revision());
-				consulta.setString(20, listaBitacora.get(i).getObs_coordinador());
-				consulta.setLong(21, tipo2);
-				consulta.setLong(22, listaBitacora.get(i).getId_bitacora());
+				consulta.setLong(5, listaBitacora.get(i).getId_tipo_servicio());
+				consulta.setLong(6, listaBitacora.get(i).getId_tipo_tarea());
+				consulta.setLong(7, listaBitacora.get(i).getId_solicitante());
+				consulta.setString(8, listaBitacora.get(i).getArea());
+				consulta.setString(9, listaBitacora.get(i).getRack());
+				consulta.setString(10, listaBitacora.get(i).getDescripcion().toUpperCase());
+				consulta.setTimestamp(11, listaBitacora.get(i).getFec_inicio());
+				consulta.setTimestamp(12, listaBitacora.get(i).getFec_fin());
+				consulta.setLong(13, listaBitacora.get(i).getId_estado_bitacora());
+				consulta.setString(14, listaBitacora.get(i).getCumplimiento());
+				consulta.setString(15, listaBitacora.get(i).getCumplimientoSLA());
+				consulta.setString(16, listaBitacora.get(i).getComentarioCumplimientoSLA());
+				consulta.setLong(17, listaBitacora.get(i).getId_localidad());
+				consulta.setString(18, listaBitacora.get(i).getEst_bitacora());
+				consulta.setString(19, listaBitacora.get(i).getUsu_ingresa());
+				consulta.setTimestamp(20, listaBitacora.get(i).getFec_ingresa());
+				consulta.setString(21, listaBitacora.get(i).getUsu_modifica());
+				consulta.setTimestamp(22, listaBitacora.get(i).getFec_modifica());
+				consulta.setString(23, listaBitacora.get(i).getCor_revisa());
+				consulta.setTimestamp(24, listaBitacora.get(i).getFec_revision());
+				consulta.setString(25, listaBitacora.get(i).getObs_coordinador());
+				consulta.setLong(26, tipo2);
+				consulta.setLong(27, listaBitacora.get(i).getId_bitacora());
 				consulta.executeUpdate();
 			}
 			consulta.close();

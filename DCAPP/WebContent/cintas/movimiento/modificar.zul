@@ -15,8 +15,8 @@
 			</toolbar>
 			<tabbox height="100%">
 				<tabs>
-					<tab label="DATOS ANTERIORES" visible="false"></tab>
-					<tab label="DATOS DESPUES DE PEDIDO" selected="true"></tab>
+					<tab label="REGISTRO ANTES DE PEDIDO" visible="true"></tab>
+					<tab label="REGISTRO DESPUES DE PEDIDO" selected="true"></tab>
 				</tabs>
 				<tabpanels vflex="max" style="height: calc(100%);"
 					width="100%">
@@ -596,60 +596,7 @@
 														<hlayout>
 															<bandbox
 																id="bdxUbicacionActual" mold="rounded" autodrop="true"
-																width="250px" readonly="true">
-																<bandpopup
-																	width="45%">
-																	<panel
-																		title="">
-																		<panelchildren>
-																			<space
-																				width="13px">
-																			</space>
-																			<textbox
-																				width="280px" id="txtBuscarUbicacionActual"																			
-																				placeholder="Ingrese palabra clave"
-																				tooltiptext="Presione enter para realizar la búsqueda"
-																				style="font-style: italic;">
-																			</textbox>
-																			<image
-																				src="/img/botones/ButtonPopup.png" tooltip="con"
-																				style="cursor: help; width: 16px; height: 16px;" />
-																			<div
-																				align="center">
-																				<listbox
-																					mold="paging" pageSize="10"
-																					id="lbxUbicacionesActual"
-																					model="@{zModificar$modificar.obtenerUbicacionesActual}"
-																					sizedByContent="false" width="100%">
-																					<listhead
-																						sizable="false" style="overflow: scroll;">
-																						<listheader
-																							label="CLIENTE">
-																						</listheader>
-																						<listheader
-																							label="UBICACIÓN">
-																						</listheader>
-																						<listheader
-																							label="POSICIÓN">
-																						</listheader>
-																					</listhead>
-																					<listitem
-																						self="@{each=lista}">
-																						<listcell
-																							label="@{lista.getNom_empresa}">
-																						</listcell>
-																						<listcell
-																							label="@{lista.getNom_ubicacion}">
-																						</listcell>
-																						<listcell
-																							label="@{lista.getPos_ubicacion}">
-																						</listcell>
-																					</listitem>
-																				</listbox>
-																			</div>
-																		</panelchildren>
-																	</panel>
-																</bandpopup>
+																width="250px" readonly="true" popup="pUbicacionActual">
 															</bandbox>
 															<space width="45px"></space>
 														</hlayout>
@@ -742,6 +689,36 @@
 				</tabpanels>
 			</tabbox>
 		</div>
+
+		<popup id="pUbicacionActual" width="600px">
+			<space width="13px"></space>
+			<textbox width="280px" id="txtBuscarUbicacionActual"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" />
+			<listbox mold="paging" pageSize="10"
+				id="lbxUbicacionesActual"
+				model="@{zModificar$modificar.obtenerUbicacionesActual}"
+				sizedByContent="false" width="100%">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="CLIENTE"></listheader>
+					<listheader label="UBICACIÓN"></listheader>
+					<listheader label="POSICIÓN"></listheader>
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell label="@{lista.getNom_empresa}">
+					</listcell>
+					<listcell label="@{lista.getNom_ubicacion}">
+					</listcell>
+					<listcell label="@{lista.getPos_ubicacion}">
+					</listcell>
+				</listitem>
+			</listbox>
+		</popup>
+
 		<popup id="con" width="450px">
 			<html>
 

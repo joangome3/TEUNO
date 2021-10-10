@@ -3,7 +3,7 @@
 <zk>
 	<window border="normal" id="zModificar" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.articulo_dn.modificar"
-		position="center, center" sizable="true" width="45%" height="65%"
+		position="center, center" sizable="true" width="45%" height="90%"
 		maximizable="false" minimizable="false"
 		title=".:: Modificar articulo ::." shadow="false" mode="overlapped"
 		focus="true" action="show: slideDown;hide: slideUp">
@@ -255,59 +255,7 @@
 											<hlayout>
 												<bandbox
 													id="bdxUbicacion" mold="rounded" autodrop="true"
-													width="250px" readonly="true">
-													<bandpopup width="45%">
-														<panel
-															title="">
-															<panelchildren>
-																<textbox
-																	width="280px" id="txtBuscarUbicacion"
-																	class="z-textbox-search-move"
-																	placeholder="Ingrese palabra clave"
-																	tooltiptext="Presione enter para realizar la búsqueda"
-																	style="font-style: italic;">
-																</textbox>
-																<space
-																	width="20px">
-																</space>
-																<image
-																	src="/img/botones/ButtonPopup.png" tooltip="con"
-																	style="cursor: help; width: 16px; height: 16px;" />
-																<div
-																	align="center">
-																	<listbox
-																		mold="paging" pageSize="10" id="lbxUbicaciones"
-																		model="@{zModificar$modificar.obtenerUbicaciones}"
-																		sizedByContent="false" width="100%">
-																		<listhead
-																			sizable="false" style="overflow: scroll;">
-																			<listheader
-																				label="CLIENTE">
-																			</listheader>
-																			<listheader
-																				label="UBICACIÓN">
-																			</listheader>
-																			<listheader
-																				label="POSICIÓN">
-																			</listheader>
-																		</listhead>
-																		<listitem
-																			self="@{each=lista}">
-																			<listcell
-																				label="@{lista.getNom_empresa}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_ubicacion}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getPos_ubicacion}">
-																			</listcell>
-																		</listitem>
-																	</listbox>
-																</div>
-															</panelchildren>
-														</panel>
-													</bandpopup>
+													width="250px" readonly="true" popup="pUbicacion">
 												</bandbox>
 												<space width="45px"></space>
 											</hlayout>
@@ -376,6 +324,39 @@
 				</center>
 			</borderlayout>
 		</div>
+		
+		<popup id="pUbicacion" width="800px">
+			<space width="12px"></space>
+			<textbox width="280px" id="txtBuscarUbicacion"
+				class="z-textbox-search-move" placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<space width="20px"></space>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" />
+			<div align="center">
+				<listbox mold="paging" pageSize="8" id="lbxUbicaciones"
+					model="@{zModificar$modificar.obtenerUbicaciones}"
+					sizedByContent="false" width="100%">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="CLIENTE" style="text-align: center !important;"></listheader>
+						<listheader label="UBICACIÓN" style="text-align: center !important;"></listheader>
+						<listheader label="POSICIÓN" style="text-align: center !important;"></listheader>
+					</listhead>
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getNom_empresa}" style="text-align: center !important;" >
+						</listcell>
+						<listcell label="@{lista.getNom_ubicacion}" style="text-align: center !important;" >
+						</listcell>
+						<listcell label="@{lista.getPos_ubicacion}" style="text-align: center !important;" >
+						</listcell>
+					</listitem>
+				</listbox>
+			</div>
+		</popup>
+
 		<popup id="con" width="450px">
 			<html>
 

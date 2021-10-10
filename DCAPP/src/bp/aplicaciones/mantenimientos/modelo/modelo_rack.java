@@ -13,6 +13,7 @@ public class modelo_rack {
 	private String coord_rack;
 	private long id_cliente;
 	private String nom_cliente;
+	private String nom_fila;
 	private long id_localidad;
 	private String est_rack;
 	private String usu_ingresa;
@@ -32,6 +33,7 @@ public class modelo_rack {
 	 * @param coord_rack
 	 * @param id_cliente
 	 * @param nom_cliente
+	 * @param nom_fila
 	 * @param id_localidad
 	 * @param est_rack
 	 * @param usu_ingresa
@@ -39,13 +41,15 @@ public class modelo_rack {
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_rack(long id_rack, String coord_rack, long id_cliente, String nom_cliente, long id_localidad,
-			String est_rack, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
+	public modelo_rack(long id_rack, String coord_rack, long id_cliente, String nom_cliente, String nom_fila,
+			long id_localidad, String est_rack, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
+			Timestamp fec_modifica) {
 		super();
 		this.id_rack = id_rack;
 		this.coord_rack = coord_rack;
 		this.id_cliente = id_cliente;
 		this.nom_cliente = nom_cliente;
+		this.nom_fila = nom_fila;
 		this.id_localidad = id_localidad;
 		this.est_rack = est_rack;
 		this.usu_ingresa = usu_ingresa;
@@ -102,6 +106,20 @@ public class modelo_rack {
 
 	public void setNom_cliente(String nom_cliente) {
 		this.nom_cliente = nom_cliente;
+	}
+
+	/**
+	 * @return the nom_fila
+	 */
+	public String getNom_fila() {
+		return nom_fila;
+	}
+
+	/**
+	 * @param nom_fila the nom_fila to set
+	 */
+	public void setNom_fila(String nom_fila) {
+		this.nom_fila = nom_fila;
 	}
 
 	public long getId_localidad() {
@@ -187,9 +205,9 @@ public class modelo_rack {
 	@Override
 	public String toString() {
 		return "modelo_rack [id_rack=" + id_rack + ", coord_rack=" + coord_rack + ", id_cliente=" + id_cliente
-				+ ", nom_cliente=" + nom_cliente + ", id_localidad=" + id_localidad + ", est_rack=" + est_rack
-				+ ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica
-				+ ", fec_modifica=" + fec_modifica + "]";
+				+ ", nom_cliente=" + nom_cliente + ", nom_fila=" + nom_fila + ", id_localidad=" + id_localidad
+				+ ", est_rack=" + est_rack + ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa
+				+ ", usu_modifica=" + usu_modifica + ", fec_modifica=" + fec_modifica + "]";
 	}
 
 	public String mostrarEstado() {

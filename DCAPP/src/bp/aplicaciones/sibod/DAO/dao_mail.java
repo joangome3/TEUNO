@@ -26,13 +26,13 @@ public class dao_mail {
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				lista_parametros.add(new modelo_mail_parametros(resultado.getLong("id_parametro"),
-						resultado.getString("nom_remitente"), resultado.getString("pas_remitente"),
-						resultado.getString("smtp_host"), resultado.getString("smtp_starttls"),
-						resultado.getString("smtp_puerto"), resultado.getString("smtp_auth"),
-						resultado.getString("smtp_trust"), resultado.getString("smtp_debug"),
-						resultado.getString("est_parametro"), resultado.getString("usu_ingresa"),
-						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
-						resultado.getTimestamp("fec_modifica")));
+						resultado.getString("email_remitente"), resultado.getString("pass_remitente"),
+						resultado.getString("email_receptor"), resultado.getString("smtp_host"),
+						resultado.getString("smtp_starttls"), resultado.getString("smtp_puerto"),
+						resultado.getString("smtp_auth"), resultado.getString("smtp_trust"),
+						resultado.getString("smtp_debug"), resultado.getString("est_parametro"),
+						resultado.getString("usu_ingresa"), resultado.getTimestamp("fec_ingresa"),
+						resultado.getString("usu_modifica"), resultado.getTimestamp("fec_modifica")));
 
 			}
 			resultado.close();
@@ -59,12 +59,10 @@ public class dao_mail {
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				lista_destinatarios.add(new modelo_mail_destinatarios(resultado.getLong("id_destinatario"),
-						resultado.getLong("id_parametro"), resultado.getLong("id_tipo_destinatario"),
-						resultado.getString("nom_tipo_destinatario"), resultado.getString("mail_destinatario"),
+						resultado.getLong("id_mail_parametro"), resultado.getString("email_destinatario"),
 						resultado.getString("est_destinatario"), resultado.getString("usu_ingresa"),
 						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
 						resultado.getTimestamp("fec_modifica")));
-
 			}
 			resultado.close();
 			consulta.close();

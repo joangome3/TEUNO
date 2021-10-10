@@ -24,6 +24,8 @@ public class modelo_bitacora implements Cloneable {
 	private String nom_turno;
 	private long id_tipo_servicio;
 	private String nom_tipo_servicio;
+	private long id_tipo_clasificacion;
+	private String nom_tipo_clasificacion;
 	private long id_tipo_tarea;
 	private String nom_tipo_tarea;
 	private long id_solicitante;
@@ -36,6 +38,8 @@ public class modelo_bitacora implements Cloneable {
 	private long id_estado_bitacora;
 	private String nom_estado_bitacora;
 	private String cumplimiento;
+	private String cumplimientoSLA;
+	private String comentarioCumplimientoSLA;
 	private long id_localidad;
 	private String nom_localidad;
 	private String est_bitacora;
@@ -83,6 +87,7 @@ public class modelo_bitacora implements Cloneable {
 	 * @param ticket_externo
 	 * @param id_turno
 	 * @param id_tipo_servicio
+	 * @param id_tipo_clasificacion
 	 * @param id_tipo_tarea
 	 * @param id_solicitante
 	 * @param area
@@ -92,6 +97,8 @@ public class modelo_bitacora implements Cloneable {
 	 * @param fec_fin
 	 * @param id_estado_bitacora
 	 * @param cumplimiento
+	 * @param cumplimientoSLA
+	 * @param comentarioCumplimientoSLA
 	 * @param id_localidad
 	 * @param est_bitacora
 	 * @param usu_ingresa
@@ -103,16 +110,18 @@ public class modelo_bitacora implements Cloneable {
 	 * @param obs_coordinador
 	 */
 	public modelo_bitacora(long id_bitacora, long id_cliente, String ticket_externo, long id_turno,
-			long id_tipo_servicio, long id_tipo_tarea, long id_solicitante, String area, String rack,
-			String descripcion, Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora, String cumplimiento,
-			long id_localidad, String est_bitacora, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
-			Timestamp fec_modifica, String cor_revisa, Timestamp fec_revision, String obs_coordinador) {
+			long id_tipo_servicio, long id_tipo_clasificacion, long id_tipo_tarea, long id_solicitante, String area,
+			String rack, String descripcion, Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora,
+			String cumplimiento, String cumplimientoSLA, String comentarioCumplimientoSLA, long id_localidad,
+			String est_bitacora, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica,
+			String cor_revisa, Timestamp fec_revision, String obs_coordinador) {
 		super();
 		this.id_bitacora = id_bitacora;
 		this.id_cliente = id_cliente;
 		this.ticket_externo = ticket_externo;
 		this.id_turno = id_turno;
 		this.id_tipo_servicio = id_tipo_servicio;
+		this.id_tipo_clasificacion = id_tipo_clasificacion;
 		this.id_tipo_tarea = id_tipo_tarea;
 		this.id_solicitante = id_solicitante;
 		this.area = area;
@@ -122,6 +131,8 @@ public class modelo_bitacora implements Cloneable {
 		this.fec_fin = fec_fin;
 		this.id_estado_bitacora = id_estado_bitacora;
 		this.cumplimiento = cumplimiento;
+		this.cumplimientoSLA = cumplimientoSLA;
+		this.comentarioCumplimientoSLA = comentarioCumplimientoSLA;
 		this.id_localidad = id_localidad;
 		this.est_bitacora = est_bitacora;
 		this.usu_ingresa = usu_ingresa;
@@ -142,6 +153,8 @@ public class modelo_bitacora implements Cloneable {
 	 * @param nom_turno
 	 * @param id_tipo_servicio
 	 * @param nom_tipo_servicio
+	 * @param id_tipo_clasificacion
+	 * @param nom_tipo_clasificacion
 	 * @param id_tipo_tarea
 	 * @param nom_tipo_tarea
 	 * @param id_solicitante
@@ -154,6 +167,8 @@ public class modelo_bitacora implements Cloneable {
 	 * @param id_estado_bitacora
 	 * @param nom_estado_bitacora
 	 * @param cumplimiento
+	 * @param cumplimientoSLA
+	 * @param comentarioCumplimientoSLA
 	 * @param id_localidad
 	 * @param nom_localidad
 	 * @param est_bitacora
@@ -169,10 +184,11 @@ public class modelo_bitacora implements Cloneable {
 	 * @param obs_coordinador
 	 */
 	public modelo_bitacora(long id_bitacora, long id_cliente, String nom_cliente, String ticket_externo, long id_turno,
-			String nom_turno, long id_tipo_servicio, String nom_tipo_servicio, long id_tipo_tarea,
-			String nom_tipo_tarea, long id_solicitante, String nom_solicitante, String area, String rack,
-			String descripcion, Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora,
-			String nom_estado_bitacora, String cumplimiento, long id_localidad, String nom_localidad,
+			String nom_turno, long id_tipo_servicio, String nom_tipo_servicio, long id_tipo_clasificacion,
+			String nom_tipo_clasificacion, long id_tipo_tarea, String nom_tipo_tarea, long id_solicitante,
+			String nom_solicitante, String area, String rack, String descripcion, Timestamp fec_inicio,
+			Timestamp fec_fin, long id_estado_bitacora, String nom_estado_bitacora, String cumplimiento,
+			String cumplimientoSLA, String comentarioCumplimientoSLA, long id_localidad, String nom_localidad,
 			String est_bitacora, String usu_ingresa, String nom_usuario_ingresa, Timestamp fec_ingresa,
 			String usu_modifica, String nom_usuario_modifica, Timestamp fec_modifica, String cor_revisa,
 			String nom_usuario_revisa, Timestamp fec_revision, String obs_coordinador) {
@@ -185,6 +201,8 @@ public class modelo_bitacora implements Cloneable {
 		this.nom_turno = nom_turno;
 		this.id_tipo_servicio = id_tipo_servicio;
 		this.nom_tipo_servicio = nom_tipo_servicio;
+		this.id_tipo_clasificacion = id_tipo_clasificacion;
+		this.nom_tipo_clasificacion = nom_tipo_clasificacion;
 		this.id_tipo_tarea = id_tipo_tarea;
 		this.nom_tipo_tarea = nom_tipo_tarea;
 		this.id_solicitante = id_solicitante;
@@ -197,6 +215,8 @@ public class modelo_bitacora implements Cloneable {
 		this.id_estado_bitacora = id_estado_bitacora;
 		this.nom_estado_bitacora = nom_estado_bitacora;
 		this.cumplimiento = cumplimiento;
+		this.cumplimientoSLA = cumplimientoSLA;
+		this.comentarioCumplimientoSLA = comentarioCumplimientoSLA;
 		this.id_localidad = id_localidad;
 		this.nom_localidad = nom_localidad;
 		this.est_bitacora = est_bitacora;
@@ -245,6 +265,34 @@ public class modelo_bitacora implements Cloneable {
 	 */
 	public String getNom_cliente() {
 		return nom_cliente;
+	}
+
+	/**
+	 * @return the id_tipo_clasificacion
+	 */
+	public long getId_tipo_clasificacion() {
+		return id_tipo_clasificacion;
+	}
+
+	/**
+	 * @param id_tipo_clasificacion the id_tipo_clasificacion to set
+	 */
+	public void setId_tipo_clasificacion(long id_tipo_clasificacion) {
+		this.id_tipo_clasificacion = id_tipo_clasificacion;
+	}
+
+	/**
+	 * @return the nom_tipo_clasificacion
+	 */
+	public String getNom_tipo_clasificacion() {
+		return nom_tipo_clasificacion;
+	}
+
+	/**
+	 * @param nom_tipo_clasificacion the nom_tipo_clasificacion to set
+	 */
+	public void setNom_tipo_clasificacion(String nom_tipo_clasificacion) {
+		this.nom_tipo_clasificacion = nom_tipo_clasificacion;
 	}
 
 	/**
@@ -521,6 +569,34 @@ public class modelo_bitacora implements Cloneable {
 	}
 
 	/**
+	 * @return the cumplimientoSLA
+	 */
+	public String getCumplimientoSLA() {
+		return cumplimientoSLA;
+	}
+
+	/**
+	 * @param cumplimientoSLA the cumplimientoSLA to set
+	 */
+	public void setCumplimientoSLA(String cumplimientoSLA) {
+		this.cumplimientoSLA = cumplimientoSLA;
+	}
+
+	/**
+	 * @return the comentarioCumplimientoSLA
+	 */
+	public String getComentarioCumplimientoSLA() {
+		return comentarioCumplimientoSLA;
+	}
+
+	/**
+	 * @param comentarioCumplimientoSLA the comentarioCumplimientoSLA to set
+	 */
+	public void setComentarioCumplimientoSLA(String comentarioCumplimientoSLA) {
+		this.comentarioCumplimientoSLA = comentarioCumplimientoSLA;
+	}
+
+	/**
 	 * @return the est_bitacora
 	 */
 	public String getEst_bitacora() {
@@ -674,18 +750,21 @@ public class modelo_bitacora implements Cloneable {
 		this.obs_coordinador = obs_coordinador;
 	}
 
+
 	@Override
 	public String toString() {
 		return "modelo_bitacora [consultasABaseDeDatos=" + consultasABaseDeDatos + ", fechas=" + fechas
 				+ ", id_bitacora=" + id_bitacora + ", id_cliente=" + id_cliente + ", nom_cliente=" + nom_cliente
 				+ ", ticket_externo=" + ticket_externo + ", id_turno=" + id_turno + ", nom_turno=" + nom_turno
 				+ ", id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio=" + nom_tipo_servicio
-				+ ", id_tipo_tarea=" + id_tipo_tarea + ", nom_tipo_tarea=" + nom_tipo_tarea + ", id_solicitante="
-				+ id_solicitante + ", nom_solicitante=" + nom_solicitante + ", area=" + area + ", rack=" + rack
-				+ ", descripcion=" + descripcion + ", fec_inicio=" + fec_inicio + ", fec_fin=" + fec_fin
-				+ ", id_estado_bitacora=" + id_estado_bitacora + ", nom_estado_bitacora=" + nom_estado_bitacora
-				+ ", cumplimiento=" + cumplimiento + ", id_localidad=" + id_localidad + ", nom_localidad="
-				+ nom_localidad + ", est_bitacora=" + est_bitacora + ", usu_ingresa=" + usu_ingresa
+				+ ", id_tipo_clasificacion=" + id_tipo_clasificacion + ", nom_tipo_clasificacion="
+				+ nom_tipo_clasificacion + ", id_tipo_tarea=" + id_tipo_tarea + ", nom_tipo_tarea=" + nom_tipo_tarea
+				+ ", id_solicitante=" + id_solicitante + ", nom_solicitante=" + nom_solicitante + ", area=" + area
+				+ ", rack=" + rack + ", descripcion=" + descripcion + ", fec_inicio=" + fec_inicio + ", fec_fin="
+				+ fec_fin + ", id_estado_bitacora=" + id_estado_bitacora + ", nom_estado_bitacora="
+				+ nom_estado_bitacora + ", cumplimiento=" + cumplimiento + ", cumplimientoSLA=" + cumplimientoSLA
+				+ ", comentarioCumplimientoSLA=" + comentarioCumplimientoSLA + ", id_localidad=" + id_localidad
+				+ ", nom_localidad=" + nom_localidad + ", est_bitacora=" + est_bitacora + ", usu_ingresa=" + usu_ingresa
 				+ ", nom_usuario_ingresa=" + nom_usuario_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica="
 				+ usu_modifica + ", nom_usuario_modifica=" + nom_usuario_modifica + ", fec_modifica=" + fec_modifica
 				+ ", cor_revisa=" + cor_revisa + ", nom_usuario_revisa=" + nom_usuario_revisa + ", fec_revision="
@@ -754,6 +833,14 @@ public class modelo_bitacora implements Cloneable {
 		return observacion;
 	}
 
+	public String mostrarClasificacion() {
+		String nom_tipo_clasificacion = "";
+		if (nom_tipo_clasificacion != null) {
+			nom_tipo_clasificacion = getNom_tipo_clasificacion();
+		}
+		return nom_tipo_clasificacion;
+	}
+
 	public String mostrarArea() {
 		String _area = "";
 		if (area != null) {
@@ -762,10 +849,18 @@ public class modelo_bitacora implements Cloneable {
 		return _area;
 	}
 
+	public String mostrarCumplimientoSLA() {
+		String _cumplimientoSLA = "";
+		if (cumplimientoSLA != null) {
+			_cumplimientoSLA = getArea();
+		}
+		return _cumplimientoSLA;
+	}
+
 	public String mostrarRack() {
 		String _rack = "";
 		if (rack != null) {
-			_rack = getArea();
+			_rack = getRack();
 		}
 		return _rack;
 	}
@@ -824,9 +919,29 @@ public class modelo_bitacora implements Cloneable {
 		return imagen;
 	}
 
+	public String mostrarImagenClasificacion() {
+		String imagen = "";
+		if (nom_tipo_clasificacion == null) {
+			imagen = "/img/botones/ButtonError.png";
+		}
+		return imagen;
+	}
+
 	public String mostrarImagenArea() {
 		String imagen = "";
 		if (area == null) {
+			imagen = "/img/botones/ButtonError.png";
+		} else if (area.length() <= 0) {
+			imagen = "/img/botones/ButtonError.png";
+		}
+		return imagen;
+	}
+
+	public String mostrarImagenCumplimientoSLA() {
+		String imagen = "";
+		if (cumplimientoSLA == null) {
+			imagen = "/img/botones/ButtonError.png";
+		} else if (cumplimientoSLA.length() <= 0) {
 			imagen = "/img/botones/ButtonError.png";
 		}
 		return imagen;
@@ -835,6 +950,8 @@ public class modelo_bitacora implements Cloneable {
 	public String mostrarImagenRack() {
 		String imagen = "";
 		if (rack == null) {
+			imagen = "/img/botones/ButtonError.png";
+		} else if (rack.length() <= 0) {
 			imagen = "/img/botones/ButtonError.png";
 		}
 		return imagen;
@@ -906,9 +1023,29 @@ public class modelo_bitacora implements Cloneable {
 		return estilo;
 	}
 
+	public String estiloImagenClasificacion() {
+		String estilo = "";
+		if (nom_tipo_clasificacion == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		}
+		return estilo;
+	}
+
 	public String estiloImagenArea() {
 		String estilo = "";
 		if (area == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		} else if (area.length() <= 0) {
+			estilo = "text-align: center !important; color: transparent;";
+		}
+		return estilo;
+	}
+
+	public String estiloImagenCumplimientoSLA() {
+		String estilo = "";
+		if (cumplimientoSLA == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		} else if (cumplimientoSLA.length() <= 0) {
 			estilo = "text-align: center !important; color: transparent;";
 		}
 		return estilo;
@@ -917,6 +1054,8 @@ public class modelo_bitacora implements Cloneable {
 	public String estiloImagenRack() {
 		String estilo = "";
 		if (rack == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		} else if (rack.length() <= 0) {
 			estilo = "text-align: center !important; color: transparent;";
 		}
 		return estilo;

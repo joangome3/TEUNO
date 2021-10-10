@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FO-PV-07 Registro servicios postventa Datacenter" printOrder="Horizontal" pageWidth="1670" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1630" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0ee78576-d84b-47a1-be7b-a12825845cd2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="net.sf.jasperreports.export.character.encoding" value="Cp1252"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.exports.xls.font.size.fix.enabled" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.freeze.row" value="2"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="Data/Footnotes"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="false"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.1" value="title"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.3" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.keep.first.band.4" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.keep.first.report.4" value="*"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.keep.first.report.3" value="*"/>
+	<property name="net.sf.jasperreports.export.csv.exclude.origin.band.5" value="columnFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="title"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.3" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.4" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.report.4" value="*"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.report.3" value="*"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.5" value="columnFooter"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.report.description" value="FO-PV-07 Registro servicios postventa Datacenter"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="110"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="884"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DCAPP"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="p_tipo_servicio" class="java.lang.String"/>
+	<parameter name="p_cumplimiento" class="java.lang.String"/>
+	<parameter name="p_tipo_tarea" class="java.lang.String"/>
+	<parameter name="p_estado" class="java.lang.String"/>
+	<parameter name="p_fechainicio" class="java.util.Date"/>
+	<parameter name="p_fechafin" class="java.util.Date"/>
+	<parameter name="p_usuario" class="java.lang.String"/>
+	<parameter name="p_localidad" class="java.lang.String"/>
+	<parameter name="tipo_servicio" class="java.lang.String"/>
+	<parameter name="tipo_tarea" class="java.lang.String"/>
+	<parameter name="estado" class="java.lang.String"/>
+	<parameter name="localidad" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="cumplimiento" class="java.lang.String"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<parameter name="p_empresa" class="java.lang.String"/>
+	<parameter name="fechainicio" class="java.lang.String"/>
+	<parameter name="fechafin" class="java.lang.String"/>
+	<parameter name="p_operador" class="java.lang.String"/>
+	<parameter name="operador" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select sb.ticket_externo,
+		(select se.nom_empresa from sibod_empresa se where se.id_empresa = sb.id_cliente limit 1) as nom_cliente,
+		(select concat(su.nom_usuario, ' ', su.ape_usuario) from sibod_usuario su where su.use_usuario = sb.usu_ingresa limit 1) as nom_usuario_ejecutor,
+		sb.fec_inicio,
+		(select sb2.fec_fin from sibod_bitacora sb2 where sb2.ticket_externo = sb.ticket_externo and sb2.id_tipo_tarea = 5 limit 1) as fec_fin,
+		(case when (sb.id_solicitante is null or sb.id_solicitante = 0) then (select concat(su2.nom_usuario, ' ', su2.ape_usuario) from sibod_usuario su2 where su2.use_usuario = sb.usu_ingresa limit 1) else (select concat(ss.nom_solicitante, ' ', ss.ape_solicitante) from sibod_solicitante ss where ss.id_solicitante = sb.id_solicitante limit 1) end) nom_solicitante,
+		(select sts.nom_tipo_servicio from sibod_tipo_servicio sts where sts.id_tipo_servicio = sb.id_tipo_servicio limit 1) as des_servicio,
+		(select stc.cod_tipo_clasificacion from sibod_tipo_clasificacion stc where stc.id_tipo_clasificacion = sb.id_tipo_clasificacion limit 1) as cod_servicio,
+		(select stc.nom_tipo_clasificacion from sibod_tipo_clasificacion stc where stc.id_tipo_clasificacion = sb.id_tipo_clasificacion limit 1) as nom_servicio,
+		sb.descripcion,
+		(select sb3.descripcion from sibod_bitacora sb3 where sb3.ticket_externo = sb.ticket_externo and sb3.id_tipo_tarea = 5 limit 1) as solucion,
+		(case when (select count(sb4.id_bitacora) from sibod_bitacora sb4 where sb4.ticket_externo = sb.ticket_externo and sb4.id_tipo_tarea = 5 limit 1) = 1 then 'CERRADO' else 'ABIERTO' end) as estado
+from sibod_bitacora sb
+where sb.id_tipo_tarea = 1 and sb.id_tipo_servicio not in (11, 13, 15) and (CAST(DATE_FORMAT(sb.fec_inicio, "%Y-%m-%d %H:%i:%s") AS DATETIME)  between  $P{fechainicio}  and  $P{fechafin}) and (sb.id_localidad = $P{localidad} )
+union
+select sb.ticket_externo,
+		(select se.nom_empresa from sibod_empresa se where se.id_empresa = sb.id_cliente limit 1) as nom_cliente,
+		(select concat(su.nom_usuario, ' ', su.ape_usuario) from sibod_usuario su where su.use_usuario = sb.usu_ingresa limit 1) as nom_usuario_ejecutor,
+		sb.fec_inicio,
+		sb.fec_fin as fec_fin,
+		(case when (sb.id_solicitante is null or sb.id_solicitante = 0) then (select concat(su2.nom_usuario, ' ', su2.ape_usuario) from sibod_usuario su2 where su2.use_usuario = sb.usu_ingresa limit 1) else (select concat(ss.nom_solicitante, ' ', ss.ape_solicitante) from sibod_solicitante ss where ss.id_solicitante = sb.id_solicitante limit 1) end) nom_solicitante,
+		(select sts.nom_tipo_servicio from sibod_tipo_servicio sts where sts.id_tipo_servicio = sb.id_tipo_servicio limit 1) as des_servicio,
+		(select stc.cod_tipo_clasificacion from sibod_tipo_clasificacion stc where stc.id_tipo_clasificacion = sb.id_tipo_clasificacion limit 1) as cod_servicio,
+		(select stc.nom_tipo_clasificacion from sibod_tipo_clasificacion stc where stc.id_tipo_clasificacion = sb.id_tipo_clasificacion limit 1) as nom_servicio,
+		sb.descripcion,
+		sb.descripcion as solucion,
+		'CERRADO' as estado
+from sibod_bitacora sb
+where sb.id_tipo_tarea = 7 and sb.id_tipo_servicio in (13) and (CAST(DATE_FORMAT(sb.fec_inicio, "%Y-%m-%d %H:%i:%s") AS DATETIME)  between  $P{fechainicio}  and  $P{fechafin}) and (sb.id_localidad = $P{localidad} )
+order by 4, 5;]]>
+	</queryString>
+	<field name="ticket_externo" class="java.lang.String"/>
+	<field name="nom_cliente" class="java.lang.String"/>
+	<field name="nom_usuario_ejecutor" class="java.lang.String"/>
+	<field name="fec_inicio" class="java.lang.String"/>
+	<field name="fec_fin" class="java.lang.String"/>
+	<field name="nom_solicitante" class="java.lang.String"/>
+	<field name="des_servicio" class="java.lang.String"/>
+	<field name="cod_servicio" class="java.lang.String"/>
+	<field name="nom_servicio" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="solucion" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="155" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="64" width="1628" height="24" forecolor="#000000" backcolor="#000000" uuid="8db2d9aa-0689-47ad-bee0-a2d155a1b2ae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="20" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[FO-PV-07 REGISTRO SERVICIOS POSTVENTA DATACENTER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="687" y="111" width="89" height="15" forecolor="#000000" uuid="fb8c5dad-c030-4c8e-9668-def3f90d4a95"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="687" y="126" width="89" height="15" forecolor="#000000" uuid="c8dc23ae-058f-427a-9992-5cd165fd62c2"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Fin:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="687" y="95" width="89" height="15" forecolor="#000000" uuid="aa6a4fe9-2658-432d-832d-235c44bc7921"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="791" y="110" width="100" height="15" uuid="1bcc8830-32d4-4c7e-8b8b-db0735625940"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fechainicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm">
+				<reportElement x="791" y="125" width="100" height="16" uuid="86d17a14-c302-4492-a1d5-3b70db6c9225"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fechafin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="791" y="95" width="195" height="15" uuid="480c3b02-f6b8-4cc7-8395-f48d764676cb"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_localidad}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement key="" x="41" y="2" width="59" height="58" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="f0e5bfbd-ead8-4223-97bc-56a9721bbec2"/>
+				<imageExpression><![CDATA[($P{logo})]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="35" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="2" width="76" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="81a59a2f-cb5b-4213-af58-dc3872a2606c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[TICKET]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="78" y="2" width="110" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="c6e39fcf-2b3e-41e7-9cee-396e86f65d0a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CLIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="660" y="2" width="150" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="963a5dd2-86ae-4969-9839-a00c687d9c2e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN SOLICITUD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="810" y="2" width="110" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="c134b6b4-48e6-4232-b193-266f3f8a5814">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO SERVICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="920" y="2" width="160" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="971a5c82-aa0e-45ad-8d42-8154c7d6e34d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[SERVICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="410" y="2" width="90" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="9e99da18-954e-49e9-a1f6-c31bf42caa0c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[FECHA/HORA FIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1320" y="2" width="220" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="ff8b957f-9d83-40e0-847d-fbc6fc6b5206">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[SOLUCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="188" y="2" width="123" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="dc15202b-d216-4228-9a49-57a99f4626ad">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[OP. EJECUTOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="311" y="2" width="99" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="2b7b9aa4-3186-47ed-8784-e0ce8edf587b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[FECHA/HORA INICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1540" y="2" width="90" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="19377b83-47d5-48b5-b266-166f68e498eb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1080" y="2" width="240" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="1d7f609e-8cb3-400f-b29f-5ad284e861aa">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCIÓN TAREA REALIZADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="500" y="2" width="160" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="84343b8f-7f2b-4af9-99f0-c7bc24f48407">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[SOLICITANTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="78" y="0" width="110" height="60" uuid="f5c50edf-4d41-4e69-ad5e-14bbfef569c3">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_cliente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="920" y="0" width="160" height="60" uuid="29bd9795-2063-491f-a07a-31b7bb848742">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_servicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1320" y="0" width="220" height="60" uuid="326792d6-37fb-4e4a-84bc-c8fa4b9bbd97">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{solucion}]]></textFieldExpression>
+			</textField>
+			<elementGroup>
+				<textField isBlankWhenNull="true">
+					<reportElement x="2" y="0" width="76" height="60" uuid="25a79ea2-e1c7-4ee0-b0bf-d95afc130957">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ticket_externo}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+			<textField>
+				<reportElement x="660" y="0" width="150" height="60" uuid="65cc1cf9-75ef-4897-b65b-97a30b2dcd16">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{des_servicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="810" y="0" width="110" height="60" uuid="3e8ef0de-8c71-4369-a2c1-125b85fe5e21">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cod_servicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+				<reportElement x="410" y="0" width="90" height="60" uuid="9a7a585b-1b9d-4bf4-b56a-9c2e33c28d09">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_fin}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
+				<reportElement x="311" y="0" width="99" height="60" uuid="32ec0d79-86e6-48fb-8c83-466eb932ebfe">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_inicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="1540" y="0" width="90" height="60" uuid="97addad6-9f51-45b3-8c47-6bd65ff4679e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="188" y="0" width="123" height="60" uuid="939e25b2-6e45-412b-b1bc-1acec1408e09">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_usuario_ejecutor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1080" y="0" width="240" height="60" uuid="41f0c855-c0b8-47ab-a9eb-81c727790870">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="500" y="0" width="160" height="60" uuid="542e557e-9cd8-46fc-94db-def164a30427">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_solicitante}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="575" y="2" width="110" height="15" forecolor="#FFFFFF" uuid="2e0ab82d-97d8-46d8-a6c8-ee2593dc8f56"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="534" y="2" width="42" height="15" forecolor="#FFFFFF" uuid="6626d547-c3f7-4eaa-b050-89c7d1250d7b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="2" width="46" height="15" forecolor="#FFFFFF" uuid="3accf176-f812-4f08-ba9a-3ef1f4c3cde2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="52" y="2" width="100" height="15" forecolor="#FFFFFF" uuid="c7d5a203-f59d-4dbb-b6cc-c66e62a5de5c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="955" y="2" width="57" height="15" forecolor="#FFFFFF" uuid="b3debeb8-d198-40cf-94a7-30d3da8c9598"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pag "+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1011" y="2" width="43" height="15" forecolor="#FFFFFF" uuid="875a6c56-9a65-4e09-b8cf-3c8e7af2f66d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

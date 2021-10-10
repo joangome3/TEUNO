@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -27,17 +26,25 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Center;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Include;
 
 import bp.aplicaciones.bitacora.DAO.dao_tarea_proveedor;
 import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_registra_turno;
 import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
+import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
@@ -143,7 +150,7 @@ public class consultar extends SelectorComposer<Component> {
 		}
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(txtBuscar.getText().toUpperCase());
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
 	}
@@ -387,38 +394,78 @@ public class consultar extends SelectorComposer<Component> {
 		binder.loadComponent(lbxTareasProgramadas);
 	}
 
+//	@Listen("onRightClick=#lbxTareasProgramadas")
+//	public void onRightClick$lbxMovimientos() throws Throwable {
+//		if (lbxTareasProgramadas.getSelectedItem() == null) {
+//			return;
+//		}
+//		int indice = lbxTareasProgramadas.getSelectedIndex();
+//		consultarTareasProgramadas();
+//		;
+//		int tamanio_lista = lbxTareasProgramadas.getItemCount();
+//		if (indice >= tamanio_lista) {
+//			return;
+//		}
+//		lbxTareasProgramadas.setSelectedIndex(indice);
+//	}
+
 	@Listen("onClick=#mModificar")
 	public void onClickmModificar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		onDoubleClicklbxTareasProgramadas();
-	}
-
-	@Listen("onDoubleClick=#lbxTareasProgramadas")
-	public void onDoubleClicklbxTareasProgramadas()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		if (lbxTareasProgramadas.getSelectedItem() == null) {
 			return;
 		}
-		if (ingresa_a_modificar == false) {
-			ingresa_a_modificar = true;
-			if (lbxTareasProgramadas.getSelectedItems().size() > 1) {
-				ingresa_a_modificar = false;
-				Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
-						Messagebox.OK, Messagebox.EXCLAMATION);
+		if (lbxTareasProgramadas.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxTareasProgramadas.getSelectedIndex();
+		if (listaTareasProgramadas.get(indice).getId_cliente() == 9
+				&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
+			if (validarSiSeRealizaRevisionT1(indice) == false) {
+				Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "modificar"),
+						informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 				return;
 			}
-			int indice = lbxTareasProgramadas.getSelectedIndex();
-			Sessions.getCurrent().setAttribute("tarea_proveedor", listaTareasProgramadas.get(indice));
-			window = (Window) Executions.createComponents("/bitacora/tarea_proveedor/modificar.zul", null, null);
-			if (window instanceof Window) {
-				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-					@Override
-					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-						ingresa_a_modificar = false;
-						consultarTareasProgramadas();
-					}
-				});
+		}
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		long id_tarea_proveedor = listaTareasProgramadas.get(indice).getId_tarea_proveedor();
+		String ticket = listaTareasProgramadas.get(indice).getTicket_externo();
+		Sessions.getCurrent().setAttribute("tarea_proveedor", listaTareasProgramadas.get(indice));
+		crearPestanaParaRevision(tTab, tPanel, id_tarea_proveedor, ticket);
+	}
+
+	public void crearPestanaParaRevision(Tabbox tTab, Tabpanels tPanel, long id_tarea_proveedor, String ticket) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab - TP:" + id_tarea_proveedor)) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab - TP:" + id_tarea_proveedor);
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
 			}
-			window.setParent(winList);
+			Tab tab = new Tab();
+			tab.setLabel("ACTIVIDAD PROGRAMADA - MODIFICAR | REGISTRO " + ticket);
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab - TP:" + id_tarea_proveedor);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/bitacora/tarea_proveedor/modificar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -510,6 +557,17 @@ public class consultar extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.INFORMATION);
 			return;
 		}
+		if (lbxTareasProgramadas.getSelectedItems().size() == 1) {
+			int indice = lbxTareasProgramadas.getSelectedIndex();
+			if (listaTareasProgramadas.get(indice).getId_cliente() == 9
+					&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
+				if (validarSiSeRealizaRevisionT1(indice) == false) {
+					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "eliminar"),
+							informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
+			}
+		}
 		List<modelo_tarea_proveedor> _listaTareasProgramadas;
 		_listaTareasProgramadas = actualizarEstadoConPermiso();
 		if (cumple_condicion_modificar == false) {
@@ -558,6 +616,17 @@ public class consultar extends SelectorComposer<Component> {
 			Messagebox.show(informativos.getMensaje_informativo_3(), informativos.getMensaje_informativo_27(),
 					Messagebox.OK, Messagebox.INFORMATION);
 			return;
+		}
+		if (lbxTareasProgramadas.getSelectedItems().size() == 1) {
+			int indice = lbxTareasProgramadas.getSelectedIndex();
+			if (listaTareasProgramadas.get(indice).getId_cliente() == 9
+					&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
+				if (validarSiSeRealizaRevisionT1(indice) == false) {
+					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "eliminar"),
+							informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
+			}
 		}
 		List<modelo_tarea_proveedor> _listaTareasProgramadas;
 		_listaTareasProgramadas = eliminarRegistroConPermiso();
@@ -671,7 +740,8 @@ public class consultar extends SelectorComposer<Component> {
 		return _listaTareasProgramadas;
 	}
 
-	public List<modelo_tarea_proveedor> actualizarEstadoConPermiso() {
+	public List<modelo_tarea_proveedor> actualizarEstadoConPermiso()
+			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		List<modelo_tarea_proveedor> _listaTareasProgramadas = new ArrayList<modelo_tarea_proveedor>();
 		Iterator<Listitem> it = lbxTareasProgramadas.getSelectedItems().iterator();
 		cumple_condicion_modificar = false;
@@ -681,12 +751,23 @@ public class consultar extends SelectorComposer<Component> {
 			int indice = item.getIndex();
 			registro = listaTareasProgramadas.get(indice);
 			if (registro.getId_estado_bitacora() == 1) {
-				modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
-				tarea_proveedor = registro.clone();
-				tarea_proveedor.setId_estado_bitacora(2);
-				tarea_proveedor.setUsu_modifica(user);
-				tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
-				_listaTareasProgramadas.add(tarea_proveedor);
+				if (registro.getId_cliente() == 9 && registro.getId_tipo_servicio() == 7) {
+					if (validarSiSeRealizaRevisionT1(indice) == true) {
+						modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
+						tarea_proveedor = registro.clone();
+						tarea_proveedor.setId_estado_bitacora(2);
+						tarea_proveedor.setUsu_modifica(user);
+						tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+						_listaTareasProgramadas.add(tarea_proveedor);
+					}
+				} else {
+					modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
+					tarea_proveedor = registro.clone();
+					tarea_proveedor.setId_estado_bitacora(2);
+					tarea_proveedor.setUsu_modifica(user);
+					tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+					_listaTareasProgramadas.add(tarea_proveedor);
+				}
 			}
 			cumple_condicion_modificar = true;
 		}
@@ -708,7 +789,13 @@ public class consultar extends SelectorComposer<Component> {
 					&& (d2.before(fecha_fin) || d2.equals(fecha_fin))) {
 				registro = listaTareasProgramadas.get(indice);
 				if (consultarPermisoServicio(registro.getId_tipo_servicio()) == true) {
-					_listaTareasProgramadas.add(registro);
+					if (registro.getId_cliente() == 9 && registro.getId_tipo_servicio() == 7) {
+						if (validarSiSeRealizaRevisionT1(indice) == true) {
+							_listaTareasProgramadas.add(registro);
+						}
+					} else {
+						_listaTareasProgramadas.add(registro);
+					}
 				} else {
 					_listaTareasProgramadas = new ArrayList<modelo_tarea_proveedor>();
 					cumple_condicion_eliminar = true;
@@ -724,7 +811,8 @@ public class consultar extends SelectorComposer<Component> {
 		return _listaTareasProgramadas;
 	}
 
-	public List<modelo_tarea_proveedor> eliminarRegistroConPermiso() {
+	public List<modelo_tarea_proveedor> eliminarRegistroConPermiso()
+			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		List<modelo_tarea_proveedor> _listaTareasProgramadas = new ArrayList<modelo_tarea_proveedor>();
 		Iterator<Listitem> it = lbxTareasProgramadas.getSelectedItems().iterator();
 		cumple_condicion_eliminar = false;
@@ -733,7 +821,13 @@ public class consultar extends SelectorComposer<Component> {
 			Listitem item = it.next();
 			int indice = item.getIndex();
 			registro = listaTareasProgramadas.get(indice);
-			_listaTareasProgramadas.add(registro);
+			if (registro.getId_cliente() == 9 && registro.getId_tipo_servicio() == 7) {
+				if (validarSiSeRealizaRevisionT1(indice) == true) {
+					_listaTareasProgramadas.add(registro);
+				}
+			} else {
+				_listaTareasProgramadas.add(registro);
+			}
 			cumple_condicion_eliminar = true;
 		}
 		return _listaTareasProgramadas;
@@ -753,13 +847,35 @@ public class consultar extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_tarea = false;
 		List<modelo_bitacora> listatareas = new ArrayList<modelo_bitacora>();
-		listatareas = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 4, 0, "", "", id_dc, "", "", 0, "", 0);
+		listatareas = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 4, 0, "", "", id_dc, "", "", 0, 0, "", 0);
 		if (listatareas.size() > 0) {
 			existe_tarea = true;
 		} else {
 			existe_tarea = false;
 		}
 		return existe_tarea;
+	}
+
+	public boolean validarSiSeRealizaRevisionT1(int indice)
+			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
+		boolean se_realiza_revision = false;
+		String fecha_inicio = "", fecha_fin = "";
+		String criterio = listaTareasProgramadas.get(indice).getTicket_externo();
+		String estado = "";
+		List<modelo_movimiento_dn> listaMovimiento = new ArrayList<modelo_movimiento_dn>();
+		listaMovimiento = consultasABaseDeDatos.cargarMovimientosDN(criterio, fecha_inicio, fecha_fin,
+				String.valueOf(id_dc), 0, 7, estado);
+		if (listaMovimiento.size() > 0) {
+			if (listaMovimiento.get(0).getEst_validacion().equals("RV3")
+					|| listaMovimiento.get(0).getEst_validacion().equals("RV4")) {
+				se_realiza_revision = true;
+			} else {
+				se_realiza_revision = false;
+			}
+		} else {
+			se_realiza_revision = false;
+		}
+		return se_realiza_revision;
 	}
 
 }

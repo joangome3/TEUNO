@@ -131,12 +131,12 @@ public class modificar extends SelectorComposer<Component> {
 		lbxUbicaciones.setEmptyMessage(informativos.getMensaje_informativo_2());
 		txtCodigo.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtCodigo.setText(txtCodigo.getText().toUpperCase());
+				txtCodigo.setText(txtCodigo.getText().toUpperCase().trim());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtDescripcion.setText(txtDescripcion.getText().toUpperCase());
+				txtDescripcion.setText(txtDescripcion.getText().toUpperCase().trim());
 			}
 		});
 		txtCantidad.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -147,12 +147,12 @@ public class modificar extends SelectorComposer<Component> {
 		});
 		txtComentario.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtComentario.setText(txtComentario.getText().toUpperCase());
+				txtComentario.setText(txtComentario.getText().toUpperCase().trim());
 			}
 		});
 		txtIDContenedor.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtIDContenedor.setText(txtIDContenedor.getText().toUpperCase());
+				txtIDContenedor.setText(txtIDContenedor.getText().toUpperCase().trim());
 			}
 		});
 		inicializarListas();
@@ -616,11 +616,13 @@ public class modificar extends SelectorComposer<Component> {
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, articulo.getId_articulo(), 7);
 		if (solicitud != null) {
-			comentario_1 = solicitud.getComentario_1();
-			comentario_2 = solicitud.getComentario_4();
-			fecha_comentario_1 = solicitud.getFecha_1();
-			fecha_comentario_2 = solicitud.getFecha_2();
-			fecha_comentario_3 = solicitud.getFecha_4();
+			if (solicitud.getId_solicitud() != 0) {
+				comentario_1 = solicitud.getComentario_1();
+				comentario_2 = solicitud.getComentario_4();
+				fecha_comentario_1 = solicitud.getFecha_1();
+				fecha_comentario_2 = solicitud.getFecha_2();
+				fecha_comentario_3 = solicitud.getFecha_4();
+			}
 		}
 	}
 
@@ -631,7 +633,7 @@ public class modificar extends SelectorComposer<Component> {
 				+ fechas.obtenerFechaFormateada(fecha_comentario_2, "dd/MM/yyyy HH:mm") + " EL APROBADOR INDICA QUE "
 				+ comentario_2 + "\n" + "EN LA FECHA "
 				+ fechas.obtenerFechaFormateada(fecha_comentario_3, "dd/MM/yyyy HH:mm")
-				+ " SE REALIZA EL CAMBIO SOLICITADO Y SE REGISTRA COMO COMENTARIO ";
+				+ " SE REALIZA EL CAMBIO SOLICITADO.";
 		return comentario;
 	}
 
@@ -714,8 +716,8 @@ public class modificar extends SelectorComposer<Component> {
 							articulo.setId_articulo(Long.parseLong(txtId.getText()));
 							articulo.setId_categoria(
 									Long.parseLong(cmbCategoria.getSelectedItem().getValue().toString()));
-							articulo.setCod_articulo(txtCodigo.getText().toString());
-							articulo.setDes_articulo(txtDescripcion.getText().toString());
+							articulo.setCod_articulo(txtCodigo.getText().toString().trim());
+							articulo.setDes_articulo(txtDescripcion.getText().toString().trim());
 							articulo.setSto_articulo(Integer.valueOf(txtCantidad.getText().toString()));
 							articulo.setId_localidad(
 									Long.parseLong(cmbLocalidad.getSelectedItem().getValue().toString()));
@@ -857,10 +859,52 @@ public class modificar extends SelectorComposer<Component> {
 								relacion_articulo_ubicacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 								listaRelacionArticulos.add(relacion_articulo_ubicacion);
 							}
-							articulo.setEst_articulo("AE");
+							if (solicitud != null) {
+								if (solicitud.getId_solicitud() != 0) {
+									if (solicitud.getId_tip_solicitud() == 2) {
+										if (solicitud.getEst_solicitud().equals("T")) {
+											articulo.setEst_articulo("PAC");
+										} else {
+											articulo.setEst_articulo("AE");
+										}
+									} else {
+										articulo.setEst_articulo("AE");
+									}
+								} else {
+									articulo.setEst_articulo("AE");
+								}
+							} else {
+								articulo.setEst_articulo("AE");
+							}
+							if (solicitud != null) {
+								if (solicitud.getId_solicitud() != 0) {
+									if (solicitud.getEst_solicitud().equals("T")) {
+										articulo.setEst_articulo("PACP");
+										solicitud.setEst_solicitud("R");
+										solicitud.setComentario_1(
+												setearComentario() + txtComentario.getText().toUpperCase());
+										solicitud.setComentario_2("");
+										solicitud.setComentario_3("");
+										solicitud.setComentario_4("");
+										solicitud.setComentario_5("");
+										solicitud.setId_user_1(id_user);
+										solicitud.setId_user_2(0);
+										solicitud.setId_user_3(0);
+										solicitud.setId_user_4(0);
+										solicitud.setId_user_5(0);
+										solicitud.setFecha_1(fechas.obtenerTimestampDeDate(fecha_comentario_1));
+										solicitud.setFecha_2(null);
+										solicitud.setFecha_3(null);
+										solicitud.setFecha_4(null);
+										solicitud.setFecha_5(null);
+										solicitud.setUsu_modifica(user);
+										solicitud.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+									}
+								}
+							}
 							int tipo = 1;
 							try {
-								dao.modificarArticulo(articulo, listaRelacionArticulos, tipo);
+								dao.modificarArticulo(articulo, listaRelacionArticulos, solicitud, tipo);
 								if (tipo == 1) {
 									Messagebox.show(informativos.getMensaje_informativo_20(),
 											informativos.getMensaje_informativo_24(), Messagebox.OK,

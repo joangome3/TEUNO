@@ -42,7 +42,8 @@
 																				width="280px" id="txtBuscarUbicacion1"
 																				placeholder="Ingrese palabra clave"
 																				tooltiptext="Presione enter para realizar la búsqueda"
-																				visible="true" style="font-style: italic;">
+																				visible="true" style="font-style: italic;"
+																				sclass="demo-search-inp">
 																			</textbox>
 																			<space
 																				width="0px">
@@ -108,7 +109,8 @@
 													<grid>
 														<columns>
 															<column>
-																<div align="left">
+																<div
+																	align="left">
 																	<button
 																		id="btnRefrescar1"
 																		image="/img/botones/ButtonRefresh.png"
@@ -119,7 +121,7 @@
 																	<textbox
 																		placeholder="Ingrese palabra clave"
 																		style="font-style: italic;" width="200px"
-																		id="txtBuscarArticulo1">
+																		id="txtBuscarArticulo1" sclass="demo-search-inp">
 																	</textbox>
 																</div>
 															</column>
@@ -231,7 +233,8 @@
 																				width="280px" id="txtBuscarUbicacion2"
 																				placeholder="Ingrese palabra clave"
 																				tooltiptext="Presione enter para realizar la búsqueda"
-																				visible="true" style="font-style: italic;">
+																				visible="true" style="font-style: italic;"
+																				sclass="demo-search-inp">
 																			</textbox>
 																			<space
 																				width="0px">
@@ -297,18 +300,19 @@
 													<grid>
 														<columns>
 															<column>
-																<div align="left">
+																<div
+																	align="left">
 																	<button
 																		id="btnRefrescar2"
 																		image="/img/botones/ButtonRefresh.png"
 																		tooltiptext="Refrescar lista" autodisable="self" />
 																	<space
 																		width="15px">
-																		</space>
+																	</space>
 																	<textbox
 																		placeholder="Ingrese palabra clave"
 																		style="font-style: italic;" width="200px"
-																		id="txtBuscarArticulo2">
+																		id="txtBuscarArticulo2" sclass="demo-search-inp">
 																	</textbox>
 																</div>
 															</column>

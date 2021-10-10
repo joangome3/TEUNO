@@ -1,0 +1,270 @@
+<?page title="Personal - Registro de permanencia - Consultar" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.personal.consultar_permanencia"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<custom-attributes
+									org.zkoss.zul.nativebar="false" />
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="5px"></space>
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png"
+												tooltiptext="Registrar ingreso" autodisable="self" />
+											<space width="5px"></space>
+											<button id="btnExit"
+												image="/img/botones/ButtonExit.png"
+												tooltiptext="Registrar salida" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="250px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;"
+												sclass="demo-search-inp">
+											</textbox>
+											<combobox width="150px"
+												id="cmbTurno" readonly="false" disabled="false"
+												tooltiptext="Seleccione el turno a consultar"
+												model="@{zConsultar$consultar_permanencia.obtenerTurnos}"
+												visible="false">
+												<comboitem
+													self="@{each=lista}" label="@{lista.getNom_turno}"
+													value="@{lista.getId_turno}">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<datebox id="dtxFechaInicio"
+												format="dd/MM/yyyy HH:mm" width="153px"
+												tooltiptext="Seleccione la fecha inicio a consultar">
+											</datebox>
+											<datebox id="dtxFechaFin"
+												format="dd/MM/yyyy HH:mm" width="153px"
+												tooltiptext="Seleccione la fecha fin a consultar">
+											</datebox>
+											<space width="20px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
+
+											<space width="10px"></space>
+											<combobox id="cmbEstado"
+												width="150px" tooltiptext="Seleccione el estado a consultar"
+												visible="true" readonly="true">
+												<comboitem value="A"
+													label="EN CURSO">
+												</comboitem>
+												<comboitem value="I"
+													label="GESTIONADOS">
+												</comboitem>
+											</combobox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox mold="paging" id="lbxRegistroPermanencia"
+					vflex="1" sizedByContent="true" width="100%" multiple="false"
+					checkmark="false"
+					model="@{zConsultar$consultar_permanencia.obtenerRegistros}">
+					<listhead sizable="false"
+						style="overflow-y: scroll;">
+						<listheader label="ID"
+							style="text-align: center !important;" visible="true">
+						</listheader>
+						<listheader label="TICKET"
+							style="text-align: center !important;" visible="true">
+						</listheader>
+						<listheader label="FECHA INGRESO"
+							style="text-align: center !important;" visible="true">
+						</listheader>
+						<listheader label="EMPRESA"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="NOMBRE Y APELLIDOS"
+							align="center" style="text-align: center !important;">
+						</listheader>
+						<listheader label="DOCUMENTO" align="center"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="MOTIVO INGRESO"
+							align="center" style="text-align: center !important;"
+							width="500px">
+						</listheader>
+						<listheader label="FECHA SALIDA"
+							style="text-align: center !important;" visible="true">
+						</listheader>
+						<listheader label="AREA/RACKS" align="center"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="TIPO DE TRABAJO"
+							align="center" style="text-align: center !important;">
+						</listheader>
+						<listheader label="# TARJETA ACCESO DN"
+							align="center" style="text-align: center !important;">
+						</listheader>
+						<listheader label="# TARJETA ACCESO BP"
+							align="center" style="text-align: center !important;">
+						</listheader>
+						<listheader label="AUTORIZADOR" align="center"
+							style="text-align: center !important;" width="200px">
+						</listheader>
+						<listheader label="TIPO DE INGRESO"
+							align="center" style="text-align: center !important;"
+							width="200px">
+						</listheader>
+						<listheader label="FECHA INGRESO SALA UTIL"
+							align="center" style="text-align: center !important;"
+							width="200px">
+						</listheader>
+						<listheader label="FECHA SALIDA SALA UTIL"
+							align="center" style="text-align: center !important;"
+							width="200px">
+						</listheader>
+					</listhead>
+					<listitem context="editPopup"
+						self="@{each=lista}">
+						<listcell
+							label="@{lista.getId_registro_permanencia}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.getTicket}"
+							style="text-align: center !important;" />
+						<listcell
+							label="@{lista.mostrarFechaHoraIngreso}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.getNom_empresa}" />
+						<listcell label="@{lista.getNom_proveedor}" />
+						<listcell label="@{lista.getNum_documento}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.getDescripcion}" />
+						<listcell
+							label="@{lista.mostrarFechaHoraSalida}"
+							style="text-align: center !important;"
+							image="@{lista.mostrarImagenFechaHoraSalida}" />
+						<listcell label="@{lista.getArea_rack}" />
+						<listcell label="@{lista.getTipo_trabajo}" />
+						<listcell label="@{lista.getNum_tarjeta_dn}"
+							style="text-align: center !important;"
+							image="@{lista.mostrarImagenTarjetaDN}" />
+						<listcell label="@{lista.getNum_tarjeta_bp}"
+							style="text-align: center !important;"
+							image="@{lista.mostrarImagenTarjetaBP}" />
+						<listcell label="@{lista.getTipo_autorizador}" />
+						<listcell label="@{lista.getTipo_ingreso}"
+							style="text-align: center !important;" />
+						<listcell label="@{lista.mostrarFechaIngresoSU}"
+							style="text-align: center !important;"
+							image="@{lista.mostrarImagenFechaIngresoSU}" />
+						<listcell label="@{lista.mostrarFechaSalidaSU}"
+							style="text-align: center !important;"
+							image="@{lista.mostrarImagenFechaSalidaSU}" />
+					</listitem>
+				</listbox>
+			</hlayout>
+		</vlayout>
+		<popup id="pFiltros" width="1150px">
+			<groupbox>
+				<caption label="Criterios de busqueda"></caption>
+				<grid>
+					<columns>
+						<column>
+
+						</column>
+						<column visible="false">
+							<combobox width="180px" id="cmbCliente"
+								model="@{zConsultar$consultar_permanencia.obtenerClientes}"
+								readonly="false" disabled="false"
+								tooltiptext="Seleccione el cliente a consultar">
+								<comboitem self="@{each=lista}"
+									label="@{lista.getNom_empresa}"
+									value="@{lista.getId_empresa}">
+								</comboitem>
+							</combobox>
+						</column>
+					</columns>
+				</grid>
+			</groupbox>
+		</popup>
+	</div>
+
+	<menupopup id="editPopup">
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar el registro seleccionado, solo se permite modificar un item a la vez." visible="false" />
+		<menuseparator id="mSeparador1" visible="false" />
+		<menuitem id="mRegistrarSalida" iconSclass="z-icon-code"
+			label=" - Registrar salida"
+			tooltiptext="Permite registrar la salida del item seleccionado, solo se permite modificar un item a la vez." visible="false" />
+		<menuseparator id="mSeparador2" visible="false" />
+		<menuitem id="mEliminar" iconSclass="z-icon-trash"
+			label=" - Eliminar"
+			tooltiptext="Permite eliminar el item seleccionado, solo se permite eliminar un item a la vez." />
+	</menupopup>
+
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+	lbxRegistroPermanencia.pagingChild.mold = "os".equals(lbxRegistroPermanencia.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	<style>.z-listheader-checkable { visibility: hidden; }</style>
+</zk>

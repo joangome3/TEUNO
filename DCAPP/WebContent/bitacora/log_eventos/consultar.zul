@@ -1,4 +1,4 @@
-<?page title="Bitacora - Tareas programadas" contentType="text/html;charset=UTF-8"?>
+<?page title="Bitacora - Log de eventos" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<div id="zConsultar" width="100%" height="100%"
@@ -38,7 +38,7 @@
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="150px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;" sclass="demo-search-inp">
 											</textbox>
 											<space width="5px"></space>
 											<combobox width="100px"
@@ -60,6 +60,17 @@
 												<comboitem
 													self="@{each=lista}" label="@{lista.getNom_tipo_servicio}"
 													value="@{lista.getId_tipo_servicio}">
+												</comboitem>
+											</combobox>
+											<space width="5px"></space>
+											<combobox width="100px"
+												id="cmbTipoTarea"
+												model="@{zConsultar$consultar.obtenerTipoTarea}"
+												readonly="false" disabled="false"
+												tooltiptext="Seleccione el tipo de tarea a consultar">
+												<comboitem
+													self="@{each=lista}" label="@{lista.getNom_tipo_tarea}"
+													value="@{lista.getId_tipo_tarea}">
 												</comboitem>
 											</combobox>
 											<combobox width="100px"
@@ -132,11 +143,13 @@
 				</row>
 			</rows>
 		</grid>
-		<listbox mold="paging" id="lbxBitacora" vflex="true"
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+		<listbox mold="paging" id="lbxBitacora" vflex="1"
 			sizedByContent="true" width="100%"
 			model="@{zConsultar$consultar.obtenerBitacoras}" multiple="true"
 			checkmark="false">
-			<listhead sizable="false" style="overflow: scroll;">
+			<listhead sizable="false" style="overflow-y: scroll;">
 				<listheader label="ID"
 					style="text-align: center !important;" visible="true">
 				</listheader>
@@ -149,6 +162,9 @@
 				<listheader label="SERVICIO/CATEGORIA" align="center"
 					style="text-align: center !important;">
 				</listheader>
+				<listheader label="CLASIFICACIÓN" align="center"
+					style="text-align: center !important;" width="450px">
+				</listheader>
 				<listheader label="TIPO TAREA" align="center"
 					style="text-align: center !important;">
 				</listheader>
@@ -156,7 +172,7 @@
 					style="text-align: center !important;">
 				</listheader>
 				<listheader label="DESCRIPCION" align="center"
-					style="text-align: center !important;" width="200px">
+					style="text-align: center !important;" width="500px">
 				</listheader>
 				<listheader label="AREA" align="center"
 					style="text-align: center !important;" width="200px">
@@ -198,6 +214,9 @@
 				<listcell label="@{lista.getNom_cliente}" />
 				<listcell label="@{lista.getTicket_externo}" />
 				<listcell label="@{lista.getNom_tipo_servicio}" />
+				<listcell label="@{lista.getNom_tipo_clasificacion}" 
+						  image="@{lista.mostrarImagenClasificacion}"
+					      style="@{lista.estiloImagenClasificacion}" />
 				<listcell label="@{lista.getNom_tipo_tarea}" />
 				<listcell label="@{lista.mostrarSolicitante}"
 					image="@{lista.mostrarImagenSolicitante}"
@@ -231,6 +250,8 @@
 					style="@{lista.estiloImagenObservacion}" />
 			</listitem>
 		</listbox>
+		</hlayout>
+		</vlayout>
 	</div>
 
 	<menupopup id="editPopup">
@@ -245,6 +266,10 @@
 		<menuitem id="mCerrar" iconSclass="z-icon-code"
 			label=" - Cerrar tarea"
 			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." />
+		<menuseparator />
+		<menuitem id="mCerrarRegistro" iconSclass="z-icon-edit"
+			label=" - Crear registro de cierre"
+			tooltiptext="Permite crear el cierre de una tarea que se encuentre en estado abierto, solo se permite crear el cierre de una tarea a la vez." />
 	</menupopup>
 
 	<popup id="cons" width="300px">

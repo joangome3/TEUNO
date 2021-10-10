@@ -97,12 +97,12 @@ public class organizar extends SelectorComposer<Component> {
 		inicializarListas();
 		txtBuscarArticulo1.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtBuscarArticulo1.setText(txtBuscarArticulo1.getText().toUpperCase());
+				txtBuscarArticulo1.setText(txtBuscarArticulo1.getText().trim().toUpperCase());
 			}
 		});
 		txtBuscarArticulo2.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtBuscarArticulo2.setText(txtBuscarArticulo2.getText().toUpperCase());
+				txtBuscarArticulo2.setText(txtBuscarArticulo2.getText().trim().toUpperCase());
 			}
 		});
 	}
@@ -196,8 +196,8 @@ public class organizar extends SelectorComposer<Component> {
 			id_categoria = cmbCategoria1.getSelectedItem().getValue().toString();
 		}
 		int index = lbxUbicaciones1.getSelectedIndex();
-		listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo1.getText(), id_dc, id_categoria, 12,
-				0, String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), "");
+		listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo1.getText().trim(), id_dc,
+				id_categoria, 12, 0, String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), "");
 		mostrarCantidadDeArticulos(index, 1);
 		binder.loadComponent(lbxArticulos1);
 	}
@@ -226,8 +226,8 @@ public class organizar extends SelectorComposer<Component> {
 			id_categoria = cmbCategoria2.getSelectedItem().getValue().toString();
 		}
 		int index = lbxUbicaciones2.getSelectedIndex();
-		listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo2.getText(), id_dc, id_categoria, 12,
-				0, String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), "");
+		listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo2.getText().trim(), id_dc,
+				id_categoria, 12, 0, String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), "");
 		mostrarCantidadDeArticulos(index, 2);
 		binder.loadComponent(lbxArticulos2);
 	}
@@ -248,8 +248,8 @@ public class organizar extends SelectorComposer<Component> {
 			cmbCategoria1.setDisabled(true);
 			cmbCategoria1.setSelectedIndex(-1);
 			listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
-					String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0, txtBuscarArticulo1.getText(),
-					"");
+					String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0,
+					txtBuscarArticulo1.getText().trim(), "");
 		}
 		binder.loadComponent(lbxArticulos1);
 	}
@@ -270,8 +270,8 @@ public class organizar extends SelectorComposer<Component> {
 			cmbCategoria2.setDisabled(true);
 			cmbCategoria2.setSelectedIndex(-1);
 			listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
-					String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0, txtBuscarArticulo2.getText(),
-					"");
+					String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0,
+					txtBuscarArticulo2.getText().trim(), "");
 		}
 		binder.loadComponent(lbxArticulos2);
 	}
@@ -320,13 +320,13 @@ public class organizar extends SelectorComposer<Component> {
 		bdxUbicacion1.setText(ubicacion);
 		if (chkCategoria1.isChecked()) {
 			listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
-					String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0, txtBuscarArticulo1.getText(),
-					"");
+					String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0,
+					txtBuscarArticulo1.getText().trim(), "");
 		} else {
 			listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN(
 					cmbCategoria1.getSelectedItem().getValue().toString(), id_dc,
-					String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0, txtBuscarArticulo1.getText(),
-					"");
+					String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0,
+					txtBuscarArticulo1.getText().trim(), "");
 		}
 		mostrarCantidadDeArticulos(index, 1);
 		binder.loadComponent(lbxArticulos1);
@@ -358,13 +358,13 @@ public class organizar extends SelectorComposer<Component> {
 		bdxUbicacion2.setText(ubicacion);
 		if (chkCategoria2.isChecked()) {
 			listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
-					String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0, txtBuscarArticulo2.getText(),
-					"");
+					String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0,
+					txtBuscarArticulo2.getText().trim(), "");
 		} else {
 			listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN(
 					cmbCategoria2.getSelectedItem().getValue().toString(), id_dc,
-					String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0, txtBuscarArticulo2.getText(),
-					"");
+					String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0,
+					txtBuscarArticulo2.getText().trim(), "");
 		}
 		mostrarCantidadDeArticulos(index, 2);
 		binder.loadComponent(lbxArticulos2);
@@ -378,7 +378,7 @@ public class organizar extends SelectorComposer<Component> {
 		int index = lbxUbicaciones1.getSelectedIndex();
 		listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN(cmbCategoria1.getSelectedItem().getValue().toString(),
 				id_dc, String.valueOf(listaUbicacion1.get(index).getId_ubicacion()), 11, 0,
-				txtBuscarArticulo1.getText(), "");
+				txtBuscarArticulo1.getText().trim(), "");
 		binder.loadComponent(lbxArticulos1);
 	}
 
@@ -390,7 +390,7 @@ public class organizar extends SelectorComposer<Component> {
 		int index = lbxUbicaciones2.getSelectedIndex();
 		listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN(cmbCategoria2.getSelectedItem().getValue().toString(),
 				id_dc, String.valueOf(listaUbicacion2.get(index).getId_ubicacion()), 11, 0,
-				txtBuscarArticulo2.getText(), "");
+				txtBuscarArticulo2.getText().trim(), "");
 		binder.loadComponent(lbxArticulos2);
 	}
 
@@ -663,24 +663,24 @@ public class organizar extends SelectorComposer<Component> {
 		if (chkCategoria2.isChecked()) {
 			listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
 					String.valueOf(listaUbicacion2.get(lbxUbicaciones2.getSelectedIndex()).getId_ubicacion()), 11, 0,
-					txtBuscarArticulo2.getText(), "");
+					txtBuscarArticulo2.getText().trim(), "");
 		} else {
 			listaArticulo2 = consultasABaseDeDatos.cargarArticulosDN(
 					cmbCategoria2.getSelectedItem().getValue().toString(), id_dc,
 					String.valueOf(listaUbicacion2.get(lbxUbicaciones2.getSelectedIndex()).getId_ubicacion()), 11, 0,
-					txtBuscarArticulo2.getText(), "");
+					txtBuscarArticulo2.getText().trim(), "");
 		}
 		mostrarCantidadDeArticulos(lbxUbicaciones2.getSelectedIndex(), 2);
 		binder.loadComponent(lbxArticulos2);
 		if (chkCategoria1.isChecked()) {
 			listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
 					String.valueOf(listaUbicacion1.get(lbxUbicaciones1.getSelectedIndex()).getId_ubicacion()), 11, 0,
-					txtBuscarArticulo1.getText(), "");
+					txtBuscarArticulo1.getText().trim(), "");
 		} else {
 			listaArticulo1 = consultasABaseDeDatos.cargarArticulosDN(
 					cmbCategoria1.getSelectedItem().getValue().toString(), id_dc,
 					String.valueOf(listaUbicacion1.get(lbxUbicaciones1.getSelectedIndex()).getId_ubicacion()), 11, 0,
-					txtBuscarArticulo1.getText(), "");
+					txtBuscarArticulo1.getText().trim(), "");
 		}
 		mostrarCantidadDeArticulos(lbxUbicaciones1.getSelectedIndex(), 1);
 		binder.loadComponent(lbxArticulos1);

@@ -12,8 +12,8 @@
 						<treeitem>
 							<treerow>
 								<treecell
-									image="/img/botones/ButtonSolicitud2.png" label=" - Solicitud de ingreso (A.16)"
-									class="log-trcell">
+									image="/img/botones/ButtonSolicitud2.png"
+									label=" - Solicitud de ingreso (A.16)" class="log-trcell">
 								</treecell>
 							</treerow>
 							<treechildren>
@@ -21,7 +21,16 @@
 									<treerow>
 										<treecell
 											image="/img/botones/ButtonSearch3.png"
-											label=" - Consultar solicitudes" id="tcOpcion1"
+											label=" - Consultar solicitudes (Normal)" id="tcOpcion4"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png"
+											label=" - Consultar solicitudes (Calendario)" id="tcOpcion1"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -35,11 +44,11 @@
 										</treecell>
 									</treerow>
 								</treeitem>
-								<treeitem visible="false">
+								<treeitem visible="true">
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonPersonal2.png" label=" - Registro de permanencia"
-											id="tcOpcion3"
+											image="/img/botones/ButtonPersonal2.png"
+											label=" - Registro de permanencia (A.15)" id="tcOpcion3"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -47,8 +56,8 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonReport3.png" label=" - Reporte de tareas"
-											id="tcReporte1"
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte de tareas" id="tcReporte1"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -56,8 +65,17 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonReport3.png" label=" - Reporte de ingreso personal"
-											id="tcReporte3"
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte de ingreso personal" id="tcReporte2"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte de acceso y permanencia" id="tcReporte3"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -68,11 +86,10 @@
 				</tree>
 			</west>
 			<center>
-				<tabbox vflex="max" style="height: calc(100%);"
-					width="100%" visible="true" id="tTab">
+				<tabbox height="100%" width="100%" visible="true"
+					id="tTab">
 					<tabs></tabs>
-					<tabpanels vflex="max" style="height: calc(100%);"
-						width="100%" id="tPanel">
+					<tabpanels height="100%" width="100%" id="tPanel">
 					</tabpanels>
 				</tabbox>
 			</center>

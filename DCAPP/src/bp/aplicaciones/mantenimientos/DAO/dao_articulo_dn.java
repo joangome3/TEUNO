@@ -187,7 +187,8 @@ public class dao_articulo_dn {
 	}
 
 	public int validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(String codigo, String fecha_inicio,
-			String fecha_fin, long categoria) throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+			String fecha_fin, long categoria)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		int totalArticulos = 0;
 		conexion conexion = new conexion();
 		CallableStatement consulta = null;
@@ -377,33 +378,37 @@ public class dao_articulo_dn {
 				consulta.setTimestamp(8, relacion.get(i).getFec_ingresa());
 				consulta.executeUpdate();
 			}
-			if (solicitud.getId_mantenimiento() == 16) {
-				consulta = conexion.abrir().prepareStatement(
-						"{CALL solicitud_modificarSolicitud(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
-				consulta.setLong(1, solicitud.getId_tip_solicitud());
-				consulta.setString(2, solicitud.getComentario_1().toUpperCase());
-				consulta.setString(3, solicitud.getComentario_2().toUpperCase());
-				consulta.setString(4, solicitud.getComentario_3().toUpperCase());
-				consulta.setString(5, solicitud.getComentario_4().toUpperCase());
-				consulta.setString(6, solicitud.getComentario_5().toUpperCase());
-				consulta.setLong(7, solicitud.getId_mantenimiento());
-				consulta.setLong(8, solicitud.getId_registro());
-				consulta.setLong(9, solicitud.getId_campo());
-				consulta.setLong(10, solicitud.getId_user_1());
-				consulta.setLong(11, solicitud.getId_user_2());
-				consulta.setLong(12, solicitud.getId_user_3());
-				consulta.setLong(13, solicitud.getId_user_4());
-				consulta.setLong(14, solicitud.getId_user_5());
-				consulta.setTimestamp(15, solicitud.getFecha_1());
-				consulta.setTimestamp(16, solicitud.getFecha_2());
-				consulta.setTimestamp(17, solicitud.getFecha_3());
-				consulta.setTimestamp(18, solicitud.getFecha_4());
-				consulta.setTimestamp(19, solicitud.getFecha_5());
-				consulta.setString(20, solicitud.getEst_solicitud());
-				consulta.setString(21, solicitud.getUsu_modifica());
-				consulta.setTimestamp(22, solicitud.getFec_modifica());
-				consulta.setLong(23, solicitud.getId_solicitud());
-				consulta.executeUpdate();
+			if (solicitud != null) {
+				if (solicitud.getId_solicitud() != 0) {
+					if (solicitud.getId_mantenimiento() == 16) {
+						consulta = conexion.abrir().prepareStatement(
+								"{CALL solicitud_modificarSolicitud(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						consulta.setLong(1, solicitud.getId_tip_solicitud());
+						consulta.setString(2, solicitud.getComentario_1().toUpperCase());
+						consulta.setString(3, solicitud.getComentario_2().toUpperCase());
+						consulta.setString(4, solicitud.getComentario_3().toUpperCase());
+						consulta.setString(5, solicitud.getComentario_4().toUpperCase());
+						consulta.setString(6, solicitud.getComentario_5().toUpperCase());
+						consulta.setLong(7, solicitud.getId_mantenimiento());
+						consulta.setLong(8, solicitud.getId_registro());
+						consulta.setLong(9, solicitud.getId_campo());
+						consulta.setLong(10, solicitud.getId_user_1());
+						consulta.setLong(11, solicitud.getId_user_2());
+						consulta.setLong(12, solicitud.getId_user_3());
+						consulta.setLong(13, solicitud.getId_user_4());
+						consulta.setLong(14, solicitud.getId_user_5());
+						consulta.setTimestamp(15, solicitud.getFecha_1());
+						consulta.setTimestamp(16, solicitud.getFecha_2());
+						consulta.setTimestamp(17, solicitud.getFecha_3());
+						consulta.setTimestamp(18, solicitud.getFecha_4());
+						consulta.setTimestamp(19, solicitud.getFecha_5());
+						consulta.setString(20, solicitud.getEst_solicitud());
+						consulta.setString(21, solicitud.getUsu_modifica());
+						consulta.setTimestamp(22, solicitud.getFec_modifica());
+						consulta.setLong(23, solicitud.getId_solicitud());
+						consulta.executeUpdate();
+					}
+				}
 			}
 			consulta.close();
 			conexion.abrir().commit();

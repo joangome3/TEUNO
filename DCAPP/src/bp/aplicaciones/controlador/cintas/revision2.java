@@ -22,11 +22,13 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menuseparator;
@@ -49,6 +51,7 @@ import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
 import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_registra_turno;
+import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
 import bp.aplicaciones.cintas.DAO.dao_movimiento_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 
@@ -491,10 +494,10 @@ public class revision2 extends SelectorComposer<Component> {
 			return;
 		}
 		Date fecha_1 = fechas.obtenerFechaArmada(dtxFechaSolicitud.getValue(), dtxFechaSolicitud.getValue().getMonth(),
-				dtxFechaSolicitud.getValue().getDay(), tmxHoraSolicitud.getValue().getHours(),
+				dtxFechaSolicitud.getValue().getDate(), tmxHoraSolicitud.getValue().getHours(),
 				tmxHoraSolicitud.getValue().getMinutes(), 0);
 		Date fecha_2 = fechas.obtenerFechaArmada(dtxFechaRespuesta.getValue(), dtxFechaRespuesta.getValue().getMonth(),
-				dtxFechaRespuesta.getValue().getDay(), tmxHoraRespuesta.getValue().getHours(),
+				dtxFechaRespuesta.getValue().getDate(), tmxHoraRespuesta.getValue().getHours(),
 				tmxHoraRespuesta.getValue().getMinutes(), 0);
 		float diferencia_minutos = obtenerDiferenciaEnMinutosYSegundos(fecha_1, fecha_2);
 		if ((diferencia_minutos <= 15.0 && diferencia_minutos >= 0.0)) {
@@ -825,11 +828,11 @@ public class revision2 extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
-		if (validarSiExistenTareasVencidas() == true) {
-			Messagebox.show(informativos.getMensaje_informativo_38(), informativos.getMensaje_informativo_24(),
-					Messagebox.OK, Messagebox.EXCLAMATION);
-			return;
-		}
+//		if (validarSiExistenTareasVencidas1() == true) {
+//			Messagebox.show(informativos.getMensaje_informativo_38(), informativos.getMensaje_informativo_24(),
+//					Messagebox.OK, Messagebox.EXCLAMATION);
+//			return;
+//		}
 		if (validarSiPedidoHaSidoRevisado() == true) {
 			Messagebox.show(informativos.getMensaje_informativo_75(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
@@ -843,6 +846,11 @@ public class revision2 extends SelectorComposer<Component> {
 		if (validarSiExistePrimeroApertura(txtId.getText().trim(), 1) == false) {
 			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtId.getText().trim()),
 					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (validarSiArticulosEstanRevisados() == false) {
+			Messagebox.show(informativos.getMensaje_informativo_104(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
 		if (cmbPedido.getSelectedItem() == null) {
@@ -1008,6 +1016,11 @@ public class revision2 extends SelectorComposer<Component> {
 							bitacora.setId_cliente(9);
 							bitacora.setTicket_externo(txtId.getText().trim().toUpperCase());
 							bitacora.setId_tipo_servicio(7);
+							if (movimiento.getTip_pedido().equals("M")) {
+								bitacora.setId_tipo_clasificacion(6);
+							} else {
+								bitacora.setId_tipo_clasificacion(7);
+							}
 							bitacora.setId_tipo_tarea(14);
 							bitacora.setId_estado_bitacora(2);
 							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(fechas.obtenerFechaArmada(
@@ -1034,7 +1047,7 @@ public class revision2 extends SelectorComposer<Component> {
 							}
 							List<modelo_bitacora> listaRegistrosBitacora = new ArrayList<modelo_bitacora>();
 							listaRegistrosBitacora = consultasABaseDeDatos.cargarBitacoras(
-									revision2.this.movimiento.getTck_movimiento(), 5, 0, "", "", id_dc, "", "", 0, "",
+									revision2.this.movimiento.getTck_movimiento(), 5, 0, "", "", id_dc, "", "", 0, 0, "",
 									0);
 							try {
 								dao.revisarMovimiento(movimiento, listaMovimientoDetalle, bitacora,
@@ -1145,13 +1158,16 @@ public class revision2 extends SelectorComposer<Component> {
 									if (listaArticulos.get(j).getSi_ing_fec_inicio_fin().equals("N")) {
 										if (listaArticulos.get(j).getEs_fecha().equals("N")) {
 											if (listaArticulos.get(j).getFec_fin() == null) {
-												if (listaMovimientoDetalle.get(i).getCod_articulo_actual()
-														.equals(listaArticulos.get(j).getCod_articulo())) {
-													lbxMovimientos.clearSelection();
-													lbxMovimientos.addItemToSelection(lbxMovimientos.getItemAtIndex(i));
-													tienen_mismos_datos = true;
-													i = listaMovimientoDetalle.size();
-													j = 0;
+												if (listaArticulos.get(j).getId_categoria() == 1) {
+													if (listaMovimientoDetalle.get(i).getCod_articulo_actual()
+															.equals(listaArticulos.get(j).getCod_articulo())) {
+														lbxMovimientos.clearSelection();
+														lbxMovimientos
+																.addItemToSelection(lbxMovimientos.getItemAtIndex(i));
+														tienen_mismos_datos = true;
+														i = listaMovimientoDetalle.size();
+														j = 0;
+													}
 												}
 											}
 										}
@@ -1225,15 +1241,18 @@ public class revision2 extends SelectorComposer<Component> {
 									if (listaArticulos.get(j).getSi_ing_fec_inicio_fin().equals("S")) {
 										if (listaArticulos.get(j).getEs_fecha().equals("S")) {
 											if (listaArticulos.get(j).getFec_fin() == null) {
-												if (listaMovimientoDetalle.get(i).getCod_articulo_actual()
-														.equals(listaArticulos.get(j).getCod_articulo())
-														&& listaMovimientoDetalle.get(i).getFec_inicio_actual()
-																.equals(listaArticulos.get(j).getFec_inicio())) {
-													lbxMovimientos.clearSelection();
-													lbxMovimientos.addItemToSelection(lbxMovimientos.getItemAtIndex(i));
-													tienen_mismos_datos = true;
-													i = listaMovimientoDetalle.size();
-													j = 0;
+												if (listaArticulos.get(j).getId_categoria() == 1) {
+													if (listaMovimientoDetalle.get(i).getCod_articulo_actual()
+															.equals(listaArticulos.get(j).getCod_articulo())
+															&& listaMovimientoDetalle.get(i).getFec_inicio_actual()
+																	.equals(listaArticulos.get(j).getFec_inicio())) {
+														lbxMovimientos.clearSelection();
+														lbxMovimientos
+																.addItemToSelection(lbxMovimientos.getItemAtIndex(i));
+														tienen_mismos_datos = true;
+														i = listaMovimientoDetalle.size();
+														j = 0;
+													}
 												}
 											}
 										}
@@ -1309,18 +1328,21 @@ public class revision2 extends SelectorComposer<Component> {
 										.getId_articulo()) {
 									if (listaArticulos.get(j).getSi_ing_fec_inicio_fin().equals("S")) {
 										if (listaArticulos.get(j).getEs_fecha().equals("S")) {
-											if (listaMovimientoDetalle.get(i).getFec_fin_actual() != null) {
-												if (listaMovimientoDetalle.get(i).getCod_articulo_actual()
-														.equals(listaArticulos.get(j).getCod_articulo())
-														&& listaMovimientoDetalle.get(i).getFec_inicio_actual()
-																.equals(listaArticulos.get(j).getFec_inicio())
-														&& listaMovimientoDetalle.get(i).getFec_fin_actual()
-																.equals(listaArticulos.get(j).getFec_fin())) {
-													lbxMovimientos.clearSelection();
-													lbxMovimientos.addItemToSelection(lbxMovimientos.getItemAtIndex(i));
-													tienen_mismos_datos = true;
-													i = listaMovimientoDetalle.size();
-													j = 0;
+											if (listaArticulos.get(j).getId_categoria() == 1) {
+												if (listaMovimientoDetalle.get(i).getFec_fin_actual() != null) {
+													if (listaMovimientoDetalle.get(i).getCod_articulo_actual()
+															.equals(listaArticulos.get(j).getCod_articulo())
+															&& listaMovimientoDetalle.get(i).getFec_inicio_actual()
+																	.equals(listaArticulos.get(j).getFec_inicio())
+															&& listaMovimientoDetalle.get(i).getFec_fin_actual()
+																	.equals(listaArticulos.get(j).getFec_fin())) {
+														lbxMovimientos.clearSelection();
+														lbxMovimientos
+																.addItemToSelection(lbxMovimientos.getItemAtIndex(i));
+														tienen_mismos_datos = true;
+														i = listaMovimientoDetalle.size();
+														j = 0;
+													}
 												}
 											}
 										}
@@ -1436,11 +1458,25 @@ public class revision2 extends SelectorComposer<Component> {
 		return se_inicio_turno;
 	}
 
-	public boolean validarSiExistenTareasVencidas()
+	public boolean validarSiExistenTareasVencidas1()
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existen_tareas_vencidas = false;
 		int totalTareasVencidas = consultasABaseDeDatos.validarSiExistenTareasProgramadasVencidas("1");
 		if (totalTareasVencidas > 0) {
+			existen_tareas_vencidas = true;
+		} else {
+			existen_tareas_vencidas = false;
+		}
+		return existen_tareas_vencidas;
+	}
+
+	public boolean validarSiExistenTareasVencidas2(String ticket_externo)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		boolean existen_tareas_vencidas = false;
+		List<modelo_tarea_proveedor> listaTareaProveedor = new ArrayList<modelo_tarea_proveedor>();
+		listaTareaProveedor = consultasABaseDeDatos.cargarTareasProveedores(ticket_externo, 5, 0, "", "", id_dc, "", "",
+				0, "", 1, 0);
+		if (listaTareaProveedor.size() > 0) {
 			existen_tareas_vencidas = true;
 		} else {
 			existen_tareas_vencidas = false;
@@ -1491,6 +1527,30 @@ public class revision2 extends SelectorComposer<Component> {
 			existe_primero_apertura = false;
 		}
 		return existe_primero_apertura;
+	}
+
+	public boolean validarSiArticulosEstanRevisados() {
+		boolean esta_revisado = false;
+		int contador_chequeados = 0;
+		int tamanio_lista = lbxMovimientos.getItems().size();
+		Iterator<Listitem> it = lbxMovimientos.getItems().iterator();
+		lbxMovimientos.clearSelection();
+		while (it.hasNext()) {
+			Listitem item = it.next();
+			Listcell cell = (Listcell) item.getChildren().get(0);
+			Checkbox chk = (Checkbox) cell.getChildren().get(0);
+			if (chk.isChecked()) {
+				contador_chequeados++;
+			} else {
+				lbxMovimientos.addItemToSelection(item);
+			}
+		}
+		if (contador_chequeados == tamanio_lista) {
+			esta_revisado = true;
+		} else {
+			esta_revisado = false;
+		}
+		return esta_revisado;
 	}
 
 }

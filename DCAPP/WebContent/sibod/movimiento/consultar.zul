@@ -23,7 +23,8 @@
 								</columns>
 								<rows>
 									<row>
-										<cell colspan="4"  class="m-cell-b">
+										<cell colspan="4"
+											class="m-cell-b">
 											<button id="btnNuevo"
 												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
 												autodisable="self" visible="false" />
@@ -33,7 +34,9 @@
 												tooltiptext="Refrescar lista" autodisable="self" />
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
-												width="200px" placeholder="Ingrese palabra clave" tooltip="cons" style="font-style: italic;">
+												width="200px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;"
+												sclass="demo-search-inp">
 											</textbox>
 											<datebox
 												constraint="no empty" format="dd/MM/yyyy HH:mm"

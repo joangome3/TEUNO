@@ -17,12 +17,15 @@ import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
 import bp.aplicaciones.cintas.DAO.dao_movimiento_dn;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_detalle_dn;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
+import bp.aplicaciones.controlcambio.DAO.dao_control_cambio;
+import bp.aplicaciones.controlcambio.modelo.modelo_control_cambio;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_campo;
 import bp.aplicaciones.mantenimientos.DAO.dao_capacidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_categoria_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_bitacora;
+import bp.aplicaciones.mantenimientos.DAO.dao_fila;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_mantenimiento;
 import bp.aplicaciones.mantenimientos.DAO.dao_opcion;
@@ -42,6 +45,7 @@ import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
 import bp.aplicaciones.mantenimientos.DAO.dao_solicitud;
 import bp.aplicaciones.mantenimientos.DAO.dao_tarea_periodica;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_aprobador;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_clasificacion;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_dispositivo;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_servicio;
@@ -58,6 +62,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_bitacora;
+import bp.aplicaciones.mantenimientos.modelo.modelo_fila;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_mantenimiento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_opcion;
@@ -77,6 +82,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_solicitante;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tarea_periodica;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_aprobador;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_clasificacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_dispositivo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
@@ -91,6 +97,7 @@ import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.personal.DAO.dao_solicitud_personal;
 import bp.aplicaciones.personal.modelo.modelo_detalle_solicitud_personal;
+import bp.aplicaciones.personal.modelo.modelo_registro_permanencia;
 import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 import bp.aplicaciones.sibod.DAO.dao_movimiento;
 
@@ -775,6 +782,19 @@ public class ConsultasABaseDeDatos {
 		return listaTipoTarea;
 	}
 
+	public List<modelo_tipo_clasificacion> cargarClasificaciones(String criterio, int tipo, long id, int limite)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		List<modelo_tipo_clasificacion> listaClasificacion = new ArrayList<modelo_tipo_clasificacion>();
+		dao_tipo_clasificacion dao = new dao_tipo_clasificacion();
+		try {
+			listaClasificacion = dao.obtenerTipoClasificaciones(criterio, tipo, id, limite);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaClasificacion;
+	}
+
 	/*
 	 * *
 	 * 
@@ -863,13 +883,13 @@ public class ConsultasABaseDeDatos {
 	 */
 
 	public List<modelo_bitacora> cargarBitacoras(String criterio, int tipo, long id_cliente, String fecha, String turno,
-			long localidad, String fecha_inicio, String fecha_fin, long id_tipo_servicio, String use_usuario,
+			long localidad, String fecha_inicio, String fecha_fin, long id_tipo_servicio, long id_tipo_tarea, String use_usuario,
 			int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_bitacora dao = new dao_bitacora();
 		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
 		try {
 			listaBitacora = dao.obtenerBitacoras(criterio, tipo, id_cliente, fecha, turno, localidad, fecha_inicio,
-					fecha_fin, id_tipo_servicio, use_usuario, limite);
+					fecha_fin, id_tipo_servicio, id_tipo_tarea, use_usuario, limite);
 		} catch (SQLException e) {
 			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
@@ -1034,6 +1054,19 @@ public class ConsultasABaseDeDatos {
 		}
 		return id_tipo_servicio;
 	}
+	
+	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		dao_movimiento dao = new dao_movimiento();
+		long id_tipo_clasificacion = 0;
+		try {
+			id_tipo_clasificacion = dao.obtenerIdTipoClasificacionAPartirDeTicket(ticket, id_tipo_tarea, id_dc);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return id_tipo_clasificacion;
+	}
 
 	/*
 	 * Modulo de personal
@@ -1127,17 +1160,37 @@ public class ConsultasABaseDeDatos {
 	 * 
 	 */
 
-	public List<modelo_rack> cargarRacks(String criterio, long id_localidad)
+	public List<modelo_rack> cargarRacks(String criterio, long id_localidad, long id_cliente, long id_fila, int tipo)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_rack dao = new dao_rack();
 		List<modelo_rack> listaRack = new ArrayList<modelo_rack>();
 		try {
-			listaRack = dao.obtenerRacks(criterio, id_localidad);
+			listaRack = dao.obtenerRacks(criterio, id_localidad, id_cliente, id_fila, tipo);
 		} catch (SQLException e) {
 			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 		return listaRack;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve las filas
+	 * 
+	 */
+
+	public List<modelo_fila> cargarFilas(String criterio, long id_localidad, long id_cliente, int tipo)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_fila dao = new dao_fila();
+		List<modelo_fila> listaFila = new ArrayList<modelo_fila>();
+		try {
+			listaFila = dao.obtenerFilas(criterio, id_localidad, id_cliente, tipo);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaFila;
 	}
 
 	/*
@@ -1200,6 +1253,13 @@ public class ConsultasABaseDeDatos {
 		return listaSolicitudPersonal;
 	}
 
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve el detalle de las solicitudes de personal
+	 * 
+	 */
+
 	public List<modelo_detalle_solicitud_personal> cargarDetalleSolicitudPersonal(String criterio, int tipo)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_solicitud_personal dao = new dao_solicitud_personal();
@@ -1211,6 +1271,98 @@ public class ConsultasABaseDeDatos {
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 		return listaDetalleSolicitudPersonal;
+	}
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los registros de permanencia
+	 * 
+	 */
+
+	public List<modelo_registro_permanencia> cargarRegistrosPermanencia(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_solicitud_personal dao = new dao_solicitud_personal();
+		List<modelo_registro_permanencia> listaRegistroPermanencia = new ArrayList<modelo_registro_permanencia>();
+		try {
+			listaRegistroPermanencia = dao.obtenerRegistroPermanencia(criterio, tipo, estado, id_localidad, limite,
+					fecha_inicio, fecha_fin);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaRegistroPermanencia;
+	}
+
+	public List<modelo_registro_permanencia> cargarRegistrosPermanencia2(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_solicitud_personal dao = new dao_solicitud_personal();
+		List<modelo_registro_permanencia> listaRegistroPermanencia = new ArrayList<modelo_registro_permanencia>();
+		try {
+			listaRegistroPermanencia = dao.obtenerRegistroPermanencia2(criterio, tipo, estado, id_localidad, limite,
+					fecha_inicio, fecha_fin);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaRegistroPermanencia;
+	}
+
+	public List<modelo_registro_permanencia> cargarRegistrosPermanencia3(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_solicitud_personal dao = new dao_solicitud_personal();
+		List<modelo_registro_permanencia> listaRegistroPermanencia = new ArrayList<modelo_registro_permanencia>();
+		try {
+			listaRegistroPermanencia = dao.obtenerRegistroPermanencia3(criterio, tipo, estado, id_localidad, limite,
+					fecha_inicio, fecha_fin);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaRegistroPermanencia;
+	}
+
+	public List<modelo_registro_permanencia> cargarRegistrosPermanencia4(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_solicitud_personal dao = new dao_solicitud_personal();
+		List<modelo_registro_permanencia> listaRegistroPermanencia = new ArrayList<modelo_registro_permanencia>();
+		try {
+			listaRegistroPermanencia = dao.obtenerRegistroPermanencia4(criterio, tipo, estado, id_localidad, limite,
+					fecha_inicio, fecha_fin);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaRegistroPermanencia;
+	}
+
+	/*
+	 * Modulo de control de cambio
+	 * 
+	 */
+
+	/*
+	 * *
+	 * 
+	 * Metodo que devuelve los controles de cambio
+	 * 
+	 */
+
+	public List<modelo_control_cambio> cargarControlesDeCambio(String criterio, int tipo, long id_cliente,
+			long id_localidad, int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_control_cambio dao = new dao_control_cambio();
+		List<modelo_control_cambio> listaControlCambio = new ArrayList<modelo_control_cambio>();
+		try {
+			listaControlCambio = dao.obtenerControlCambios(criterio, tipo, id_cliente, id_localidad, limite);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaControlCambio;
 	}
 
 }

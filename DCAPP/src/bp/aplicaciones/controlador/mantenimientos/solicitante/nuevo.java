@@ -74,13 +74,13 @@ public class nuevo extends SelectorComposer<Component> {
 		txtNombres.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtNombres.setText(validar.soloLetrasyNumeros(txtNombres.getText()));
+				txtNombres.setText(txtNombres.getText().toUpperCase().trim());
 			}
 		});
 		txtApellidos.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtApellidos.setText(validar.soloLetrasyNumeros(txtApellidos.getText()));
+				txtApellidos.setText(txtApellidos.getText().toUpperCase().trim());
 			}
 		});
 		obtenerId();
@@ -158,7 +158,8 @@ public class nuevo extends SelectorComposer<Component> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	@Listen("onClick=#btnGrabar")
-	public void onClick$btnGrabar() throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+	public void onClick$btnGrabar()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (cmbTipoDocumento.getSelectedItem() == null) {
 			cmbTipoDocumento.setErrorMessage("Seleccione un tipo de documento.");
 			cmbTipoDocumento.setFocus(true);

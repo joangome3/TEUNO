@@ -1,0 +1,104 @@
+<?page title="GESTION DE PERSONAL - CALENDARIO" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<style>
+		.z-calevent-inner
+		.z-calevent-cnt{background:${eventColor};font-size:11px;font-family:${fontFamilyC};padding-left:1px;padding-right:1px;line-height:14px;color:black;}
+	</style>
+	<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+	<!-- Calendars Body -->
+	<div id="winList" class="m-div-c"></div>
+	<div id="zCalendario" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.personal.calendario">
+		<!-- Control Menu -->
+		<hlayout>
+			<separator width="5px" />
+			<button id="btnRefrescar"
+				image="/img/botones/ButtonRefresh.png" tooltiptext="Refrescar lista"
+				autodisable="self" />
+			<separator width="5px" />
+			<button id="btnHoy" label="HOY" autodisable="self"
+				sclass="btn-success" />
+			<separator width="5px" />
+			<button iconSclass="z-icon-arrow-left" sclass="btn-primary"
+				id="btnAnterior" autodisable="self" />
+			<button iconSclass="z-icon-arrow-right" sclass="btn-primary"
+				id="btnSiguiente" autodisable="self" />
+			<separator width="5px" />
+			<button id="btnDia" sclass="btn-success" label="DIA"
+				autodisable="self" visible="true" />
+			<button id="btnSemana" sclass="btn-success" label="SEMANA"
+				autodisable="self" visible="true" />
+			<button id="btnMes" sclass="btn-success" label="MES"
+				autodisable="self" visible="true" />
+			<separator width="10px" />
+			<bandbox id="bdxFiltros" popup="pFiltros" width="150px"
+				readonly="true">
+			</bandbox>
+			<button id="btnLimpiar" sclass="btn-danger" label="Limpiar Criterios"
+				autodisable="self" visible="true" disabled="true" />
+		</hlayout>
+		<borderlayout height="97%">
+			<center autoscroll="true">
+				<calendars id="calendario" firstDayOfWeek="Monday"
+					height="100%" timeZone="Main=GMT-5" mold="default" days="7"/>
+			</center>
+		</borderlayout>
+		<popup id="pFiltros" width="1150px">
+			<groupbox>
+				<caption label="Criterios de busqueda"></caption>
+				<grid>
+					<columns>
+						<column>
+							<textbox id="txtBuscar" width="250px"
+								placeholder="Ingrese palabra clave" tooltip="cons"
+								style="font-style: italic;" sclass="demo-search-inp">
+							</textbox>
+						</column>
+						<column>
+							<combobox width="200px" id="cmbCliente"
+								model="@{zCalendario$calendario.obtenerClientes}"
+								readonly="false" disabled="false"
+								tooltiptext="Seleccione el cliente a consultar">
+								<comboitem self="@{each=lista}"
+									label="@{lista.getNom_empresa}"
+									value="@{lista.getId_empresa}">
+								</comboitem>
+							</combobox>
+						</column>
+						<column>
+							<datebox id="dtxFechaInicio"
+								format="dd/MM/yyyy HH:mm" width="153px"
+								tooltiptext="Seleccione la fecha inicio a consultar">
+							</datebox>
+						</column>
+						<column>
+							<datebox id="dtxFechaFin"
+								format="dd/MM/yyyy HH:mm" width="153px"
+								tooltiptext="Seleccione la fecha fin a consultar">
+							</datebox>
+							<space width="40px"></space>
+						</column>
+					</columns>
+				</grid>
+			</groupbox>
+		</popup>
+		
+		<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
+
+			</html>
+	</popup>
+		
+	</div>
+</zk>

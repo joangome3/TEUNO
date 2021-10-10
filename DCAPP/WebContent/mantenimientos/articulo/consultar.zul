@@ -33,9 +33,18 @@
 												image="/img/botones/ButtonRefresh.png"
 												tooltiptext="Refrescar lista" autodisable="self" />
 											<space width="20px"></space>
+											<combobox width="375px"
+													id="cmbCategoria" model="@{zConsultar$consultar.obtenerCategorias}"
+													readonly="true" disabled="false">
+													<comboitem
+														self="@{each=lista}" label="@{lista.getNom_categoria}"
+														value="@{lista.getId_categoria}">
+													</comboitem>
+												</combobox>
+											<space width="5px"></space>
 											<textbox id="txtBuscar"
 												width="205px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;" sclass="demo-search-inp">
 											</textbox>
 											<space width="5px"></space>
 											<combobox id="cmbLimite"
@@ -62,12 +71,12 @@
 											<button id="btnCargar"
 												iconSclass="z-icon-camera" tooltiptext="Cargar imagen"
 												autodisable="self" upload="true, maxsize=1000"
-												disabled="false" class="btn btn-info">
+												disabled="false" sclass="btn-primary" >
 											</button>
 											<space width="5px"></space>
 											<button id="btnBorrar"
 												iconSclass="z-icon-trash-o" tooltiptext="Borrar imagen"
-												autodisable="self" disabled="false">
+												autodisable="self" disabled="false" sclass="btn-danger" width="50px" height="43px">
 											</button>
 										</cell>
 									</row>
@@ -78,8 +87,6 @@
 				</row>
 			</rows>
 		</grid>
-		<vlayout vflex="1">
-			<hlayout vflex="1" style="overflow: scroll;">
 				<listbox mold="paging" id="lbxArticulos" vflex="true"
 					sizedByContent="true" width="100%"
 					model="@{zConsultar$consultar.obtenerArticulos}">
@@ -153,8 +160,6 @@
 							style="@{lista.estiloMostrarEstado}" />
 					</listitem>
 				</listbox>
-			</hlayout>
-		</vlayout>
 	</div>
 
 	<menupopup id="editPopup">

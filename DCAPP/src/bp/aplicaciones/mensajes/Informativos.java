@@ -91,14 +91,34 @@ public class Informativos {
 	private String mensaje_informativo_87 = "Uno de los items que desea mover ya se encuentra en la lista destino, es posible que hace poco el item haya sido movido a la ubicación deseada.";
 	private String mensaje_informativo_88 = "El/Los registros se desactivaron correctamente.";
 	private String mensaje_informativo_89 = "El/Los registros se activaron correctamente.";
-	private String mensaje_informativo_90 = "El/Los registros que intenta desactivar no son del tipo caja, o ya se encuentran inactivos.";
-	private String mensaje_informativo_91 = "El/Los registros que intenta activar no son del tipo caja, o ya se encuentran activos.";
+	private String mensaje_informativo_90 = "El/Los registros que intenta desactivar no son del tipo caja, ya se encuentran inactivos, o están pendientes de aprobación por parte del coordinador.";
+	private String mensaje_informativo_91 = "El/Los registros que intenta activar no son del tipo caja, ya se encuentran activos, o están pendientes de aprobación por parte del coordinador.";
 	private String mensaje_informativo_92 = "El registro debe estar activo antes de modificarlo.";
 	private String mensaje_informativo_93 = "Se modificara(n) ?1 registro(s) en el modulo de bodega y ?2 registro(s) en el modulo de bitacora.";
 	private String mensaje_informativo_94 = "Ocurrió un error al cargar la información.";
 	private String mensaje_informativo_95 = "Existe(n) ?1 registro(s) en el modulo de bodega y ?2 registro(s) en el modulo de bitacora, para el ticket ?3.";
 	private String mensaje_informativo_96 = "No existe una tarea de tipo apertura para el ticket ?1, debe primero crear la apertura antes de realizar esta acción.";
 	private String mensaje_informativo_97 = "Ya existe una solicitud de personal creada para el ticket ?1.";
+	private String mensaje_informativo_98 = "No se ha registrado la fecha de salida de sala util para la persona ?1 en la solicitud con ticket ?2.";
+	private String mensaje_informativo_99 = "La fecha de salida debe ser mayor que la fecha de ingreso, para la persona ?1 en la solicitud con ticket ?2.";
+	private String mensaje_informativo_100 = "La fecha de salida de sala util debe ser mayor que la fecha de ingreso a sala util, para la persona ?1 en la solicitud con ticket ?2.";
+	private String mensaje_informativo_101 = "Ya se encuentra registrado el ingreso de ?1 para la solicitud ?2.";
+	private String mensaje_informativo_102 = "Ya existe una tarea de tipo apertura para el ticket ?1, debe primero eliminar la apertura creada en el modulo de bitacora antes de realizar esta acción.";
+	private String mensaje_informativo_103 = "Ya se encuentra registrado el ingreso de ?1 para la solicitud ?2, en la fecha de ingreso ?3.";
+	private String mensaje_informativo_104 = "Antes de guardar, debe primero marcar como revisada(s) la(s) cinta(s) seleccionada(s).";
+	private String mensaje_informativo_105 = "Antes de ? la tarea, debe primero realizar la revisión del turno T1 del registro en el modulo de cintas.";
+	private String mensaje_informativo_106 = "El registro se guardó correctamente, el codigo ? ya se encuentra registrado para otro item, por lo que se deberá realizar la aprobacón por parte de coordinación antes de ser utilizado.";
+	private String mensaje_informativo_107 = "El registro se encuentra pendiente de aprobación por parte del coordinador, favor revisar en la opción de seguimiento en que estado se encuentra su solicitud, en el caso de no haber creado la solicitud realizarla desde la opción solicitar.";
+	private String mensaje_informativo_108 = "El registro no necesita de una aprobación por parte del coordinador.";
+	private String mensaje_informativo_109 = "No se ha creado una solicitud para este registro, puedes hacerlo desde la opción solicitar.";
+	private String mensaje_informativo_110 = "Ya existe una solicitud creada para este registro, puedes consultar su estado desde la opción seguimiento.";
+	private String mensaje_informativo_111 = "El registro ? no ha sido aprobado por parte de coordinación, por favor registre su solicitud desde la opción solicitar en el inventario de artículos.";
+	private String mensaje_informativo_112 = "La tarjeta # ?1 ya se encuentra registrada en la permanencia, antes de poder utilizarla debe primero registrar la salida de la persona que tiene la tarjeta.";
+	private String mensaje_informativo_113 = "Su comentario debe ser referente al SLT registrado en las herramientas externas.";
+	private String mensaje_informativo_114 = "Seleccione si el ticket cumple o no cumple con el SLA asignado.";
+	private String mensaje_informativo_115 = "Ingrese el comentario del incumplimiento.";
+	private String mensaje_informativo_116 = ".:: Cerrar registro ::.";
+	private String mensaje_informativo_117 = "Por favor escoja el registro que tenga la apertura.";
 
 	public Informativos() {
 
@@ -487,9 +507,89 @@ public class Informativos {
 	public String getMensaje_informativo_96() {
 		return mensaje_informativo_96;
 	}
-	
+
 	public String getMensaje_informativo_97() {
 		return mensaje_informativo_97;
+	}
+
+	public String getMensaje_informativo_98() {
+		return mensaje_informativo_98;
+	}
+
+	public String getMensaje_informativo_99() {
+		return mensaje_informativo_99;
+	}
+
+	public String getMensaje_informativo_100() {
+		return mensaje_informativo_100;
+	}
+
+	public String getMensaje_informativo_101() {
+		return mensaje_informativo_101;
+	}
+
+	public String getMensaje_informativo_102() {
+		return mensaje_informativo_102;
+	}
+
+	public String getMensaje_informativo_103() {
+		return mensaje_informativo_103;
+	}
+
+	public String getMensaje_informativo_104() {
+		return mensaje_informativo_104;
+	}
+
+	public String getMensaje_informativo_105() {
+		return mensaje_informativo_105;
+	}
+
+	public String getMensaje_informativo_106() {
+		return mensaje_informativo_106;
+	}
+
+	public String getMensaje_informativo_107() {
+		return mensaje_informativo_107;
+	}
+
+	public String getMensaje_informativo_108() {
+		return mensaje_informativo_108;
+	}
+
+	public String getMensaje_informativo_109() {
+		return mensaje_informativo_109;
+	}
+
+	public String getMensaje_informativo_110() {
+		return mensaje_informativo_110;
+	}
+
+	public String getMensaje_informativo_111() {
+		return mensaje_informativo_111;
+	}
+
+	public String getMensaje_informativo_112() {
+		return mensaje_informativo_112;
+	}
+
+	public String getMensaje_informativo_113() {
+		return mensaje_informativo_113;
+	}
+
+	public String getMensaje_informativo_114() {
+		return mensaje_informativo_114;
+	}
+
+	public String getMensaje_informativo_115() {
+		return mensaje_informativo_115;
+	}
+
+	public String getMensaje_informativo_116() {
+		return mensaje_informativo_116;
+	}
+
+	public String getMensaje_informativo_117() {
+		return mensaje_informativo_117;
 	}
 
 }

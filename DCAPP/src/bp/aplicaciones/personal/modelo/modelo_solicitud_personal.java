@@ -596,5 +596,62 @@ public class modelo_solicitud_personal {
 		fecha = fechas.obtenerFechaFormateada(fec_fin, "dd/MM/yyyy HH:mm");
 		return fecha;
 	}
+	
+	public String mostrarArea() {
+		String _area = "";
+		if (area != null) {
+			_area = getArea();
+		}
+		return _area;
+	}
+
+	public String mostrarRack() {
+		String _rack = "";
+		if (rack != null) {
+			_rack = getRack();
+		}
+		return _rack;
+	}
+
+	
+	public String mostrarImagenArea() {
+		String imagen = "";
+		if (area == null) {
+			imagen = "/img/botones/ButtonError.png";
+		} else if (area.length() <= 0) {
+			imagen = "/img/botones/ButtonError.png";
+		}
+		return imagen;
+	}
+
+	public String mostrarImagenRack() {
+		String imagen = "";
+		if (rack == null) {
+			imagen = "/img/botones/ButtonError.png";
+		} else if (rack.length() <= 0) {
+			imagen = "/img/botones/ButtonError.png";
+		}
+		return imagen;
+	}
+	
+	public String estiloImagenArea() {
+		String estilo = "";
+		if (area == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		} else if (area.length() <= 0) {
+			estilo = "text-align: center !important; color: transparent;";
+		}
+		return estilo;
+	}
+
+	public String estiloImagenRack() {
+		String estilo = "";
+		if (rack == null) {
+			estilo = "text-align: center !important; color: transparent;";
+		} else if (rack.length() <= 0) {
+			estilo = "text-align: center !important; color: transparent;";
+		}
+		return estilo;
+	}
 
 }

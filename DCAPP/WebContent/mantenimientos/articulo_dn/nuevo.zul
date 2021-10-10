@@ -258,59 +258,7 @@
 											<hlayout>
 												<bandbox
 													id="bdxUbicacion" mold="rounded" autodrop="true"
-													width="250px" readonly="true">
-													<bandpopup
-														width="45%">
-														<panel
-															title="">
-															<panelchildren>
-																<space
-																	width="15px">
-																</space>
-																<textbox
-																	width="280px" id="txtBuscarUbicacion"
-																	placeholder="Ingrese palabra clave"
-																	tooltiptext="Presione enter para realizar la búsqueda"
-																	style="font-style: italic;">
-																</textbox>
-																<image
-																	src="/img/botones/ButtonPopup.png" tooltip="con"
-																	style="cursor: help; width: 16px; height: 16px;" />
-																<div
-																	align="center">
-																	<listbox
-																		mold="paging" pageSize="10" id="lbxUbicaciones"
-																		model="@{zNuevo$nuevo.obtenerUbicaciones}"
-																		sizedByContent="false" width="100%">
-																		<listhead
-																			sizable="false" style="overflow: scroll;">
-																			<listheader
-																				label="CLIENTE" style="text-align: center;">
-																			</listheader>
-																			<listheader
-																				label="UBICACIÓN" style="text-align: center;">
-																			</listheader>
-																			<listheader
-																				label="POSICIÓN" style="text-align: center;">
-																			</listheader>
-																		</listhead>
-																		<listitem
-																			self="@{each=lista}">
-																			<listcell
-																				label="@{lista.getNom_empresa}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_ubicacion}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getPos_ubicacion}">
-																			</listcell>
-																		</listitem>
-																	</listbox>
-																</div>
-															</panelchildren>
-														</panel>
-													</bandpopup>
+													width="250px" readonly="true" popup="pUbicacion">
 												</bandbox>
 												<space width="45px"></space>
 											</hlayout>
@@ -367,10 +315,47 @@
 				</center>
 			</borderlayout>
 		</div>
+		
+		<popup id="pUbicacion" width="800px">
+			<space width="15px"></space>
+			<textbox width="280px" id="txtBuscarUbicacion"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" />
+			<div align="center">
+				<listbox mold="paging" pageSize="8" id="lbxUbicaciones"
+					model="@{zNuevo$nuevo.obtenerUbicaciones}" sizedByContent="false"
+					width="100%">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="CLIENTE"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="UBICACIÓN"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="POSICIÓN"
+							style="text-align: center;">
+						</listheader>
+					</listhead>
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getNom_empresa}" style="text-align: center !important;" >
+						</listcell>
+						<listcell label="@{lista.getNom_ubicacion}" style="text-align: center !important;" >
+						</listcell>
+						<listcell label="@{lista.getPos_ubicacion}" style="text-align: center !important;" >
+						</listcell>
+					</listitem>
+				</listbox>
+			</div>
+		</popup>
+
 		<popup id="con" width="450px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				la ubicación no se encuentra en la lista, valide que se
 				encuentre creada, aprobada y activa para poderse usar
@@ -385,7 +370,6 @@
 				y presionando la tecla Enter </br> 2.- Para mostrar
 				todas las ubicaciones deje limpio el campo buscar y
 				presione la tecla Enter. </p> ]]>
-				
 
 			</html>
 		</popup>
@@ -393,35 +377,30 @@
 		<popup id="cod" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> El
 				codigo no puede repetirse con algun otro que ya se haya
 				registrado. <span style="color: black; font-size: 12px;
 				font-style: italic; font-weight: bold;"> El sistema
 				validará que el codigo no se encuentre registrado.
 				</span> </p> ]]>
-				
 
 			</html>
 		</popup>
 		<popup id="cat" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				la categoria no se muestra en la lista, valide que se
 				encuentre creada y que no este inactiva en las <span
 				style="color: black; font-size: 12px; font-style:
 				italic; font-weight: bold;"> configuraciones de
 				categorias. </span> </p> ]]>
-				
 
 			</html>
 		</popup>
 		<popup id="ubi" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				la ubicacion no se muestra en la lista, valide que se
 				encuentre creada y que no este inactiva en las <span
@@ -435,41 +414,35 @@
 				Enter. </br> 2.- Para mostrar todas las ubicaciones deje
 				limpio el campo y presione 2 veces la tecla Enter. </p>
 				]]>
-				
 
 			</html>
 		</popup>
 		<popup id="dc" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> La
 				localidad que se muestra es la que se asignó a su
 				usuario en la <span style="color: black; font-size:
 				12px; font-style: italic; font-weight: bold;">
 				configuracion de usuarios. </span> </p> ]]>
-				
 
 			</html>
 		</popup>
 		<popup id="can" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> El
 				stock no se puede asignar desde la creación del
 				artículo, <span style="color: black; font-size: 12px;
 				font-style: italic; font-weight: bold;"> si necesita
 				asignar stock al artículo debe hacerlo desde la opcion
 				de movimientos. </span> </p> ]]>
-				
 
 			</html>
 		</popup>
 		<popup id="trp" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;">
 				Para realizar la busqueda escriba parte de la palabra a
 				buscar y presione 2 veces enter, <span style="color:
@@ -477,7 +450,6 @@
 				bold;"> si necesita mostrar todos los items deje el
 				campo en blanco y presione 2 veces enter. </span> </p>
 				]]>
-				
 
 			</html>
 		</popup>

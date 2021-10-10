@@ -2,7 +2,7 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window border="normal" id="zSolicitar" closable="true" apply="bp.aplicaciones.controlador.mantenimientos.solicitud.solicitar"
-		position="center, center" sizable="true" width="70%" height="65%"
+		position="center, center" sizable="true" width="80%" height="75%"
 		maximizable="false" minimizable="false"
 		title=".:: Solicitar aprobación ::." shadow="false" mode="overlapped"
 		focus="true" action="show: slideDown;hide: slideUp">

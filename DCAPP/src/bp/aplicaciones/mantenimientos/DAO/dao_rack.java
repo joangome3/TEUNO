@@ -38,22 +38,26 @@ public class dao_rack {
 		return id;
 	}
 
-	public List<modelo_rack> obtenerRacks(String criterio, long id_localidad)
+	public List<modelo_rack> obtenerRacks(String criterio, long id_localidad, long id_cliente, long id_fila, int tipo)
 			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
 		List<modelo_rack> lista_racks = new ArrayList<modelo_rack>();
 		PreparedStatement consulta = null;
 		try {
-			consulta = conexion.abrir().prepareStatement("{CALL rack_obtenerRacks(?, ?)}");
+			consulta = conexion.abrir().prepareStatement("{CALL rack_obtenerRacks(?, ?, ?, ?, ?)}");
 			consulta.setString(1, criterio.toUpperCase());
 			consulta.setLong(2, id_localidad);
+			consulta.setLong(3, id_cliente);
+			consulta.setLong(4, id_fila);
+			consulta.setInt(5, tipo);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				lista_racks.add(new modelo_rack(resultado.getLong("id_rack"), resultado.getString("coord_rack"),
 						resultado.getLong("id_cliente"), resultado.getString("nom_cliente"),
-						resultado.getLong("id_localidad"), resultado.getString("est_rack"),
-						resultado.getString("usu_ingresa"), resultado.getTimestamp("fec_ingresa"),
-						resultado.getString("usu_modifica"), resultado.getTimestamp("fec_modifica")));
+						resultado.getString("nom_fila"), resultado.getLong("id_localidad"),
+						resultado.getString("est_rack"), resultado.getString("usu_ingresa"),
+						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
+						resultado.getTimestamp("fec_modifica")));
 
 			}
 			resultado.close();

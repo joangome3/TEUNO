@@ -60,6 +60,43 @@ public class dao_articulo {
 						resultado.getString("nom_empresa"), resultado.getLong("id_categoria"),
 						resultado.getString("nom_categoria"), resultado.getLong("id_ubicacion"),
 						resultado.getString("nom_ubicacion"), resultado.getInt("sto_articulo"),
+						resultado.getLong("id_localidad"), resultado.getString("nom_localidad"),
+						resultado.getString("marca"), resultado.getString("modelo"), resultado.getString("serie"),
+						resultado.getString("codigo_activo"), resultado.getString("est_articulo"),
+						resultado.getString("usu_ingresa"), resultado.getTimestamp("fec_ingresa"),
+						resultado.getString("usu_modifica"), resultado.getTimestamp("fec_modifica")));
+			}
+			resultado.close();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+		return lista_articulos;
+	}
+
+	public List<modelo_articulo> obtenerArticulos2(String criterio, String localidad, String empresa, int tipo,
+			int limite) throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		List<modelo_articulo> lista_articulos = new ArrayList<modelo_articulo>();
+		PreparedStatement consulta = null;
+		try {
+			consulta = conexion.abrir().prepareStatement("{CALL articulo_obtenerArticulos(?, ?, ?, ?, ?)}");
+			consulta.setString(1, criterio.toUpperCase());
+			consulta.setString(2, localidad);
+			consulta.setString(3, empresa);
+			consulta.setInt(4, tipo);
+			consulta.setInt(5, limite);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				lista_articulos.add(new modelo_articulo(resultado.getLong("id_articulo"),
+						resultado.getString("cod_articulo"), resultado.getString("des_articulo"),
+						resultado.getString("nom_empresa"), resultado.getLong("id_categoria"),
+						resultado.getString("nom_categoria"), resultado.getLong("id_ubicacion"),
+						resultado.getString("nom_ubicacion"), resultado.getInt("sto_articulo"),
 						resultado.getBlob("img_articulo"), resultado.getLong("id_localidad"),
 						resultado.getString("nom_localidad"), resultado.getString("marca"),
 						resultado.getString("modelo"), resultado.getString("serie"),

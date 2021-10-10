@@ -50,71 +50,7 @@
 												<bandbox
 													id="bdxSolicitantes" mold="rounded" autodrop="true"
 													width="340px" readonly="true"
-													style="font-weight: bold; color:black !important;">
-													<bandpopup
-														width="45%">
-														<panel
-															title="">
-															<panelchildren>
-																<space
-																	width="12px">
-																</space>
-																<textbox
-																	width="280px" id="txtBuscarProveedor"
-																	placeholder="Ingrese palabra clave"
-																	tooltiptext="Presione enter para realizar la búsqueda"
-																	style="font-style: italic;">
-																</textbox>
-																<image
-																	src="/img/botones/ButtonPopup.png" tooltip="con"
-																	style="cursor: help; width: 16px; height: 16px;" />
-																<div
-																	align="center">
-																	<listbox
-																		mold="paging" pageSize="10" id="lbxSolicitantes"
-																		model="@{zNuevo$nuevo.obtenerSolicitantes}"
-																		sizedByContent="true" width="100%">
-																		<listhead
-																			sizable="false" style="overflow: scroll;">
-																			<listheader
-																				label="ID">
-																			</listheader>
-																			<listheader
-																				label="DOCUMENTO">
-																			</listheader>
-																			<listheader
-																				label="NOMBRE">
-																			</listheader>
-																			<listheader
-																				label="EMPRESA">
-																			</listheader>
-																			<listheader
-																				label="ESTADO" visible="false">
-																			</listheader>
-																		</listhead>
-																		<listitem
-																			self="@{each=lista}">
-																			<listcell
-																				label="@{lista.getId_solicitante}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNum_documento}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.toStringSolicitante}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_empresa}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.mostrarEstado}">
-																			</listcell>
-																		</listitem>
-																	</listbox>
-																</div>
-															</panelchildren>
-														</panel>
-													</bandpopup>
+													style="font-weight: bold; color:black !important;" popup="pSolicitante">
 												</bandbox>
 											</hlayout>
 										</vlayout>
@@ -196,100 +132,7 @@
 												<bandbox
 													id="bdxArticulos" mold="rounded" autodrop="true"
 													disabled="true" width="405px" readonly="true"
-													style="font-weight: bold; color:black !important;">
-													<bandpopup
-														width="49%">
-														<panel
-															title="">
-															<panelchildren>
-																<space
-																	width="12px">
-																</space>
-																<combobox
-																	width="200px" id="cmbEstado"
-																	model="@{zNuevo$nuevo.obtenerEstados}" readonly="true"
-																	autocomplete="false" autodrop="false"
-																	buttonVisible="true" disabled="false"
-																	style="font-weight: bold; color:black !important;">
-																	<comboitem
-																		self="@{each=lista}" label="@{lista.getNom_estado}"
-																		value="@{lista.getId_estado}">
-																	</comboitem>
-																</combobox>
-																<textbox
-																	width="280px" id="txtBuscarArticulo"
-																	class="z-textbox-search-move"
-																	placeholder="Ingrese palabra clave"
-																	tooltiptext="Presione enter para realizar la búsqueda"
-																	style="font-style: italic;">
-																</textbox>
-																<space
-																	width="20px">
-																</space>
-																<image
-																	src="/img/botones/ButtonPopup.png" tooltip="art"
-																	style="cursor: help; width: 16px; height: 16px;" />
-																<div
-																	align="center">
-																	<listbox
-																		mold="paging" pageSize="10" id="lbxArticulos"
-																		model="@{zNuevo$nuevo.obtenerArticulos}"
-																		sizedByContent="true" width="100%">
-																		<listhead
-																			sizable="false" style="overflow: scroll;">
-																			<listheader
-																				label="ID">
-																			</listheader>
-																			<listheader
-																				label="CÓDIGO">
-																			</listheader>
-																			<listheader
-																				label="DESCRIPCIÓN">
-																			</listheader>
-																			<listheader
-																				label="CATEGORÍA">
-																			</listheader>
-																			<listheader
-																				label="UBICACIÓN">
-																			</listheader>
-																			<listheader
-																				label="STOCK"
-																				style="text-align: center !important;">
-																			</listheader>
-																			<listheader
-																				label="ESTADO" visible="false">
-																			</listheader>
-																		</listhead>
-																		<listitem
-																			self="@{each=lista}">
-																			<listcell
-																				label="@{lista.getId_articulo}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getCod_articulo}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getDes_articulo}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_categoria}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_ubicacion}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getSto_articulo}"
-																				style="text-align: center !important;">
-																			</listcell>
-																			<listcell
-																				label="@{lista.mostrarEstado}">
-																			</listcell>
-																		</listitem>
-																	</listbox>
-																</div>
-															</panelchildren>
-														</panel>
-													</bandpopup>
+													style="font-weight: bold; color:black !important;" popup="pArticulo">
 												</bandbox>
 												<hlayout visible="false">
 													<vlayout>
@@ -503,6 +346,103 @@
 				</hlayout>
 			</vlayout>
 		</div>
+		
+		<popup id="pSolicitante" width="800px">
+			<space width="12px"></space>
+			<textbox width="280px" id="txtBuscarProveedor"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" />
+			<div align="center">
+				<listbox mold="paging" pageSize="5"
+					id="lbxSolicitantes" model="@{zNuevo$nuevo.obtenerSolicitantes}"
+					sizedByContent="true" width="100%">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="ID"></listheader>
+						<listheader label="DOCUMENTO"></listheader>
+						<listheader label="NOMBRE"></listheader>
+						<listheader label="EMPRESA"></listheader>
+						<listheader label="ESTADO" visible="false">
+						</listheader>
+					</listhead>
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getId_solicitante}">
+						</listcell>
+						<listcell label="@{lista.getNum_documento}">
+						</listcell>
+						<listcell
+							label="@{lista.toStringSolicitante}">
+						</listcell>
+						<listcell label="@{lista.getNom_empresa}">
+						</listcell>
+						<listcell label="@{lista.mostrarEstado}">
+						</listcell>
+					</listitem>
+				</listbox>
+			</div>
+		</popup>
+		
+		<popup id="pArticulo" width="800px">
+			<space width="12px"></space>
+			<combobox width="200px" id="cmbEstado"
+				model="@{zNuevo$nuevo.obtenerEstados}" readonly="true"
+				autocomplete="false" autodrop="false" buttonVisible="true"
+				disabled="false"
+				style="font-weight: bold; color:black !important;">
+				<comboitem self="@{each=lista}"
+					label="@{lista.getNom_estado}" value="@{lista.getId_estado}">
+				</comboitem>
+			</combobox>
+			<textbox width="280px" id="txtBuscarArticulo"
+				class="z-textbox-search-move" placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<space width="20px"></space>
+			<image src="/img/botones/ButtonPopup.png" tooltip="art"
+				style="cursor: help; width: 16px; height: 16px;" />
+			<div align="center">
+				<listbox mold="paging" pageSize="8" id="lbxArticulos"
+					model="@{zNuevo$nuevo.obtenerArticulos}" sizedByContent="true"
+					width="100%">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="ID"></listheader>
+						<listheader label="CÓDIGO"></listheader>
+						<listheader label="DESCRIPCIÓN"></listheader>
+						<listheader label="CATEGORÍA"></listheader>
+						<listheader label="UBICACIÓN"></listheader>
+						<listheader label="STOCK"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="ESTADO" visible="false">
+						</listheader>
+					</listhead>
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getId_articulo}">
+						</listcell>
+						<listcell label="@{lista.getCod_articulo}">
+						</listcell>
+						<listcell label="@{lista.getDes_articulo}">
+						</listcell>
+						<listcell label="@{lista.getNom_categoria}">
+						</listcell>
+						<listcell label="@{lista.getNom_ubicacion}">
+						</listcell>
+						<listcell label="@{lista.getSto_articulo}"
+							style="text-align: center !important;">
+						</listcell>
+						<listcell label="@{lista.mostrarEstado}">
+						</listcell>
+					</listitem>
+				</listbox>
+			</div>
+		</popup>
+
 		<popup id="con" width="450px">
 			<html>
 

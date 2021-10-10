@@ -3,7 +3,7 @@
 <zk>
 	<window border="normal" id="zAprobar" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.solicitud.aprobar"
-		position="center, center" sizable="true" width="75%" height="65%"
+		position="center, center" sizable="true" width="80%" height="75%"
 		maximizable="true" minimizable="false"
 		title=".:: Aprobar solicitud ::." shadow="false" mode="overlapped"
 		focus="true" action="show: slideDown;hide: slideUp">

@@ -57,7 +57,7 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Button btnNuevo, btnRefrescar;
 	@Wire
-	Textbox txtBuscar;
+	Textbox txtBuscar, txtBuscarDetalle;
 	@Wire
 	Datebox dtxFechaInicio, dtxFechaFin;
 	@Wire
@@ -126,7 +126,12 @@ public class consultar extends SelectorComposer<Component> {
 		}
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(txtBuscar.getText().toUpperCase());
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
+			}
+		});
+		txtBuscarDetalle.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				txtBuscarDetalle.setText(txtBuscarDetalle.getText().toUpperCase().trim());
 			}
 		});
 	}
@@ -239,7 +244,7 @@ public class consultar extends SelectorComposer<Component> {
 	public void setearMovimientos()
 			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
-		String criterio = txtBuscar.getText();
+		String criterio = txtBuscar.getText().trim();
 		String tipo_busqueda = "LP";
 		String estado = "";
 		if (cmbEstado.getSelectedItem() != null) {
@@ -265,7 +270,7 @@ public class consultar extends SelectorComposer<Component> {
 	public void consultarMovimientos()
 			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
-		String criterio = txtBuscar.getText();
+		String criterio = txtBuscar.getText().trim();
 		String estado = "";
 		if (cmbEstado.getSelectedItem() != null) {
 			estado = cmbEstado.getSelectedItem().getValue().toString();
@@ -282,7 +287,7 @@ public class consultar extends SelectorComposer<Component> {
 	public void consultarDetalleMovimientos()
 			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
-		String criterio = txtBuscar.getText();
+		String criterio = txtBuscar.getText().trim();
 		String estado = "";
 		if (cmbEstado.getSelectedItem() != null) {
 			estado = cmbEstado.getSelectedItem().getValue().toString();
@@ -295,6 +300,19 @@ public class consultar extends SelectorComposer<Component> {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
 		buscarDetalleMovimientos(criterio, fecha_inicio, fecha_fin, estado);
+	}
+
+	public void consultarDetalleMovimientos1()
+			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
+		String fecha_inicio = "", fecha_fin = "";
+		String criterio = txtBuscarDetalle.getText().trim();
+		String estado = "";
+		if (lbxMovimientos.getSelectedItem() == null) {
+			return;
+		}
+		int indice = lbxMovimientos.getSelectedIndex();
+		fecha_inicio = String.valueOf(listaMovimiento.get(indice).getId_movimiento());
+		buscarDetalleMovimientos1(criterio, fecha_inicio, fecha_fin, estado);
 	}
 
 	public void buscarMovimientos(String criterio, String fecha_inicio, String fecha_fin, String estado)
@@ -317,6 +335,14 @@ public class consultar extends SelectorComposer<Component> {
 		binder.loadComponent(lbxMovimientos);
 	}
 
+	public void buscarDetalleMovimientos1(String criterio, String fecha_inicio, String fecha_fin, String estado)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaMovimientoDetalle = consultasABaseDeDatos.cargarDetalleMovimientosDN(criterio, fecha_inicio, fecha_fin,
+				String.valueOf(id_dc), Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), 6, estado);
+		binder.loadComponent(lbxDetalleMovimientoAnterior);
+		binder.loadComponent(lbxDetalleMovimientoActual);
+	}
+
 	@Listen("onOK=#txtBuscar")
 	public void onOK$txtBuscar()
 			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
@@ -329,6 +355,12 @@ public class consultar extends SelectorComposer<Component> {
 		} else {
 			consultarDetalleMovimientos();
 		}
+	}
+
+	@Listen("onOK=#txtBuscarDetalle")
+	public void onOK$txtBuscarDetalle()
+			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
+		consultarDetalleMovimientos1();
 	}
 
 	@Listen("onChange=#dtxFechaInicio")
@@ -416,6 +448,7 @@ public class consultar extends SelectorComposer<Component> {
 		if (lbxMovimientos.getSelectedItem() == null) {
 			return;
 		}
+		txtBuscarDetalle.setText("");
 		int indice = lbxMovimientos.getSelectedIndex();
 		if (cmbTipoBusqueda.getSelectedItem().getValue().toString().equals("LP")) {
 			listaMovimientoDetalle = consultasABaseDeDatos.cargarDetalleMovimientosDN(

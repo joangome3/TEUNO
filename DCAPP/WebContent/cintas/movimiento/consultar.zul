@@ -47,7 +47,7 @@
 											<space width="5px"></space>
 											<textbox id="txtBuscar"
 												width="205px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;" sclass="demo-search-inp">
 											</textbox>
 											<datebox format="dd/MM/yyyy"
 												id="dtxFechaInicio">
@@ -104,9 +104,11 @@
 				</row>
 			</rows>
 		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
 		<listbox mold="paging" pageSize="25" id="lbxMovimientos"
 				span="true" sizedByContent="true" width="100%"
-				model="@{zConsultar$consultar.obtenerMovimientos}" vflex="true">
+				model="@{zConsultar$consultar.obtenerMovimientos}" vflex="1">
 				<listhead sizable="false" style="overflow: scroll;"
 					columnsgroup="true">
 					<listheader label="ID"
@@ -140,7 +142,7 @@
 						style="text-align: center !important;">
 					</listheader>
 				</listhead>
-				<listitem context="editPopup" self="@{each=lista}">
+				<listitem context="editPopup" self="@{each=lista}" popup="lista">
 					<listcell label="@{lista.getId_movimiento}"
 						style="text-align: center !important;" />
 					<listcell label="@{lista.getTck_movimiento}"
@@ -164,11 +166,19 @@
 					<listcell label="@{lista.getObs_movimiento}" />
 				</listitem>
 			</listbox>
-		<div align="center" style="height: calc(84%); overflow: scroll;"  visible="false">
-			<hlayout vflex="max" hflex="min">
+			</hlayout>
+		</vlayout>
+		<popup id="lista" width="75%" vflex="1"
+			style="overflow: scroll;">
+			<space width="10px"></space>
+			<textbox id="txtBuscarDetalle" width="500px"
+				placeholder="Ingrese palabra clave" tooltip="cons"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<hlayout>
 				<groupbox hflex="1" closable="false">
 					<caption label="REGISTRO ANTES DE PEDIDO"></caption>
-					<listbox mold="paging" pageSize="25"
+					<listbox mold="paging" pageSize="5"
 						id="lbxDetalleMovimientoAnterior" span="true"
 						sizedByContent="true" width="100%"
 						model="@{zConsultar$consultar.obtenerDetalleMovimientos}">
@@ -277,7 +287,7 @@
 				</groupbox>
 				<groupbox hflex="1" closable="false">
 					<caption label="REGISTRO DESPUES DE PEDIDO"></caption>
-					<listbox mold="paging" pageSize="25"
+					<listbox mold="paging" pageSize="5"
 						id="lbxDetalleMovimientoActual" span="true" sizedByContent="true"
 						width="100%"
 						model="@{zConsultar$consultar.obtenerDetalleMovimientos}">
@@ -384,8 +394,8 @@
 						</listitem>
 					</listbox>
 				</groupbox>
-	</hlayout>
-	</div>
+			</hlayout>
+		</popup>
 	</div>
 	<menupopup id="editPopup">
 		<menuitem id="mValidar" iconSclass="z-icon-edit" />
@@ -406,6 +416,7 @@
 	
 			</html>
 	</popup>
+	
 	<zscript>
 	<![CDATA[
 	lbxMovimientos.pagingChild.mold = "os".equals(lbxMovimientos.pagingChild.mold) ? "default" : "os";

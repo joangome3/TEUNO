@@ -166,64 +166,7 @@
 											<hlayout>
 												<bandbox
 													id="bdxUbicacion" mold="rounded" autodrop="true"
-													width="250px" readonly="true">
-													<bandpopup width="34%">
-														<panel
-															title="">
-															<panelchildren>
-																<space
-																	width="20px">
-																</space>
-																<image
-																	src="/img/botones/ButtonPopup.png" tooltip="con"
-																	style="cursor: help; width: 16px; height: 16px;"
-																	visible="false" />
-	
-																	<listbox
-																		mold="paging" pageSize="500" id="lbxUbicaciones"
-																		model="@{zModificar$modificar.obtenerUbicaciones}"
-																		checkmark="true" multiple="true" vflex="true"
-																		sizedByContent="false">
-																		<listhead
-																			sizable="false">
-																			<listheader
-																				label="ID" visible="true">
-																			</listheader>
-																			<listheader
-																				label="CLIENTE" style="text-align: center !important;">
-																			</listheader>
-																			<listheader
-																				label="UBICACIÓN" style="text-align: center !important;">
-																			</listheader>
-																			<listheader
-																				label="POSICIÓN" style="text-align: center !important;">
-																			</listheader>
-																			<listheader
-																				label="ESTADO" visible="false">
-																			</listheader>
-																		</listhead>
-																		<listitem
-																			self="@{each=lista}">
-																			<listcell
-																				label="@{lista.getId_ubicacion}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_empresa}">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getNom_ubicacion}" style="text-align: center !important;">
-																			</listcell>
-																			<listcell
-																				label="@{lista.getPos_ubicacion}" style="text-align: center !important;">
-																			</listcell>
-																			<listcell
-																				label="@{lista.mostrarEstado}"
-																				style="@{lista.estiloMostrarEstado}" />
-																		</listitem>
-																	</listbox>
-															</panelchildren>
-														</panel>
-													</bandpopup>
+													width="250px" readonly="true" popup="pUbicacion">
 												</bandbox>
 												<space width="5px"></space>
 												<image
@@ -366,6 +309,44 @@
 				</center>
 				</borderlayout>
 		</div>
+		
+		<popup id="pUbicacion" width="800px">
+			<space width="20px"></space>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" visible="false" />
+			<listbox mold="paging" pageSize="8" id="lbxUbicaciones"
+				model="@{zModificar$modificar.obtenerUbicaciones}" checkmark="true"
+				multiple="true" vflex="true" sizedByContent="false">
+				<listhead sizable="false">
+					<listheader label="ID" visible="true"></listheader>
+					<listheader label="CLIENTE"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="UBICACIÓN"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="POSICIÓN"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="ESTADO" visible="false">
+					</listheader>
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell label="@{lista.getId_ubicacion}">
+					</listcell>
+					<listcell label="@{lista.getNom_empresa}">
+					</listcell>
+					<listcell label="@{lista.getNom_ubicacion}"
+						style="text-align: center !important;">
+					</listcell>
+					<listcell label="@{lista.getPos_ubicacion}"
+						style="text-align: center !important;">
+					</listcell>
+					<listcell label="@{lista.mostrarEstado}"
+						style="@{lista.estiloMostrarEstado}" />
+				</listitem>
+			</listbox>
+		</popup>
 
 		<popup id="con" width="450px">
 			<html>

@@ -75,7 +75,7 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 	@Wire
 	Bandbox bdxSolicitantes, bdxProveedores, bdxArea, bdxRack;
 	@Wire
-	Combobox cmbCliente, cmbTipoIngreso, cmbTipoAprobador, cmbEstado, cmbTurno, cmbUsuario, cmbTipoTrabajo;
+	Combobox cmbCliente, cmbTipoIngreso, cmbTipoAprobador, cmbEstado, cmbTurno, cmbUsuario, cmbTipoTrabajo, cmbEmpresa;
 	@Wire
 	Datebox dtxFechaSolicitud, dtxFechaRespuesta, dtxFechaInicio, dtxFechaFin;
 	@Wire
@@ -88,6 +88,7 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 	Window window;
 
 	List<modelo_empresa> listaCliente = new ArrayList<modelo_empresa>();
+	List<modelo_empresa> listaEmpresa = new ArrayList<modelo_empresa>();
 	List<modelo_solicitante> listaSolicitante = new ArrayList<modelo_solicitante>();
 	List<modelo_solicitante> listaProveedor = new ArrayList<modelo_solicitante>();
 	List<modelo_parametros_generales_1> listaParametros1 = new ArrayList<modelo_parametros_generales_1>();
@@ -201,6 +202,10 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		return listaCliente;
 	}
 
+	public List<modelo_empresa> obtenerEmpresas() {
+		return listaEmpresa;
+	}
+
 	public List<modelo_usuario> obtenerUsuarios() {
 		return listaUsuario;
 	}
@@ -249,6 +254,7 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 				String.valueOf(id_opcion), 0);
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
 		listaCliente = consultasABaseDeDatos.cargarEmpresas("", 6, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
+		listaEmpresa = consultasABaseDeDatos.cargarEmpresas("", 10, String.valueOf(id_dc), "", 0);
 		listaTurnos1 = consultasABaseDeDatos.cargarTurnos("");
 		listaTurnos2 = consultasABaseDeDatos.cargarTurnos("A");
 		listaTipoIngreso = consultasABaseDeDatos.cargarTipoIngresos("");
@@ -258,6 +264,7 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		binder.loadComponent(lbxProveedores1);
 		binder.loadComponent(cmbUsuario);
 		binder.loadComponent(cmbCliente);
+		binder.loadComponent(cmbEmpresa);
 		binder.loadComponent(cmbEstado);
 		binder.loadComponent(cmbTurno);
 		binder.loadComponent(cmbTipoIngreso);
@@ -595,6 +602,9 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		if (cmbCliente.getSelectedItem() == null) {
 			return;
 		}
+		bdxRack.setText("");
+		bdxRack.setTooltiptext("");
+		listaRack = new ArrayList<modelo_rack>();
 	}
 
 	@Listen("onOK=#txtBuscarSolicitante")
@@ -617,11 +627,28 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		bdxSolicitantes.setText(listaSolicitante.get(indice).toStringSolicitante());
 	}
 
+	@Listen("onSelect=#cmbEmpresa")
+	public void onSelect$cmbEmpresa() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		int id_empresa = 0;
+		if (cmbEmpresa.getSelectedItem() != null) {
+			id_empresa = Integer.valueOf(cmbEmpresa.getSelectedItem().getValue().toString());
+		}
+		listaProveedor = consultasABaseDeDatos.cargarSolicitantes(txtBuscarProveedor.getText().toUpperCase(), 8,
+				String.valueOf(id_dc), String.valueOf(id_opcion), id_empresa);
+		bdxProveedores.setText("");
+		lbxProveedores1.clearSelection();
+		binder.loadComponent(lbxProveedores1);
+	}
+
 	@Listen("onOK=#txtBuscarProveedor")
 	public void onOK$txtBuscarProveedor()
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		int id_empresa = 0;
+		if (cmbEmpresa.getSelectedItem() != null) {
+			id_empresa = Integer.valueOf(cmbEmpresa.getSelectedItem().getValue().toString());
+		}
 		listaProveedor = consultasABaseDeDatos.cargarSolicitantes(txtBuscarProveedor.getText().toUpperCase(), 8,
-				String.valueOf(id_dc), String.valueOf(id_opcion), 0);
+				String.valueOf(id_dc), String.valueOf(id_opcion), id_empresa);
 		bdxProveedores.setText("");
 		lbxProveedores1.clearSelection();
 		binder.loadComponent(lbxProveedores1);
@@ -743,7 +770,7 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
-			window = (Window) Executions.createComponents("/personal/solicitud/area.zul", null, null);
+			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
 					@SuppressWarnings("unchecked")
@@ -752,9 +779,6 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
-						if (listaTipoUbicacion.size() == 0) {
-							return;
-						}
 						setearAreas(listaTipoUbicacion);
 					}
 				});
@@ -765,10 +789,18 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 
 	@Listen("onClick=#bdxRack")
 	public void onClick$bdxRack() throws Throwable {
+		long id_cliente = 0;
+		if (cmbCliente.getSelectedItem() == null) {
+			cmbCliente.setErrorMessage(validaciones.getMensaje_validacion_12());
+			ingresa_a_area_rack = false;
+			return;
+		}
+		id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
+			Sessions.getCurrent().setAttribute("cliente", id_cliente);
 			Sessions.getCurrent().setAttribute("lista_rack", listaRack);
-			window = (Window) Executions.createComponents("/personal/solicitud/rack.zul", null, null);
+			window = (Window) Executions.createComponents("/emergentes/rack.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
 					@SuppressWarnings("unchecked")
@@ -776,9 +808,6 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
 						ingresa_a_area_rack = false;
 						listaRack = (List<modelo_rack>) Sessions.getCurrent().getAttribute("lista_rack");
-						if (listaRack.size() == 0) {
-							return;
-						}
 						setearRacks(listaRack);
 					}
 				});
@@ -789,25 +818,34 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 
 	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
 		String tipo_ubicacion = "";
-		for (int i = 0; i < listaTipoUbicacion.size(); i++) {
-			if (i == 0) {
-				tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
-			} else {
-				tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+		if (listaTipoUbicacion.size() > 0) {
+			for (int i = 0; i < listaTipoUbicacion.size(); i++) {
+				if (i == 0) {
+					tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+				} else {
+					tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+				}
 			}
+		} else {
+			tipo_ubicacion = "";
 		}
+
 		bdxArea.setText(tipo_ubicacion);
 		bdxArea.setTooltiptext(tipo_ubicacion);
 	}
 
 	public void setearRacks(List<modelo_rack> listaRack) {
 		String rack = "";
-		for (int i = 0; i < listaRack.size(); i++) {
-			if (i == 0) {
-				rack = listaRack.get(i).getCoord_rack();
-			} else {
-				rack = rack + ", " + listaRack.get(i).getCoord_rack();
+		if (listaRack.size() > 0) {
+			for (int i = 0; i < listaRack.size(); i++) {
+				if (i == 0) {
+					rack = listaRack.get(i).getCoord_rack();
+				} else {
+					rack = rack + ", " + listaRack.get(i).getCoord_rack();
+				}
 			}
+		} else {
+			rack = "";
 		}
 		bdxRack.setText(rack);
 		bdxRack.setTooltiptext(rack);
@@ -926,14 +964,9 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 			dtxFechaInicio.setErrorMessage(validaciones.getMensaje_validacion_10());
 			return;
 		}
-		if (bdxArea.getText().length() <= 0) {
-			bdxArea.setFocus(true);
-			bdxArea.setErrorMessage(validaciones.getMensaje_validacion_33());
-			return;
-		}
-		if (bdxRack.getText().length() <= 0) {
-			bdxRack.setFocus(true);
-			bdxRack.setErrorMessage(validaciones.getMensaje_validacion_33());
+		if(d1.equals(d2)) {
+			dtxFechaInicio.setFocus(true);
+			dtxFechaInicio.setErrorMessage(validaciones.getMensaje_validacion_39());
 			return;
 		}
 		if (cmbTipoTrabajo.getSelectedItem() == null) {
@@ -998,32 +1031,54 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 								dt.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 								detalle.add(dt);
 							}
+							if (validarSiExistePrimeroApertura(txtTicket.getText().trim(), 1) == false) {
+								Messagebox.show(
+										informativos.getMensaje_informativo_96().replace("?1",
+												txtTicket.getText().trim()),
+										informativos.getMensaje_informativo_24(), Messagebox.OK,
+										Messagebox.EXCLAMATION);
+								return;
+							}
+							long id_apertura = obtenerIDApertura(txtTicket.getText().trim(), 1);
+							if (id_apertura == 0) {
+								Messagebox.show(
+										informativos.getMensaje_informativo_96().replace("?1",
+												txtTicket.getText().trim()),
+										informativos.getMensaje_informativo_24(), Messagebox.OK,
+										Messagebox.EXCLAMATION);
+								return;
+							}
 							/* Se inicializa el objeto bitacora */
 							modelo_bitacora bitacora = new modelo_bitacora();
+							bitacora.setId_bitacora(id_apertura);
 							bitacora.setTicket_externo(txtTicket.getText().toUpperCase().trim());
 							bitacora.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
 							bitacora.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
 							bitacora.setId_tipo_servicio(2);
-							bitacora.setId_tipo_tarea(7);
+							if (solicitud.getId_tipo_ingreso() != 1) {
+								bitacora.setId_tipo_clasificacion(11);
+							} else {
+								bitacora.setId_tipo_clasificacion(10);
+							}
+							bitacora.setId_tipo_tarea(1);
 							bitacora.setId_estado_bitacora(2);
-							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(fechas.obtenerFechaArmada(
-									fecha_ingresa_formulario, fecha_ingresa_formulario.getMonth(),
-									fecha_ingresa_formulario.getDate(), fecha_ingresa_formulario.getHours(),
-									fecha_ingresa_formulario.getMinutes(), 0)));
-							bitacora.setFec_fin(fechas
-									.obtenerTimestampDeDate(fechas.obtenerFechaArmada(new Date(), new Date().getMonth(),
-											new Date().getDate(), new Date().getHours(), new Date().getMinutes(), 0)));
+							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaSolicitud.getValue()));
+							bitacora.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaRespuesta.getValue()));
 							bitacora.setCumplimiento("C");
+							bitacora.setArea(bdxArea.getText().toString());
+							bitacora.setRack(bdxRack.getText().toString());
 							bitacora.setDescripcion(
-									"SE MODIFICA LA SOLICITUD DE INGRESO DE PERSONAL, DONDE SE REALIZARÁ "
+									"SE APERTURA LA SOLICITUD DE INGRESO DE PERSONAL, DONDE SE REALIZARÁ "
 											+ txtDescripcion.getText().trim() + ", EN LA(S) SIGUIENTE(S) ÁREA(S) "
 											+ bdxArea.getText() + ", y RACK(S) " + bdxRack.getText());
 							bitacora.setId_turno(id_turno);
 							bitacora.setId_localidad(id_dc);
 							bitacora.setEst_bitacora("AE");
-							bitacora.setUsu_ingresa(user);
-							bitacora.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							bitacora.setUsu_ingresa(solicitud_personal.getUsu_ingresa());
+							bitacora.setFec_ingresa(solicitud_personal.getFec_ingresa());
+							bitacora.setUsu_modifica(user);
+							bitacora.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							if (listaParametros1.size() > 0) {
 								secuencia1 = listaParametros1.get(0).getSecuencia_bitacora();
 							}
@@ -1042,6 +1097,11 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 							tarea_proveedor.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
 							tarea_proveedor.setId_tipo_servicio(2);
+							if (solicitud.getId_tipo_ingreso() != 1) {
+								tarea_proveedor.setId_tipo_clasificacion(11);
+							} else {
+								tarea_proveedor.setId_tipo_clasificacion(10);
+							}
 							tarea_proveedor.setId_tipo_tarea(1);
 							tarea_proveedor.setId_estado_bitacora(1);
 							tarea_proveedor.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
@@ -1054,8 +1114,10 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 							tarea_proveedor.setId_turno(id_turno);
 							tarea_proveedor.setId_localidad(id_dc);
 							tarea_proveedor.setEst_tarea_proveedor("AE");
-							tarea_proveedor.setUsu_ingresa(user);
-							tarea_proveedor.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							tarea_proveedor.setUsu_ingresa(solicitud_personal.getUsu_ingresa());
+							tarea_proveedor.setFec_ingresa(solicitud_personal.getFec_ingresa());
+							tarea_proveedor.setUsu_modifica(user);
+							tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							if (listaParametros1.size() > 0) {
 								secuencia2 = listaParametros1.get(0).getSecuencia_tarea_proveedor();
 							}
@@ -1068,10 +1130,10 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 							try {
 								dao.modificarSolicitudPersonal(solicitud, detalle, bitacora, secuencia1,
 										tarea_proveedor, secuencia2, bandera);
+								setearFechaIngresaFormulario();
 								Messagebox.show(informativos.getMensaje_informativo_20(),
 										informativos.getMensaje_informativo_24(), Messagebox.OK,
 										Messagebox.EXCLAMATION);
-								// limpiarCampos1();
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(),
 										informativos.getMensaje_informativo_24() + e.getMessage(), Messagebox.OK,
@@ -1147,12 +1209,35 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		return existe_primero_apertura;
 	}
 
+	public long obtenerIDApertura(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo obteiene el ID del registro de apertura
+		 */
+		long id_apertura = 0;
+		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
+		listaBitacora = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 7, id_tipo_tarea, "", "", id_dc, "", "",
+				0, 0, "", 0);
+		if (listaBitacora.size() > 0) {
+			id_apertura = listaBitacora.get(0).getId_bitacora();
+		}
+		return id_apertura;
+	}
+
 	public void borrarListaProveedores() {
 		Listitem lItem;
 		for (int i = lbxProveedores2.getItemCount() - 1; i >= 0; i--) {
 			lItem = (Listitem) lbxProveedores2.getItemAtIndex(i);
 			lbxProveedores2.removeItemAt(lItem.getIndex());
 		}
+	}
+
+	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		long id_tipo_clasificacion = 0;
+		id_tipo_clasificacion = consultasABaseDeDatos.obtenerIdTipoClasificacionAPartirDeTicket(ticket, id_tipo_tarea,
+				id_dc);
+		return id_tipo_clasificacion;
 	}
 
 }

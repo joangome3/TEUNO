@@ -38,10 +38,12 @@ import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo;
+import bp.aplicaciones.mantenimientos.DAO.dao_categoria;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_articulo;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo;
+import bp.aplicaciones.mantenimientos.modelo.modelo_categoria;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
@@ -64,7 +66,7 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Listbox lbxArticulos, lbxEstados;
 	@Wire
-	Combobox cmbLimite;
+	Combobox cmbCategoria, cmbLimite;
 	@Wire
 	Div dEstado;
 	@Wire
@@ -102,6 +104,7 @@ public class consultar extends SelectorComposer<Component> {
 	Error error = new Error();
 
 	List<modelo_articulo> listaArticulo = new ArrayList<modelo_articulo>();
+	List<modelo_categoria> listaCategoria = new ArrayList<modelo_categoria>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
 	List<modelo_estado_articulo> listaEstados = new ArrayList<modelo_estado_articulo>();
 	List<modelo_parametros_generales_1> listaParametros = new ArrayList<modelo_parametros_generales_1>();
@@ -139,15 +142,20 @@ public class consultar extends SelectorComposer<Component> {
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(validar.soloLetrasyNumeros(txtBuscar.getText()));
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
+		cargarCategorias();
 		cargarEstados("", 1, id_dc);
 		cargarParametros();
 	}
 
 	public List<modelo_estado_articulo> obtenerEstados() {
 		return listaEstados;
+	}
+
+	public List<modelo_categoria> obtenerCategorias() {
+		return listaCategoria;
 	}
 
 	public List<modelo_parametros_generales_1> obtenerParametros() {
@@ -165,11 +173,23 @@ public class consultar extends SelectorComposer<Component> {
 		}
 	}
 
+	public void cargarCategorias() throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_categoria dao = new dao_categoria();
+		String criterio = "";
+		try {
+			listaCategoria = dao.obtenerCategorias(criterio, String.valueOf(id_dc), 4, 0, 0);
+			binder.loadComponent(cmbCategoria);
+		} catch (SQLException e) {
+			Messagebox.show("Error al cargar las categorias. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
+					".:: Cargar categoria ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+	}
+
 	public void cargarArticulos() throws WrongValueException, Throwable {
 		dao_articulo dao = new dao_articulo();
 		String criterio = "";
 		try {
-			listaArticulo = dao.obtenerArticulos(criterio, String.valueOf(id_dc), "", 1,
+			listaArticulo = dao.obtenerArticulos(criterio, String.valueOf(id_dc), "0", 1,
 					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 			binder.loadComponent(lbxArticulos);
 		} catch (SQLException e) {
@@ -408,6 +428,16 @@ public class consultar extends SelectorComposer<Component> {
 		}
 	}
 
+	@Listen("onSelect=#cmbCategoria")
+	public void onSelect$cmbCategoria() {
+		try {
+			buscarArticulos();
+		} catch (Exception e) {
+			Messagebox.show(error.getMensaje_error_2(), informativos.getMensaje_informativo_1(), Messagebox.OK,
+					Messagebox.EXCLAMATION);
+		}
+	}
+
 	@Listen("onClick=#btnRefrescar")
 	public void onClick$btnRefrescar() {
 		try {
@@ -421,8 +451,12 @@ public class consultar extends SelectorComposer<Component> {
 	public void buscarArticulos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_articulo dao = new dao_articulo();
 		String criterio = txtBuscar.getText();
+		long id_categoria = 0;
+		if (cmbCategoria.getSelectedItem() != null) {
+			id_categoria = Long.valueOf(cmbCategoria.getSelectedItem().getValue().toString());
+		}
 		try {
-			listaArticulo = dao.obtenerArticulos(criterio, String.valueOf(id_dc), "", 1,
+			listaArticulo = dao.obtenerArticulos(criterio, String.valueOf(id_dc), String.valueOf(id_categoria), 1,
 					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 			binder.loadComponent(lbxArticulos);
 		} catch (SQLException e) {

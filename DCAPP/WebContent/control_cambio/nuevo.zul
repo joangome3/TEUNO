@@ -1,15 +1,22 @@
-<?page title="Nuevo código" contentType="text/html;charset=UTF-8"?>
+<?page title="Nuevo" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<window title=".:: Nuevo código ::." border="normal" id="zNuevo"
+	<window title=".:: Nuevo ::." border="normal" id="zNuevo"
 		closable="true"
 		apply="bp.aplicaciones.controlador.controlcambio.nuevo"
 		position="center, center" sizable="true" width="45%" height="95%"
-		maximizable="true" minimizable="true" shadow="false" mode="overlapped"
-		focus="true" action="show: slideDown;hide: slideUp">
+		maximizable="false" minimizable="false" shadow="false"
+		mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
 		<div height="100%" width="100%">
-			<vlayout vflex="1">
-				<hlayout vflex="1" style="overflow: scroll;">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
 					<grid>
 						<custom-attributes
 							org.zkoss.zul.nativebar="false" />
@@ -20,7 +27,7 @@
 						<rows>
 							<row>
 								<cell colspan="2">
-									<div class="img-logo"></div>
+									<space height="30px"></space>
 								</cell>
 							</row>
 							<row visible="false">
@@ -236,16 +243,12 @@
 													maxlength="500" multiline="true" style="resize: none;">
 												</textbox>
 											</hlayout>
-											<label id="lDescripcion" style="position: relative; left: 21.5rem; top: -1.1rem; color:red; font-weight: bold;" value="0/500"></label>
+											<label id="lDescripcion"
+												style="position: relative; left: 21.5rem; top: -1.1rem; color:red; font-weight: bold;"
+												value="0/500">
+											</label>
 										</vlayout>
 									</div>
-								</cell>
-							</row>
-							<row align="center">
-								<cell colspan="2">
-									<button id="btnGrabar"
-										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
-										autodisable="self" />
 								</cell>
 							</row>
 							<row>
@@ -253,8 +256,8 @@
 							</row>
 						</rows>
 					</grid>
-				</hlayout>
-				</vlayout>
+				</center>
+			</borderlayout>
 		</div>
 
 		<popup id="cli" width="300px">
@@ -273,7 +276,6 @@
 		<popup id="tip_sis" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				el tipo de sistema no se muestra en la lista, debe
 				validar que se encuentre creado y activo en la <span
@@ -286,16 +288,16 @@
 
 		<popup id="inf" width="300px">
 			<html>
-	
+
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				el componente de infraestructura no se muestra en la
 				lista, debe validar que se encuentre creado y activo en
 				la <span style="color: black; font-size: 12px;
 				font-style: italic; font-weight: bold;"> configuración
-				de infraestructura. </span> </br> </br> De acuerdo al sistema
-				que se seleccione se mostrarán los componentes de
-				infraestructura. </p> ]]>
-
+				de infraestructura. </span> </br> </br> De acuerdo al
+				sistema que se seleccione se mostrarán los componentes
+				de infraestructura. </p> ]]>
+	
 			</html>
 		</popup>
 
@@ -309,7 +311,6 @@
 				bold;"> configuración de proveedores y se encuentre
 				relacionado para la opción control de cambio. </span>
 				</p> ]]>
-				
 
 			</html>
 		</popup>
@@ -336,24 +337,23 @@
 				style="color: black; font-size: 12px; font-style:
 				italic; font-weight: bold;"> configuración de
 				criticidades. </span> </p> ]]>
-
+	
 			</html>
 		</popup>
 
-	<popup id="res" width="300px">
+		<popup id="res" width="300px">
 			<html>
 
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
-				el responsable no se muestra en la lista, debe validar que
-				se encuentre creado y activo en la <span style="color:
-				black; font-size: 12px; font-style: italic; font-weight:
-				bold;"> configuración de solicitantes y se encuentre
-				relacionado para la opción control de cambio. </span>
-				</p> ]]>
-				
+				el responsable no se muestra en la lista, debe validar
+				que se encuentre creado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de
+				solicitantes y se encuentre relacionado para la opción
+				control de cambio. </span> </p> ]]>
 
 			</html>
 		</popup>
-		
+
 	</window>
 </zk>

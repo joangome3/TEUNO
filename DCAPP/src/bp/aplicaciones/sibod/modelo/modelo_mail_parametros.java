@@ -5,8 +5,9 @@ import java.sql.Timestamp;
 public class modelo_mail_parametros {
 
 	private long id_parametro;
-	private String nom_remitente;
-	private String pas_remitente;
+	private String mail_remitente;
+	private String pass_remitente;
+	private String mail_receptor;
 	private String smtp_host;
 	private String smtp_starttls;
 	private String smtp_puerto;
@@ -28,8 +29,9 @@ public class modelo_mail_parametros {
 
 	/**
 	 * @param id_parametro
-	 * @param nom_remitente
-	 * @param pas_remitente
+	 * @param mail_remitente
+	 * @param pass_remitente
+	 * @param mail_receptor
 	 * @param smtp_host
 	 * @param smtp_starttls
 	 * @param smtp_puerto
@@ -42,14 +44,15 @@ public class modelo_mail_parametros {
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_mail_parametros(long id_parametro, String nom_remitente, String pas_remitente, String smtp_host,
-			String smtp_starttls, String smtp_puerto, String smtp_auth, String smtp_trust, String smtp_debug,
-			String est_parametro, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
+	public modelo_mail_parametros(long id_parametro, String mail_remitente, String pass_remitente, String mail_receptor,
+			String smtp_host, String smtp_starttls, String smtp_puerto, String smtp_auth, String smtp_trust,
+			String smtp_debug, String est_parametro, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
 			Timestamp fec_modifica) {
 		super();
 		this.id_parametro = id_parametro;
-		this.nom_remitente = nom_remitente;
-		this.pas_remitente = pas_remitente;
+		this.mail_remitente = mail_remitente;
+		this.pass_remitente = pass_remitente;
+		this.mail_receptor = mail_receptor;
 		this.smtp_host = smtp_host;
 		this.smtp_starttls = smtp_starttls;
 		this.smtp_puerto = smtp_puerto;
@@ -78,31 +81,45 @@ public class modelo_mail_parametros {
 	}
 
 	/**
-	 * @return the nom_remitente
+	 * @return the mail_remitente
 	 */
-	public String getNom_remitente() {
-		return nom_remitente;
+	public String getMail_remitente() {
+		return mail_remitente;
 	}
 
 	/**
-	 * @param nom_remitente the nom_remitente to set
+	 * @param mail_remitente the mail_remitente to set
 	 */
-	public void setNom_remitente(String nom_remitente) {
-		this.nom_remitente = nom_remitente;
+	public void setMail_remitente(String mail_remitente) {
+		this.mail_remitente = mail_remitente;
 	}
 
 	/**
-	 * @return the pas_remitente
+	 * @return the pass_remitente
 	 */
-	public String getPas_remitente() {
-		return pas_remitente;
+	public String getPass_remitente() {
+		return pass_remitente;
 	}
 
 	/**
-	 * @param pas_remitente the pas_remitente to set
+	 * @param pass_remitente the pass_remitente to set
 	 */
-	public void setPas_remitente(String pas_remitente) {
-		this.pas_remitente = pas_remitente;
+	public void setPass_remitente(String pass_remitente) {
+		this.pass_remitente = pass_remitente;
+	}
+
+	/**
+	 * @return the mail_receptor
+	 */
+	public String getMail_receptor() {
+		return mail_receptor;
+	}
+
+	/**
+	 * @param mail_receptor the mail_receptor to set
+	 */
+	public void setMail_receptor(String mail_receptor) {
+		this.mail_receptor = mail_receptor;
 	}
 
 	/**
@@ -261,12 +278,12 @@ public class modelo_mail_parametros {
 
 	@Override
 	public String toString() {
-		return "modelo_mail_parametros [id_parametro=" + id_parametro + ", nom_remitente=" + nom_remitente
-				+ ", pas_remitente=" + pas_remitente + ", smtp_host=" + smtp_host + ", smtp_starttls=" + smtp_starttls
-				+ ", smtp_puerto=" + smtp_puerto + ", smtp_auth=" + smtp_auth + ", smtp_trust=" + smtp_trust
-				+ ", smtp_debug=" + smtp_debug + ", est_parametro=" + est_parametro + ", usu_ingresa=" + usu_ingresa
-				+ ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica=" + fec_modifica
-				+ "]";
+		return "modelo_mail_parametros [id_parametro=" + id_parametro + ", mail_remitente=" + mail_remitente
+				+ ", pass_remitente=" + pass_remitente + ", mail_receptor=" + mail_receptor + ", smtp_host=" + smtp_host
+				+ ", smtp_starttls=" + smtp_starttls + ", smtp_puerto=" + smtp_puerto + ", smtp_auth=" + smtp_auth
+				+ ", smtp_trust=" + smtp_trust + ", smtp_debug=" + smtp_debug + ", est_parametro=" + est_parametro
+				+ ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica
+				+ ", fec_modifica=" + fec_modifica + "]";
 	}
 
 }

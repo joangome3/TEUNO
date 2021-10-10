@@ -18,6 +18,7 @@ import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
 import bp.aplicaciones.conexion.conexion;
 import bp.aplicaciones.personal.modelo.modelo_detalle_solicitud_personal;
+import bp.aplicaciones.personal.modelo.modelo_registro_permanencia;
 import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 
 public class dao_solicitud_personal {
@@ -30,6 +31,29 @@ public class dao_solicitud_personal {
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				id = resultado.getLong("id_solicitud") + 1;
+			}
+			resultado.close();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+		return id;
+	}
+
+	public Long obtenerNuevoIdRegistroPermanencia()
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		Long id = (long) 0;
+		try {
+			PreparedStatement consulta = conexion.abrir()
+					.prepareStatement("{CALL personal_obtenerNuevoIDRegistroPermanencia()}");
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				id = resultado.getLong("id_registro_permanencia") + 1;
 			}
 			resultado.close();
 			consulta.close();
@@ -204,24 +228,31 @@ public class dao_solicitud_personal {
 			} else {
 				id1 = secuencia1;
 			}
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, id1);
 			consulta.setLong(2, bitacora.getId_cliente());
 			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
 			consulta.setLong(4, bitacora.getId_turno());
 			consulta.setLong(5, bitacora.getId_tipo_servicio());
-			consulta.setLong(6, bitacora.getId_tipo_tarea());
-			consulta.setLong(7, bitacora.getId_solicitante());
-			consulta.setString(8, bitacora.getDescripcion().toUpperCase());
-			consulta.setTimestamp(9, bitacora.getFec_inicio());
-			consulta.setTimestamp(10, bitacora.getFec_fin());
-			consulta.setLong(11, bitacora.getId_estado_bitacora());
-			consulta.setString(12, bitacora.getCumplimiento());
-			consulta.setLong(13, bitacora.getId_localidad());
-			consulta.setString(14, bitacora.getEst_bitacora());
-			consulta.setString(15, bitacora.getUsu_ingresa());
-			consulta.setTimestamp(16, bitacora.getFec_ingresa());
+			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(7, bitacora.getId_tipo_tarea());
+			consulta.setLong(8, bitacora.getId_solicitante());
+			consulta.setString(9, bitacora.getArea());
+			consulta.setString(10, bitacora.getRack());
+			consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(12, bitacora.getFec_inicio());
+			consulta.setTimestamp(13, bitacora.getFec_fin());
+			consulta.setLong(14, bitacora.getId_estado_bitacora());
+			consulta.setString(15, bitacora.getCumplimiento());
+			consulta.setString(16, bitacora.getCumplimientoSLA());
+			consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(18, bitacora.getId_localidad());
+			consulta.setString(19, bitacora.getEst_bitacora());
+			consulta.setString(20, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(21, bitacora.getFec_ingresa());
+			consulta.setString(22, bitacora.getUsu_modifica());
+			consulta.setTimestamp(23, bitacora.getFec_modifica());
 			consulta.executeUpdate();
 			/* REGISTRO TAREA DE PROVEEDOR */
 			if (bandera == 1) {
@@ -235,23 +266,28 @@ public class dao_solicitud_personal {
 					id1 = secuencia2;
 				}
 				consulta = conexion.abrir().prepareStatement(
-						"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				consulta.setLong(1, id1);
 				consulta.setLong(2, tarea_proveedor.getId_cliente());
 				consulta.setString(3, tarea_proveedor.getTicket_externo().toUpperCase());
 				consulta.setLong(4, tarea_proveedor.getId_turno());
 				consulta.setLong(5, tarea_proveedor.getId_tipo_servicio());
-				consulta.setLong(6, tarea_proveedor.getId_tipo_tarea());
-				consulta.setLong(7, tarea_proveedor.getId_solicitante());
-				consulta.setString(8, tarea_proveedor.getDescripcion().toUpperCase());
-				consulta.setTimestamp(9, tarea_proveedor.getFec_inicio());
-				consulta.setTimestamp(10, tarea_proveedor.getFec_fin());
-				consulta.setLong(11, tarea_proveedor.getId_estado_bitacora());
-				consulta.setString(12, tarea_proveedor.getCumplimiento());
-				consulta.setLong(13, tarea_proveedor.getId_localidad());
-				consulta.setString(14, tarea_proveedor.getEst_tarea_proveedor());
-				consulta.setString(15, tarea_proveedor.getUsu_ingresa());
-				consulta.setTimestamp(16, tarea_proveedor.getFec_ingresa());
+				consulta.setLong(6, tarea_proveedor.getId_tipo_clasificacion());
+				consulta.setLong(7, tarea_proveedor.getId_tipo_tarea());
+				consulta.setLong(8, tarea_proveedor.getId_solicitante());
+				consulta.setString(9, tarea_proveedor.getArea());
+				consulta.setString(10, tarea_proveedor.getRack());
+				consulta.setString(11, tarea_proveedor.getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, tarea_proveedor.getFec_inicio());
+				consulta.setTimestamp(13, tarea_proveedor.getFec_fin());
+				consulta.setLong(14, tarea_proveedor.getId_estado_bitacora());
+				consulta.setString(15, tarea_proveedor.getCumplimiento());
+				consulta.setLong(16, tarea_proveedor.getId_localidad());
+				consulta.setString(17, tarea_proveedor.getEst_tarea_proveedor());
+				consulta.setString(18, tarea_proveedor.getUsu_ingresa());
+				consulta.setTimestamp(19, tarea_proveedor.getFec_ingresa());
+				consulta.setString(20, bitacora.getUsu_modifica());
+				consulta.setTimestamp(21, bitacora.getFec_modifica());
 				consulta.executeUpdate();
 			}
 			/*
@@ -271,6 +307,7 @@ public class dao_solicitud_personal {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	public void modificarSolicitudPersonal(modelo_solicitud_personal solicitud,
 			List<modelo_detalle_solicitud_personal> detalle, modelo_bitacora bitacora, long secuencia1,
 			modelo_tarea_proveedor tarea_proveedor, long secuencia2, int bandera) throws SQLException,
@@ -316,6 +353,10 @@ public class dao_solicitud_personal {
 				consulta.setTimestamp(6, detalle.get(i).getFec_ingresa());
 				consulta.executeUpdate();
 			}
+			/* ELIMINAMOS REGISTRO DE BITACORA */
+			consulta = conexion.abrir().prepareStatement("{CALL bitacora_eliminarBitacora (?)}");
+			consulta.setLong(1, bitacora.getId_bitacora());
+			consulta.executeUpdate();
 			/* REGISTRO EN BITACORA */
 			long id = 0;
 			dao_bitacora dao1 = new dao_bitacora();
@@ -326,31 +367,34 @@ public class dao_solicitud_personal {
 			} else {
 				id1 = secuencia1;
 			}
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 			consulta.setLong(1, id1);
 			consulta.setLong(2, bitacora.getId_cliente());
 			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
 			consulta.setLong(4, bitacora.getId_turno());
 			consulta.setLong(5, bitacora.getId_tipo_servicio());
-			consulta.setLong(6, bitacora.getId_tipo_tarea());
-			consulta.setLong(7, bitacora.getId_solicitante());
-			consulta.setString(8, bitacora.getDescripcion().toUpperCase());
-			consulta.setTimestamp(9, bitacora.getFec_inicio());
-			consulta.setTimestamp(10, bitacora.getFec_fin());
-			consulta.setLong(11, bitacora.getId_estado_bitacora());
-			consulta.setString(12, bitacora.getCumplimiento());
-			consulta.setLong(13, bitacora.getId_localidad());
-			consulta.setString(14, bitacora.getEst_bitacora());
-			consulta.setString(15, bitacora.getUsu_ingresa());
-			consulta.setTimestamp(16, bitacora.getFec_ingresa());
-			consulta.executeUpdate();
-			/* ELIMINAMOS EL REGISTRO TAREA DE PROVEEDOR ANTERIOR */
-			consulta = conexion.abrir().prepareStatement("{CALL tarea_proveedor_eliminarTareaProveedor(?)}");
-			consulta.setLong(1, tarea_proveedor.getId_tarea_proveedor());
+			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(7, bitacora.getId_tipo_tarea());
+			consulta.setLong(8, bitacora.getId_solicitante());
+			consulta.setString(9, bitacora.getArea());
+			consulta.setString(10, bitacora.getRack());
+			consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(12, bitacora.getFec_inicio());
+			consulta.setTimestamp(13, bitacora.getFec_fin());
+			consulta.setLong(14, bitacora.getId_estado_bitacora());
+			consulta.setString(15, bitacora.getCumplimiento());
+			consulta.setString(16, bitacora.getCumplimientoSLA());
+			consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(18, bitacora.getId_localidad());
+			consulta.setString(19, bitacora.getEst_bitacora());
+			consulta.setString(20, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(21, bitacora.getFec_ingresa());
+			consulta.setString(22, bitacora.getUsu_modifica());
+			consulta.setTimestamp(23, bitacora.getFec_modifica());
 			consulta.executeUpdate();
 			/* REGISTRO TAREA DE PROVEEDOR ACTUAL */
-			if (bandera == 1) {
+			if (bandera == 1) { // SI TAREA NO EXISTE
 				id = 0;
 				dao_tarea_proveedor dao2 = new dao_tarea_proveedor();
 				id = dao2.obtenerNuevoId();
@@ -361,25 +405,530 @@ public class dao_solicitud_personal {
 					id1 = secuencia2;
 				}
 				consulta = conexion.abrir().prepareStatement(
-						"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				consulta.setLong(1, id1);
 				consulta.setLong(2, tarea_proveedor.getId_cliente());
 				consulta.setString(3, tarea_proveedor.getTicket_externo().toUpperCase());
 				consulta.setLong(4, tarea_proveedor.getId_turno());
 				consulta.setLong(5, tarea_proveedor.getId_tipo_servicio());
-				consulta.setLong(6, tarea_proveedor.getId_tipo_tarea());
-				consulta.setLong(7, tarea_proveedor.getId_solicitante());
-				consulta.setString(8, tarea_proveedor.getDescripcion().toUpperCase());
-				consulta.setTimestamp(9, tarea_proveedor.getFec_inicio());
-				consulta.setTimestamp(10, tarea_proveedor.getFec_fin());
-				consulta.setLong(11, tarea_proveedor.getId_estado_bitacora());
-				consulta.setString(12, tarea_proveedor.getCumplimiento());
-				consulta.setLong(13, tarea_proveedor.getId_localidad());
-				consulta.setString(14, tarea_proveedor.getEst_tarea_proveedor());
-				consulta.setString(15, tarea_proveedor.getUsu_ingresa());
-				consulta.setTimestamp(16, tarea_proveedor.getFec_ingresa());
+				consulta.setLong(6, tarea_proveedor.getId_tipo_clasificacion());
+				consulta.setLong(7, tarea_proveedor.getId_tipo_tarea());
+				consulta.setLong(8, tarea_proveedor.getId_solicitante());
+				consulta.setString(9, tarea_proveedor.getArea());
+				consulta.setString(10, tarea_proveedor.getRack());
+				consulta.setString(11, tarea_proveedor.getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, tarea_proveedor.getFec_inicio());
+				consulta.setTimestamp(13, tarea_proveedor.getFec_fin());
+				consulta.setLong(14, tarea_proveedor.getId_estado_bitacora());
+				consulta.setString(15, tarea_proveedor.getCumplimiento());
+				consulta.setLong(16, tarea_proveedor.getId_localidad());
+				consulta.setString(17, tarea_proveedor.getEst_tarea_proveedor());
+				consulta.setString(18, tarea_proveedor.getUsu_ingresa());
+				consulta.setTimestamp(19, tarea_proveedor.getFec_ingresa());
+				consulta.setString(20, bitacora.getUsu_modifica());
+				consulta.setTimestamp(21, bitacora.getFec_modifica());
+				consulta.executeUpdate();
+			} else { // SI TAREA EXISTE
+				/* ELIMINAMOS EL REGISTRO TAREA DE PROVEEDOR ANTERIOR */
+				consulta = conexion.abrir().prepareStatement("{CALL tarea_proveedor_eliminarTareaProveedor(?)}");
+				consulta.setLong(1, tarea_proveedor.getId_tarea_proveedor());
+				consulta.executeUpdate();
+				id = 0;
+				dao_tarea_proveedor dao2 = new dao_tarea_proveedor();
+				id = dao2.obtenerNuevoId();
+				id1 = 0;
+				if (id > secuencia2) {
+					id1 = id;
+				} else {
+					id1 = secuencia2;
+				}
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL tarea_proveedor_insertarTareaProveedor(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, id1);
+				consulta.setLong(2, tarea_proveedor.getId_cliente());
+				consulta.setString(3, tarea_proveedor.getTicket_externo().toUpperCase());
+				consulta.setLong(4, tarea_proveedor.getId_turno());
+				consulta.setLong(5, tarea_proveedor.getId_tipo_servicio());
+				consulta.setLong(6, tarea_proveedor.getId_tipo_clasificacion());
+				consulta.setLong(7, tarea_proveedor.getId_tipo_tarea());
+				consulta.setLong(8, tarea_proveedor.getId_solicitante());
+				consulta.setString(9, tarea_proveedor.getArea());
+				consulta.setString(10, tarea_proveedor.getRack());
+				consulta.setString(11, tarea_proveedor.getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, tarea_proveedor.getFec_inicio());
+				consulta.setTimestamp(13, tarea_proveedor.getFec_fin());
+				consulta.setLong(14, tarea_proveedor.getId_estado_bitacora());
+				consulta.setString(15, tarea_proveedor.getCumplimiento());
+				consulta.setLong(16, tarea_proveedor.getId_localidad());
+				consulta.setString(17, tarea_proveedor.getEst_tarea_proveedor());
+				consulta.setString(18, tarea_proveedor.getUsu_ingresa());
+				consulta.setTimestamp(19, tarea_proveedor.getFec_ingresa());
+				consulta.setString(20, bitacora.getUsu_modifica());
+				consulta.setTimestamp(21, bitacora.getFec_modifica());
 				consulta.executeUpdate();
 			}
+			/*
+			 * SI NO SE PRESENTAN ERRORES SE APLICAN LOS CAMBIOS Y SE CIERRA LA INSTANCIA DE
+			 * LA BD
+			 */
+			consulta.close();
+			conexion.abrir().commit();
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	public List<modelo_registro_permanencia> obtenerRegistroPermanencia(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		List<modelo_registro_permanencia> lista_permanencia = new ArrayList<modelo_registro_permanencia>();
+		PreparedStatement consulta = null;
+		try {
+			consulta = conexion.abrir()
+					.prepareStatement("{CALL personal_obtenerRegistroPermanencia(?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setString(1, criterio.toUpperCase().trim());
+			consulta.setInt(2, tipo);
+			consulta.setString(3, estado);
+			consulta.setLong(4, id_localidad);
+			consulta.setInt(5, limite);
+			consulta.setString(6, fecha_inicio);
+			consulta.setString(7, fecha_fin);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				lista_permanencia.add(new modelo_registro_permanencia(resultado.getLong("id_registro_permanencia"),
+						resultado.getLong("id_solicitud"), resultado.getLong("id_cliente"),
+						resultado.getString("ticket"), resultado.getTimestamp("fec_ingreso"),
+						resultado.getTimestamp("fec_salida"), resultado.getLong("id_proveedor"),
+						resultado.getString("nom_empresa"), resultado.getString("nom_proveedor"),
+						resultado.getString("num_documento"), resultado.getString("descripcion"),
+						resultado.getString("area_rack"), resultado.getString("tipo_trabajo"),
+						resultado.getString("num_tarjeta_dn"), resultado.getString("num_tarjeta_bp"),
+						resultado.getString("tipo_aprobador"), resultado.getString("tipo_ingreso"),
+						resultado.getTimestamp("fec_ingreso_su"), resultado.getTimestamp("fec_salida_su"),
+						resultado.getLong("id_localidad"), resultado.getString("nom_localidad"),
+						resultado.getString("est_registro_permanencia"), resultado.getString("usu_ingresa"),
+						resultado.getString("nom_usuario_ingresa"), resultado.getTimestamp("fec_ingresa"),
+						resultado.getString("usu_modifica"), resultado.getString("nom_usuario_modifica"),
+						resultado.getTimestamp("fec_modifica")));
+			}
+			resultado.close();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+		return lista_permanencia;
+	}
+
+	public List<modelo_registro_permanencia> obtenerRegistroPermanencia2(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		List<modelo_registro_permanencia> lista_permanencia = new ArrayList<modelo_registro_permanencia>();
+		PreparedStatement consulta = null;
+		try {
+			consulta = conexion.abrir()
+					.prepareStatement("{CALL personal_obtenerRegistroPermanencia(?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setString(1, criterio.toUpperCase().trim());
+			consulta.setInt(2, tipo);
+			consulta.setString(3, estado);
+			consulta.setLong(4, id_localidad);
+			consulta.setInt(5, limite);
+			consulta.setString(6, fecha_inicio);
+			consulta.setString(7, fecha_fin);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				lista_permanencia.add(new modelo_registro_permanencia(resultado.getLong("id_solicitud"),
+						resultado.getLong("id_cliente"), resultado.getString("ticket"),
+						resultado.getTimestamp("fec_inicio"), resultado.getTimestamp("fec_fin"),
+						resultado.getLong("id_proveedor"), resultado.getString("nom_empresa"),
+						resultado.getString("nom_proveedor"), resultado.getString("num_documento"),
+						resultado.getLong("id_solicitante"), resultado.getLong("id_emp_solicitante"),
+						resultado.getString("nom_emp_solicitante"), resultado.getString("descripcion"),
+						resultado.getString("area"), resultado.getString("rack")));
+			}
+			resultado.close();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+		return lista_permanencia;
+	}
+
+	public List<modelo_registro_permanencia> obtenerRegistroPermanencia3(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		List<modelo_registro_permanencia> lista_permanencia = new ArrayList<modelo_registro_permanencia>();
+		PreparedStatement consulta = null;
+		try {
+			consulta = conexion.abrir()
+					.prepareStatement("{CALL personal_obtenerRegistroPermanencia(?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setString(1, criterio.toUpperCase().trim());
+			consulta.setInt(2, tipo);
+			consulta.setString(3, estado);
+			consulta.setLong(4, id_localidad);
+			consulta.setInt(5, limite);
+			consulta.setString(6, fecha_inicio);
+			consulta.setString(7, fecha_fin);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				lista_permanencia.add(new modelo_registro_permanencia(resultado.getLong("id_registro_permanencia"),
+						resultado.getString("num_tarjeta_bp"), resultado.getString("num_tarjeta_dn"),
+						resultado.getTimestamp("fec_ingreso"), resultado.getTimestamp("fec_salida"),
+						resultado.getTimestamp("fec_ingreso_su"), resultado.getTimestamp("fec_salida_su"),
+						resultado.getLong("id_solicitud"), resultado.getLong("id_cliente"),
+						resultado.getString("ticket"), resultado.getTimestamp("fec_inicio"),
+						resultado.getTimestamp("fec_fin"), resultado.getLong("id_proveedor"),
+						resultado.getString("nom_empresa"), resultado.getString("nom_proveedor"),
+						resultado.getString("num_documento"), resultado.getLong("id_solicitante"),
+						resultado.getLong("id_emp_solicitante"), resultado.getString("nom_emp_solicitante"),
+						resultado.getString("descripcion"), resultado.getString("area"), resultado.getString("rack")));
+			}
+			resultado.close();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+		return lista_permanencia;
+	}
+
+	public List<modelo_registro_permanencia> obtenerRegistroPermanencia4(String criterio, int tipo, String estado,
+			long id_localidad, int limite, String fecha_inicio, String fecha_fin)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		List<modelo_registro_permanencia> lista_permanencia = new ArrayList<modelo_registro_permanencia>();
+		PreparedStatement consulta = null;
+		try {
+			consulta = conexion.abrir()
+					.prepareStatement("{CALL personal_obtenerRegistroPermanencia(?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setString(1, criterio.toUpperCase().trim());
+			consulta.setInt(2, tipo);
+			consulta.setString(3, estado);
+			consulta.setLong(4, id_localidad);
+			consulta.setInt(5, limite);
+			consulta.setString(6, fecha_inicio);
+			consulta.setString(7, fecha_fin);
+			ResultSet resultado = consulta.executeQuery();
+			while (resultado.next()) {
+				lista_permanencia.add(new modelo_registro_permanencia(resultado.getLong("id_registro_permanencia"),
+						resultado.getString("num_tarjeta_bp"), resultado.getString("num_tarjeta_dn"),
+						resultado.getTimestamp("fec_ingreso"), resultado.getTimestamp("fec_salida"),
+						resultado.getTimestamp("fec_ingreso_su"), resultado.getTimestamp("fec_salida_su"),
+						resultado.getLong("id_solicitud"), resultado.getLong("id_cliente"),
+						resultado.getString("ticket"), resultado.getTimestamp("fec_inicio"),
+						resultado.getTimestamp("fec_fin"), resultado.getLong("id_proveedor"),
+						resultado.getString("nom_empresa"), resultado.getString("nom_proveedor"),
+						resultado.getString("num_documento"), resultado.getLong("id_solicitante"),
+						resultado.getLong("id_emp_solicitante"), resultado.getString("nom_emp_solicitante"),
+						resultado.getString("descripcion"), resultado.getString("area"), resultado.getString("rack")));
+			}
+			resultado.close();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+		return lista_permanencia;
+	}
+
+	public void insertarRegistroPermanencia(List<modelo_registro_permanencia> listaPermanencia,
+			List<modelo_bitacora> listaBitacora, long secuencia1) throws SQLException,
+			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		long id = 0;
+		try {
+			PreparedStatement consulta = null;
+			for (int i = 0; i < listaPermanencia.size(); i++) {
+				id = obtenerNuevoIdRegistroPermanencia();
+				consulta = conexion.abrir()
+						.prepareStatement("{CALL personal_insertarRegistroPermanencia(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, id);
+				consulta.setLong(2, listaPermanencia.get(i).getId_solicitud());
+				consulta.setTimestamp(3, listaPermanencia.get(i).getFec_ingreso());
+				consulta.setTimestamp(4, listaPermanencia.get(i).getFec_salida());
+				consulta.setLong(5, listaPermanencia.get(i).getId_proveedor());
+				consulta.setString(6, listaPermanencia.get(i).getNum_tarjeta_dn());
+				consulta.setString(7, listaPermanencia.get(i).getNum_tarjeta_bp());
+				consulta.setTimestamp(8, listaPermanencia.get(i).getFec_ingreso_su());
+				consulta.setTimestamp(9, listaPermanencia.get(i).getFec_salida_su());
+				consulta.setLong(10, listaPermanencia.get(i).getId_localidad());
+				consulta.setString(11, listaPermanencia.get(i).getEst_registro_permanencia());
+				consulta.setString(12, listaPermanencia.get(i).getUsu_ingresa());
+				consulta.setTimestamp(13, listaPermanencia.get(i).getFec_ingresa());
+				consulta.executeUpdate();
+				consulta.close();
+				conexion.abrir().commit();
+			}
+			for (int i = 0; i < listaBitacora.size(); i++) {
+				/* REGISTRO EN BITACORA */
+				id = 0;
+				dao_bitacora dao1 = new dao_bitacora();
+				id = dao1.obtenerNuevoId();
+				long id1 = 0;
+				if (id > secuencia1) {
+					id1 = id;
+				} else {
+					id1 = secuencia1;
+				}
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, id1);
+				consulta.setLong(2, listaBitacora.get(i).getId_cliente());
+				consulta.setString(3, listaBitacora.get(i).getTicket_externo().toUpperCase());
+				consulta.setLong(4, listaBitacora.get(i).getId_turno());
+				consulta.setLong(5, listaBitacora.get(i).getId_tipo_servicio());
+				consulta.setLong(6, listaBitacora.get(i).getId_tipo_clasificacion());
+				consulta.setLong(7, listaBitacora.get(i).getId_tipo_tarea());
+				consulta.setLong(8, listaBitacora.get(i).getId_solicitante());
+				consulta.setString(9, listaBitacora.get(i).getArea());
+				consulta.setString(10, listaBitacora.get(i).getRack());
+				consulta.setString(11, listaBitacora.get(i).getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, listaBitacora.get(i).getFec_inicio());
+				consulta.setTimestamp(13, listaBitacora.get(i).getFec_fin());
+				consulta.setLong(14, listaBitacora.get(i).getId_estado_bitacora());
+				consulta.setString(15, listaBitacora.get(i).getCumplimiento());
+				consulta.setString(16, listaBitacora.get(i).getCumplimientoSLA());
+				consulta.setString(17, listaBitacora.get(i).getComentarioCumplimientoSLA());
+				consulta.setLong(18, listaBitacora.get(i).getId_localidad());
+				consulta.setString(19, listaBitacora.get(i).getEst_bitacora());
+				consulta.setString(20, listaBitacora.get(i).getUsu_ingresa());
+				consulta.setTimestamp(21, listaBitacora.get(i).getFec_ingresa());
+				consulta.setString(22, listaBitacora.get(i).getUsu_modifica());
+				consulta.setTimestamp(23, listaBitacora.get(i).getFec_modifica());
+				consulta.executeUpdate();
+				consulta.close();
+				conexion.abrir().commit();
+			}
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	public void modificarRegistroPermanencia(modelo_registro_permanencia registro_permanencia, modelo_bitacora bitacora,
+			long secuencia1) throws SQLException, MySQLIntegrityConstraintViolationException, ClassNotFoundException,
+			FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		long id = 0;
+		try {
+			PreparedStatement consulta = null;
+			consulta = conexion.abrir()
+					.prepareStatement("{CALL personal_modificarRegistroPermanencia(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta.setLong(1, registro_permanencia.getId_registro_permanencia());
+			consulta.setLong(2, registro_permanencia.getId_solicitud());
+			consulta.setTimestamp(3, registro_permanencia.getFec_ingreso());
+			consulta.setTimestamp(4, registro_permanencia.getFec_salida());
+			consulta.setLong(5, registro_permanencia.getId_proveedor());
+			consulta.setString(6, registro_permanencia.getNum_tarjeta_dn());
+			consulta.setString(7, registro_permanencia.getNum_tarjeta_bp());
+			consulta.setTimestamp(8, registro_permanencia.getFec_ingreso_su());
+			consulta.setTimestamp(9, registro_permanencia.getFec_salida_su());
+			consulta.setLong(10, registro_permanencia.getId_localidad());
+			consulta.setString(11, registro_permanencia.getEst_registro_permanencia());
+			consulta.setString(12, registro_permanencia.getUsu_modifica());
+			consulta.setTimestamp(13, registro_permanencia.getFec_modifica());
+			consulta.executeUpdate();
+			/* REGISTRO EN BITACORA */
+			id = 0;
+			dao_bitacora dao1 = new dao_bitacora();
+			id = dao1.obtenerNuevoId();
+			long id1 = 0;
+			if (id > secuencia1) {
+				id1 = id;
+			} else {
+				id1 = secuencia1;
+			}
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta.setLong(1, id1);
+			consulta.setLong(2, bitacora.getId_cliente());
+			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
+			consulta.setLong(4, bitacora.getId_turno());
+			consulta.setLong(5, bitacora.getId_tipo_servicio());
+			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(7, bitacora.getId_tipo_tarea());
+			consulta.setLong(8, bitacora.getId_solicitante());
+			consulta.setString(9, bitacora.getArea());
+			consulta.setString(10, bitacora.getRack());
+			consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(12, bitacora.getFec_inicio());
+			consulta.setTimestamp(13, bitacora.getFec_fin());
+			consulta.setLong(14, bitacora.getId_estado_bitacora());
+			consulta.setString(15, bitacora.getCumplimiento());
+			consulta.setString(16, bitacora.getCumplimientoSLA());
+			consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(18, bitacora.getId_localidad());
+			consulta.setString(19, bitacora.getEst_bitacora());
+			consulta.setString(20, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(21, bitacora.getFec_ingresa());
+			consulta.setString(22, bitacora.getUsu_modifica());
+			consulta.setTimestamp(23, bitacora.getFec_modifica());
+			consulta.executeUpdate();
+			consulta.close();
+			conexion.abrir().commit();
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	public void modificarRegistroPermanencia(List<modelo_registro_permanencia> listaPermanencia,
+			List<modelo_bitacora> listaBitacora, long secuencia1) throws SQLException,
+			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		long id = 0;
+		try {
+			PreparedStatement consulta = null;
+			for (int i = 0; i < listaPermanencia.size(); i++) {
+				consulta = conexion.abrir()
+						.prepareStatement("{CALL personal_modificarRegistroPermanencia(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, listaPermanencia.get(i).getId_registro_permanencia());
+				consulta.setLong(2, listaPermanencia.get(i).getId_solicitud());
+				consulta.setTimestamp(3, listaPermanencia.get(i).getFec_ingreso());
+				consulta.setTimestamp(4, listaPermanencia.get(i).getFec_salida());
+				consulta.setLong(5, listaPermanencia.get(i).getId_proveedor());
+				consulta.setString(6, listaPermanencia.get(i).getNum_tarjeta_dn());
+				consulta.setString(7, listaPermanencia.get(i).getNum_tarjeta_bp());
+				consulta.setTimestamp(8, listaPermanencia.get(i).getFec_ingreso_su());
+				consulta.setTimestamp(9, listaPermanencia.get(i).getFec_salida_su());
+				consulta.setLong(10, listaPermanencia.get(i).getId_localidad());
+				consulta.setString(11, listaPermanencia.get(i).getEst_registro_permanencia());
+				consulta.setString(12, listaPermanencia.get(i).getUsu_modifica());
+				consulta.setTimestamp(13, listaPermanencia.get(i).getFec_modifica());
+				consulta.executeUpdate();
+				consulta.close();
+				conexion.abrir().commit();
+			}
+			for (int i = 0; i < listaBitacora.size(); i++) {
+				/* REGISTRO EN BITACORA */
+				id = 0;
+				dao_bitacora dao1 = new dao_bitacora();
+				id = dao1.obtenerNuevoId();
+				long id1 = 0;
+				if (id > secuencia1) {
+					id1 = id;
+				} else {
+					id1 = secuencia1;
+				}
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, id1);
+				consulta.setLong(2, listaBitacora.get(i).getId_cliente());
+				consulta.setString(3, listaBitacora.get(i).getTicket_externo().toUpperCase());
+				consulta.setLong(4, listaBitacora.get(i).getId_turno());
+				consulta.setLong(5, listaBitacora.get(i).getId_tipo_servicio());
+				consulta.setLong(6, listaBitacora.get(i).getId_tipo_clasificacion());
+				consulta.setLong(7, listaBitacora.get(i).getId_tipo_tarea());
+				consulta.setLong(8, listaBitacora.get(i).getId_solicitante());
+				consulta.setString(9, listaBitacora.get(i).getArea());
+				consulta.setString(10, listaBitacora.get(i).getRack());
+				consulta.setString(11, listaBitacora.get(i).getDescripcion().toUpperCase());
+				consulta.setTimestamp(12, listaBitacora.get(i).getFec_inicio());
+				consulta.setTimestamp(13, listaBitacora.get(i).getFec_fin());
+				consulta.setLong(14, listaBitacora.get(i).getId_estado_bitacora());
+				consulta.setString(15, listaBitacora.get(i).getCumplimiento());
+				consulta.setString(16, listaBitacora.get(i).getCumplimientoSLA());
+				consulta.setString(17, listaBitacora.get(i).getComentarioCumplimientoSLA());
+				consulta.setLong(18, listaBitacora.get(i).getId_localidad());
+				consulta.setString(19, listaBitacora.get(i).getEst_bitacora());
+				consulta.setString(20, listaBitacora.get(i).getUsu_ingresa());
+				consulta.setTimestamp(21, listaBitacora.get(i).getFec_ingresa());
+				consulta.setString(22, listaBitacora.get(i).getUsu_modifica());
+				consulta.setTimestamp(23, listaBitacora.get(i).getFec_modifica());
+				consulta.executeUpdate();
+				consulta.close();
+				conexion.abrir().commit();
+			}
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	public void eliminarRegistroPermanencia(long id_registro_permanencia, modelo_bitacora bitacora, long secuencia1)
+			throws SQLException, MySQLIntegrityConstraintViolationException, ClassNotFoundException,
+			FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		try {
+			PreparedStatement consulta = null;
+			consulta = conexion.abrir().prepareStatement("{CALL personal_eliminarRegistroPermanencia(?)}");
+			consulta.setLong(1, id_registro_permanencia);
+			consulta.executeUpdate();
+//			/* REGISTRO EN BITACORA */
+//			long id = 0;
+//			dao_bitacora dao1 = new dao_bitacora();
+//			id = dao1.obtenerNuevoId();
+//			long id1 = 0;
+//			if (id > secuencia1) {
+//				id1 = id;
+//			} else {
+//				id1 = secuencia1;
+//			}
+//			consulta = conexion.abrir()
+//					.prepareStatement("{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+//			consulta.setLong(1, id1);
+//			consulta.setLong(2, bitacora.getId_cliente());
+//			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
+//			consulta.setLong(4, bitacora.getId_turno());
+//			consulta.setLong(5, bitacora.getId_tipo_servicio());
+//			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+//			consulta.setLong(7, bitacora.getId_tipo_tarea());
+//			consulta.setLong(8, bitacora.getId_solicitante());
+//			consulta.setString(9, bitacora.getArea());
+//			consulta.setString(10, bitacora.getRack());
+//			consulta.setString(11, bitacora.getDescripcion().toUpperCase());
+//			consulta.setTimestamp(12, bitacora.getFec_inicio());
+//			consulta.setTimestamp(13, bitacora.getFec_fin());
+//			consulta.setLong(14, bitacora.getId_estado_bitacora());
+//			consulta.setString(15, bitacora.getCumplimiento());
+//			consulta.setString(16, bitacora.getCumplimientoSLA());
+//			consulta.setString(17, bitacora.getComentarioCumplimientoSLA());
+//			consulta.setLong(18, bitacora.getId_localidad());
+//			consulta.setString(19, bitacora.getEst_bitacora());
+//			consulta.setString(20, bitacora.getUsu_ingresa());
+//			consulta.setTimestamp(21, bitacora.getFec_ingresa());
+//			consulta.executeUpdate();
 			/*
 			 * SI NO SE PRESENTAN ERRORES SE APLICAN LOS CAMBIOS Y SE CIERRA LA INSTANCIA DE
 			 * LA BD

@@ -30,6 +30,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
+import bp.aplicaciones.controlador.DemoCalendarEvent;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.controlcambio.DAO.dao_control_cambio;
 import bp.aplicaciones.controlcambio.modelo.modelo_control_cambio;
@@ -88,6 +89,8 @@ public class nuevo extends SelectorComposer<Component> {
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
+	DemoCalendarEvent data = (DemoCalendarEvent) Sessions.getCurrent().getAttribute("data_calendario");
+
 	validar_datos validar = new validar_datos();
 
 	@Override
@@ -101,6 +104,7 @@ public class nuevo extends SelectorComposer<Component> {
 				txtDescripcion.setText(txtDescripcion.getText().toUpperCase());
 			}
 		});
+		dtxFechaProgramada.setValue(data.getBeginDate());
 		cargarParametros1();
 		cmbInfraestructura.setDisabled(true);
 		cargarClientes();
@@ -387,7 +391,7 @@ public class nuevo extends SelectorComposer<Component> {
 			txtDescripcion.setErrorMessage("Ingrese la descripción.");
 			return;
 		}
-		Messagebox.show("Esta seguro de guardar el control de cambio?", ".:: Nuevo código ::.",
+		Messagebox.show("Esta seguro de guardar el control de cambio?", ".:: Nuevo ::.",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
@@ -427,15 +431,14 @@ public class nuevo extends SelectorComposer<Component> {
 							}
 							try {
 								id = dao.insertarControlCambio(control_cambio, secuencia);
-								Messagebox.show("El control de cambio se guardó correctamente.", ".:: Nuevo código ::.",
+								Messagebox.show("El control de cambio se guardó correctamente.", ".:: Nuevo ::.",
 										Messagebox.OK, Messagebox.EXCLAMATION);
-								limpiarCampos();
-								obtenerId();
+								Events.postEvent(new Event("onClose", zNuevo));
 							} catch (Exception e) {
 								Messagebox.show(
 										"Error al guardar el control de cambio. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Nuevo código ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										".:: Nuevo ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 							}
 						}
 					}

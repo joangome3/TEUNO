@@ -43,6 +43,10 @@ body {
 	background-color: transparent;
 }
 
+.z-scrollbar-indicator {
+	background-color: transparent;
+}
+
 .z-window-header, .z-messagebox, .z-label, .z-tab-text,
 	.z-window-content, .z-textbox, .z-intbox, .z-caption, .z-tab-text,
 	.z-toolbarbutton-content, .z-west-header, .z-listheader-content,
@@ -393,7 +397,7 @@ body {
 }
 
 .z-cell {
-	background-image: #FFF !important;
+	background-color: #FFF !important;
 }
 
 .z-cell-check {
@@ -549,7 +553,7 @@ body {
 .z-treecell-content:hover>.z-treecell-text {
 	color: black !important;
 	font-style: normal !important;
-	font-weigh: bold !important;
+	font-weight: bold !important;
 }
 
 .z-tree-icon {

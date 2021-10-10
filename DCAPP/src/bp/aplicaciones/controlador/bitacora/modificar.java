@@ -22,10 +22,12 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
@@ -42,6 +44,7 @@ import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_bitacora;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_tarea;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Informativos;
@@ -51,7 +54,9 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_11;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_9;
+import bp.aplicaciones.mantenimientos.modelo.modelo_rack;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitante;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_clasificacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
 
 @SuppressWarnings({ "serial", "deprecation" })
@@ -64,11 +69,12 @@ public class modificar extends SelectorComposer<Component> {
 	@Wire
 	Button btnGrabar, btnCancelar, btnLimpiar;
 	@Wire
-	Textbox txtId, txtDescripcion, txtBuscarSolicitante, txtObservacion;
+	Textbox txtId, txtDescripcion, txtBuscarSolicitante, txtObservacion, txtComentarioIncumplimientoSLA;
 	@Wire
-	Bandbox bdxTicketInterno, bdxSolicitantes;
+	Bandbox bdxTicketInterno, bdxSolicitantes, bdxArea, bdxRack;
 	@Wire
-	Combobox cmbCliente, cmbTipoServicio, cmbTipoTarea, cmbEstado, cmbCumplimiento, cmbTurno, cmbUsuario;
+	Combobox cmbCliente, cmbTipoServicio, cmbTipoTarea, cmbEstado, cmbCumplimiento, cmbTurno, cmbUsuario,
+			cmbClasificacion, cmbCumplimientoSLA;
 	@Wire
 	Datebox dtxFechaInicio, dtxFechaFin;
 	@Wire
@@ -79,6 +85,12 @@ public class modificar extends SelectorComposer<Component> {
 	Listbox lbxSolicitantes;
 	@Wire
 	Row rwObservacion;
+	@Wire
+	Div winList;
+	@Wire
+	Tab tInformacionGeneral, tCumplimientoSLA;
+
+	Window window;
 
 	List<modelo_empresa> listaCliente = new ArrayList<modelo_empresa>();
 	List<modelo_solicitante> listaSolicitante = new ArrayList<modelo_solicitante>();
@@ -93,6 +105,9 @@ public class modificar extends SelectorComposer<Component> {
 	List<modelo_turno> listaTurnos1 = new ArrayList<modelo_turno>();
 	List<modelo_turno> listaTurnos2 = new ArrayList<modelo_turno>();
 	List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
+	List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
+	List<modelo_rack> listaRack = new ArrayList<modelo_rack>();
+	List<modelo_tipo_clasificacion> listaClasificacion = new ArrayList<modelo_tipo_clasificacion>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	Fechas fechas = new Fechas();
@@ -114,6 +129,7 @@ public class modificar extends SelectorComposer<Component> {
 	long id_tarea_proveedor = 0;
 
 	boolean ingresa_a_relacionar_ticket = false;
+	boolean ingresa_a_area_rack = false;
 
 	boolean es_turno_extendido = false;
 
@@ -159,19 +175,25 @@ public class modificar extends SelectorComposer<Component> {
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtDescripcion.setText(txtDescripcion.getText().toUpperCase());
+				txtDescripcion.setText(txtDescripcion.getText().toUpperCase().trim());
 				lDescripcion.setValue(txtDescripcion.getText().length() + "/" + txtDescripcion.getMaxlength());
 			}
 		});
 		txtObservacion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtObservacion.setText(txtObservacion.getText().toUpperCase());
+				txtObservacion.setText(txtObservacion.getText().toUpperCase().trim());
 				lObservacion.setValue(txtObservacion.getText().length() + "/" + txtObservacion.getMaxlength());
+			}
+		});
+		txtComentarioIncumplimientoSLA.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				txtComentarioIncumplimientoSLA.setText(txtComentarioIncumplimientoSLA.getText().toUpperCase().trim());
 			}
 		});
 		if (cmbCumplimiento.getItems().size() > 0) {
 			cmbCumplimiento.setSelectedIndex(0);
 		}
+		tCumplimientoSLA.setDisabled(true);
 		cmbTipoTarea.setDisabled(true);
 		cmbCumplimiento.setDisabled(true);
 		setearEstado();
@@ -215,6 +237,10 @@ public class modificar extends SelectorComposer<Component> {
 		return listaTipoTarea;
 	}
 
+	public List<modelo_tipo_clasificacion> obtenerClasificaciones() {
+		return listaClasificacion;
+	}
+
 	public List<modelo_tipo_servicio> obtenerTipoServicio() {
 		return listaTipoServicio;
 	}
@@ -254,6 +280,22 @@ public class modificar extends SelectorComposer<Component> {
 				break;
 			}
 		}
+		/* TIPO DE CLASIFICACIONES **/
+		listaClasificacion = consultasABaseDeDatos.cargarClasificaciones("", 2, id_tipo_servicio, 0);
+		binder.loadComponent(cmbClasificacion);
+		Iterator<modelo_tipo_clasificacion> it_tipo_clasificacion = listaClasificacion.iterator();
+		while (it_tipo_clasificacion.hasNext()) {
+			modelo_tipo_clasificacion tipo_clasificacion = it_tipo_clasificacion.next();
+			if (tipo_clasificacion.getId_tipo_clasificacion() == bitacora.getId_tipo_clasificacion()) {
+				cmbClasificacion.setText(tipo_clasificacion.getNom_tipo_clasificacion());
+				break;
+			}
+		}
+		if (listaClasificacion.size() > 0) {
+			cmbClasificacion.setDisabled(false);
+		} else {
+			cmbClasificacion.setDisabled(true);
+		}
 		/* TIPO DE TAREAS **/
 		listaTipoTarea = consultasABaseDeDatos.cargarTipoDeTareas("", 6, id_tipo_servicio, 0);
 		binder.loadComponent(cmbTipoTarea);
@@ -292,6 +334,10 @@ public class modificar extends SelectorComposer<Component> {
 		setearObservacion();
 		/* DESCRIPCION **/
 		txtDescripcion.setText(bitacora.getDescripcion());
+		bdxArea.setText(bitacora.getArea());
+		bdxArea.setTooltiptext(bitacora.getArea());
+		bdxRack.setText(bitacora.getRack());
+		bdxRack.setTooltiptext(bitacora.getRack());
 		/* TURNO **/
 		Iterator<modelo_turno> it_turno = listaTurnos1.iterator();
 		while (it_turno.hasNext()) {
@@ -338,6 +384,28 @@ public class modificar extends SelectorComposer<Component> {
 		}
 		cmbUsuario.setDisabled(true);
 		activarCampoOperador();
+		/* CUMPLIMIENTO SLA */
+		if (bitacora.getCumplimientoSLA() == null) {
+			cmbCumplimientoSLA.setText("");
+			txtComentarioIncumplimientoSLA.setReadonly(true);
+			txtComentarioIncumplimientoSLA.setText(informativos.getMensaje_informativo_113());
+		}
+		if (bitacora.getCumplimientoSLA() != null) {
+			if (bitacora.getCumplimientoSLA().trim().equals("NO")) {
+				cmbCumplimientoSLA.setText(" NO CUMPLE SLA");
+				txtComentarioIncumplimientoSLA.setReadonly(false);
+				txtComentarioIncumplimientoSLA.setText(bitacora.getComentarioCumplimientoSLA());
+			} else {
+				cmbCumplimientoSLA.setText(" SI CUMPLE SLA");
+				txtComentarioIncumplimientoSLA.setReadonly(true);
+				txtComentarioIncumplimientoSLA.setText(informativos.getMensaje_informativo_113());
+			}
+		}
+		if (bitacora.getId_tipo_tarea() == 5) {
+			tCumplimientoSLA.setDisabled(false);
+		} else {
+			tCumplimientoSLA.setDisabled(true);
+		}
 	}
 
 	public boolean validarSiUsuarioEsRevisor() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -645,6 +713,24 @@ public class modificar extends SelectorComposer<Component> {
 								listaTipoTarea = consultasABaseDeDatos.cargarTipoDeTareas("", 6,
 										Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString()), 0);
 								binder.loadComponent(cmbTipoTarea);
+								listaClasificacion = consultasABaseDeDatos.cargarClasificaciones("", 2,
+										tarea_proveedor.getId_tipo_servicio(), 0);
+								if (listaClasificacion.size() > 0) {
+									cmbClasificacion.setText("");
+									cmbClasificacion.setDisabled(false);
+									binder.loadComponent(cmbClasificacion);
+									for (int i = 0; i < listaClasificacion.size(); i++) {
+										if (listaClasificacion.get(i).getId_tipo_clasificacion() == tarea_proveedor
+												.getId_tipo_clasificacion()) {
+											cmbClasificacion
+													.setText(listaClasificacion.get(i).getNom_tipo_clasificacion());
+											i = listaClasificacion.size();
+										}
+									}
+								} else {
+									cmbClasificacion.setText("");
+									cmbClasificacion.setDisabled(true);
+								}
 								txtDescripcion.setText(tarea_proveedor.getDescripcion());
 								setearSolicitante(tarea_proveedor.getId_solicitante());
 							} else {
@@ -710,6 +796,23 @@ public class modificar extends SelectorComposer<Component> {
 		binder.loadComponent(lbxSolicitantes);
 	}
 
+	@Listen("onSelect=#cmbCumplimientoSLA")
+	public void onSelect$cmbCumplimientoSLA()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (cmbCumplimientoSLA.getSelectedItem() == null) {
+			txtComentarioIncumplimientoSLA.setReadonly(true);
+			txtComentarioIncumplimientoSLA.setText(informativos.getMensaje_informativo_113());
+			return;
+		}
+		if (cmbCumplimientoSLA.getSelectedItem().getValue().toString().equals("NO")) {
+			txtComentarioIncumplimientoSLA.setReadonly(false);
+			txtComentarioIncumplimientoSLA.setText("");
+		} else {
+			txtComentarioIncumplimientoSLA.setReadonly(true);
+			txtComentarioIncumplimientoSLA.setText(informativos.getMensaje_informativo_113());
+		}
+	}
+
 	@Listen("onSelect=#lbxSolicitantes")
 	public void onSelect$lbxSolicitantes()
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
@@ -726,6 +829,8 @@ public class modificar extends SelectorComposer<Component> {
 		if (cmbTipoServicio.getSelectedItem() == null) {
 			cmbTipoTarea.setText("");
 			cmbTipoTarea.setDisabled(true);
+			cmbClasificacion.setText("");
+			cmbClasificacion.setDisabled(true);
 			return;
 		}
 		long id_tipo_servicio = 0;
@@ -740,6 +845,8 @@ public class modificar extends SelectorComposer<Component> {
 				cmbTipoServicio.setText("");
 				cmbTipoTarea.setText("");
 				cmbTipoTarea.setDisabled(true);
+				cmbClasificacion.setText("");
+				cmbClasificacion.setDisabled(true);
 				return;
 			}
 		}
@@ -760,6 +867,8 @@ public class modificar extends SelectorComposer<Component> {
 				cmbTipoServicio.setText("");
 				cmbTipoTarea.setText("");
 				cmbTipoTarea.setDisabled(true);
+				cmbClasificacion.setText("");
+				cmbClasificacion.setDisabled(true);
 				return;
 			}
 		}
@@ -768,6 +877,16 @@ public class modificar extends SelectorComposer<Component> {
 		listaTipoTarea = consultasABaseDeDatos.cargarTipoDeTareas("", 6,
 				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString()), 0);
 		binder.loadComponent(cmbTipoTarea);
+		listaClasificacion = consultasABaseDeDatos.cargarClasificaciones("", 2,
+				Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString()), 0);
+		if (listaClasificacion.size() > 0) {
+			cmbClasificacion.setText("");
+			cmbClasificacion.setDisabled(false);
+			binder.loadComponent(cmbClasificacion);
+		} else {
+			cmbClasificacion.setText("");
+			cmbClasificacion.setDisabled(true);
+		}
 		if (existeTipoServicio()) {
 			lOperador.setValue("Operador asignado:");
 			cmbUsuario.setDisabled(false);
@@ -816,6 +935,11 @@ public class modificar extends SelectorComposer<Component> {
 			cmbTipoTarea.setText("");
 			return;
 		}
+		if (Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()) == 5) {
+			tCumplimientoSLA.setDisabled(false);
+		} else {
+			tCumplimientoSLA.setDisabled(true);
+		}
 	}
 
 	public boolean validarSiTareaExiste()
@@ -846,6 +970,9 @@ public class modificar extends SelectorComposer<Component> {
 		if (cmbCliente.getSelectedItem() == null) {
 			return;
 		}
+		bdxRack.setText("");
+		bdxRack.setTooltiptext("");
+		listaRack = new ArrayList<modelo_rack>();
 		id_tarea_proveedor = 0;
 		if (!chkTicketInterno.isChecked()) {
 			String id_empresa = cmbCliente.getSelectedItem().getValue().toString();
@@ -933,16 +1060,19 @@ public class modificar extends SelectorComposer<Component> {
 			return;
 		}
 		if (cmbCliente.getSelectedItem() == null) {
+			tInformacionGeneral.setSelected(true);
 			cmbCliente.setFocus(true);
 			cmbCliente.setErrorMessage(validaciones.getMensaje_validacion_12());
 			return;
 		}
 		if (bdxTicketInterno.getValue() == null) {
+			tInformacionGeneral.setSelected(true);
 			bdxTicketInterno.setFocus(true);
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
 		}
 		if (bdxTicketInterno.getText().trim().length() <= 0) {
+			tInformacionGeneral.setSelected(true);
 			bdxTicketInterno.setFocus(true);
 			bdxTicketInterno.setErrorMessage(validaciones.getMensaje_validacion_13());
 			return;
@@ -958,6 +1088,7 @@ public class modificar extends SelectorComposer<Component> {
 		 * return; }
 		 */
 		if (cmbTipoServicio.getSelectedItem() == null) {
+			tInformacionGeneral.setSelected(true);
 			cmbTipoServicio.setFocus(true);
 			cmbTipoServicio.setErrorMessage(validaciones.getMensaje_validacion_14());
 			return;
@@ -991,13 +1122,23 @@ public class modificar extends SelectorComposer<Component> {
 				return;
 			}
 		}
+		if (listaClasificacion.size() > 0) {
+			if (cmbClasificacion.getSelectedItem() == null) {
+				tInformacionGeneral.setSelected(true);
+				cmbClasificacion.setFocus(true);
+				cmbClasificacion.setErrorMessage(validaciones.getMensaje_validacion_38());
+				return;
+			}
+		}
 		if (cmbTipoTarea.getSelectedItem() == null) {
+			tInformacionGeneral.setSelected(true);
 			cmbTipoTarea.setFocus(true);
 			cmbTipoTarea.setErrorMessage(validaciones.getMensaje_validacion_15());
 			return;
 		}
 		if (validarSiTareaExiste() == true && (Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()) == 1
 				|| Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()) == 5)) {
+			tInformacionGeneral.setSelected(true);
 			cmbTipoTarea.setFocus(true);
 			Messagebox.show(
 					informativos.getMensaje_informativo_37().replace("-?", cmbTipoTarea.getSelectedItem().getLabel())
@@ -1014,16 +1155,19 @@ public class modificar extends SelectorComposer<Component> {
 			return;
 		}
 		if (txtDescripcion.getText().length() <= 0) {
+			tInformacionGeneral.setSelected(true);
 			txtDescripcion.setFocus(true);
 			txtDescripcion.setErrorMessage(validaciones.getMensaje_validacion_2());
 			return;
 		}
 		if (dtxFechaInicio.getValue() == null) {
+			tInformacionGeneral.setSelected(true);
 			dtxFechaInicio.setFocus(true);
 			dtxFechaInicio.setErrorMessage(validaciones.getMensaje_validacion_4());
 			return;
 		}
 		if (dtxFechaFin.getValue() == null) {
+			tInformacionGeneral.setSelected(true);
 			dtxFechaFin.setFocus(true);
 			dtxFechaFin.setErrorMessage(validaciones.getMensaje_validacion_4());
 			return;
@@ -1035,6 +1179,7 @@ public class modificar extends SelectorComposer<Component> {
 				dtxFechaFin.getValue().getDate(), dtxFechaFin.getValue().getHours(),
 				dtxFechaFin.getValue().getMinutes(), 0);
 		if (d2.before(d1)) {
+			tInformacionGeneral.setSelected(true);
 			dtxFechaInicio.setFocus(true);
 			dtxFechaInicio.setErrorMessage(validaciones.getMensaje_validacion_10());
 			return;
@@ -1047,6 +1192,7 @@ public class modificar extends SelectorComposer<Component> {
 			}
 		}
 		if (cmbTurno.getSelectedItem() == null) {
+			tInformacionGeneral.setSelected(true);
 			cmbTurno.setFocus(true);
 			cmbTurno.setErrorMessage(validaciones.getMensaje_validacion_16());
 			return;
@@ -1074,6 +1220,22 @@ public class modificar extends SelectorComposer<Component> {
 			cmbCumplimiento.setErrorMessage(validaciones.getMensaje_validacion_18());
 			return;
 		}
+		if (Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()) == 5) {
+			if (cmbCumplimientoSLA.getSelectedItem() == null) {
+				tCumplimientoSLA.setSelected(true);
+				cmbCumplimientoSLA.setFocus(true);
+				cmbCumplimientoSLA.setErrorMessage(informativos.getMensaje_informativo_114());
+				return;
+			}
+			if (cmbCumplimientoSLA.getSelectedItem().getValue().toString().equals("NO")) {
+				if (txtComentarioIncumplimientoSLA.getText().length() <= 0) {
+					tCumplimientoSLA.setSelected(true);
+					txtComentarioIncumplimientoSLA.setErrorMessage(informativos.getMensaje_informativo_115());
+					txtComentarioIncumplimientoSLA.setFocus(true);
+					return;
+				}
+			}
+		}
 		if (validarSiUsuarioEsRevisor() == true
 				&& cmbCumplimiento.getSelectedItem().getValue().toString().equals("I")) {
 			if (txtObservacion.getText().length() <= 0) {
@@ -1097,6 +1259,12 @@ public class modificar extends SelectorComposer<Component> {
 							bitacora.setId_turno(Long.valueOf(cmbTurno.getSelectedItem().getValue().toString()));
 							bitacora.setId_tipo_servicio(
 									Long.valueOf(cmbTipoServicio.getSelectedItem().getValue().toString()));
+							if (listaClasificacion.size() > 0) {
+								bitacora.setId_tipo_clasificacion(
+										Long.valueOf(cmbClasificacion.getSelectedItem().getValue().toString()));
+							} else {
+								bitacora.setId_tipo_clasificacion(0);
+							}
 							bitacora.setId_tipo_tarea(
 									Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()));
 							if (lbxSolicitantes.getSelectedItem() != null) {
@@ -1105,11 +1273,24 @@ public class modificar extends SelectorComposer<Component> {
 								bitacora.setId_solicitante(listaSolicitante.get(indice).getId_solicitante());
 							}
 							bitacora.setDescripcion(txtDescripcion.getText());
+							bitacora.setArea(bdxArea.getText().toString());
+							bitacora.setRack(bdxRack.getText().toString());
 							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
 							bitacora.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaFin.getValue()));
 							bitacora.setId_estado_bitacora(
 									Long.valueOf(cmbEstado.getSelectedItem().getValue().toString()));
 							bitacora.setCumplimiento(cmbCumplimiento.getSelectedItem().getValue().toString());
+							if (cmbCumplimientoSLA.getSelectedItem() == null) {
+								bitacora.setCumplimientoSLA(null);
+								bitacora.setComentarioCumplimientoSLA(null);
+							} else {
+								bitacora.setCumplimientoSLA(cmbCumplimientoSLA.getSelectedItem().getValue().toString());
+								if (cmbCumplimientoSLA.getSelectedItem().getValue().toString().equals("NO")) {
+									bitacora.setComentarioCumplimientoSLA(txtComentarioIncumplimientoSLA.getText());
+								} else {
+									bitacora.setComentarioCumplimientoSLA(null);
+								}
+							}
 							bitacora.setId_localidad(id_dc);
 							bitacora.setEst_bitacora("AE");
 							if (validarSiUsuarioEsRevisor() == true
@@ -1167,7 +1348,6 @@ public class modificar extends SelectorComposer<Component> {
 								Messagebox.show(informativos.getMensaje_informativo_20(),
 										informativos.getMensaje_informativo_24(), Messagebox.OK,
 										Messagebox.EXCLAMATION);
-								Events.postEvent(new Event("onClose", zModificar));
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(), informativos.getMensaje_informativo_24(),
 										Messagebox.OK, Messagebox.EXCLAMATION);
@@ -1310,6 +1490,92 @@ public class modificar extends SelectorComposer<Component> {
 			}
 		}
 		return existe_primero_apertura;
+	}
+
+	@Listen("onClick=#bdxArea")
+	public void onClick$bdxArea() throws Throwable {
+		if (ingresa_a_area_rack == false) {
+			ingresa_a_area_rack = true;
+			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
+			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
+			if (window instanceof Window) {
+				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+						ingresa_a_area_rack = false;
+						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
+								.getAttribute("lista_area");
+						setearAreas(listaTipoUbicacion);
+					}
+				});
+			}
+			window.setParent(winList);
+		}
+	}
+
+	@Listen("onClick=#bdxRack")
+	public void onClick$bdxRack() throws Throwable {
+		long id_cliente = 0;
+		if (cmbCliente.getSelectedItem() == null) {
+			cmbCliente.setErrorMessage(validaciones.getMensaje_validacion_12());
+			ingresa_a_area_rack = false;
+			return;
+		}
+		id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
+		if (ingresa_a_area_rack == false) {
+			ingresa_a_area_rack = true;
+			Sessions.getCurrent().setAttribute("cliente", id_cliente);
+			Sessions.getCurrent().setAttribute("lista_rack", listaRack);
+			window = (Window) Executions.createComponents("/emergentes/rack.zul", null, null);
+			if (window instanceof Window) {
+				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+						ingresa_a_area_rack = false;
+						listaRack = (List<modelo_rack>) Sessions.getCurrent().getAttribute("lista_rack");
+						setearRacks(listaRack);
+					}
+				});
+			}
+			window.setParent(winList);
+		}
+	}
+
+	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
+		String tipo_ubicacion = "";
+		if (listaTipoUbicacion.size() > 0) {
+			for (int i = 0; i < listaTipoUbicacion.size(); i++) {
+				if (i == 0) {
+					tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+				} else {
+					tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+				}
+			}
+		} else {
+			tipo_ubicacion = "";
+		}
+
+		bdxArea.setText(tipo_ubicacion);
+		bdxArea.setTooltiptext(tipo_ubicacion);
+	}
+
+	public void setearRacks(List<modelo_rack> listaRack) {
+		String rack = "";
+		if (listaRack.size() > 0) {
+			for (int i = 0; i < listaRack.size(); i++) {
+				if (i == 0) {
+					rack = listaRack.get(i).getCoord_rack();
+				} else {
+					rack = rack + ", " + listaRack.get(i).getCoord_rack();
+				}
+			}
+		} else {
+			rack = "";
+		}
+		bdxRack.setText(rack);
+		bdxRack.setTooltiptext(rack);
 	}
 
 }

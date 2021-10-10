@@ -12,16 +12,16 @@
 						<treeitem>
 							<treerow>
 								<treecell
-									image="/img/botones/ButtonBitacore4.png" label=" - Log de eventos"
-									class="log-trcell">
+									image="/img/botones/ButtonBitacore4.png"
+									label=" - Log de eventos" class="log-trcell">
 								</treecell>
 							</treerow>
 							<treechildren>
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonSearch3.png"
-											label=" - Consultas" id="tcOpcion1"
+											image="/img/botones/ButtonSearch3.png" label=" - Consultas"
+											id="tcOpcion1"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -38,8 +38,8 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonReport3.png" label=" - Reporte log de eventos"
-											id="tcReporte1"
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte log de eventos" id="tcReporte1"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -47,8 +47,17 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonReport3.png" label=" - Reporte log de eventos detallado"
-											id="tcReporte3"
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte log de eventos detallado" id="tcReporte3"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte FO-PV-07" id="tcReporte4"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -66,8 +75,8 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonSearch3.png"
-											label=" - Consultas" id="tcOpcion3"
+											image="/img/botones/ButtonSearch3.png" label=" - Consultas"
+											id="tcOpcion3"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -75,8 +84,8 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonNew3.png" label=" - Nueva actividad"
-											id="tcOpcion4"
+											image="/img/botones/ButtonNew3.png"
+											label=" - Nueva actividad" id="tcOpcion4"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -84,8 +93,8 @@
 								<treeitem>
 									<treerow>
 										<treecell
-											image="/img/botones/ButtonReport3.png" label=" - Reporte actividades programadas"
-											id="tcReporte2"
+											image="/img/botones/ButtonReport3.png"
+											label=" - Reporte actividades programadas" id="tcReporte2"
 											style="font-style: normal !important; font-weight: normal;">
 										</treecell>
 									</treerow>
@@ -96,11 +105,10 @@
 				</tree>
 			</west>
 			<center>
-				<tabbox vflex="max" style="height: calc(100%);"
-					width="100%" visible="true" id="tTab">
+				<tabbox height="100%" width="100%" visible="true"
+					id="tTab">
 					<tabs></tabs>
-					<tabpanels vflex="max" style="height: calc(100%);"
-						width="100%" id="tPanel">
+					<tabpanels height="100%" width="100%" id="tPanel">
 					</tabpanels>
 				</tabbox>
 			</center>

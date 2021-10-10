@@ -36,6 +36,11 @@ public class Validaciones {
 	private String mensaje_validacion_32 = "Seleccione el tipo de solicitud.";
 	private String mensaje_validacion_33 = "Seleccione un item.";
 	private String mensaje_validacion_34 = "Añada un proveedor a la lista.";
+	private String mensaje_validacion_35 = "Añada un item a la lista.";
+	private String mensaje_validacion_36 = "Ingrese el numero de tarjeta.";
+	private String mensaje_validacion_37 = "El numero de tarjeta no puede ser asignado al cliente seleccionado.";
+	private String mensaje_validacion_38 = "Seleccione un item de la lista.";
+	private String mensaje_validacion_39 = "La fecha de fin debe ser diferente a la fecha de inicio.";
 
 	public String getMensaje_validacion_1() {
 		return mensaje_validacion_1;
@@ -173,4 +178,24 @@ public class Validaciones {
 		return mensaje_validacion_34;
 	}
 
+	public String getMensaje_validacion_35() {
+		return mensaje_validacion_35;
+	}
+
+	public String getMensaje_validacion_36() {
+		return mensaje_validacion_36;
+	}
+
+	public String getMensaje_validacion_37() {
+		return mensaje_validacion_37;
+	}
+
+	public String getMensaje_validacion_38() {
+		return mensaje_validacion_38;
+	}
+	
+	public String getMensaje_validacion_39() {
+		return mensaje_validacion_39;
+	}
+	
 }

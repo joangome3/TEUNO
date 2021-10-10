@@ -33,7 +33,7 @@
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="150px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;" sclass="demo-search-inp">
 											</textbox>
 											<space width="5px"></space>
 											<combobox width="180px"
@@ -130,7 +130,7 @@
 					style="text-align: center !important;">
 				</listheader>
 				<listheader label="DESCRIPCION" align="center"
-					style="text-align: center !important;" width="200px">
+					style="text-align: center !important;" width="500px">
 				</listheader>
 				<listheader label="FECHA SOLICITUD" align="center"
 					style="text-align: center !important;">
@@ -165,8 +165,12 @@
 				<listcell label="@{lista.mostrarFechaRespuesta}" />
 				<listcell label="@{lista.mostrarFechaInicio}" />
 				<listcell label="@{lista.mostrarFechaFin}" />
-				<listcell label="@{lista.getArea}" />
-				<listcell label="@{lista.getRack}" />
+				<listcell label="@{lista.mostrarArea}"
+					image="@{lista.mostrarImagenArea}"
+					style="@{lista.estiloImagenArea}" />
+				<listcell label="@{lista.mostrarRack}"
+					image="@{lista.mostrarImagenRack}"
+					style="@{lista.estiloImagenRack}" />
 			</listitem>
 		</listbox>
 	</div>
@@ -174,14 +178,14 @@
 		<menuitem id="mModificar" iconSclass="z-icon-edit"
 			label=" - Modificar"
 			tooltiptext="Permite modificar la tarea que se encuentra seleccionada, solo se permite modificar una tarea a la vez." />
-		<menuseparator />
+		<menuseparator visible="false"/>
 		<menuitem id="mRegistrar" iconSclass="z-icon-times"
 			label=" - Registrar permanencia"
-			tooltiptext="Permite registrar la permanencia del personal asignado a la solicitud." />
-		<menuseparator />
+			tooltiptext="Permite registrar la permanencia del personal asignado a la solicitud." visible="false"/>
+		<menuseparator visible="false"/>
 		<menuitem id="mCerrar" iconSclass="z-icon-code"
 			label=" - Cerrar tarea"
-			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." />
+			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." visible="false"/>
 	</menupopup>
 	<popup id="cons" width="300px">
 		<html>

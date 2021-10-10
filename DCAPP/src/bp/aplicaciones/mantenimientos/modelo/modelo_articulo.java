@@ -132,6 +132,56 @@ public class modelo_articulo {
 	}
 
 	/**
+	 * @param id_articulo
+	 * @param cod_articulo
+	 * @param des_articulo
+	 * @param nom_empresa
+	 * @param id_categoria
+	 * @param nom_categoria
+	 * @param id_ubicacion
+	 * @param nom_ubicacion
+	 * @param sto_articulo
+	 * @param id_localidad
+	 * @param nom_localidad
+	 * @param marca
+	 * @param modelo
+	 * @param serie
+	 * @param codig_activo
+	 * @param est_articulo
+	 * @param usu_ingresa
+	 * @param fec_ingresa
+	 * @param usu_modifica
+	 * @param fec_modifica
+	 */
+	public modelo_articulo(long id_articulo, String cod_articulo, String des_articulo, String nom_empresa,
+			long id_categoria, String nom_categoria, long id_ubicacion, String nom_ubicacion, int sto_articulo,
+			long id_localidad, String nom_localidad, String marca, String modelo, String serie, String codig_activo,
+			String est_articulo, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
+			Timestamp fec_modifica) {
+		super();
+		this.id_articulo = id_articulo;
+		this.cod_articulo = cod_articulo;
+		this.des_articulo = des_articulo;
+		this.nom_empresa = nom_empresa;
+		this.id_categoria = id_categoria;
+		this.nom_categoria = nom_categoria;
+		this.id_ubicacion = id_ubicacion;
+		this.nom_ubicacion = nom_ubicacion;
+		this.sto_articulo = sto_articulo;
+		this.id_localidad = id_localidad;
+		this.nom_localidad = nom_localidad;
+		this.marca = marca;
+		this.modelo = modelo;
+		this.serie = serie;
+		this.codig_activo = codig_activo;
+		this.est_articulo = est_articulo;
+		this.usu_ingresa = usu_ingresa;
+		this.fec_ingresa = fec_ingresa;
+		this.usu_modifica = usu_modifica;
+		this.fec_modifica = fec_modifica;
+	}
+
+	/**
 	 * @return the nom_empresa
 	 */
 	public String getNom_empresa() {

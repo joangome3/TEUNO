@@ -700,7 +700,7 @@ public class consultar_ticket extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_tarea = false;
 		List<modelo_bitacora> listatareas = new ArrayList<modelo_bitacora>();
-		listatareas = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 4, 0, "", "", id_dc, "", "", 0, "", 0);
+		listatareas = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 4, 0, "", "", id_dc, "", "", 0, 0, "", 0);
 		if (listatareas.size() > 0) {
 			existe_tarea = true;
 		} else {
@@ -728,6 +728,7 @@ public class consultar_ticket extends SelectorComposer<Component> {
 				tarea_proveedor.setTicket_externo(listaTareasProgramadas.get(i).getTicket_externo());
 				tarea_proveedor.setId_cliente(listaTareasProgramadas.get(i).getId_cliente());
 				tarea_proveedor.setId_tipo_servicio(listaTareasProgramadas.get(i).getId_tipo_servicio());
+				tarea_proveedor.setId_tipo_clasificacion(listaTareasProgramadas.get(i).getId_tipo_clasificacion());
 				tarea_proveedor.setId_tipo_tarea(listaTareasProgramadas.get(i).getId_tipo_tarea());
 				tarea_proveedor.setDescripcion(listaTareasProgramadas.get(i).getDescripcion());
 				tarea_proveedor.setId_solicitante(listaTareasProgramadas.get(i).getId_solicitante());

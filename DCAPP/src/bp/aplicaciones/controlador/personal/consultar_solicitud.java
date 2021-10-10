@@ -405,7 +405,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_tarea = false;
 		List<modelo_bitacora> listatareas = new ArrayList<modelo_bitacora>();
-		listatareas = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 4, 0, "", "", id_dc, "", "", 0, "", 0);
+		listatareas = consultasABaseDeDatos.cargarBitacoras(ticket_externo, 4, 0, "", "", id_dc, "", "", 0, 0, "", 0);
 		if (listatareas.size() > 0) {
 			existe_tarea = true;
 		} else {
@@ -421,7 +421,6 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		}
 		int indice = lbxSolicitudesPersonal.getSelectedIndex();
 		consultarSolicitudesPersonal();
-		;
 		int tamanio_lista = lbxSolicitudesPersonal.getItemCount();
 		if (indice >= tamanio_lista) {
 			return;

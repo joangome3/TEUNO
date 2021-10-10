@@ -163,49 +163,7 @@
 												<bandbox
 													id="bdxSolicitantes" mold="rounded" autodrop="true"
 													width="135px" readonly="true"
-													style="font-weight: bold; color:black !important;">
-													<bandpopup
-														width="45%">
-														<panel
-															title="">
-															<panelchildren>
-																<textbox
-																	width="280px" id="txtBuscarSolicitante"
-																	placeholder="Ingrese palabra clave"
-																	tooltiptext="Presione enter para realizar la búsqueda"
-																	style="font-style: italic;">
-																</textbox>
-																<image
-																	src="/img/botones/ButtonPopup.png" tooltip="con"
-																	style="cursor: help; width: 12px; height: 12px;" />
-																<listbox
-																	mold="paging" pageSize="5" id="lbxSolicitantes"
-																	model="@{zNuevo$nueva_solicitud.obtenerSolicitantes}"
-																	sizedByContent="false" width="100%">
-																	<listhead
-																		sizable="false" style="overflow: scroll;">
-																		<listheader
-																			label="DOCUMENTO"
-																			style="text-align: center !important;" />
-																		<listheader
-																			label="NOMBRE" />
-																		<listheader
-																			label="EMPRESA" />
-																	</listhead>
-																	<listitem
-																		self="@{each=lista}">
-																		<listcell
-																			label="@{lista.getNum_documento}"
-																			style="text-align: center !important;" />
-																		<listcell
-																			label="@{lista.toStringSolicitante}" />
-																		<listcell
-																			label="@{lista.getNom_empresa}" />
-																	</listitem>
-																</listbox>
-															</panelchildren>
-														</panel>
-													</bandpopup>
+													style="font-weight: bold; color:black !important;" popup="pSolicitante">
 												</bandbox>
 												<space width="25px">
 												</space>
@@ -252,7 +210,7 @@
 									</div>
 								</cell>
 								<space></space>
-								<cell colspan="1">
+								<cell colspan="1" visible="false">
 									<div align="center" visible="true">
 										<space width="20px"></space>
 										<label value="Estado:"
@@ -321,7 +279,7 @@
 								<cell colspan="1">
 									<div align="center">
 										<space width="25px"></space>
-										<label value="* Area:"
+										<label value="Area:"
 											class="z-label-1" style="font-style: normal;" />
 										<vlayout>
 											<hlayout>
@@ -335,7 +293,7 @@
 								<cell colspan="1">
 									<div align="center">
 										<space width="25px"></space>
-										<label value="* Rack:"
+										<label value="Rack:"
 											class="z-label-1" style="font-style: normal;" />
 										<vlayout>
 											<hlayout>
@@ -404,52 +362,7 @@
 																<bandbox
 																	id="bdxProveedores" mold="rounded" autodrop="true"
 																	width="350px" readonly="true"
-																	style="font-weight: bold; color:black !important;">
-																	<bandpopup
-																		width="45%">
-																		<panel
-																			title="">
-																			<panelchildren>
-																				<space
-																					width="12px">
-																				</space>
-																				<textbox
-																					width="280px" id="txtBuscarProveedor"
-																					placeholder="Ingrese palabra clave"
-																					tooltiptext="Presione enter para realizar la búsqueda"
-																					style="font-style: italic;">
-																				</textbox>
-																				<image
-																					src="/img/botones/ButtonPopup.png" tooltip="con"
-																					style="cursor: help; width: 12px; height: 12px;" />
-																				<listbox
-																					mold="paging" pageSize="5" id="lbxProveedores1"
-																					model="@{zNuevo$nueva_solicitud.obtenerProveedores}"
-																					sizedByContent="false" width="100%">
-																					<listhead
-																						sizable="false" style="overflow: scroll;">
-																						<listheader
-																							label="DOCUMENTO"
-																							style="text-align: center !important;" />
-																						<listheader
-																							label="NOMBRE" />
-																						<listheader
-																							label="EMPRESA" />
-																					</listhead>
-																					<listitem
-																						self="@{each=lista}">
-																						<listcell
-																							label="@{lista.getNum_documento}"
-																							style="text-align: center !important;" />
-																						<listcell
-																							label="@{lista.toStringSolicitante}" />
-																						<listcell
-																							label="@{lista.getNom_empresa}" />
-																					</listitem>
-																				</listbox>
-																			</panelchildren>
-																		</panel>
-																	</bandpopup>
+																	style="font-weight: bold; color:black !important;" popup="pProveedor">
 																</bandbox>
 															</hlayout>
 														</vlayout>
@@ -546,6 +459,67 @@
 			</borderlayout>
 		</div>
 		
+		<popup id="pSolicitante" width="700px">
+			<space width="12px"></space>
+			<textbox width="280px" id="txtBuscarSolicitante"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 12px; height: 12px;" />
+			<listbox mold="paging" pageSize="5" id="lbxSolicitantes"
+				model="@{zNuevo$nueva_solicitud.obtenerSolicitantes}"
+				sizedByContent="false" width="100%">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="DOCUMENTO"
+						style="text-align: center !important;" />
+					<listheader label="NOMBRE" />
+					<listheader label="EMPRESA" />
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell label="@{lista.getNum_documento}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.toStringSolicitante}" />
+					<listcell label="@{lista.getNom_empresa}" />
+				</listitem>
+			</listbox>
+		</popup>
+		
+		<popup id="pProveedor" width="750px">
+			<space width="12px"></space>
+			<combobox width="160px" id="cmbEmpresa"
+				model="@{zNuevo$nueva_solicitud.obtenerEmpresas}" readonly="false"
+				disabled="false">
+				<comboitem self="@{each=lista}"
+					label="@{lista.getNom_empresa}" value="@{lista.getId_empresa}">
+				</comboitem>
+			</combobox>
+			<textbox width="280px" id="txtBuscarProveedor"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 12px; height: 12px;" />
+			<listbox mold="paging" pageSize="15" id="lbxProveedores1"
+				model="@{zNuevo$nueva_solicitud.obtenerProveedores}"
+				sizedByContent="false" width="100%">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="DOCUMENTO"
+						style="text-align: center !important;" />
+					<listheader label="NOMBRE" />
+					<listheader label="EMPRESA" />
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell label="@{lista.getNum_documento}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.toStringSolicitante}" />
+					<listcell label="@{lista.getNom_empresa}" />
+				</listitem>
+			</listbox>
+		</popup>
+
 		<popup id="cli" width="300px">
 			<html>
 

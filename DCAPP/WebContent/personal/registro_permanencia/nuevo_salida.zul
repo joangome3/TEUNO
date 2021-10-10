@@ -1,0 +1,352 @@
+<?page title="Registrar salida" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.personal.registrar_salida"
+		position="center, center" sizable="false" width="80%" height="80%"
+		maximizable="false" minimizable="false"
+		title=".:: Registrar salida ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+				<button id="btnLimpiar"
+					image="/img/botones/ButtonClean1.png" tooltiptext="Limpiar campos"
+					autodisable="self" visible="false" />
+			</toolbar>
+			<separator></separator>
+			<borderlayout height="99%" width="99%">
+				<center style="overflow: scroll;">
+					<vlayout vflex="1">
+						<hlayout vflex="1" style="overflow: scroll;">
+							<grid>
+								<custom-attributes
+									org.zkoss.zul.nativebar="false" />
+								<columns>
+									<column width="50%"></column>
+									<column width="50%"></column>
+								</columns>
+								<rows>
+									<row visible="false">
+										<cell colspan="2">
+											<div align="right">
+												<space width="15px"></space>
+												<combobox id="cmbEstado"
+													width="100px" readonly="true"
+													tooltiptext="¿La solicitud de personal se encuentra vigente?"
+													disabled="true">
+													<comboitem
+														value="SI" label=" SI"
+														iconSclass="z-icon-check-circle-o">
+													</comboitem>
+													<comboitem
+														value="NO" label=" NO"
+														iconSclass="z-icon-times-circle-o">
+													</comboitem>
+												</combobox>
+											</div>
+										</cell>
+									</row>
+									<row visible="true">
+										<cell colspan="2"
+											align="center">
+											<space width="15px"></space>
+											<textbox id="txtBuscar"
+												width="98%" placeholder="Ingrese palabra clave"
+												style="font-style: italic;" sclass="demo-search-inp"
+												readonly="false" disabled="false">
+											</textbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="2"
+											align="center">
+											<listbox mold="paging"
+												pageSize="5" id="lbxProveedores"
+												sizedByContent="false" width="100%" multiple="true"
+												checkmark="true"
+												model="@{zModificar$registrar_salida.obtenerRegistros}" vflex="1">
+												<custom-attributes
+													org.zkoss.zul.nativebar="false" />
+												<listhead
+													sizable="false" style="overflow: scroll;">
+													<listheader
+														label="ID" style="text-align: center !important;">
+													</listheader>
+													<listheader
+														label="TICKET" style="text-align: center !important;">
+													</listheader>
+													<listheader
+														label="EMPRESA" style="text-align: center !important;">
+													</listheader>
+													<listheader
+														label="DOCUMENTO"
+														style="text-align: center !important;">
+													</listheader>
+													<listheader
+														label="NOMBRE" style="text-align: center !important;">
+													</listheader>
+													<listheader
+														label="MOTIVO DE INGRESO"
+														style="text-align: center !important;" width="500px">
+													</listheader>
+													<listheader
+														label="FECHA INICIO"
+														style="text-align: center !important;">
+													</listheader>
+													<listheader
+														label="FECHA FIN"
+														style="text-align: center !important;">
+													</listheader>
+												</listhead>
+												<listitem
+													self="@{each=lista}">
+													<listcell
+														label="@{lista.getId_solicitud}"
+														style="text-align: center !important;" />
+													<listcell
+														label="@{lista.getTicket}"
+														style="text-align: center !important;" />
+													<listcell
+														label="@{lista.getNom_empresa}" />
+													<listcell
+														label="@{lista.getNum_documento}"
+														style="text-align: center !important;" />
+													<listcell
+														label="@{lista.getNom_proveedor}" />
+													<listcell
+														label="@{lista.getDescripcion}" />
+													<listcell
+														label="@{lista.mostrarFechaHoraInicio}"
+														style="text-align: center !important;" />
+													<listcell
+														label="@{lista.mostrarFechaHoraFin}"
+														style="text-align: center !important;" />
+												</listitem>
+											</listbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="2">
+											<groupbox>
+												<caption
+													label="Tarjeta de acceso">
+												</caption>
+
+												<grid>
+													<custom-attributes
+														org.zkoss.zul.nativebar="false" />
+													<columns>
+														<column></column>
+														<column></column>
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="1">
+																<div
+																	align="center">
+																	<space
+																		width="50px">
+																	</space>
+																	<label
+																		value="# Tarjeta BP:" class="z-label-1" />
+																	<vlayout>
+																		<hlayout>
+																			<checkbox id="chkTarjetaBP" checked="true" disabled="true"></checkbox>
+																			<space
+																				width="15px">
+																			</space>
+																			<textbox
+																				id="txtTarjetaBP"
+																				style="font-style: normal !important; text-align: center;"
+																				width="120px" disabled="true">
+																			</textbox>
+																		</hlayout>
+																	</vlayout>
+																</div>
+															</cell>
+															<cell
+																colspan="1">
+																<div
+																	align="center">
+																	<space
+																		width="50px">
+																	</space>
+																	<label
+																		value="# Tarjeta DN:" class="z-label-1" />
+																	<vlayout>
+																		<hlayout>
+																			<checkbox id="chkTarjetaDN" checked="true" disabled="true"></checkbox>
+																			<space
+																				width="15px">
+																			</space>
+																			<textbox
+																				id="txtTarjetaDN"
+																				style="font-style: normal !important; text-align: center;"
+																				width="120px" disabled="true">
+																			</textbox>
+																		</hlayout>
+																	</vlayout>
+																</div>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="2">
+											<groupbox>
+												<caption
+													label="Data Center">
+												</caption>
+												<grid>
+													<columns>
+														<column></column>
+														<column></column>
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="1">
+																<div
+																	align="center">
+																	<space
+																		width="55px">
+																	</space>
+																	<label
+																		value="* Fecha ingreso:" class="z-label-1" />
+																	<vlayout>
+																		<hlayout>
+																			<space
+																				width="10px">
+																			</space>
+																			<datebox
+																				id="dtxFechaIngresoDC" format="dd/MM/yyyy HH:mm"
+																				width="155px" disabled="true">
+																			</datebox>
+																		</hlayout>
+																	</vlayout>
+																</div>
+															</cell>
+															<cell
+																colspan="1">
+																<div
+																	align="center">
+																	<space
+																		width="55px">
+																	</space>
+																	<label
+																		value="Fecha salida:" class="z-label-1" />
+																	<vlayout>
+																		<hlayout>
+																			<space
+																				width="10px">
+																			</space>
+																			<datebox
+																				id="dtxFechaSalidaDC" format="dd/MM/yyyy HH:mm"
+																				width="155px" disabled="false">
+																			</datebox>
+																		</hlayout>
+																	</vlayout>
+																</div>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="2">
+											<groupbox>
+												<caption
+													label="Sala Util">
+												</caption>
+
+												<grid>
+													<columns>
+														<column></column>
+														<column></column>
+													</columns>
+													<rows>
+														<row>
+															<cell
+																colspan="1">
+																<div
+																	align="center">
+																	<space
+																		width="55px">
+																	</space>
+																	<label
+																		value="Fecha ingreso:" class="z-label-1" />
+																	<vlayout>
+																		<hlayout>
+																			<space
+																				width="10px">
+																			</space>
+																			<datebox
+																				id="dtxFechaIngresoSU" format="dd/MM/yyyy HH:mm"
+																				width="155px" disabled="true">
+																			</datebox>
+																		</hlayout>
+																	</vlayout>
+																</div>
+															</cell>
+															<cell
+																colspan="1">
+																<div
+																	align="center">
+																	<space
+																		width="55px">
+																	</space>
+																	<label
+																		value="Fecha salida:" class="z-label-1" />
+																	<vlayout>
+																		<hlayout>
+																			<space
+																				width="10px">
+																			</space>
+																			<datebox
+																				id="dtxFechaSalidaSU" format="dd/MM/yyyy HH:mm"
+																				width="155px" disabled="false">
+																			</datebox>
+																		</hlayout>
+																	</vlayout>
+																</div>
+															</cell>
+														</row>
+													</rows>
+												</grid>
+											</groupbox>
+										</cell>
+									</row>
+									<row>
+										<cell colspan="2"></cell>
+									</row>
+									<row>
+										<cell colspan="2"></cell>
+									</row>
+								</rows>
+							</grid>
+						</hlayout>
+					</vlayout>
+				</center>
+			</borderlayout>
+		</div>
+		<zscript>
+	<![CDATA[
+	lbxProveedores.pagingChild.mold = "os".equals(lbxProveedores.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+		<style>.z-listheader-checkable { visibility: hidden; }</style>
+		<script type="text/javascript"
+			src="/js/jquery.maskedinput.min.js" />
+		<script type="text/javascript"
+			src="/js/jquery.watermarkinput.js" />
+	</window>
+</zk>

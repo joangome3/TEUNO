@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte_de_acceso_permanencia" printOrder="Horizontal" pageWidth="1750" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1710" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="0ee78576-d84b-47a1-be7b-a12825845cd2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.exports.xls.font.size.fix.enabled" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.freeze.row" value="3"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.all" value="Data/Footnotes"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="false"/>
+	<property name="net.sf.jasperreports.export.pdf.size.page.to.content" value="true"/>
+	<property name="net.sf.jasperreports.export.pdf.compressed" value="true"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.report.description" value="Reporte de permanencia"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="138"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="856"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DCAPP "/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="p_fechainicio" class="java.util.Date"/>
+	<parameter name="p_fechafin" class="java.util.Date"/>
+	<parameter name="p_localidad" class="java.lang.String"/>
+	<parameter name="fechainicio" class="java.lang.String"/>
+	<parameter name="fechafin" class="java.lang.String"/>
+	<parameter name="localidad" class="java.lang.String"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="p_usuario" class="java.lang.String"/>
+	<parameter name="p_empresa" class="java.lang.String"/>
+	<parameter name="empresa" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 
+       nsp.id_solicitud,
+	   nsp.ticket,
+	   (select se1.nom_empresa from sibod_empresa se1 where se1.id_empresa = nsp.id_cliente limit 1) as nom_emp_cliente,
+	   (select concat(ss2.ape_solicitante, ' ', ss2.nom_solicitante) from sibod_solicitante ss2 where ss2.id_solicitante = ndsp.id_proveedor limit 1) as nom_ape_proveedor,
+	   (select se2.nom_empresa from sibod_empresa se2 where se2.id_empresa = (select ss3.id_empresa from sibod_solicitante ss3 where ss3.id_solicitante = ndsp.id_proveedor limit 1) limit 1) as nom_emp_proveedor,
+	   (select ss4.num_documento from sibod_solicitante ss4 where ss4.id_solicitante = ndsp.id_proveedor limit 1) as num_doc_proveedor,
+	   nsp.fec_inicio,
+	   nsp.fec_fin,
+	   (select concat(ss5.nom_solicitante, ' ', ss5.ape_solicitante) from sibod_solicitante ss5 where ss5.id_solicitante = nsp.id_solicitante limit 1) as nom_ape_solicitante,
+	   concat(nsp.area, ' ', nsp.rack) as rack_area,
+	   (select ntt.nom_tipo_trabajo from nocap_tipo_trabajo ntt where ntt.id_tipo_trabajo = nsp.id_tipo_trabajo limit 1) as nom_tip_trabajo,
+	   nsp.descripcion,
+	   (select nti.nom_tipo_ingreso from nocap_tipo_ingreso nti where nti.id_tipo_ingreso = nsp.id_tipo_ingreso limit 1) as nom_tip_ingreso,
+	   nrp.fec_ingreso,
+	   nrp.fec_salida,
+	   nrp.num_tarjeta_bp,
+	   (select nta.nom_tipo_aprobador from nocap_tipo_aprobador nta where nta.id_tipo_aprobador = nsp.id_tipo_aprobador limit 1) as nom_tip_aprobador
+from 
+  nocap_registro_permanencia nrp, 
+  nocap_solicitud_personal nsp, 
+  nocap_detalle_solicitud_personal ndsp, 
+  sibod_solicitante ss1 
+where 
+  (
+    nrp.id_solicitud = nsp.id_solicitud 
+    and nsp.id_solicitud = ndsp.id_solicitud 
+    and nrp.id_proveedor = ndsp.id_proveedor 
+    and ndsp.id_proveedor = ss1.id_solicitante
+  )
+and nsp.id_localidad =  $P{localidad} 
+and (nsp.id_cliente =  $P{empresa}  or $P{empresa} IS NULL)
+and (CAST(DATE_FORMAT(nrp.fec_ingreso, "%Y-%m-%d %H:%i:%s") AS DATETIME)  between $P{fechainicio}  and  $P{fechafin})
+order by nrp.fec_ingreso ASC]]>
+	</queryString>
+	<field name="id_solicitud" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="id_solicitud"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_solicitud_personal"/>
+	</field>
+	<field name="ticket" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ticket"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_solicitud_personal"/>
+	</field>
+	<field name="nom_emp_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_emp_cliente"/>
+	</field>
+	<field name="nom_ape_proveedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_ape_proveedor"/>
+	</field>
+	<field name="nom_emp_proveedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_emp_proveedor"/>
+	</field>
+	<field name="num_doc_proveedor" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="num_doc_proveedor"/>
+	</field>
+	<field name="fec_inicio" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_inicio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_solicitud_personal"/>
+	</field>
+	<field name="fec_fin" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_fin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_solicitud_personal"/>
+	</field>
+	<field name="nom_ape_solicitante" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_ape_solicitante"/>
+	</field>
+	<field name="rack_area" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="rack_area"/>
+	</field>
+	<field name="nom_tip_trabajo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_tip_trabajo"/>
+	</field>
+	<field name="descripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_solicitud_personal"/>
+	</field>
+	<field name="nom_tip_ingreso" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_tip_ingreso"/>
+	</field>
+	<field name="fec_ingreso" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_ingreso"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_registro_permanencia"/>
+	</field>
+	<field name="fec_salida" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="fec_salida"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_registro_permanencia"/>
+	</field>
+	<field name="num_tarjeta_bp" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="num_tarjeta_bp"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="nocap_registro_permanencia"/>
+	</field>
+	<field name="nom_tip_aprobador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nom_tip_aprobador"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="191" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="64" width="1708" height="24" forecolor="#000000" backcolor="#000000" uuid="8db2d9aa-0689-47ad-bee0-a2d155a1b2ae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="20" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[A.15 - FORMULARIO DE REGISTRO DE ACCESO Y PERMANENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="643" y="167" width="89" height="24" forecolor="#000000" uuid="e6997397-1560-49d0-bf77-d9af0e5fdd26"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Hasta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="643" y="143" width="89" height="24" forecolor="#000000" uuid="760ceb47-29e5-4928-ab8f-ffa83831bfb7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="643" y="95" width="89" height="24" forecolor="#000000" uuid="aa6a4fe9-2658-432d-832d-235c44bc7921"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Localidad:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="747" y="143" width="402" height="24" uuid="384010dc-7b29-46b0-871e-41134d08fa04"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fechainicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="747" y="167" width="402" height="24" uuid="1cab1b26-c2ca-4eb6-8c01-e8f2d350386b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_fechafin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="747" y="95" width="195" height="24" uuid="480c3b02-f6b8-4cc7-8395-f48d764676cb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_localidad}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="true" onErrorType="Blank">
+				<reportElement key="" x="41" y="2" width="59" height="58" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="f0e5bfbd-ead8-4223-97bc-56a9721bbec2"/>
+				<imageExpression><![CDATA[($P{logo})]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="643" y="119" width="89" height="24" forecolor="#000000" uuid="387fd125-ec69-4e90-afb0-cbca5daba07a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="747" y="119" width="195" height="24" uuid="969ab0ed-b4e0-454c-8d11-f86f8cec6717"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{p_empresa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="32" y="2" width="88" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="81a59a2f-cb5b-4213-af58-dc3872a2606c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="701" y="2" width="120" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="963a5dd2-86ae-4969-9839-a00c687d9c2e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="821" y="2" width="285" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="75e84cd8-4d23-4405-8132-f277df6cef39">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[MOTIVO DEL INGRESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="440" y="2" width="261" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="c68f6886-7faf-4f83-b8fe-67c7299022a6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[NOMBRE Y APELLIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1106" y="2" width="150" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="2a5cdd26-80f8-408e-8bca-2e5dbb052515">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No. TARJETA ACCESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="120" y="2" width="142" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="0c0c14de-2c54-43cf-96d9-265fe0ab0372">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[FECHA / HORA INGRESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1256" y="2" width="145" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="ec874a70-eaf7-4580-8b35-4f518cee8ddc">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[FECHA / HORA SALIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="262" y="2" width="178" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="398db5b6-c698-45b6-9333-1672babbb102">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[EMPRESA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1401" y="2" width="145" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="1980b087-388e-4b28-b47d-433821532aac">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[AUTORIZADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1546" y="2" width="145" height="32" forecolor="#FFFFFF" backcolor="#222B35" uuid="5e1e0cd6-8552-4c18-b3f1-7953fbfbdd33">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[TICKET]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<elementGroup>
+				<textField isBlankWhenNull="true">
+					<reportElement x="32" y="0" width="88" height="40" uuid="25a79ea2-e1c7-4ee0-b0bf-d95afc130957">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{id_solicitud}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+			<textField>
+				<reportElement x="701" y="0" width="120" height="40" uuid="65cc1cf9-75ef-4897-b65b-97a30b2dcd16">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_doc_proveedor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="821" y="0" width="285" height="40" uuid="374bcff4-c6e1-4896-8d46-d561559ced16">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="0" width="261" height="40" uuid="57e13da8-98f6-4dbc-a680-72ad07e1e076">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_ape_proveedor}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYY" isBlankWhenNull="true">
+				<reportElement x="1106" y="0" width="150" height="40" uuid="befd395e-69de-4310-8ef1-951f642e97d1">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_tarjeta_bp}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="142" height="40" uuid="eec0f615-5e7d-4428-b790-4f67a0e4cccf">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_ingreso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1256" y="0" width="145" height="40" uuid="c87a12f7-859d-4382-853b-d8a7f22cc8ae">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fec_salida}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="262" y="0" width="178" height="40" uuid="d0b069de-b4b1-4e68-928f-38aa5ac0bde2">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_emp_proveedor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1401" y="0" width="145" height="40" uuid="9711b35c-32fc-4d9c-8fd2-b51e79d8172a">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nom_tip_aprobador}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1546" y="0" width="145" height="40" uuid="cfd5e973-3222-43b4-b382-9168b2cd1b91">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ticket}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
