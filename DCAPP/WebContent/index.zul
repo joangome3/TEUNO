@@ -76,7 +76,7 @@
 	</div>
 	<div visible="true">
 		<textbox id="txtUsuario" disabled="true"
-			class="z-textbox-not-use" />
+			class="z-textbox-not-use" readonly="true" />
 		<textbox type="password" id="txtContrasena"
 			class="z-textbox-not-use" disabled="true" />
 		<timer id="cTimer" delay="0" running="false" repeats="false" />
