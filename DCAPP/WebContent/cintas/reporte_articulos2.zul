@@ -25,50 +25,7 @@
 							<label value="Ubicación:" />
 							<cell colspan="3">
 								<bandbox id="bdxUbicacion"
-									mold="rounded" autodrop="true" width="150px" readonly="true" disabled="true">
-									<bandpopup width="25%">
-										<panel title="">
-											<panelchildren>
-												<space width="15px">
-												</space>
-												<textbox width="280px"
-													id="txtBuscarUbicacion" placeholder="Ingrese palabra clave"
-													tooltiptext="Presione enter para realizar la búsqueda"
-													style="font-style: italic;">
-												</textbox>
-												<image
-													src="/img/botones/ButtonPopup.png" tooltip="con"
-													style="cursor: help; width: 16px; height: 16px;" />
-												<div align="center">
-													<listbox
-														mold="paging" pageSize="10" id="lbxUbicaciones"
-														model="@{zReporte$reporte_articulos2.obtenerUbicaciones}"
-														sizedByContent="false" width="100%">
-														<listhead
-															sizable="false" style="overflow: scroll;">
-															<listheader
-																label="ID" style="text-align: center;" visible="false">
-															</listheader>
-															<listheader
-																label="UBICACIÓN" style="text-align: center;">
-															</listheader>
-														</listhead>
-														<listitem
-															self="@{each=lista}">
-															<listcell
-																label="@{lista.getId_tipo_ubicacion}"
-																style="text-align: center !important;">
-															</listcell>
-															<listcell
-																label="@{lista.getNom_tipo_ubicacion}"
-																style="text-align: center !important;">
-															</listcell>
-														</listitem>
-													</listbox>
-												</div>
-											</panelchildren>
-										</panel>
-									</bandpopup>
+									mold="rounded" autodrop="true" width="150px" readonly="true" disabled="true" popup="pUbicacion">
 								</bandbox>
 								<space width="5px"></space>
 								<checkbox id="chkUbicacion"
@@ -156,6 +113,48 @@
 				<jasperreport id="reporte" height="100%"></jasperreport>
 			</center>
 		</borderlayout>
+
+		<popup width="500px" id="pUbicacion">
+			<panel title="">
+				<panelchildren>
+					<space width="15px"></space>
+					<textbox width="280px" id="txtBuscarUbicacion"
+						placeholder="Ingrese palabra clave"
+						tooltiptext="Presione enter para realizar la búsqueda"
+						style="font-style: italic;">
+					</textbox>
+					<image src="/img/botones/ButtonPopup.png"
+						tooltip="con" style="cursor: help; width: 16px; height: 16px;" />
+					<div align="center">
+						<listbox mold="paging" pageSize="10"
+							id="lbxUbicaciones"
+							model="@{zReporte$reporte_articulos2.obtenerUbicaciones}"
+							sizedByContent="false" width="100%">
+							<listhead sizable="false"
+								style="overflow: scroll;">
+								<listheader label="ID"
+									style="text-align: center;" visible="false">
+								</listheader>
+								<listheader label="UBICACIÓN"
+									style="text-align: center;">
+								</listheader>
+							</listhead>
+							<listitem self="@{each=lista}">
+								<listcell
+									label="@{lista.getId_tipo_ubicacion}"
+									style="text-align: center !important;">
+								</listcell>
+								<listcell
+									label="@{lista.getNom_tipo_ubicacion}"
+									style="text-align: center !important;">
+								</listcell>
+							</listitem>
+						</listbox>
+					</div>
+				</panelchildren>
+			</panel>
+		</popup>
+
 	</div>
 	<popup id="art" width="450px">
 		<html>

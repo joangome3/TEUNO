@@ -114,7 +114,7 @@ public class reporte_articulos2 extends SelectorComposer<Component> {
 	public void cargarUbicaciones(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_tipo_ubicacion dao = new dao_tipo_ubicacion();
 		try {
-			listaUbicacion = dao.obtenerTipoUbicaciones("");
+			listaUbicacion = dao.obtenerTipoUbicaciones("", 0, 1);
 			binder.loadComponent(lbxUbicaciones);
 		} catch (SQLException e) {
 			Messagebox.show("Error al cargar las ubicaciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),

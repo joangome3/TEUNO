@@ -34,8 +34,19 @@
 			<bandbox id="bdxFiltros" popup="pFiltros" width="150px"
 				readonly="true">
 			</bandbox>
-			<button id="btnLimpiar" sclass="btn-danger" label="Limpiar Criterios"
-				autodisable="self" visible="true" disabled="true" />
+			<button id="btnLimpiar" sclass="btn-danger"
+				label="Limpiar Criterios" autodisable="self" visible="true"
+				disabled="true" />
+			<space width="10px"></space>
+			<combobox width="145px" id="cmbEstado" readonly="true"
+				disabled="false" visible="false">
+				<comboitem label="EJECUTADO" value="E"
+					iconSclass="z-icon-check-circle-o">
+				</comboitem>
+				<comboitem label="NO EJECUTADO" value="NE"
+					iconSclass="z-icon-times-circle-o">
+				</comboitem>
+			</combobox>
 		</hlayout>
 		<borderlayout height="97%">
 			<center autoscroll="true">

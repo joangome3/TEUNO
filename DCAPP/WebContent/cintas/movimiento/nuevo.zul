@@ -49,7 +49,7 @@
 											value="M">
 										</comboitem>
 										<comboitem label="REQUERIMIENTO"
-											value="R">
+											value="R" visible="false">
 										</comboitem>
 									</combobox>
 								</cell>
@@ -370,8 +370,26 @@
 			</listbox>
 		</popup>
 		
-		<popup id="pArticulo" width="900px">
+		<popup id="pArticulo" width="75%">
 			<space width="12px"></space>
+			<combobox width="150px" id="cmbTipoUbicacion"
+				model="@{zNuevo$nuevo.obtenerTipoUbicacion}"
+				readonly="false" autocomplete="false" autodrop="false"
+				buttonVisible="true" disabled="false">
+				<comboitem self="@{each=lista}"
+					label="@{lista.getNom_tipo_ubicacion}"
+					value="@{lista.getId_tipo_ubicacion}">
+				</comboitem>
+			</combobox>
+			<combobox width="150px" id="cmbUbicacion"
+				model="@{zNuevo$nuevo.obtenerUbicaciones}"
+				readonly="false" autocomplete="false" autodrop="false"
+				buttonVisible="true" disabled="true">
+				<comboitem self="@{each=lista}"
+					label="@{lista.obtenerNombreUbicacion}"
+					value="@{lista.getId_ubicacion}">
+				</comboitem>
+			</combobox>
 			<textbox width="280px" id="txtBuscarArticulo"
 				placeholder="Ingrese palabra clave"
 				tooltiptext="Presione enter para realizar la búsqueda"
@@ -393,6 +411,14 @@
 						style="text-align: center !important;">
 					</listheader>
 					<listheader label="UBICACIÓN"></listheader>
+					<listheader label="CAPACIDAD"
+						style="text-align: center !important;" />
+					<listheader label="FECHA INICIO RESPALDO"
+						style="text-align: center !important;" />
+					<listheader label="FECHA FIN RESPALDO"
+						style="text-align: center !important;" />
+					<listheader label="TIPO RESPALDO"
+						style="text-align: center !important;"/>
 				</listhead>
 				<listitem self="@{each=lista}">
 					<listcell label="@{lista.getCod_articulo}">
@@ -404,6 +430,19 @@
 					</listcell>
 					<listcell label="@{lista.getNom_ubicacion}">
 					</listcell>
+					<listcell image="@{lista.mostrarImagenCapacidad}"
+						label="@{lista.mostrarCapacidad}"
+						style="text-align: center !important;" />
+					<listcell image="@{lista.mostrarImagenFechaInicio}"
+						label="@{lista.mostrarFechaInicio}"
+						style="text-align: center !important;" />
+					<listcell image="@{lista.mostrarImagenFechaFin}"
+						label="@{lista.mostrarFechaFin}"
+						style="text-align: center !important;" />
+					<listcell
+						image="@{lista.mostrarImagenTipoDeRespaldo}"
+						label="@{lista.mostrarTipoDeRespaldo}"
+						style="@{lista.estiloImagenTipoDeRespaldo}" />
 				</listitem>
 			</listbox>
 		</popup>

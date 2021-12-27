@@ -180,6 +180,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			throws NumberFormatException, ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
 		String criterio = txtBuscar.getText();
+		String estado = "";
 		long id_cliente = 0;
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
@@ -193,9 +194,11 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
+		if (cmbEstado.getSelectedItem() != null) {
+			estado = cmbEstado.getSelectedItem().getValue().toString();
+		}
 		listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio,
-				fecha_fin, fecha_inicio, fecha_fin, id_dc,
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+				fecha_fin, estado, "", id_dc, Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		binder.loadComponent(lbxSolicitudesPersonal);
 	}
 
@@ -383,6 +386,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	public void consultarSolicitudesPersonal() throws ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
 		String criterio = txtBuscar.getText();
+		String estado = "";
 		long id_cliente = 0;
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
@@ -393,7 +397,10 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
-		buscarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio, fecha_fin, "", "", id_dc);
+		if (cmbEstado.getSelectedItem() != null) {
+			estado = cmbEstado.getSelectedItem().getValue().toString();
+		}
+		buscarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio, fecha_fin, estado, "", id_dc);
 	}
 
 	@Listen("onClick=#mCerrar")

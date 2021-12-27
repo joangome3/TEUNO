@@ -164,6 +164,23 @@
 
 		<popup id="pUbicacion" width="800px">
 			<space width="15px"></space>
+			<combobox width="150px" id="cmbEmpresa1"
+				model="@{zConsultar$consultar.obtenerEmpresas1}"
+				readonly="true" autocomplete="false" autodrop="false"
+				buttonVisible="true" disabled="false">
+				<comboitem self="@{each=lista}"
+					label="@{lista.getNom_empresa}" value="@{lista.getId_empresa}">
+				</comboitem>
+			</combobox>
+			<combobox width="150px" id="cmbTipoUbicacion"
+				model="@{zConsultar$consultar.obtenerTipoUbicacion}"
+				readonly="false" autocomplete="false" autodrop="false"
+				buttonVisible="true" disabled="false">
+				<comboitem self="@{each=lista}"
+					label="@{lista.getNom_tipo_ubicacion}"
+					value="@{lista.getId_tipo_ubicacion}">
+				</comboitem>
+			</combobox>
 			<textbox width="280px" id="txtBuscarUbicacion"
 				placeholder="Ingrese palabra clave"
 				tooltiptext="Presione enter para realizar la búsqueda"
@@ -188,11 +205,14 @@
 						</listheader>
 					</listhead>
 					<listitem self="@{each=lista}">
-						<listcell label="@{lista.getNom_empresa}" style="text-align: center !important;" >
+						<listcell label="@{lista.getNom_empresa}"
+							style="text-align: center !important;">
 						</listcell>
-						<listcell label="@{lista.getNom_ubicacion}" style="text-align: center !important;" >
+						<listcell label="@{lista.getNom_ubicacion}"
+							style="text-align: center !important;">
 						</listcell>
-						<listcell label="@{lista.getPos_ubicacion}" style="text-align: center !important;" >
+						<listcell label="@{lista.getPos_ubicacion}"
+							style="text-align: center !important;">
 						</listcell>
 					</listitem>
 				</listbox>

@@ -61,7 +61,7 @@ public class calendario extends SelectorComposer<Component> {
 	@Wire
 	private Textbox txtBuscar;
 	@Wire
-	private Combobox cmbCliente;
+	private Combobox cmbCliente, cmbEstado;
 	@Wire
 	private Datebox dtxFechaInicio, dtxFechaFin;
 	@Wire
@@ -106,6 +106,7 @@ public class calendario extends SelectorComposer<Component> {
 		inicializarListas();
 		cargarInformacion();
 		btnLimpiar.setDisabled(false);
+		cmbEstado.setSelectedIndex(0);
 	}
 
 	public void setearFechaActual() {
@@ -140,13 +141,17 @@ public class calendario extends SelectorComposer<Component> {
 
 	public void cargarInformacion() throws ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
+		String estado = "";
 		if (dtxFechaInicio.getValue() != null) {
 			fecha_inicio = fechas.obtenerFechaFormateada(dtxFechaInicio.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
-		List<CalendarEvent> data = new DemoCalendarData(5, "", 1, 0, id_dc, 0, fecha_inicio, fecha_fin)
+		if (cmbEstado.getSelectedItem() != null) {
+			estado = cmbEstado.getSelectedItem().getValue().toString();
+		}
+		List<CalendarEvent> data = new DemoCalendarData(5, "", 1, 0, id_dc, 0, fecha_inicio, fecha_fin, estado)
 				.getCalendarEvents();
 		calendarioModel = new DemoCalendarModel(data);
 		calendario.setModel(this.calendarioModel);
@@ -232,10 +237,16 @@ public class calendario extends SelectorComposer<Component> {
 		consultarSolicitudesPersonal();
 	}
 
+	@Listen("onChange=#cmbEstado")
+	public void onChange$cmbEstado() throws ClassNotFoundException, FileNotFoundException, IOException {
+		consultarSolicitudesPersonal();
+	}
+	
 	public void consultarSolicitudesPersonal() throws ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
 		String criterio = txtBuscar.getText();
 		long id_cliente = 0;
+		String estado = "";
 		if (cmbCliente.getSelectedItem() != null) {
 			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
 		}
@@ -245,8 +256,11 @@ public class calendario extends SelectorComposer<Component> {
 		if (dtxFechaFin.getValue() != null) {
 			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
 		}
+		if (cmbEstado.getSelectedItem() != null) {
+			estado = cmbEstado.getSelectedItem().getValue().toString();
+		}
 		calendarioModel = new DemoCalendarModel(
-				new DemoCalendarData(5, criterio, 1, id_cliente, id_dc, 0, fecha_inicio, fecha_fin)
+				new DemoCalendarData(5, criterio, 1, id_cliente, id_dc, 0, fecha_inicio, fecha_fin, estado)
 						.getCalendarEvents());
 		calendario.setModel(this.calendarioModel);
 	}

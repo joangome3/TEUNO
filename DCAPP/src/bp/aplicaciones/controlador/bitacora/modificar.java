@@ -127,6 +127,7 @@ public class modificar extends SelectorComposer<Component> {
 	long id_opcion = 3;
 	long id_turno = 0;
 	long id_tarea_proveedor = 0;
+	long tipo_trabajo = 0;
 
 	boolean ingresa_a_relacionar_ticket = false;
 	boolean ingresa_a_area_rack = false;
@@ -1497,6 +1498,7 @@ public class modificar extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
+			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -1506,6 +1508,7 @@ public class modificar extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
+						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 						setearAreas(listaTipoUbicacion);
 					}
 				});

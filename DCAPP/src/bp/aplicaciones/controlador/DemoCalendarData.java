@@ -34,12 +34,12 @@ public class DemoCalendarData {
 	private List<CalendarEvent> calendarEvents = new LinkedList<CalendarEvent>();
 
 	public DemoCalendarData(int opcion, String criterio, int tipo, long id_cliente, long id_localidad, int limite,
-			String fecha_inicio, String fecha_fin) throws ClassNotFoundException, FileNotFoundException, IOException {
+			String fecha_inicio, String fecha_fin, String estado) throws ClassNotFoundException, FileNotFoundException, IOException {
 		if (opcion == 2) { // GESTION DE CONTROL DE CAMBIOS
 			inicializarInformacionControlDeCambio(criterio, tipo, id_cliente, id_localidad, limite);
 		}
 		if (opcion == 5) { // GESTION DE PERSONAL
-			inicializarInformacionPersonal(criterio, tipo, id_cliente, id_localidad, limite, fecha_inicio, fecha_fin);
+			inicializarInformacionPersonal(criterio, tipo, id_cliente, id_localidad, limite, fecha_inicio, fecha_fin, estado);
 		}
 	}
 
@@ -72,9 +72,9 @@ public class DemoCalendarData {
 
 	@SuppressWarnings("deprecation")
 	public void inicializarInformacionPersonal(String criterio, int tipo, long id_cliente, long id_localidad,
-			int limite, String fecha_inicio, String fecha_fin)
+			int limite, String fecha_inicio, String fecha_fin, String estado)
 					throws ClassNotFoundException, FileNotFoundException, IOException {
-		inicializarListasPersonal(criterio, tipo, id_cliente, id_localidad, limite, fecha_inicio, fecha_fin);
+		inicializarListasPersonal(criterio, tipo, id_cliente, id_localidad, limite, fecha_inicio, fecha_fin, estado);
 		Date f_i = null;
 		Date f_f = null;
 		String color1 = "";
@@ -102,9 +102,9 @@ public class DemoCalendarData {
 	}
 
 	public void inicializarListasPersonal(String criterio, int tipo, long id_cliente, long id_localidad, int limite,
-			String fecha_inicio, String fecha_fin) throws ClassNotFoundException, FileNotFoundException, IOException {
+			String fecha_inicio, String fecha_fin, String estado) throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio,
-				fecha_fin, "", "", id_localidad, limite);
+				fecha_fin, estado, "", id_localidad, limite);
 	}
 
 }

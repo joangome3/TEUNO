@@ -13,14 +13,16 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 
 public class dao_tipo_ubicacion {
 
-	public List<modelo_tipo_ubicacion> obtenerTipoUbicaciones(String criterio)
+	public List<modelo_tipo_ubicacion> obtenerTipoUbicaciones(String criterio, long id_tipo_trabajo, int tipo)
 			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
 		List<modelo_tipo_ubicacion> lista_tipo_ubicacions = new ArrayList<modelo_tipo_ubicacion>();
 		PreparedStatement consulta = null;
 		try {
-			consulta = conexion.abrir().prepareStatement("{CALL tipo_ubicacion_obtenerTipoUbicaciones(?)}");
+			consulta = conexion.abrir().prepareStatement("{CALL tipo_ubicacion_obtenerTipoUbicaciones(?, ?, ?)}");
 			consulta.setString(1, criterio.toUpperCase());
+			consulta.setLong(2, id_tipo_trabajo);
+			consulta.setInt(3, tipo);
 			ResultSet resultado = consulta.executeQuery();
 			while (resultado.next()) {
 				lista_tipo_ubicacions.add(new modelo_tipo_ubicacion(resultado.getLong("id_tip_ubicacion"),

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
@@ -19,6 +20,7 @@ import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Include;
@@ -37,6 +39,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_informativo;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
@@ -66,7 +69,7 @@ public class dashboard extends SelectorComposer<Component> {
 	Menuitem tcMantenimientoUsuarios, tcMantenimientoPerfiles, tcMantenimientoLocalidades, tcMantenimientoParametros,
 			tcMantenimientoEmpresas, tcMantenimientoUbicaciones1, tcMantenimientoSolicitantesProveedores,
 			tcMantenimientoCategorias1, tcMantenimientoSesiones, tcMantenimientoRespaldos, tcMantenimientoCapacidades,
-			tcMantenimientoCategorias2, tcMantenimientoUbicaciones2, tcMantenimientoSolicitudes,
+			tcMantenimientoCategorias2, tcMantenimientoUbicaciones2, tcMantenimientoSolicitudes, tcManosRemotas,
 			tcMantenimientoInformativos, tcBodega, tcBitacora, tcControlCambioGenerar, tcCintas, tcAcercaDe, tcDBodega,
 			tcDBitacora, tcPersonal;
 	@Wire
@@ -79,6 +82,8 @@ public class dashboard extends SelectorComposer<Component> {
 	Div dSolicitudes;
 	@Wire
 	Center cPaneles;
+	@Wire
+	Combobox cmbLocalidad;
 
 	List<modelo_localidad> listaLocalidad = new ArrayList<modelo_localidad>();
 
@@ -90,7 +95,7 @@ public class dashboard extends SelectorComposer<Component> {
 
 	String mlocalidades, mparametros, mperfiles, musuarios, mempresas, msolicitantes, mcategorias1, mubicaciones1,
 			marticulos, msesiones, mrespaldos, mcapacidades, mcategorias2, mubicaciones2, msolicitudes, minformativos;
-	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas, oPersonal;
+	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas, oPersonal, oManosRemotas;
 
 	List<modelo_solicitud> listaSolicitud = new ArrayList<modelo_solicitud>();
 	List<modelo_movimiento_dn> listaMovimientoDN = new ArrayList<modelo_movimiento_dn>();
@@ -102,6 +107,8 @@ public class dashboard extends SelectorComposer<Component> {
 			sMovimientoCintasValidacionOperadorEnTurnoActual = 0, sMovimientoCintasValidacionOperadorEnTurnoT1 = 0,
 			sMovimientoCintasValidacionOperadorAuditor = 0;
 
+	Fechas fechas = new Fechas();
+
 	String usup = "";
 
 	@Override
@@ -111,6 +118,7 @@ public class dashboard extends SelectorComposer<Component> {
 		binder.loadAll();
 		tMenu1.setAttribute("data-tittle", "APLICACIONES");
 		cargarLocalidades();
+		mostrarLocalidad();
 		cargarDatosUsuario();
 		cargarEtiquetaDeUsuario();
 		inicializarPermisosMantenimientos();
@@ -182,6 +190,38 @@ public class dashboard extends SelectorComposer<Component> {
 							+ "\n\nMensaje de error: \n\n" + e.getMessage(),
 					".:: Cargar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 		}
+		binder.loadComponent(cmbLocalidad);
+	}
+
+	public void mostrarLocalidad() throws ClassNotFoundException, FileNotFoundException, IOException {
+		for (int i = 0; i < listaLocalidad.size(); i++) {
+			if (listaLocalidad.get(i).getId_localidad() == id_dc) {
+				cmbLocalidad.setText(listaLocalidad.get(i).getNom_localidad());
+				i = listaLocalidad.size() + 1;
+			}
+		}
+		if (validarSiEsUsuarioPermitido() == true) {
+			cmbLocalidad.setDisabled(false);
+		} else {
+			cmbLocalidad.setDisabled(true);
+		}
+	}
+
+	public boolean validarSiEsUsuarioPermitido() throws ClassNotFoundException, FileNotFoundException, IOException {
+		boolean es_usuario_permitido = false;
+		cargarParametros();
+		if (id_perfil == 1) {
+			es_usuario_permitido = true;
+		} else if (listaParametros.size() > 0) {
+			if (id_perfil == listaParametros.get(0).getId_perfil_revisor_bitacora()) {
+				es_usuario_permitido = true;
+			} else {
+				es_usuario_permitido = false;
+			}
+		} else {
+			es_usuario_permitido = false;
+		}
+		return es_usuario_permitido;
 	}
 
 	public void cargarEtiquetaDeUsuario()
@@ -202,17 +242,21 @@ public class dashboard extends SelectorComposer<Component> {
 			if (nom_localidad != "") {
 				usup = nombre[0] + " " + apellido[0] + " (<span style='color:#008000; font-style: italic !important;'>"
 						+ listaPerfil.get(0).getNom_perfil() + "</span>)</br>" + nom_localidad + "</br>"
-						+ Executions.getCurrent().getRemoteAddr();
+						+ Executions.getCurrent().getRemoteAddr() + "</br>"
+						+ fechas.obtenerFechaFormateada(new Date(), "dd/MM/yyyy HH:mm:ss");
 			} else {
 				usup = nombre[0] + " " + apellido[0] + " (<span style='color:#008000; font-style: italic !important;'>"
 						+ listaPerfil.get(0).getNom_perfil() + "</span>)" + "</br>"
-						+ Executions.getCurrent().getRemoteAddr();
+						+ Executions.getCurrent().getRemoteAddr() + "</br>"
+						+ fechas.obtenerFechaFormateada(new Date(), "dd/MM/yyyy HH:mm:ss");
 			}
 		} else {
 			if (nom_localidad != "") {
-				usup = nom_ape_user + "</br>" + nom_localidad + "</br>" + Executions.getCurrent().getRemoteAddr();
+				usup = nom_ape_user + "</br>" + nom_localidad + "</br>" + Executions.getCurrent().getRemoteAddr()
+						+ "</br>" + fechas.obtenerFechaFormateada(new Date(), "dd/MM/yyyy HH:mm:ss");
 			} else {
-				usup = nom_ape_user + "</br>" + Executions.getCurrent().getRemoteAddr();
+				usup = nom_ape_user + "</br>" + Executions.getCurrent().getRemoteAddr() + "</br>"
+						+ fechas.obtenerFechaFormateada(new Date(), "dd/MM/yyyy HH:mm:ss");
 			}
 		}
 	}
@@ -362,7 +406,8 @@ public class dashboard extends SelectorComposer<Component> {
 	}
 
 	@Listen("onClick=#btnUsuario")
-	public void onClick$btnUsuario() throws ClassNotFoundException, FileNotFoundException, IOException {
+	public void onClick$btnUsuario() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		cargarEtiquetaDeUsuario();
 		Clients.showNotification(usup, "info", btnUsuario, "start_before", 3000);
 	}
 
@@ -371,6 +416,50 @@ public class dashboard extends SelectorComposer<Component> {
 		Messagebox.show(
 				"Sistema creado para integrar aplicaciones que permitan tener un mejor control de la información que se registra en el Datacenter.",
 				".:: DC Aplicaciones v1.9 ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Listen("onSelect=#cmbLocalidad")
+	public void onSelect$cmbLocalidad() throws ClassNotFoundException, FileNotFoundException, IOException {
+		if (cmbLocalidad.getSelectedItem() == null) {
+			cmbLocalidad.setErrorMessage("Seleccione una localidad.");
+			cmbLocalidad.setFocus(true);
+			return;
+		}
+		if (Long.valueOf(cmbLocalidad.getSelectedItem().getValue().toString()) == id_dc) {
+			return;
+		}
+		Messagebox.show(
+				"Esta seguro de cambiar de localidad, al realizar este cambio, se cerrará la sesión y deberá iniciar nuevamente?",
+				".:: Cambiar localidad ::.", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION,
+				new org.zkoss.zk.ui.event.EventListener() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						if (event.getName().equals("onOK")) {
+							dao_usuario dao = new dao_usuario();
+							modelo_usuario usuario = new modelo_usuario();
+							usuario.setId_usuario(id_user);
+							usuario.setId_localidad(Long.valueOf(cmbLocalidad.getSelectedItem().getValue().toString()));
+							usuario.setUsu_modifica(user);
+							usuario.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+							try {
+								dao.cambiarLocalidad(usuario);
+								String url = "/index.zul";
+								Sessions.getCurrent().removeAttribute("id_user");
+								Sessions.getCurrent().removeAttribute("id_perfil");
+								Sessions.getCurrent().removeAttribute("user");
+								Sessions.getCurrent().removeAttribute("id_dc");
+								Sessions.getCurrent().removeAttribute("nom_ape_user");
+								Executions.sendRedirect(url);
+							} catch (Exception e) {
+								Messagebox.show(
+										"Error al cambiar de localidad. \n\n" + "Mensaje de error: \n\n"
+												+ e.getMessage(),
+										".:: Cambiar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+							}
+						}
+					}
+				});
 	}
 
 	public void inicializarPermisosMantenimientos() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -491,6 +580,11 @@ public class dashboard extends SelectorComposer<Component> {
 				oPersonal = "S";
 			} else {
 				oPersonal = "N";
+			}
+			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "6", 2) == true) {
+				oManosRemotas = "S";
+			} else {
+				oManosRemotas = "N";
 			}
 		} catch (SQLException e) {
 			Messagebox.show(
@@ -622,6 +716,12 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tcPersonal.setDisabled(true);
 			tcPersonal.setTooltiptext("No tiene permisos para usar esta opción.");
+		}
+		if (oManosRemotas.equals("S")) {
+			tcManosRemotas.setDisabled(false);
+		} else {
+			tcManosRemotas.setDisabled(true);
+			tcManosRemotas.setTooltiptext("No tiene permisos para usar esta opción.");
 		}
 	}
 
@@ -902,6 +1002,41 @@ public class dashboard extends SelectorComposer<Component> {
 			Tabpanel tabpanel = new Tabpanel();
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/personal/principal.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * MANOS REMOTAS
+	 */
+
+	@Listen("onClick=#tcManosRemotas")
+	public void onClick$tcManosRemotas() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcManosRemotas.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcManosRemotas.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION OPERATIVA");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcManosRemotas.getId());
+			tab.setImage("/img/botones/ButtonRemotas2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/manos_remotas/principal.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

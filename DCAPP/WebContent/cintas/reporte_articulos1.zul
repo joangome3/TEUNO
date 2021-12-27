@@ -39,81 +39,7 @@
 							<cell colspan="2">
 								<bandbox id="bdxArticulo" mold="rounded"
 									autodrop="true" disabled="true" width="150px" readonly="true"
-									style="font-weight: bold; color:black !important;">
-									<bandpopup width="45%">
-										<panel title="">
-											<panelchildren>	
-												<space width="10px">
-												</space>								
-												<textbox width="280px"
-													id="txtBuscarArticulo" 
-													placeholder="Ingrese palabra clave"
-													tooltiptext="Presione enter para realizar la búsqueda" style="font-style: italic;">
-												</textbox>
-												<space width="5px">
-												</space>
-												<image
-													src="/img/botones/ButtonPopup.png" tooltip="art"
-													style="cursor: help; width: 16px; height: 16px;" />
-												<div align="center">
-													<listbox
-														mold="paging" pageSize="10" id="lbxArticulos"
-														model="@{zReporte$reporte_articulos1.obtenerArticulos}"
-														sizedByContent="false" width="100%">
-														<listhead>
-															<listheader
-																label="ID" width="10%" visible="false">
-															</listheader>
-															<listheader
-																label="CÓDIGO">
-															</listheader>
-															<listheader
-																label="DESCRIPCIÓN">
-															</listheader>
-															<listheader
-																label="CATEGORÍA">
-															</listheader>
-															<listheader
-																label="UBICACIÓN">
-															</listheader>
-															<listheader
-																label="STOCK" width="10%"
-																style="text-align: center !important;" visible="false">
-															</listheader>
-															<listheader
-																label="ESTADO" width="10%" visible="false">
-															</listheader>
-														</listhead>
-														<listitem
-															self="@{each=lista}">
-															<listcell
-																label="@{lista.getId_articulo}">
-															</listcell>
-															<listcell
-																label="@{lista.getCod_articulo}">
-															</listcell>
-															<listcell
-																label="@{lista.getDes_articulo}">
-															</listcell>
-															<listcell
-																label="@{lista.getNom_categoria}">
-															</listcell>
-															<listcell
-																label="@{lista.getNom_ubicacion}">
-															</listcell>
-															<listcell
-																label="@{lista.getSto_articulo}"
-																style="text-align: center !important;">
-															</listcell>
-															<listcell
-																label="@{lista.mostrarEstado}">
-															</listcell>
-														</listitem>
-													</listbox>
-												</div>
-											</panelchildren>
-										</panel>
-									</bandpopup>
+									style="font-weight: bold; color:black !important;" popup="pArticulo">
 								</bandbox>
 								<space width="15px"></space>
 								<checkbox id="chkArticulo"
@@ -179,54 +105,7 @@
 							<label value="Ubicación:" />
 							<cell colspan="3">
 								<bandbox id="bdxUbicacion"
-									mold="rounded" autodrop="true" width="150px" readonly="true" disabled="true">
-									<bandpopup width="45%">
-										<panel title="">
-											<panelchildren>
-												<space width="15px">
-												</space>
-												<textbox width="280px"
-													id="txtBuscarUbicacion" placeholder="Ingrese palabra clave"
-													tooltiptext="Presione enter para realizar la búsqueda"
-													style="font-style: italic;">
-												</textbox>
-												<image
-													src="/img/botones/ButtonPopup.png" tooltip="con"
-													style="cursor: help; width: 16px; height: 16px;" />
-												<div align="center">
-													<listbox
-														mold="paging" pageSize="10" id="lbxUbicaciones"
-														model="@{zReporte$reporte_articulos1.obtenerUbicaciones}"
-														sizedByContent="false" width="100%">
-														<listhead
-															sizable="false" style="overflow: scroll;">
-															<listheader
-																label="CLIENTE" style="text-align: center;">
-															</listheader>
-															<listheader
-																label="UBICACIÓN" style="text-align: center;">
-															</listheader>
-															<listheader
-																label="POSICIÓN" style="text-align: center;">
-															</listheader>
-														</listhead>
-														<listitem
-															self="@{each=lista}">
-															<listcell
-																label="@{lista.getNom_empresa}">
-															</listcell>
-															<listcell
-																label="@{lista.getNom_ubicacion}">
-															</listcell>
-															<listcell
-																label="@{lista.getPos_ubicacion}">
-															</listcell>
-														</listitem>
-													</listbox>
-												</div>
-											</panelchildren>
-										</panel>
-									</bandpopup>
+									mold="rounded" autodrop="true" width="150px" readonly="true" disabled="true" popup="pUbicacion">
 								</bandbox>
 								<space width="15px"></space>
 								<checkbox id="chkUbicacion"
@@ -241,12 +120,136 @@
 				<jasperreport id="reporte" height="100%"></jasperreport>
 			</center>
 		</borderlayout>
+
+		<popup width="800px" id="pArticulo">
+			<panel title="">
+				<panelchildren>
+					<space width="10px"></space>
+					<textbox width="280px" id="txtBuscarArticulo"
+						placeholder="Ingrese palabra clave"
+						tooltiptext="Presione enter para realizar la búsqueda"
+						style="font-style: italic;">
+					</textbox>
+					<space width="5px"></space>
+					<image src="/img/botones/ButtonPopup.png"
+						tooltip="art" style="cursor: help; width: 16px; height: 16px;" />
+					<div align="center">
+						<listbox mold="paging" pageSize="8"
+							id="lbxArticulos"
+							model="@{zReporte$reporte_articulos1.obtenerArticulos}"
+							sizedByContent="false" width="100%">
+							<listhead>
+								<listheader label="ID" width="10%"
+									visible="false">
+								</listheader>
+								<listheader label="CÓDIGO"></listheader>
+								<listheader label="DESCRIPCIÓN">
+								</listheader>
+								<listheader label="CATEGORÍA"></listheader>
+								<listheader label="UBICACIÓN"></listheader>
+								<listheader label="STOCK" width="10%"
+									style="text-align: center !important;" visible="false">
+								</listheader>
+								<listheader label="ESTADO" width="10%"
+									visible="false">
+								</listheader>
+							</listhead>
+							<listitem self="@{each=lista}">
+								<listcell
+									label="@{lista.getId_articulo}">
+								</listcell>
+								<listcell
+									label="@{lista.getCod_articulo}">
+								</listcell>
+								<listcell
+									label="@{lista.getDes_articulo}">
+								</listcell>
+								<listcell
+									label="@{lista.getNom_categoria}">
+								</listcell>
+								<listcell
+									label="@{lista.getNom_ubicacion}">
+								</listcell>
+								<listcell
+									label="@{lista.getSto_articulo}"
+									style="text-align: center !important;">
+								</listcell>
+								<listcell
+									label="@{lista.mostrarEstado}">
+								</listcell>
+							</listitem>
+						</listbox>
+					</div>
+				</panelchildren>
+			</panel>
+		</popup>
+
+		<popup width="800px" id="pUbicacion">
+			<panel title="">
+				<panelchildren>
+					<space width="15px"></space>
+					<combobox width="150px" id="cmbEmpresa1"
+						model="@{zReporte$reporte_articulos1.obtenerEmpresas1}"
+						readonly="true" autocomplete="false" autodrop="false"
+						buttonVisible="true" disabled="false">
+						<comboitem self="@{each=lista}"
+							label="@{lista.getNom_empresa}" value="@{lista.getId_empresa}">
+						</comboitem>
+					</combobox>
+					<combobox width="150px" id="cmbTipoUbicacion"
+						model="@{zReporte$reporte_articulos1.obtenerTipoUbicacion}"
+						readonly="false" autocomplete="false" autodrop="false"
+						buttonVisible="true" disabled="false">
+						<comboitem self="@{each=lista}"
+							label="@{lista.getNom_tipo_ubicacion}" value="@{lista.getId_tipo_ubicacion}">
+						</comboitem>
+					</combobox>
+					<textbox width="280px" id="txtBuscarUbicacion"
+						placeholder="Ingrese palabra clave"
+						tooltiptext="Presione enter para realizar la búsqueda"
+						style="font-style: italic;">
+					</textbox>
+					<image src="/img/botones/ButtonPopup.png"
+						tooltip="con" style="cursor: help; width: 16px; height: 16px;" />
+					<div align="center">
+						<listbox mold="paging" pageSize="10"
+							id="lbxUbicaciones"
+							model="@{zReporte$reporte_articulos1.obtenerUbicaciones}"
+							sizedByContent="false" width="100%">
+							<listhead sizable="false"
+								style="overflow: scroll;">
+								<listheader label="CLIENTE"
+									style="text-align: center;">
+								</listheader>
+								<listheader label="UBICACIÓN"
+									style="text-align: center;">
+								</listheader>
+								<listheader label="POSICIÓN"
+									style="text-align: center;">
+								</listheader>
+							</listhead>
+							<listitem self="@{each=lista}">
+								<listcell
+									label="@{lista.getNom_empresa}">
+								</listcell>
+								<listcell
+									label="@{lista.getNom_ubicacion}">
+								</listcell>
+								<listcell
+									label="@{lista.getPos_ubicacion}">
+								</listcell>
+							</listitem>
+						</listbox>
+					</div>
+				</panelchildren>
+			</panel>
+		</popup>
+
 	</div>
+
 	<popup id="art" width="450px">
 		<html>
 
-
-			
 			<![CDATA[ <p style="color: black; font-size: 12px;"> Si el
 			artículo no se encuentra en la lista, valide que se
 			encuentre creado, aprobado y activo en la <span
@@ -260,16 +263,12 @@
 			y presionando la tecla Enter </br> 2.- Para mostrar todos
 			los artículos deje limpio el campo buscar y presione la
 			tecla Enter. </p> ]]>
-			
-			
 
 			</html>
 	</popup>
 	<popup id="con" width="450px">
 		<html>
 
-
-			
 			<![CDATA[ <p style="color: black; font-size: 12px;"> Si el
 			proveedor no se encuentra en la lista, valide que se
 			encuentre creado, aprobado, activo y que mantenga una
@@ -285,9 +284,7 @@
 			presionando la tecla Enter </br> 2.- Para mostrar todos los
 			proveedores deje limpio el campo buscar y presione la tecla
 			Enter. </p> ]]>
-			
-			
-	
+
 			</html>
 	</popup>
 	<zscript>

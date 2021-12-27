@@ -10,6 +10,7 @@ encoding//WebContent/sibod/movimiento/repuestos2/repuestos.jrxml=UTF-8
 encoding//src/bp/aplicaciones/controlador/bitacora/principal.java=UTF-8
 encoding//src/bp/aplicaciones/controlador/cintas/principal.java=UTF-8
 encoding//src/bp/aplicaciones/controlador/dashboard.java=UTF-8
+encoding//src/bp/aplicaciones/controlador/manos_remotas/principal.java=UTF-8
 encoding//src/bp/aplicaciones/controlador/mantenimientos/parametros/principal.java=UTF-8
 encoding//src/bp/aplicaciones/controlador/mantenimientos/perfiles/consultar.java=UTF-8
 encoding//src/bp/aplicaciones/controlador/mantenimientos/usuario/consultar.java=UTF-8

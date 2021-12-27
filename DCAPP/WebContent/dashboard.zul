@@ -58,6 +58,13 @@
 									</menuitem>
 									<menuseparator visible="false" />
 									<menuitem
+										image="/img/botones/ButtonRemotas1.png"
+										label=" - Gestión operativa" id="tcManosRemotas"
+										tooltiptext="Módulo creado para la gestión de manos remotas del Data center."
+										height="35px" class="m-bitacora m-item_a">
+									</menuitem>
+									<menuseparator visible="false" />
+									<menuitem
 										image="/img/botones/ButtonDiners5.png"
 										label=" - Gestión de cintas" id="tcCintas"
 										tooltiptext="Módulo creado para la gestión de cintas del cliente Diners."
@@ -222,8 +229,16 @@
 						</menubar>
 					</div>
 					<div align="right" class="m_botones">
+						<combobox width="210px" id="cmbLocalidad"
+							model="@{zDashboard$dashboard.obtenerLocalidades}" readonly="true"
+							disabled="false">
+							<comboitem self="@{each=lista}"
+								label="@{lista.getNom_localidad}"
+								value="@{lista.getId_localidad}">
+							</comboitem>
+						</combobox>
 						<button id="btnUsuario"
-							image="/img/botones/ButtonUser1.png" tooltiptext="Usuario"
+							image="/img/botones/ButtonUser1.png" tooltiptext="Información de usuario y sesión"
 							autodisable="self" style="background: rgb(2, 0, 36) !important;" />
 						<button id="btnSalir"
 							image="/img/principal/btnExit2.png" tooltiptext="Cerrar sesión"

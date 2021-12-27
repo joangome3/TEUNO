@@ -18,7 +18,7 @@ public class conexion {
 		if (cnx == null) {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				cnx = DriverManager.getConnection("jdbc:mysql://localhost/dcap_bp_1?zeroDateTimeBehavior=convertToNull",
+				cnx = DriverManager.getConnection("jdbc:mysql://localhost/dcap_bp?zeroDateTimeBehavior=convertToNull",
 						"sibod", "$1b0d");
 			} catch (SQLException ex) {
 				System.out.println("No se puede conectar a la base de datos!");

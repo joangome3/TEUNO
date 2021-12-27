@@ -322,18 +322,18 @@ public class cerrar_registro extends SelectorComposer<Component> {
 		setearFechaHoraFin();
 		/* CUMPLIMIENTO **/
 		// activarCampoCumplimiento();
-		if (bitacora.getCumplimiento().equals("C")) {
-			cmbCumplimiento.setText("CUMPLIDO");
-		} else {
-			cmbCumplimiento.setText("INCUMPLIDO");
-		}
-		if (bitacora.getObs_coordinador() != null) {
-			if (bitacora.getObs_coordinador().length() > 0) {
-				txtObservacion.setText(bitacora.getObs_coordinador());
-			}
-		}
-		mostrarObservacion();
-		setearObservacion();
+//		if (bitacora.getCumplimiento().equals("C")) {
+//			cmbCumplimiento.setText("CUMPLIDO");
+//		} else {
+//			cmbCumplimiento.setText("INCUMPLIDO");
+//		}
+//		if (bitacora.getObs_coordinador() != null) {
+//			if (bitacora.getObs_coordinador().length() > 0) {
+//				txtObservacion.setText(bitacora.getObs_coordinador());
+//			}
+//		}
+//		mostrarObservacion();
+//		setearObservacion();
 		/* DESCRIPCION **/
 		txtDescripcion.setText(bitacora.getDescripcion());
 		bdxArea.setText(bitacora.getArea());

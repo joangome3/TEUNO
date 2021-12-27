@@ -16,6 +16,27 @@ public class modelo_tipo_ubicacion {
 		super();
 	}
 
+	public modelo_tipo_ubicacion clone() {
+		modelo_tipo_ubicacion tipo_ubicacion = new modelo_tipo_ubicacion(this.id_tipo_ubicacion,
+				this.est_tipo_ubicacion, this.usu_modifica, this.fec_modifica);
+		return tipo_ubicacion;
+	}
+
+	/**
+	 * @param id_tipo_ubicacion
+	 * @param est_tipo_ubicacion
+	 * @param usu_modifica
+	 * @param fec_modifica
+	 */
+	public modelo_tipo_ubicacion(long id_tipo_ubicacion, String est_tipo_ubicacion, String usu_modifica,
+			Timestamp fec_modifica) {
+		super();
+		this.id_tipo_ubicacion = id_tipo_ubicacion;
+		this.est_tipo_ubicacion = est_tipo_ubicacion;
+		this.usu_modifica = usu_modifica;
+		this.fec_modifica = fec_modifica;
+	}
+
 	public modelo_tipo_ubicacion(long id_tipo_ubicacion, String nom_tipo_ubicacion, String est_tipo_ubicacion,
 			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		super();

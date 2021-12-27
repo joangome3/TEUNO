@@ -30,11 +30,13 @@ import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_categoria_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.DAO.dao_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 
 @SuppressWarnings({ "deprecation", "serial" })
@@ -47,7 +49,7 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 	@Wire
 	Bandbox bdxArticulo, bdxUbicacion;
 	@Wire
-	Combobox cmbEmpresa, cmbCategoria, cmbFormato;
+	Combobox cmbEmpresa, cmbEmpresa1, cmbCategoria, cmbFormato, cmbTipoUbicacion;
 	@Wire
 	Button btnConsultar, btnLimpiar;
 	@Wire
@@ -68,9 +70,11 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 	String cod_sesion = (String) Sessions.getCurrent().getAttribute("cod_sesion");
 
 	List<modelo_empresa> listaEmpresa = new ArrayList<modelo_empresa>();
+	List<modelo_empresa> listaEmpresa1 = new ArrayList<modelo_empresa>();
 	List<modelo_articulo_dn> listaArticulo = new ArrayList<modelo_articulo_dn>();
 	List<modelo_categoria_dn> listaCategoria = new ArrayList<modelo_categoria_dn>();
 	List<modelo_ubicacion_dn> listaUbicacion = new ArrayList<modelo_ubicacion_dn>();
+	List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
 
 	ConsultasABaseDeDatos ConsultasABaseDeDatos = new ConsultasABaseDeDatos();
 
@@ -86,8 +90,9 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 		lbxUbicaciones.setEmptyMessage("No existen datos que mostrar");
 		imagen = Sessions.getCurrent().getWebApp().getRealPath("/img/principal/logo_teuno.png");
 		cargarEmpresas();
+		cargarEmpresas1();
+		cargarTipoUbicaciones();
 		cargarCategorias();
-		cargarUbicaciones("");
 		validarSesion();
 	}
 
@@ -97,6 +102,10 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 
 	public List<modelo_empresa> obtenerEmpresas() {
 		return listaEmpresa;
+	}
+
+	public List<modelo_empresa> obtenerEmpresas1() {
+		return listaEmpresa1;
 	}
 
 	public List<modelo_articulo_dn> obtenerArticulos() {
@@ -111,9 +120,19 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 		return listaUbicacion;
 	}
 
+	public List<modelo_tipo_ubicacion> obtenerTipoUbicacion() {
+		return listaTipoUbicacion;
+	}
+
 	public void cargarEmpresas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaEmpresa = ConsultasABaseDeDatos.cargarEmpresas("", 2, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
 		binder.loadComponent(cmbEmpresa);
+	}
+
+	public void cargarEmpresas1() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaEmpresa1 = ConsultasABaseDeDatos.cargarEmpresas("", 2, String.valueOf(id_dc), String.valueOf(id_opcion),
+				0);
+		binder.loadComponent(cmbEmpresa1);
 	}
 
 	public void cargarArticulos(String criterio, String empresa)
@@ -140,13 +159,26 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 		}
 	}
 
-	public void cargarUbicaciones(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {
+	public void cargarUbicaciones(String criterio, long empresa, long tipo_ubicacion)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_ubicacion_dn dao = new dao_ubicacion_dn();
 		try {
-			listaUbicacion = dao.obtenerUbicaciones(criterio, String.valueOf(id_dc), 6, 0, 0, 0, 10);
+			listaUbicacion = dao.obtenerUbicaciones(criterio, String.valueOf(id_dc), 7, empresa, tipo_ubicacion, 0, 0);
 			binder.loadComponent(lbxUbicaciones);
 		} catch (SQLException e) {
 			Messagebox.show("Error al cargar las ubicaciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
+					".:: Cargar ubicacion ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+	}
+
+	public void cargarTipoUbicaciones() throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_ubicacion dao = new dao_tipo_ubicacion();
+		String criterio = "";
+		try {
+			listaTipoUbicacion = dao.obtenerTipoUbicaciones(criterio, 0, 1);
+			binder.loadComponent(cmbTipoUbicacion);
+		} catch (SQLException e) {
+			Messagebox.show("Error al cargar las ubicacions. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
 					".:: Cargar ubicacion ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
@@ -168,6 +200,25 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 		cargarArticulos("", cmbEmpresa.getSelectedItem().getValue().toString());
 	}
 
+	@Listen("onSelect=#cmbEmpresa1")
+	public void onSelect$cmbEmpresa1()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		long empresa = 0, tipo_ubicacion = 0;
+		if (cmbEmpresa1.getSelectedItem() == null) {
+			empresa = 0;
+		} else {
+			empresa = Long.valueOf(cmbEmpresa1.getSelectedItem().getValue().toString());
+		}
+		cmbTipoUbicacion.setText("");
+		if (cmbTipoUbicacion.getSelectedItem() == null) {
+			tipo_ubicacion = 0;
+		} else {
+			tipo_ubicacion = Long.valueOf(cmbTipoUbicacion.getSelectedItem().getValue().toString());
+		}
+		cargarUbicaciones(txtBuscarUbicacion.getText().toString(), empresa, tipo_ubicacion);
+		txtBuscarUbicacion.setTooltiptext("");
+	}
+
 	@Listen("onOK=#txtBuscarArticulo")
 	public void onOK$txtBuscarArticulo()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
@@ -178,7 +229,36 @@ public class reporte_articulos1 extends SelectorComposer<Component> {
 	@Listen("onOK=#txtBuscarUbicacion")
 	public void onOK$txtBuscarUbicacion()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		cargarUbicaciones(txtBuscarUbicacion.getText().toString());
+		long empresa = 0, tipo_ubicacion = 0;
+		if (cmbEmpresa1.getSelectedItem() == null) {
+			empresa = 0;
+		} else {
+			empresa = Long.valueOf(cmbEmpresa1.getSelectedItem().getValue().toString());
+		}
+		if (cmbTipoUbicacion.getSelectedItem() == null) {
+			tipo_ubicacion = 0;
+		} else {
+			tipo_ubicacion = Long.valueOf(cmbTipoUbicacion.getSelectedItem().getValue().toString());
+		}
+		cargarUbicaciones(txtBuscarUbicacion.getText().toString(), empresa, tipo_ubicacion);
+		txtBuscarUbicacion.setTooltiptext("");
+	}
+
+	@Listen("onSelect=#cmbTipoUbicacion")
+	public void onSelect$cmbTipoUbicacion()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		long empresa = 0, tipo_ubicacion = 0;
+		if (cmbEmpresa1.getSelectedItem() == null) {
+			empresa = 0;
+		} else {
+			empresa = Long.valueOf(cmbEmpresa1.getSelectedItem().getValue().toString());
+		}
+		if (cmbTipoUbicacion.getSelectedItem() == null) {
+			tipo_ubicacion = 0;
+		} else {
+			tipo_ubicacion = Long.valueOf(cmbTipoUbicacion.getSelectedItem().getValue().toString());
+		}
+		cargarUbicaciones(txtBuscarUbicacion.getText().toString(), empresa, tipo_ubicacion);
 		txtBuscarUbicacion.setTooltiptext("");
 	}
 

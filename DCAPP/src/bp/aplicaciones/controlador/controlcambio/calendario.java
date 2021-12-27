@@ -89,7 +89,7 @@ public class calendario extends SelectorComposer<Component> {
 	}
 
 	public void cargarInformacion() throws ClassNotFoundException, FileNotFoundException, IOException {
-		List<CalendarEvent> data = new DemoCalendarData(2, "", 1, 0, id_dc, 0, "", "").getCalendarEvents();
+		List<CalendarEvent> data = new DemoCalendarData(2, "", 1, 0, id_dc, 0, "", "", "").getCalendarEvents();
 		calendarioModel = new DemoCalendarModel(data);
 		calendario.setModel(this.calendarioModel);
 	}
@@ -126,7 +126,7 @@ public class calendario extends SelectorComposer<Component> {
 	public void consultarInformacion(String criterio, long id_cliente)
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		calendarioModel = new DemoCalendarModel(
-				new DemoCalendarData(2, criterio, 1, id_cliente, id_dc, 0, "", "").getCalendarEvents());
+				new DemoCalendarData(2, criterio, 1, id_cliente, id_dc, 0, "", "", "").getCalendarEvents());
 		calendario.setModel(this.calendarioModel);
 	}
 

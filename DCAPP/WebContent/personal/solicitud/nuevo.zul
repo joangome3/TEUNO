@@ -211,7 +211,8 @@
 								</cell>
 								<space></space>
 								<cell colspan="1" visible="false">
-									<div align="center" visible="true">
+									<div align="center"
+										visible="true">
 										<space width="20px"></space>
 										<label value="Estado:"
 											class="z-label-1" />
@@ -219,15 +220,16 @@
 											<hlayout>
 												<space width="10px"></space>
 												<combobox width="145px"
-													id="cmbEstado" readonly="true" disabled="true">
+													id="cmbEstado" readonly="true" disabled="false">
 													<comboitem
-														label="EJECUTADO" value="E">
+														label="EJECUTADO" value="E"
+														iconSclass="z-icon-check-circle-o">
 													</comboitem>
 													<comboitem
-														label="NO EJECUTADO" value="NE">
+														label="NO EJECUTADO" value="NE"
+														iconSclass="z-icon-times-circle-o">
 													</comboitem>
 												</combobox>
-												
 											</hlayout>
 										</vlayout>
 									</div>

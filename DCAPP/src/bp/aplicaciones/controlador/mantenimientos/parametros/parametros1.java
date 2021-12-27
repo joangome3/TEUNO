@@ -343,7 +343,7 @@ public class parametros1 extends SelectorComposer<Component> {
 		dao_tipo_ubicacion dao = new dao_tipo_ubicacion();
 		String criterio = "";
 		try {
-			listaUbicacion = dao.obtenerTipoUbicaciones(criterio);
+			listaUbicacion = dao.obtenerTipoUbicaciones(criterio, 0, 1);
 			binder.loadComponent(cmbUbicacion1);
 			binder.loadComponent(cmbUbicacion2);
 		} catch (SQLException e) {

@@ -33,7 +33,8 @@
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="150px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;" sclass="demo-search-inp">
+												tooltip="cons" style="font-style: italic;"
+												sclass="demo-search-inp">
 											</textbox>
 											<space width="5px"></space>
 											<combobox width="180px"
@@ -88,14 +89,15 @@
 												</comboitem>
 											</combobox>
 											<space width="10px"></space>
-											<combobox id="cmbEstado"
-												width="150px" tooltiptext="Seleccione el estado a consultar"
-												visible="false">
-												<comboitem value="1"
-													label="ABIERTO">
+											<combobox width="145px"
+												id="cmbEstado" readonly="true" disabled="false" visible="false">
+												<comboitem
+													label="EJECUTADO" value="E"
+													iconSclass="z-icon-check-circle-o">
 												</comboitem>
-												<comboitem value="2"
-													label="CERRADO">
+												<comboitem
+													label="NO EJECUTADO" value="NE"
+													iconSclass="z-icon-times-circle-o">
 												</comboitem>
 											</combobox>
 										</cell>

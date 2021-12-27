@@ -624,6 +624,19 @@ public class ConsultasABaseDeDatos {
 		}
 		return listaTipoDeServicio;
 	}
+	
+	public List<modelo_tipo_servicio> cargarTipoDeServicios1(String criterio, int tipo, long id, int limite)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_servicio dao = new dao_tipo_servicio();
+		List<modelo_tipo_servicio> listaTipoDeServicio = new ArrayList<modelo_tipo_servicio>();
+		try {
+			listaTipoDeServicio = dao.obtenerTipoServicios(criterio, tipo, id, limite);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return listaTipoDeServicio;
+	}
 
 	/*
 	 * *
@@ -1200,12 +1213,12 @@ public class ConsultasABaseDeDatos {
 	 * 
 	 */
 
-	public List<modelo_tipo_ubicacion> cargarTipoUbicaciones(String criterio)
+	public List<modelo_tipo_ubicacion> cargarTipoUbicaciones(String criterio, long id_tipo_trabajo, int tipo)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_tipo_ubicacion dao = new dao_tipo_ubicacion();
 		List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
 		try {
-			listaTipoUbicacion = dao.obtenerTipoUbicaciones(criterio);
+			listaTipoUbicacion = dao.obtenerTipoUbicaciones(criterio, id_tipo_trabajo, tipo);
 		} catch (SQLException e) {
 			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);

@@ -11,16 +11,14 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
-import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -30,6 +28,7 @@ import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_trabajo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
@@ -46,11 +45,11 @@ public class area extends SelectorComposer<Component> {
 	@Wire
 	Button btnGrabar, btnCancelar, btnAnadir;
 	@Wire
-	Listbox lbxArea1, lbxArea2;
-	@Wire
-	Bandbox bdxArea;
+	Listbox lbxArea1;
 	@Wire
 	Textbox txtBuscarArea;
+	@Wire
+	Combobox cmbTipoTrabajo;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
@@ -59,8 +58,9 @@ public class area extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 	modelo_movimiento movimiento = (modelo_movimiento) Sessions.getCurrent().getAttribute("movimiento");
 	@SuppressWarnings("unchecked")
-	List<modelo_tipo_ubicacion> listaArea3 = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
+	List<modelo_tipo_ubicacion> listaArea4 = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 			.getAttribute("lista_area");
+	long tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 
 	validar_datos validar = new validar_datos();
 
@@ -75,6 +75,8 @@ public class area extends SelectorComposer<Component> {
 
 	List<modelo_tipo_ubicacion> listaArea1 = new ArrayList<modelo_tipo_ubicacion>();
 	List<modelo_tipo_ubicacion> listaArea2 = new ArrayList<modelo_tipo_ubicacion>();
+	List<modelo_tipo_ubicacion> listaArea3 = new ArrayList<modelo_tipo_ubicacion>();
+	List<modelo_tipo_trabajo> listaTipoTrabajo = new ArrayList<modelo_tipo_trabajo>();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -82,66 +84,61 @@ public class area extends SelectorComposer<Component> {
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
 		lbxArea1.setEmptyMessage(informativos.getMensaje_informativo_2());
-		lbxArea2.setEmptyMessage(informativos.getMensaje_informativo_2());
 		inicializarListas();
-		if (listaArea3.size() > 0) {
-			setearAreas(listaArea3);
+		if (listaArea4.size() > 0) {
+			setearAreas(listaArea4);
 		}
 	}
 
 	public List<modelo_tipo_ubicacion> obtenerTipoUbicaciones() {
-		return listaArea1;
+		return listaArea2;
+	}
+
+	public List<modelo_tipo_trabajo> obtenerTipoTrabajo() {
+		return listaTipoTrabajo;
 	}
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaArea1 = consultasABaseDeDatos.cargarTipoUbicaciones("");
-		binder.loadComponent(lbxArea1);
+		listaArea1 = consultasABaseDeDatos.cargarTipoUbicaciones("", 0, 1);
+		listaTipoTrabajo = consultasABaseDeDatos.cargarTipoTrabajos("");
+		binder.loadComponent(cmbTipoTrabajo);
 	}
 
-	public void setearAreas(List<modelo_tipo_ubicacion> listaArea3) {
-		for (int i = 0; i < listaArea3.size(); i++) {
-			listaArea2.add(listaArea3.get(i));
-			Listitem lItem;
-			Listcell lCell;
-			Button btnEliminar;
-			lItem = new Listitem();
-			/* ID */
-			lCell = new Listcell();
-			lCell.setLabel(String.valueOf(listaArea3.get(i).getId_tipo_ubicacion()));
-			lCell.setStyle("text-align: center !important;");
-			lItem.appendChild(lCell);
-			/* NOMBRE */
-			lCell = new Listcell();
-			lCell.setLabel(listaArea3.get(i).getNom_tipo_ubicacion());
-			lCell.setStyle("text-align: center !important;");
-			lItem.appendChild(lCell);
-			/* ACCION */
-			lCell = new Listcell();
-			btnEliminar = new Button();
-			btnEliminar.setImage("/img/botones/ButtonClose.png");
-			btnEliminar.setTooltiptext("Eliminar");
-			btnEliminar.setAutodisable("self");
-			btnEliminar.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
-				public void onEvent(Event event) throws Exception {
-					Listitem lItem;
-					Listcell lCell;
-					lItem = (Listitem) btnEliminar.getParent().getParent();
-					lCell = (Listcell) lItem.getChildren().get(0);
-					lbxArea2.removeItemAt(lItem.getIndex());
-					for (int i = 0; i < listaArea2.size(); i++) {
-						if (listaArea2.get(i).getId_tipo_ubicacion() == Long.valueOf(lCell.getLabel().toString())) {
-							listaArea2.remove(i);
-							i = listaArea2.size() + 1;
-						}
-					}
+	public void setearAreas(List<modelo_tipo_ubicacion> listaArea4)
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(),
+				tipo_trabajo, 2);
+		binder.loadComponent(lbxArea1);
+		Iterator<Listitem> it = lbxArea1.getItems().iterator();
+		while (it.hasNext()) {
+			Listitem item = it.next();
+			int indice = item.getIndex();
+			for (int i = 0; i < listaArea4.size(); i++) {
+				if (listaArea4.get(i).getId_tipo_ubicacion() == listaArea2.get(indice).getId_tipo_ubicacion()) {
+					lbxArea1.addItemToSelection(item);
+					listaArea3.add(listaArea2.get(indice));
 				}
-			});
-			lCell.appendChild(btnEliminar);
-			lCell.setStyle("text-align: center !important;");
-			lItem.appendChild(lCell);
-			/* ANADIR ITEM A LISTBOX */
-			lbxArea2.appendChild(lItem);
+			}
 		}
+		for (int i = 0; i < listaTipoTrabajo.size(); i++) {
+			if (listaTipoTrabajo.get(i).getId_tipo_trabajo() == tipo_trabajo) {
+				cmbTipoTrabajo.setText(listaTipoTrabajo.get(i).getNom_tipo_trabajo());
+				i = listaTipoTrabajo.size() + 1;
+			}
+		}
+		binder.loadComponent(cmbTipoTrabajo);
+	}
+
+	@Listen("onSelect=#cmbTipoTrabajo")
+	public void onSelect$cmbTipoTrabajo()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (cmbTipoTrabajo.getSelectedItem() == null) {
+			return;
+		}
+		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(),
+				Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()), 2);
+		binder.loadComponent(lbxArea1);
+		lbxArea1.clearSelection();
 	}
 
 	@Listen("onSelect=#lbxArea1")
@@ -149,129 +146,71 @@ public class area extends SelectorComposer<Component> {
 		if (lbxArea1.getSelectedItem() == null) {
 			return;
 		}
-		if (lbxArea1.getSelectedItems().size() > 1) {
-			bdxArea.setText("");
-			setearAreas(lbxArea1);
-		} else {
-			int indice = lbxArea1.getSelectedIndex();
-			bdxArea.setText("");
-			bdxArea.setText(listaArea1.get(indice).getNom_tipo_ubicacion());
-		}
-	}
-
-	public void setearAreas(Listbox lbxAreas) {
-		Listitem lItem;
-		Listcell lCell;
-		String rack = "";
-		int i = 0;
-		Iterator<Listitem> it = lbxAreas.getSelectedItems().iterator();
+		List<modelo_tipo_ubicacion> listaArea = new ArrayList<modelo_tipo_ubicacion>();
+		Iterator<Listitem> it = lbxArea1.getSelectedItems().iterator();
+		listaArea3 = new ArrayList<modelo_tipo_ubicacion>();
+		// Se anaden a la lista3 los items seleccionados
 		while (it.hasNext()) {
-			lItem = it.next();
-			lCell = (Listcell) lItem.getChildren().get(1);
-			if (i == 0) {
-				rack = lCell.getLabel();
-			} else {
-				rack = rack + ", " + lCell.getLabel();
+			Listitem item = it.next();
+			int indice = item.getIndex();
+			if (item.isSelected()) {
+				listaArea.add(listaArea2.get(indice));
+				listaArea3.add(listaArea2.get(indice));
 			}
-			i++;
 		}
-		bdxArea.setText(rack);
-		bdxArea.setTooltiptext(rack);
 	}
 
 	@Listen("onOK=#txtBuscarArea")
 	public void onOK$txtBuscarArea() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		listaArea1 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim());
-		bdxArea.setText("");
-		lbxArea1.clearSelection();
-		binder.loadComponent(lbxArea1);
+		long id_tipo_trabajo = 0;
+		if (cmbTipoTrabajo.getSelectedItem() == null) {
+			id_tipo_trabajo = 0;
+		} else {
+			id_tipo_trabajo = Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString());
+		}
+		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(),
+				id_tipo_trabajo, 2);
+		if (txtBuscarArea.getText().length() <= 0) {
+			binder.loadComponent(lbxArea1);
+			Iterator<Listitem> it = lbxArea1.getItems().iterator();
+			while (it.hasNext()) {
+				Listitem item = it.next();
+				int indice = item.getIndex();
+				for (int i = 0; i < listaArea3.size(); i++) {
+					if (listaArea3.get(i).getId_tipo_ubicacion() == listaArea2.get(indice).getId_tipo_ubicacion()) {
+						lbxArea1.addItemToSelection(item);
+					}
+				}
+			}
+		} else {
+			for (int i = 0; i < listaArea2.size(); i++) {
+				for (int j = 0; j < listaArea3.size(); j++) {
+					if (listaArea2.get(i).getId_tipo_ubicacion() == listaArea3.get(j).getId_tipo_ubicacion()) {
+						listaArea2.remove(i);
+					}
+				}
+			}
+			for (int i = 0; i < listaArea3.size(); i++) {
+				listaArea2.add(listaArea3.get(i));
+			}
+			binder.loadComponent(lbxArea1);
+			Iterator<Listitem> it = lbxArea1.getItems().iterator();
+			while (it.hasNext()) {
+				Listitem item = it.next();
+				int indice = item.getIndex();
+				for (int i = 0; i < listaArea3.size(); i++) {
+					if (listaArea3.get(i).getId_tipo_ubicacion() == listaArea2.get(indice).getId_tipo_ubicacion()) {
+						lbxArea1.addItemToSelection(item);
+					}
+				}
+			}
+		}
 	}
 
 	@Listen("onDoubleClick=#lbxArea1")
 	public void onDoubleClick$lbxArea1()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		// onClick$btnAnadir();
-	}
-
-	@Listen("onClick=#btnAnadir")
-	public void onClick$btnAnadir()
-			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		anadirItems();
-	}
-
-	public boolean validarItemEnLista(long id_area) {
-		boolean existe = false;
-		Listitem lItem;
-		Listcell lCell;
-		long id;
-		for (int i = 0; i < lbxArea2.getItems().size(); i++) {
-			lItem = lbxArea2.getItemAtIndex(i);
-			lCell = (Listcell) lItem.getChildren().get(0);
-			id = Long.valueOf(lCell.getLabel().toString());
-			if (id_area == id) {
-				existe = true;
-				i = lbxArea2.getItems().size() + 1;
-			}
-		}
-		return existe;
-	}
-
-	public void anadirItems() throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		if (lbxArea1.getSelectedItem() == null) {
-			return;
-		}
-		Iterator<Listitem> it = lbxArea1.getSelectedItems().iterator();
-		while (it.hasNext()) {
-			Listitem lItem;
-			Listcell lCell;
-			lItem = it.next();
-			int indice = lItem.getIndex();
-			if (validarItemEnLista(listaArea1.get(indice).getId_tipo_ubicacion()) == false) {
-				listaArea2.add(listaArea1.get(indice));
-				Button btnEliminar;
-				lItem = new Listitem();
-				/* ID */
-				lCell = new Listcell();
-				lCell.setLabel(String.valueOf(listaArea1.get(indice).getId_tipo_ubicacion()));
-				lCell.setStyle("text-align: center !important;");
-				lItem.appendChild(lCell);
-				/* NOMBRE */
-				lCell = new Listcell();
-				lCell.setLabel(listaArea1.get(indice).getNom_tipo_ubicacion());
-				lCell.setStyle("text-align: center !important;");
-				lItem.appendChild(lCell);
-				/* ACCION */
-				lCell = new Listcell();
-				btnEliminar = new Button();
-				btnEliminar.setImage("/img/botones/ButtonClose.png");
-				btnEliminar.setTooltiptext("Eliminar");
-				btnEliminar.setAutodisable("self");
-				btnEliminar.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
-					public void onEvent(Event event) throws Exception {
-						Listitem lItem;
-						Listcell lCell;
-						lItem = (Listitem) btnEliminar.getParent().getParent();
-						lCell = (Listcell) lItem.getChildren().get(0);
-						lbxArea2.removeItemAt(lItem.getIndex());
-						for (int i = 0; i < listaArea2.size(); i++) {
-							if (listaArea2.get(i).getId_tipo_ubicacion() == Long.valueOf(lCell.getLabel().toString())) {
-								listaArea2.remove(i);
-								i = listaArea2.size() + 1;
-							}
-						}
-					}
-				});
-				lCell.appendChild(btnEliminar);
-				lCell.setStyle("text-align: center !important;");
-				lItem.appendChild(lCell);
-				/* ANADIR ITEM A LISTBOX */
-				lbxArea2.appendChild(lItem);
-			}
-		}
-		/* LIMPIAR CAMPOS */
-		lbxArea1.clearSelection();
-		bdxArea.setText("");
-		txtBuscarArea.setText("");
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -283,7 +222,19 @@ public class area extends SelectorComposer<Component> {
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
 							try {
-								Sessions.getCurrent().setAttribute("lista_area", listaArea2);
+								Iterator<Listitem> it = lbxArea1.getSelectedItems().iterator();
+								listaArea3 = new ArrayList<modelo_tipo_ubicacion>();
+								// Se anaden a la lista3 los items seleccionados
+								while (it.hasNext()) {
+									Listitem item = it.next();
+									int indice = item.getIndex();
+									if (item.isSelected()) {
+										listaArea3.add(listaArea2.get(indice));
+									}
+								}
+								Sessions.getCurrent().setAttribute("lista_area", listaArea3);
+								Sessions.getCurrent().setAttribute("tipo_trabajo",
+										Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()));
 								Events.postEvent(new Event("onClose", zArea));
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(),

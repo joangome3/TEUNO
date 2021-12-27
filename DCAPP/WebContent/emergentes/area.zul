@@ -3,7 +3,7 @@
 <zk>
 	<window border="normal" id="zArea" closable="true"
 		apply="bp.aplicaciones.controlador.emergentes.area"
-		position="center, center" sizable="true" width="650px" height="550px"
+		position="center, center" sizable="true" width="600px" height="628px"
 		maximizable="false" minimizable="false" title=".:: Area ::."
 		shadow="false" mode="overlapped" focus="true"
 		action="show: slideDown;hide: slideUp">
@@ -15,39 +15,26 @@
 					autodisable="self" />
 			</toolbar>
 			<div>
-				<bandbox id="bdxArea" mold="rounded" autodrop="true"
-					width="320px" readonly="true"
-					style="font-weight: bold; color:black !important;" popup="pArea">
-				</bandbox>
-				<button id="btnAnadir"
-					image="/img/botones/ButtonNew.png" tooltiptext="Añadir"
-					autodisable="self" />
-			</div>
-			<listbox mold="paging" pageSize="20" id="lbxArea2"
-				sizedByContent="false" width="100%" vflex="true" multiple="false"
-				checkmark="false">
-				<listhead sizable="false" style="overflow: scroll;">
-					<listheader label="ID"
-						style="text-align: center !important;" visible="false" />
-					<listheader label="DESCRIPCION"
-						style="text-align: center !important;" />
-					<listheader label="ACCION"
-						style="text-align: center !important;" />
-				</listhead>
-			</listbox>
-			
-			<popup id="pArea" width="650px">
-				<space width="12px"></space>
-				<textbox width="280px" id="txtBuscarArea"
+				<space width="5px"></space>
+				<combobox width="260px" id="cmbTipoTrabajo"
+					readonly="true" disabled="false"
+					model="@{zArea$area.obtenerTipoTrabajo}">
+					<comboitem self="@{each=lista}"
+						label="@{lista.getNom_tipo_trabajo}"
+						value="@{lista.getId_tipo_trabajo}">
+					</comboitem>
+				</combobox>
+				<textbox width="250px" id="txtBuscarArea"
 					placeholder="Ingrese palabra clave"
 					tooltiptext="Presione enter para realizar la búsqueda"
 					style="font-style: italic;" sclass="demo-search-inp">
 				</textbox>
-				<image src="/img/botones/ButtonPopup.png" tooltip="con"
-					style="cursor: help; width: 12px; height: 12px;" />
-				<listbox mold="paging" pageSize="5" id="lbxArea1"
+			</div>
+			<hlayout>
+				<listbox mold="paging" pageSize="9" pagingPosition="top"
+					width="600px" id="lbxArea1"
 					model="@{zArea$area.obtenerTipoUbicaciones}" sizedByContent="false"
-					width="100%" multiple="true" checkmark="true">
+					multiple="true" checkmark="true">
 					<listhead sizable="false"
 						style="overflow: scroll;">
 						<listheader label="ID"
@@ -58,19 +45,15 @@
 					<listitem self="@{each=lista}">
 						<listcell label="@{lista.getId_tipo_ubicacion}"
 							style="text-align: center !important;" />
-						<listcell
-							label="@{lista.getNom_tipo_ubicacion}" />
+						<listcell label="@{lista.getNom_tipo_ubicacion}"
+							style="font-style: normal !important;" />
 					</listitem>
 				</listbox>
-			</popup>
-
+			</hlayout>
 		</div>
-		<zscript>
-	<![CDATA[
+		<zscript><![CDATA[
 	lbxArea1.pagingChild.mold = "os".equals(lbxArea1.pagingChild.mold) ? "default" : "os";
-	lbxArea2.pagingChild.mold = "os".equals(lbxArea2.pagingChild.mold) ? "default" : "os";
-]]>
-	</zscript>
+]]></zscript>
 		<style>.z-listheader-checkable { visibility: visible; }</style>
 	</window>
 </zk>

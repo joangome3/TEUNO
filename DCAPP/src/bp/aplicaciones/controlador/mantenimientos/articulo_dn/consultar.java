@@ -36,12 +36,16 @@ import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.ConsultasEnEnums;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo_dn;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ubicacion;
+import bp.aplicaciones.mantenimientos.DAO.dao_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
+import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_respaldo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
@@ -64,7 +68,7 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Listbox lbxUbicaciones;
 	@Wire
-	Combobox cmbCategoria, cmbLimite, cmbEstado;
+	Combobox cmbCategoria, cmbLimite, cmbEstado, cmbEmpresa1, cmbTipoUbicacion;
 	@Wire
 	Menuitem mSeguimiento, mSolicitar, mAccion, mModificar, mActivar, mInactivar;
 	@Wire
@@ -98,6 +102,8 @@ public class consultar extends SelectorComposer<Component> {
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
 	List<modelo_respaldo> listaRespaldo = new ArrayList<modelo_respaldo>();
 	List<modelo_capacidad> listaCapacidad = new ArrayList<modelo_capacidad>();
+	List<modelo_empresa> listaEmpresa1 = new ArrayList<modelo_empresa>();
+	List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	ConsultasEnEnums consultasEnEnums = new ConsultasEnEnums();
@@ -110,6 +116,8 @@ public class consultar extends SelectorComposer<Component> {
 
 	int accion = 1;
 
+	long id_opcion = 4;
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -119,6 +127,8 @@ public class consultar extends SelectorComposer<Component> {
 		cmbLimite.setSelectedIndex(2);
 		cmbEstado.setSelectedIndex(0);
 		cargarPerfil();
+		cargarEmpresas1();
+		cargarTipoUbicaciones();
 		inicializarPermisos();
 		if (consultar.equals("S")) {
 			try {
@@ -157,6 +167,14 @@ public class consultar extends SelectorComposer<Component> {
 		return listaUbicacion;
 	}
 
+	public List<modelo_empresa> obtenerEmpresas1() {
+		return listaEmpresa1;
+	}
+
+	public List<modelo_tipo_ubicacion> obtenerTipoUbicacion() {
+		return listaTipoUbicacion;
+	}
+
 	public void cargarPerfil() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
 	}
@@ -172,6 +190,36 @@ public class consultar extends SelectorComposer<Component> {
 		binder.loadComponent(cmbCategoria);
 		binder.loadComponent(lbxUbicaciones);
 		binder.loadComponent(lbxArticulos);
+	}
+
+	public void cargarUbicaciones(String criterio, long empresa, long tipo_ubicacion)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_ubicacion_dn dao = new dao_ubicacion_dn();
+		try {
+			listaUbicacion = dao.obtenerUbicaciones(criterio, String.valueOf(id_dc), 7, empresa, tipo_ubicacion, 0, 0);
+			binder.loadComponent(lbxUbicaciones);
+		} catch (SQLException e) {
+			Messagebox.show("Error al cargar las ubicaciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
+					".:: Cargar ubicacion ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+	}
+	
+	public void cargarEmpresas1() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaEmpresa1 = consultasABaseDeDatos.cargarEmpresas("", 2, String.valueOf(id_dc), String.valueOf(id_opcion),
+				0);
+		binder.loadComponent(cmbEmpresa1);
+	}
+
+	public void cargarTipoUbicaciones() throws ClassNotFoundException, FileNotFoundException, IOException {
+		dao_tipo_ubicacion dao = new dao_tipo_ubicacion();
+		String criterio = "";
+		try {
+			listaTipoUbicacion = dao.obtenerTipoUbicaciones(criterio, 0, 1);
+			binder.loadComponent(cmbTipoUbicacion);
+		} catch (SQLException e) {
+			Messagebox.show("Error al cargar las ubicacions. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
+					".:: Cargar ubicacion ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		}
 	}
 
 	public void inicializarPermisos() {
@@ -283,15 +331,59 @@ public class consultar extends SelectorComposer<Component> {
 		}
 	}
 
-	@Listen("onOK=#txtBuscarUbicacion")
-	public void onOKtxtBuscarUbicacion()
+	@Listen("onSelect=#cmbEmpresa1")
+	public void onSelect$cmbEmpresa1()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		bdxUbicacion.setText("");
-		bdxUbicacion.setTooltiptext("");
-		listaUbicacion = consultasABaseDeDatos.cargarUbicacionesDN(txtBuscarUbicacion.getText().toString(), id_dc, 6, 0,
-				0, 0, 10);
-		lbxUbicaciones.clearSelection();
-		binder.loadComponent(lbxUbicaciones);
+		long empresa = 0, tipo_ubicacion = 0;
+		if (cmbEmpresa1.getSelectedItem() == null) {
+			empresa = 0;
+		} else {
+			empresa = Long.valueOf(cmbEmpresa1.getSelectedItem().getValue().toString());
+		}
+		cmbTipoUbicacion.setText("");
+		if (cmbTipoUbicacion.getSelectedItem() == null) {
+			tipo_ubicacion = 0;
+		} else {
+			tipo_ubicacion = Long.valueOf(cmbTipoUbicacion.getSelectedItem().getValue().toString());
+		}
+		cargarUbicaciones(txtBuscarUbicacion.getText().toString(), empresa, tipo_ubicacion);
+		txtBuscarUbicacion.setTooltiptext("");
+	}
+
+	@Listen("onOK=#txtBuscarUbicacion")
+	public void onOK$txtBuscarUbicacion()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		long empresa = 0, tipo_ubicacion = 0;
+		if (cmbEmpresa1.getSelectedItem() == null) {
+			empresa = 0;
+		} else {
+			empresa = Long.valueOf(cmbEmpresa1.getSelectedItem().getValue().toString());
+		}
+		if (cmbTipoUbicacion.getSelectedItem() == null) {
+			tipo_ubicacion = 0;
+		} else {
+			tipo_ubicacion = Long.valueOf(cmbTipoUbicacion.getSelectedItem().getValue().toString());
+		}
+		cargarUbicaciones(txtBuscarUbicacion.getText().toString(), empresa, tipo_ubicacion);
+		txtBuscarUbicacion.setTooltiptext("");
+	}
+
+	@Listen("onSelect=#cmbTipoUbicacion")
+	public void onSelect$cmbTipoUbicacion()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
+		long empresa = 0, tipo_ubicacion = 0;
+		if (cmbEmpresa1.getSelectedItem() == null) {
+			empresa = 0;
+		} else {
+			empresa = Long.valueOf(cmbEmpresa1.getSelectedItem().getValue().toString());
+		}
+		if (cmbTipoUbicacion.getSelectedItem() == null) {
+			tipo_ubicacion = 0;
+		} else {
+			tipo_ubicacion = Long.valueOf(cmbTipoUbicacion.getSelectedItem().getValue().toString());
+		}
+		cargarUbicaciones(txtBuscarUbicacion.getText().toString(), empresa, tipo_ubicacion);
+		txtBuscarUbicacion.setTooltiptext("");
 	}
 
 	@Listen("onSelect=#lbxUbicaciones")

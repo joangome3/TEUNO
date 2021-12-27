@@ -217,6 +217,27 @@ public class dao_usuario {
 		}
 	}
 
+	public void cambiarLocalidad(modelo_usuario usuario) throws SQLException,
+			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		try {
+			PreparedStatement consulta = null;
+			consulta = conexion.abrir().prepareStatement("{CALL usuario_cambiarLocalidad (?, ?, ?, ?)}");
+			consulta.setLong(1, usuario.getId_localidad());
+			consulta.setString(2, usuario.getUsu_modifica());
+			consulta.setTimestamp(3, usuario.getFec_modifica());
+			consulta.setLong(4, usuario.getId_usuario());
+			consulta.executeUpdate();
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
 	public void activarDesactivarUsuario(modelo_usuario usuario) throws SQLException,
 			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();

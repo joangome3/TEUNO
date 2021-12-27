@@ -423,7 +423,7 @@ public class consultar extends SelectorComposer<Component> {
 		if (listaTareasProgramadas.get(indice).getId_cliente() == 9
 				&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
 			if (validarSiSeRealizaRevisionT1(indice) == false) {
-				Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "modificar"),
+				Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
 						informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 				return;
 			}
@@ -562,7 +562,7 @@ public class consultar extends SelectorComposer<Component> {
 			if (listaTareasProgramadas.get(indice).getId_cliente() == 9
 					&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
 				if (validarSiSeRealizaRevisionT1(indice) == false) {
-					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "eliminar"),
+					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
 							informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 					return;
 				}
@@ -622,7 +622,7 @@ public class consultar extends SelectorComposer<Component> {
 			if (listaTareasProgramadas.get(indice).getId_cliente() == 9
 					&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
 				if (validarSiSeRealizaRevisionT1(indice) == false) {
-					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "eliminar"),
+					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
 							informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 					return;
 				}

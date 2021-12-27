@@ -125,6 +125,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	long id = 0;
 	long id_opcion = 5;
 	long id_turno = 0;
+	long tipo_trabajo = 0;
 
 	boolean ingresa_a_relacionar_ticket = false;
 	boolean ingresa_a_area_rack = false;
@@ -168,7 +169,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 			}
 		});
 		if (cmbEstado.getItems().size() > 1) {
-			cmbEstado.setSelectedIndex(1);
+			cmbEstado.setSelectedIndex(0);
 		}
 		setearUsuario();
 	}
@@ -621,6 +622,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
+			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -630,6 +632,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
+						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 						setearAreas(listaTipoUbicacion);
 					}
 				});
@@ -814,7 +817,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 			dtxFechaInicio.setErrorMessage(validaciones.getMensaje_validacion_10());
 			return;
 		}
-		if(d1.equals(d2)) {
+		if (d1.equals(d2)) {
 			dtxFechaInicio.setFocus(true);
 			dtxFechaInicio.setErrorMessage(validaciones.getMensaje_validacion_39());
 			return;
@@ -861,7 +864,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 									Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()));
 							solicitud.setDescripcion(txtDescripcion.getText().toUpperCase().trim());
 							solicitud.setId_localidad(id_dc);
-							solicitud.setEst_solicitud("NE");
+							solicitud.setEst_solicitud(cmbEstado.getSelectedItem().getValue().toString());
 							solicitud.setUsu_ingresa(user);
 							solicitud.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							/* Se inicializa el objeto detalle solicitud */
@@ -875,7 +878,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 								lCell = (Listcell) lbxProveedores2.getItemAtIndex(i).getChildren().get(4);
 								cmBox = (Combobox) lCell.getChildren().get(0);
 								dt.setId_dispositivo(Long.valueOf(cmBox.getSelectedItem().getValue().toString()));
-								dt.setEst_detalle_solicitud("NE");
+								dt.setEst_detalle_solicitud(cmbEstado.getSelectedItem().getValue().toString());
 								dt.setUsu_ingresa(user);
 								dt.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 								detalle.add(dt);

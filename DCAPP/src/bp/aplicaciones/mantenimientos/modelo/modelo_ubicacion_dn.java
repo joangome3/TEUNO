@@ -324,116 +324,120 @@ public class modelo_ubicacion_dn {
 		return nom_ubicacion + " - " + pos_ubicacion;
 	}
 
-	 /* Se sobreescribe el metodo toString */
+	/* Se sobreescribe el metodo toString */
 
-		public String mostrarEstado() {
-			String estado = "";
-			if (est_ubicacion.charAt(0) == 'A') {
-				estado = "ACTIVO";
-			}
-			if (est_ubicacion.charAt(0) == 'P') {
-				estado = "PENDIENTE APROBAR CREACIÓN";
-			}
-			if (est_ubicacion.charAt(0) == 'I') {
-				estado = "INACTIVO";
-			}
-			return estado;
+	public String mostrarEstado() {
+		String estado = "";
+		if (est_ubicacion.charAt(0) == 'A') {
+			estado = "ACTIVO";
 		}
-		
-		/* Estilos en campos */
+		if (est_ubicacion.charAt(0) == 'P') {
+			estado = "PENDIENTE APROBAR CREACIÓN";
+		}
+		if (est_ubicacion.charAt(0) == 'I') {
+			estado = "INACTIVO";
+		}
+		return estado;
+	}
 
-		public String estiloMostrarEstado() {
-			String estilo = "";
-			if (est_ubicacion.charAt(0) == 'A') {
-				estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #CCFFE1;";
-			}
-			if (est_ubicacion.charAt(0) == 'P') {
-				estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FAF8D5;";
-			}
-			if (est_ubicacion.charAt(0) == 'I') {
-				estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FFDDDD;";
-			}
-			return estilo;
-		}
-		
-		public String mostrarImagenCapacidad() {
-			String imagen = "";
-			if (val_capacidad.equals("N")) {
-				imagen = "/img/botones/ButtonError.png";
-			} else {
-				imagen = "/img/botones/ButtonOK.png";
-			}
-			return imagen;
-		}
-		
-		public String estiloImagenTipos() {
-			String estilo = "";
-			estilo = "text-align: center !important; color: transparent;";
-			return estilo;
-		}
-		
-		public String mostrarImagenEstadoSolicitud()
-				throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-			String imagen = "";
-			if (validarSiExisteSolicitudCreada() == true) {
-				imagen = "/img/botones/ButtonEye.png";
-			} else if (validarSiExisteSolicitudPendienteEjecucionOActualizacion()) {
-				imagen = "/img/botones/ButtonOK.png";
-			} else {
-				imagen = "/img/botones/ButtonRequire.png";
-			}
-			return imagen;
-		}
+	/* Estilos en campos */
 
-		public boolean validarSiExisteSolicitudCreada()
-				throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-			ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
-			boolean existe_solicitud_creada = false;
-			modelo_solicitud solicitud = new modelo_solicitud();
-			solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 15, id_ubicacion, 7);
-			if (solicitud != null) {
-				String estado = solicitud.getEst_solicitud();
-				if (estado != null) {
-					if (estado.equals("P") || estado.equals("R")) {
-						existe_solicitud_creada = true;
-					}
+	public String estiloMostrarEstado() {
+		String estilo = "";
+		if (est_ubicacion.charAt(0) == 'A') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #CCFFE1;";
+		}
+		if (est_ubicacion.charAt(0) == 'P') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FAF8D5;";
+		}
+		if (est_ubicacion.charAt(0) == 'I') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FFDDDD;";
+		}
+		return estilo;
+	}
+
+	public String mostrarImagenCapacidad() {
+		String imagen = "";
+		if (val_capacidad.equals("N")) {
+			imagen = "/img/botones/ButtonError.png";
+		} else {
+			imagen = "/img/botones/ButtonOK.png";
+		}
+		return imagen;
+	}
+
+	public String estiloImagenTipos() {
+		String estilo = "";
+		estilo = "text-align: center !important; color: transparent;";
+		return estilo;
+	}
+
+	public String mostrarImagenEstadoSolicitud()
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		String imagen = "";
+		if (validarSiExisteSolicitudCreada() == true) {
+			imagen = "/img/botones/ButtonEye.png";
+		} else if (validarSiExisteSolicitudPendienteEjecucionOActualizacion()) {
+			imagen = "/img/botones/ButtonOK.png";
+		} else {
+			imagen = "/img/botones/ButtonRequire.png";
+		}
+		return imagen;
+	}
+
+	public boolean validarSiExisteSolicitudCreada()
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+		boolean existe_solicitud_creada = false;
+		modelo_solicitud solicitud = new modelo_solicitud();
+		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 15, id_ubicacion, 7);
+		if (solicitud != null) {
+			String estado = solicitud.getEst_solicitud();
+			if (estado != null) {
+				if (estado.equals("P") || estado.equals("R")) {
+					existe_solicitud_creada = true;
 				}
 			}
-			return existe_solicitud_creada;
 		}
+		return existe_solicitud_creada;
+	}
 
-		public boolean validarSiExisteSolicitudCerrada()
-				throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-			ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
-			boolean existe_solicitud_cerrada = false;
-			modelo_solicitud solicitud = new modelo_solicitud();
-			solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 15, id_ubicacion, 9);
-			if (solicitud != null) {
-				String estado = solicitud.getEst_solicitud();
-				if (estado != null) {
-					if (estado.equals("E") || estado.equals("N") || estado.equals("A")) {
-						existe_solicitud_cerrada = true;
-					}
+	public boolean validarSiExisteSolicitudCerrada()
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+		boolean existe_solicitud_cerrada = false;
+		modelo_solicitud solicitud = new modelo_solicitud();
+		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 15, id_ubicacion, 9);
+		if (solicitud != null) {
+			String estado = solicitud.getEst_solicitud();
+			if (estado != null) {
+				if (estado.equals("E") || estado.equals("N") || estado.equals("A")) {
+					existe_solicitud_cerrada = true;
 				}
 			}
-			return existe_solicitud_cerrada;
 		}
+		return existe_solicitud_cerrada;
+	}
 
-		public boolean validarSiExisteSolicitudPendienteEjecucionOActualizacion()
-				throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-			ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
-			boolean existe_solicitud_pendiente = false;
-			modelo_solicitud solicitud = new modelo_solicitud();
-			solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 15, id_ubicacion, 7);
-			if (solicitud != null) {
-				String estado = solicitud.getEst_solicitud();
-				if (estado != null) {
-					if (estado.equals("S") || estado.equals("T")) {
-						existe_solicitud_pendiente = true;
-					}
+	public boolean validarSiExisteSolicitudPendienteEjecucionOActualizacion()
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+		boolean existe_solicitud_pendiente = false;
+		modelo_solicitud solicitud = new modelo_solicitud();
+		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 15, id_ubicacion, 7);
+		if (solicitud != null) {
+			String estado = solicitud.getEst_solicitud();
+			if (estado != null) {
+				if (estado.equals("S") || estado.equals("T")) {
+					existe_solicitud_pendiente = true;
 				}
 			}
-			return existe_solicitud_pendiente;
 		}
+		return existe_solicitud_pendiente;
+	}
+
+	public String obtenerNombreUbicacion() {
+		return nom_ubicacion + " - " + pos_ubicacion;
+	}
 
 }
