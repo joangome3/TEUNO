@@ -124,7 +124,6 @@ public class modificar extends SelectorComposer<Component> {
 	long id_opcion = 3;
 	long id_turno = 0;
 	long id_tarea_proveedor = 0;
-	long tipo_trabajo = 0;
 
 	boolean ingresa_a_area_rack = false;
 
@@ -143,6 +142,8 @@ public class modificar extends SelectorComposer<Component> {
 	long id_tipo_tarea = 0;
 
 	String ticket_externo = "";
+
+	String id_tipo_ubicacion = "";
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -328,6 +329,7 @@ public class modificar extends SelectorComposer<Component> {
 		txtDescripcion.setText(tarea_proveedor.getDescripcion());
 		bdxArea.setText(tarea_proveedor.getArea());
 		bdxArea.setTooltiptext(tarea_proveedor.getArea());
+		cargarUbicaciones();
 		bdxRack.setText(tarea_proveedor.getRack());
 		bdxRack.setTooltiptext(tarea_proveedor.getRack());
 		/* TURNO **/
@@ -376,6 +378,29 @@ public class modificar extends SelectorComposer<Component> {
 		}
 		cmbUsuario.setDisabled(true);
 		activarCampoOperador(existeTipoServicio(1, String.valueOf(tarea_proveedor.getId_tipo_servicio())));
+	}
+	
+	public void cargarUbicaciones() throws ClassNotFoundException, FileNotFoundException, IOException {
+		List<modelo_tipo_ubicacion> _listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
+		_listaTipoUbicacion = consultasABaseDeDatos.cargarTipoUbicaciones("", 0, 1);
+		List<Long> id_ubicaciones = new ArrayList<Long>();
+		if (tarea_proveedor.getId_area() != null) {
+			if (tarea_proveedor.getId_area().length() > 0) {
+				String[] ubicaciones = tarea_proveedor.getId_area().split(", ");
+				// System.out.println(ubicaciones.length);
+				for (int i = 0; i < ubicaciones.length; i++) {
+					id_ubicaciones.add(Long.valueOf(ubicaciones[i]));
+				}
+				// System.out.println(tipo_trabajo);
+				for (int i = 0; i < _listaTipoUbicacion.size(); i++)
+					for (int j = 0; j < id_ubicaciones.size(); j++) {
+						// System.out.println(id_ubicaciones.get(i));
+						if (_listaTipoUbicacion.get(i).getId_tipo_ubicacion() == id_ubicaciones.get(j)) {
+							listaTipoUbicacion.add(_listaTipoUbicacion.get(i));
+						}
+					}
+			}
+		}
 	}
 
 	public boolean validarSiUsuarioEsRevisor() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -1366,7 +1391,6 @@ public class modificar extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
-			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -1376,7 +1400,6 @@ public class modificar extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
-						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 						setearAreas(listaTipoUbicacion);
 					}
 				});
@@ -1416,20 +1439,26 @@ public class modificar extends SelectorComposer<Component> {
 
 	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
 		String tipo_ubicacion = "";
+		id_tipo_ubicacion = "";
 		if (listaTipoUbicacion.size() > 0) {
 			for (int i = 0; i < listaTipoUbicacion.size(); i++) {
 				if (i == 0) {
 					tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+					id_tipo_ubicacion = String.valueOf(listaTipoUbicacion.get(i).getId_tipo_ubicacion());
 				} else {
 					tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+					id_tipo_ubicacion = id_tipo_ubicacion + ", "
+							+ String.valueOf(listaTipoUbicacion.get(i).getId_tipo_ubicacion());
 				}
 			}
+			bdxArea.setText(tipo_ubicacion);
+			bdxArea.setTooltiptext(tipo_ubicacion);
 		} else {
 			tipo_ubicacion = "";
+			id_tipo_ubicacion = "";
+			bdxArea.setText(tipo_ubicacion);
+			bdxArea.setTooltiptext(tipo_ubicacion);
 		}
-
-		bdxArea.setText(tipo_ubicacion);
-		bdxArea.setTooltiptext(tipo_ubicacion);
 	}
 
 	public void setearRacks(List<modelo_rack> listaRack) {

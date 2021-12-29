@@ -1214,3 +1214,7 @@ input[type="checkbox"]:checked {
 .m-row-a>td>div {
 	padding: 0px 0px !important;
 }
+
+.z-tabbox, .z-listbox-paging-bottom, .z-listbox {
+	border: 0px !important;
+}

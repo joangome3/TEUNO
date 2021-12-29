@@ -90,15 +90,19 @@
 											</combobox>
 											<space width="10px"></space>
 											<combobox width="145px"
-												id="cmbEstado" readonly="true" disabled="false" visible="false">
+												id="cmbEstado" readonly="true" disabled="false" visible="true">
 												<comboitem
-													label="EJECUTADO" value="E"
-													iconSclass="z-icon-check-circle-o">
-												</comboitem>
-												<comboitem
-													label="NO EJECUTADO" value="NE"
-													iconSclass="z-icon-times-circle-o">
-												</comboitem>
+														label="EN CURSO" value="A">
+													</comboitem>
+													<comboitem
+														label="EJECUTADO" value="E">
+													</comboitem>
+													<comboitem
+														label="NO EJECUTADO" value="NE">
+													</comboitem>
+													<comboitem
+														label="CANCELADO" value="C">
+													</comboitem>
 											</combobox>
 										</cell>
 									</row>
@@ -180,14 +184,21 @@
 		<menuitem id="mModificar" iconSclass="z-icon-edit"
 			label=" - Modificar"
 			tooltiptext="Permite modificar la tarea que se encuentra seleccionada, solo se permite modificar una tarea a la vez." />
-		<menuseparator visible="false"/>
+		<menuseparator visible="false" />
 		<menuitem id="mRegistrar" iconSclass="z-icon-times"
 			label=" - Registrar permanencia"
-			tooltiptext="Permite registrar la permanencia del personal asignado a la solicitud." visible="false"/>
-		<menuseparator visible="false"/>
+			tooltiptext="Permite registrar la permanencia del personal asignado a la solicitud."
+			visible="false" />
+		<menuseparator visible="false" />
 		<menuitem id="mCerrar" iconSclass="z-icon-code"
 			label=" - Cerrar tarea"
-			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez." visible="false"/>
+			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez."
+			visible="false" />
+		<menuseparator visible="true" />
+		<menuitem id="mAlcance" iconSclass="z-icon-code"
+			label=" - Crear alcance"
+			tooltiptext="Permite crear el alcance a una solicitud a partir de la solicitud seleccionada."
+			visible="true" />
 	</menupopup>
 	<popup id="cons" width="300px">
 		<html>

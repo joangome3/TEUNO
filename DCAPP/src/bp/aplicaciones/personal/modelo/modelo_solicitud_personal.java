@@ -23,6 +23,8 @@ public class modelo_solicitud_personal {
 	private String nom_solicitante;
 	private long id_tipo_trabajo;
 	private String nom_tipo_trabajo;
+	private String id_area;
+	private String id_rack;
 	private String area;
 	private String rack;
 	private Timestamp fec_solicitud;
@@ -55,6 +57,8 @@ public class modelo_solicitud_personal {
 	 * @param id_tipo_aprobador
 	 * @param id_solicitante
 	 * @param id_tipo_trabajo
+	 * @param id_area
+	 * @param id_rack
 	 * @param area
 	 * @param rack
 	 * @param fec_solicitud
@@ -70,10 +74,10 @@ public class modelo_solicitud_personal {
 	 * @param fec_modifica
 	 */
 	public modelo_solicitud_personal(long id_solicitud, long id_cliente, String ticket, long id_tipo_ingreso,
-			long id_tipo_aprobador, long id_solicitante, long id_tipo_trabajo, String area, String rack,
-			Timestamp fec_solicitud, Timestamp fec_respuesta, Timestamp fec_inicio, Timestamp fec_fin,
-			String descripcion, long id_localidad, String est_solicitud, String usu_ingresa, Timestamp fec_ingresa,
-			String usu_modifica, Timestamp fec_modifica) {
+			long id_tipo_aprobador, long id_solicitante, long id_tipo_trabajo, String id_area, String id_rack,
+			String area, String rack, Timestamp fec_solicitud, Timestamp fec_respuesta, Timestamp fec_inicio,
+			Timestamp fec_fin, String descripcion, long id_localidad, String est_solicitud, String usu_ingresa,
+			Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		super();
 		this.id_solicitud = id_solicitud;
 		this.id_cliente = id_cliente;
@@ -82,6 +86,8 @@ public class modelo_solicitud_personal {
 		this.id_tipo_aprobador = id_tipo_aprobador;
 		this.id_solicitante = id_solicitante;
 		this.id_tipo_trabajo = id_tipo_trabajo;
+		this.id_area = id_area;
+		this.id_rack = id_rack;
 		this.area = area;
 		this.rack = rack;
 		this.fec_solicitud = fec_solicitud;
@@ -110,6 +116,8 @@ public class modelo_solicitud_personal {
 	 * @param nom_solicitante
 	 * @param id_tipo_trabajo
 	 * @param nom_tipo_trabajo
+	 * @param id_area
+	 * @param id_rack
 	 * @param area
 	 * @param rack
 	 * @param fec_solicitud
@@ -129,11 +137,11 @@ public class modelo_solicitud_personal {
 	 */
 	public modelo_solicitud_personal(long id_solicitud, long id_cliente, String nom_cliente, String ticket,
 			long id_tipo_ingreso, String nom_tipo_ingreso, long id_tipo_aprobador, String nom_tipo_aprobador,
-			long id_solicitante, String nom_solicitante, long id_tipo_trabajo, String nom_tipo_trabajo, String area,
-			String rack, Timestamp fec_solicitud, Timestamp fec_respuesta, Timestamp fec_inicio, Timestamp fec_fin,
-			String descripcion, long id_localidad, String nom_id_localidad, String est_solicitud, String usu_ingresa,
-			String nom_usuario_ingresa, Timestamp fec_ingresa, String usu_modifica, String nom_usuario_modifica,
-			Timestamp fec_modifica) {
+			long id_solicitante, String nom_solicitante, long id_tipo_trabajo, String nom_tipo_trabajo, String id_area,
+			String id_rack, String area, String rack, Timestamp fec_solicitud, Timestamp fec_respuesta,
+			Timestamp fec_inicio, Timestamp fec_fin, String descripcion, long id_localidad, String nom_id_localidad,
+			String est_solicitud, String usu_ingresa, String nom_usuario_ingresa, Timestamp fec_ingresa,
+			String usu_modifica, String nom_usuario_modifica, Timestamp fec_modifica) {
 		super();
 		this.id_solicitud = id_solicitud;
 		this.id_cliente = id_cliente;
@@ -147,6 +155,8 @@ public class modelo_solicitud_personal {
 		this.nom_solicitante = nom_solicitante;
 		this.id_tipo_trabajo = id_tipo_trabajo;
 		this.nom_tipo_trabajo = nom_tipo_trabajo;
+		this.id_area = id_area;
+		this.id_rack = id_rack;
 		this.area = area;
 		this.rack = rack;
 		this.fec_solicitud = fec_solicitud;
@@ -331,6 +341,34 @@ public class modelo_solicitud_personal {
 	 */
 	public void setNom_tipo_trabajo(String nom_tipo_trabajo) {
 		this.nom_tipo_trabajo = nom_tipo_trabajo;
+	}
+
+	/**
+	 * @return the id_area
+	 */
+	public String getId_area() {
+		return id_area;
+	}
+
+	/**
+	 * @param id_area the id_area to set
+	 */
+	public void setId_area(String id_area) {
+		this.id_area = id_area;
+	}
+
+	/**
+	 * @return the id_rack
+	 */
+	public String getId_rack() {
+		return id_rack;
+	}
+
+	/**
+	 * @param id_rack the id_rack to set
+	 */
+	public void setId_rack(String id_rack) {
+		this.id_rack = id_rack;
 	}
 
 	/**
@@ -557,22 +595,6 @@ public class modelo_solicitud_personal {
 		this.fec_modifica = fec_modifica;
 	}
 
-	@Override
-	public String toString() {
-		return "modelo_solicitud_personal [id_solicitud=" + id_solicitud + ", id_cliente=" + id_cliente
-				+ ", nom_cliente=" + nom_cliente + ", ticket=" + ticket + ", id_tipo_ingreso=" + id_tipo_ingreso
-				+ ", nom_tipo_ingreso=" + nom_tipo_ingreso + ", id_tipo_aprobador=" + id_tipo_aprobador
-				+ ", nom_tipo_aprobador=" + nom_tipo_aprobador + ", id_solicitante=" + id_solicitante
-				+ ", nom_solicitante=" + nom_solicitante + ", id_tipo_trabajo=" + id_tipo_trabajo
-				+ ", nom_tipo_trabajo=" + nom_tipo_trabajo + ", area=" + area + ", rack=" + rack + ", fec_solicitud="
-				+ fec_solicitud + ", fec_respuesta=" + fec_respuesta + ", fec_inicio=" + fec_inicio + ", fec_fin="
-				+ fec_fin + ", descripcion=" + descripcion + ", id_localidad=" + id_localidad + ", nom_id_localidad="
-				+ nom_id_localidad + ", est_solicitud=" + est_solicitud + ", usu_ingresa=" + usu_ingresa
-				+ ", nom_usuario_ingresa=" + nom_usuario_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica="
-				+ usu_modifica + ", nom_usuario_modifica=" + nom_usuario_modifica + ", fec_modifica=" + fec_modifica
-				+ "]";
-	}
-
 	public String mostrarFechaSolicitud() {
 		String fecha = "-";
 		fecha = fechas.obtenerFechaFormateada(fec_solicitud, "dd/MM/yyyy HH:mm");
@@ -596,7 +618,23 @@ public class modelo_solicitud_personal {
 		fecha = fechas.obtenerFechaFormateada(fec_fin, "dd/MM/yyyy HH:mm");
 		return fecha;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "modelo_solicitud_personal [id_solicitud=" + id_solicitud + ", id_cliente=" + id_cliente
+				+ ", nom_cliente=" + nom_cliente + ", ticket=" + ticket + ", id_tipo_ingreso=" + id_tipo_ingreso
+				+ ", nom_tipo_ingreso=" + nom_tipo_ingreso + ", id_tipo_aprobador=" + id_tipo_aprobador
+				+ ", nom_tipo_aprobador=" + nom_tipo_aprobador + ", id_solicitante=" + id_solicitante
+				+ ", nom_solicitante=" + nom_solicitante + ", id_tipo_trabajo=" + id_tipo_trabajo
+				+ ", nom_tipo_trabajo=" + nom_tipo_trabajo + ", id_area=" + id_area + ", id_rack=" + id_rack + ", area="
+				+ area + ", rack=" + rack + ", fec_solicitud=" + fec_solicitud + ", fec_respuesta=" + fec_respuesta
+				+ ", fec_inicio=" + fec_inicio + ", fec_fin=" + fec_fin + ", descripcion=" + descripcion
+				+ ", id_localidad=" + id_localidad + ", nom_id_localidad=" + nom_id_localidad + ", est_solicitud="
+				+ est_solicitud + ", usu_ingresa=" + usu_ingresa + ", nom_usuario_ingresa=" + nom_usuario_ingresa
+				+ ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", nom_usuario_modifica="
+				+ nom_usuario_modifica + ", fec_modifica=" + fec_modifica + "]";
+	}
+
 	public String mostrarArea() {
 		String _area = "";
 		if (area != null) {
@@ -613,7 +651,6 @@ public class modelo_solicitud_personal {
 		return _rack;
 	}
 
-	
 	public String mostrarImagenArea() {
 		String imagen = "";
 		if (area == null) {
@@ -633,7 +670,7 @@ public class modelo_solicitud_personal {
 		}
 		return imagen;
 	}
-	
+
 	public String estiloImagenArea() {
 		String estilo = "";
 		if (area == null) {

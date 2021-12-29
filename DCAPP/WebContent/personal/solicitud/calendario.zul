@@ -39,13 +39,11 @@
 				disabled="true" />
 			<space width="10px"></space>
 			<combobox width="145px" id="cmbEstado" readonly="true"
-				disabled="false" visible="false">
-				<comboitem label="EJECUTADO" value="E"
-					iconSclass="z-icon-check-circle-o">
-				</comboitem>
-				<comboitem label="NO EJECUTADO" value="NE"
-					iconSclass="z-icon-times-circle-o">
-				</comboitem>
+				disabled="false" visible="true">
+				<comboitem label="EN CURSO" value="A"></comboitem>
+				<comboitem label="EJECUTADO" value="E"></comboitem>
+				<comboitem label="NO EJECUTADO" value="NE"></comboitem>
+				<comboitem label="CANCELADO" value="C"></comboitem>
 			</combobox>
 		</hlayout>
 		<borderlayout height="97%">

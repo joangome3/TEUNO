@@ -17,7 +17,6 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
@@ -48,8 +47,6 @@ public class area extends SelectorComposer<Component> {
 	Listbox lbxArea1;
 	@Wire
 	Textbox txtBuscarArea;
-	@Wire
-	Combobox cmbTipoTrabajo;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
@@ -60,7 +57,6 @@ public class area extends SelectorComposer<Component> {
 	@SuppressWarnings("unchecked")
 	List<modelo_tipo_ubicacion> listaArea4 = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 			.getAttribute("lista_area");
-	long tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 
 	validar_datos validar = new validar_datos();
 
@@ -100,14 +96,14 @@ public class area extends SelectorComposer<Component> {
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaArea1 = consultasABaseDeDatos.cargarTipoUbicaciones("", 0, 1);
+		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones("", 0, 1);
 		listaTipoTrabajo = consultasABaseDeDatos.cargarTipoTrabajos("");
-		binder.loadComponent(cmbTipoTrabajo);
+		binder.loadComponent(lbxArea1);
 	}
 
 	public void setearAreas(List<modelo_tipo_ubicacion> listaArea4)
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
-		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(),
-				tipo_trabajo, 2);
+		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(), 0, 1);
 		binder.loadComponent(lbxArea1);
 		Iterator<Listitem> it = lbxArea1.getItems().iterator();
 		while (it.hasNext()) {
@@ -120,25 +116,6 @@ public class area extends SelectorComposer<Component> {
 				}
 			}
 		}
-		for (int i = 0; i < listaTipoTrabajo.size(); i++) {
-			if (listaTipoTrabajo.get(i).getId_tipo_trabajo() == tipo_trabajo) {
-				cmbTipoTrabajo.setText(listaTipoTrabajo.get(i).getNom_tipo_trabajo());
-				i = listaTipoTrabajo.size() + 1;
-			}
-		}
-		binder.loadComponent(cmbTipoTrabajo);
-	}
-
-	@Listen("onSelect=#cmbTipoTrabajo")
-	public void onSelect$cmbTipoTrabajo()
-			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		if (cmbTipoTrabajo.getSelectedItem() == null) {
-			return;
-		}
-		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(),
-				Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()), 2);
-		binder.loadComponent(lbxArea1);
-		lbxArea1.clearSelection();
 	}
 
 	@Listen("onSelect=#lbxArea1")
@@ -162,14 +139,7 @@ public class area extends SelectorComposer<Component> {
 
 	@Listen("onOK=#txtBuscarArea")
 	public void onOK$txtBuscarArea() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		long id_tipo_trabajo = 0;
-		if (cmbTipoTrabajo.getSelectedItem() == null) {
-			id_tipo_trabajo = 0;
-		} else {
-			id_tipo_trabajo = Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString());
-		}
-		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(),
-				id_tipo_trabajo, 2);
+		listaArea2 = consultasABaseDeDatos.cargarTipoUbicaciones(txtBuscarArea.getText().toUpperCase().trim(), 0, 1);
 		if (txtBuscarArea.getText().length() <= 0) {
 			binder.loadComponent(lbxArea1);
 			Iterator<Listitem> it = lbxArea1.getItems().iterator();
@@ -233,8 +203,6 @@ public class area extends SelectorComposer<Component> {
 									}
 								}
 								Sessions.getCurrent().setAttribute("lista_area", listaArea3);
-								Sessions.getCurrent().setAttribute("tipo_trabajo",
-										Long.valueOf(cmbTipoTrabajo.getSelectedItem().getValue().toString()));
 								Events.postEvent(new Event("onClose", zArea));
 							} catch (Exception e) {
 								Messagebox.show(error.getMensaje_error_4(),

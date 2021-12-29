@@ -125,7 +125,6 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	long id = 0;
 	long id_opcion = 5;
 	long id_turno = 0;
-	long tipo_trabajo = 0;
 
 	boolean ingresa_a_relacionar_ticket = false;
 	boolean ingresa_a_area_rack = false;
@@ -139,6 +138,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+	
+	String id_tipo_ubicacion = "";
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -622,7 +623,6 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
-			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -632,7 +632,6 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
-						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 						setearAreas(listaTipoUbicacion);
 					}
 				});
@@ -672,20 +671,26 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
 		String tipo_ubicacion = "";
+		id_tipo_ubicacion = "";
 		if (listaTipoUbicacion.size() > 0) {
 			for (int i = 0; i < listaTipoUbicacion.size(); i++) {
 				if (i == 0) {
 					tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+					id_tipo_ubicacion = String.valueOf(listaTipoUbicacion.get(i).getId_tipo_ubicacion());
 				} else {
 					tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+					id_tipo_ubicacion = id_tipo_ubicacion + ", "
+							+ String.valueOf(listaTipoUbicacion.get(i).getId_tipo_ubicacion());
 				}
 			}
+			bdxArea.setText(tipo_ubicacion);
+			bdxArea.setTooltiptext(tipo_ubicacion);
 		} else {
 			tipo_ubicacion = "";
+			id_tipo_ubicacion = "";
+			bdxArea.setText(tipo_ubicacion);
+			bdxArea.setTooltiptext(tipo_ubicacion);
 		}
-
-		bdxArea.setText(tipo_ubicacion);
-		bdxArea.setTooltiptext(tipo_ubicacion);
 	}
 
 	public void setearRacks(List<modelo_rack> listaRack) {
@@ -858,6 +863,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 							solicitud.setFec_respuesta(fechas.obtenerTimestampDeDate(dtxFechaRespuesta.getValue()));
 							solicitud.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
 							solicitud.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaFin.getValue()));
+							solicitud.setId_area(id_tipo_ubicacion);
+							solicitud.setId_rack(bdxRack.getText().toUpperCase().trim());
 							solicitud.setArea(bdxArea.getText().toUpperCase().trim());
 							solicitud.setRack(bdxRack.getText().toUpperCase().trim());
 							solicitud.setId_tipo_trabajo(
@@ -900,6 +907,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaSolicitud.getValue()));
 							bitacora.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaRespuesta.getValue()));
 							bitacora.setCumplimiento("C");
+							bitacora.setId_area(id_tipo_ubicacion);
+							bitacora.setId_rack(bdxRack.getText().toString());
 							bitacora.setArea(bdxArea.getText().toString());
 							bitacora.setRack(bdxRack.getText().toString());
 							bitacora.setDescripcion(
@@ -927,6 +936,10 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 							} else {
 								tarea_proveedor.setId_tipo_clasificacion(10);
 							}
+							tarea_proveedor.setId_area(id_tipo_ubicacion);
+							tarea_proveedor.setId_rack(bdxRack.getText().toString());
+							tarea_proveedor.setArea(bdxArea.getText().toString());
+							tarea_proveedor.setRack(bdxRack.getText().toString());
 							tarea_proveedor.setId_tipo_tarea(1);
 							tarea_proveedor.setId_estado_bitacora(1);
 							tarea_proveedor.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));

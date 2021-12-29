@@ -1,4 +1,4 @@
-<?page title="Nueva solicitud" contentType="text/html;charset=UTF-8"?>
+<?page title="Modificar solicitud" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window border="normal" id="zModificar" closable="false"
@@ -221,12 +221,16 @@
 												<combobox width="145px"
 													id="cmbEstado" readonly="true" disabled="false">
 													<comboitem
-														label="EJECUTADO" value="E"
-														iconSclass="z-icon-check-circle-o">
+														label="EN CURSO" value="A">
 													</comboitem>
 													<comboitem
-														label="NO EJECUTADO" value="NE"
-														iconSclass="z-icon-times-circle-o">
+														label="EJECUTADO" value="E">
+													</comboitem>
+													<comboitem
+														label="NO EJECUTADO" value="NE">
+													</comboitem>
+													<comboitem
+														label="CANCELADO" value="C">
 													</comboitem>
 												</combobox>
 											</hlayout>

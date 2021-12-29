@@ -126,7 +126,6 @@ public class nuevo extends SelectorComposer<Component> {
 	long id_opcion = 3;
 	long id_turno = 0;
 	long id_tarea_proveedor = 0;
-	long tipo_trabajo = 0;
 
 	boolean ingresa_a_relacionar_ticket = false;
 	boolean ingresa_a_area_rack = false;
@@ -140,6 +139,8 @@ public class nuevo extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+
+	String id_tipo_ubicacion = "";
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -1105,6 +1106,8 @@ public class nuevo extends SelectorComposer<Component> {
 								tarea_proveedor.setId_solicitante(listaSolicitante.get(indice).getId_solicitante());
 							}
 							bitacora.setDescripcion(txtDescripcion.getText());
+							bitacora.setId_area(id_tipo_ubicacion);
+							bitacora.setId_rack(bdxRack.getText().toString());
 							bitacora.setArea(bdxArea.getText().toString());
 							bitacora.setRack(bdxRack.getText().toString());
 							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
@@ -1144,6 +1147,8 @@ public class nuevo extends SelectorComposer<Component> {
 								tarea_proveedor.setId_tipo_tarea(
 										Long.valueOf(cmbTipoTarea.getSelectedItem().getValue().toString()));
 								tarea_proveedor.setDescripcion(txtDescripcion.getText());
+								tarea_proveedor.setId_area(id_tipo_ubicacion);
+								tarea_proveedor.setId_rack(bdxRack.getText().toString());
 								tarea_proveedor.setArea(bdxArea.getText().toString());
 								tarea_proveedor.setRack(bdxRack.getText().toString());
 								tarea_proveedor.setFec_inicio(
@@ -1454,7 +1459,6 @@ public class nuevo extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
-			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -1464,7 +1468,6 @@ public class nuevo extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
-						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
 						setearAreas(listaTipoUbicacion);
 					}
 				});
@@ -1503,20 +1506,26 @@ public class nuevo extends SelectorComposer<Component> {
 
 	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
 		String tipo_ubicacion = "";
+		id_tipo_ubicacion = "";
 		if (listaTipoUbicacion.size() > 0) {
 			for (int i = 0; i < listaTipoUbicacion.size(); i++) {
 				if (i == 0) {
 					tipo_ubicacion = listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+					id_tipo_ubicacion = String.valueOf(listaTipoUbicacion.get(i).getId_tipo_ubicacion());
 				} else {
 					tipo_ubicacion = tipo_ubicacion + ", " + listaTipoUbicacion.get(i).getNom_tipo_ubicacion();
+					id_tipo_ubicacion = id_tipo_ubicacion + ", "
+							+ String.valueOf(listaTipoUbicacion.get(i).getId_tipo_ubicacion());
 				}
 			}
+			bdxArea.setText(tipo_ubicacion);
+			bdxArea.setTooltiptext(tipo_ubicacion);
 		} else {
 			tipo_ubicacion = "";
+			id_tipo_ubicacion = "";
+			bdxArea.setText(tipo_ubicacion);
+			bdxArea.setTooltiptext(tipo_ubicacion);
 		}
-
-		bdxArea.setText(tipo_ubicacion);
-		bdxArea.setTooltiptext(tipo_ubicacion);
 	}
 
 	public void setearRacks(List<modelo_rack> listaRack) {
@@ -1529,11 +1538,13 @@ public class nuevo extends SelectorComposer<Component> {
 					rack = rack + ", " + listaRack.get(i).getCoord_rack();
 				}
 			}
+			bdxRack.setText(rack);
+			bdxRack.setTooltiptext(rack);
 		} else {
 			rack = "";
+			bdxRack.setText(rack);
+			bdxRack.setTooltiptext(rack);
 		}
-		bdxRack.setText(rack);
-		bdxRack.setTooltiptext(rack);
 	}
 
 }

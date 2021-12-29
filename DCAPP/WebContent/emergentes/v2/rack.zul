@@ -1,0 +1,90 @@
+<?page title="Racks - Gestion de personal" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zRack" closable="true"
+		apply="bp.aplicaciones.controlador.emergentes.rack"
+		position="center, center" sizable="true" width="650px" height="550px"
+		maximizable="false" minimizable="false" title=".:: Rack ::."
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<space height="2px"></space>
+			<toolbar class="m-toolbar">
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" />
+			</toolbar>
+			<div>
+				<bandbox id="bdxRack" mold="rounded" autodrop="true"
+					width="320px" readonly="true"
+					style="font-weight: bold; color:black !important;" popup="pRack">
+				</bandbox>
+				<button id="btnAnadir"
+					image="/img/botones/ButtonNew.png" tooltiptext="Añadir"
+					autodisable="self" />
+			</div>
+			<listbox mold="paging" pageSize="20" id="lbxRack2"
+				sizedByContent="false" width="100%" vflex="true" multiple="false"
+				checkmark="false">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="ID"
+						style="text-align: center !important;" visible="true"/>
+					<listheader label="CLIENTE"
+						style="text-align: center !important;" />
+					<listheader label="FILA"
+						style="text-align: center !important;" />
+					<listheader label="COORDENADA"
+						style="text-align: center !important;" />
+					<listheader label="ACCION"
+						style="text-align: center !important;" />
+				</listhead>
+			</listbox>
+		</div>
+		<popup id="pRack" width="700px">
+			<space width="12px"></space>
+			<combobox width="155px" id="cmbFilas"
+				model="@{zRack$rack.obtenerFilas}" readonly="true"
+				disabled="false">
+				<comboitem self="@{each=lista}"
+					label="@{lista.getNom_fila}" value="@{lista.getId_fila}">
+				</comboitem>
+			</combobox>
+			<textbox width="280px" id="txtBuscarRack"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<listbox mold="paging" pageSize="15" id="lbxRack1"
+				model="@{zRack$rack.obtenerRacks}" sizedByContent="false"
+				width="100%" checkmark="true" multiple="true">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="ID"
+						style="text-align: center !important;" visible="true" />
+					<listheader label="CLIENTE"
+						style="text-align: center !important;" />
+					<listheader label="FILA"
+						style="text-align: center !important;" />
+					<listheader label="COORDENADA"
+						style="text-align: center !important;" />
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell label="@{lista.getId_rack}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.getNom_cliente}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.getNom_fila}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.getCoord_rack}"
+						style="text-align: center !important;" />
+				</listitem>
+			</listbox>
+		</popup>
+		<zscript>
+	<![CDATA[
+	lbxRack1.pagingChild.mold = "os".equals(lbxRack1.pagingChild.mold) ? "default" : "os";
+	lbxRack2.pagingChild.mold = "os".equals(lbxRack2.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+		<style>.z-listheader-checkable { visibility: visible; }</style>
+	</window>
+</zk>

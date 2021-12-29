@@ -31,6 +31,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 	private String nom_tipo_tarea;
 	private long id_solicitante;
 	private String nom_solicitante;
+	private String id_area;
+	private String id_rack;
 	private String area;
 	private String rack;
 	private String descripcion;
@@ -89,6 +91,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 * @param id_tipo_servicio
 	 * @param id_tipo_clasificacion
 	 * @param id_tipo_tarea
+	 * @param id_area
+	 * @param id_rack
 	 * @param area
 	 * @param rack
 	 * @param descripcion
@@ -107,11 +111,11 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 * @param obs_coordinador
 	 */
 	public modelo_tarea_proveedor(long id_tarea_proveedor, long id_cliente, String ticket_externo, long id_turno,
-			long id_tipo_servicio, long id_tipo_clasificacion, long id_tipo_tarea, String area, String rack,
-			String descripcion, Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora, String cumplimiento,
-			long id_localidad, String est_tarea_proveedor, String usu_ingresa, Timestamp fec_ingresa,
-			String usu_modifica, Timestamp fec_modifica, String cor_revisa, Timestamp fec_revision,
-			String obs_coordinador) {
+			long id_tipo_servicio, long id_tipo_clasificacion, long id_tipo_tarea, String id_area, String id_rack,
+			String area, String rack, String descripcion, Timestamp fec_inicio, Timestamp fec_fin,
+			long id_estado_bitacora, String cumplimiento, long id_localidad, String est_tarea_proveedor,
+			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica, String cor_revisa,
+			Timestamp fec_revision, String obs_coordinador) {
 		super();
 		this.id_tarea_proveedor = id_tarea_proveedor;
 		this.id_cliente = id_cliente;
@@ -120,6 +124,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 		this.id_tipo_servicio = id_tipo_servicio;
 		this.id_tipo_clasificacion = id_tipo_clasificacion;
 		this.id_tipo_tarea = id_tipo_tarea;
+		this.id_area = id_area;
+		this.id_rack = id_rack;
 		this.area = area;
 		this.rack = rack;
 		this.descripcion = descripcion;
@@ -153,6 +159,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 * @param nom_tipo_tarea
 	 * @param id_solicitante
 	 * @param nom_solicitante
+	 * @param id_area
+	 * @param id_rack
 	 * @param area
 	 * @param rack
 	 * @param descripcion
@@ -178,12 +186,12 @@ public class modelo_tarea_proveedor implements Cloneable {
 	public modelo_tarea_proveedor(long id_tarea_proveedor, long id_cliente, String nom_cliente, String ticket_externo,
 			long id_turno, String nom_turno, long id_tipo_servicio, String nom_tipo_servicio,
 			long id_tipo_clasificacion, String nom_tipo_clasificacion, long id_tipo_tarea, String nom_tipo_tarea,
-			long id_solicitante, String nom_solicitante, String area, String rack, String descripcion,
-			Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora, String nom_estado_bitacora,
-			String cumplimiento, long id_localidad, String nom_localidad, String est_tarea_proveedor,
-			String usu_ingresa, String nom_usuario_ingresa, Timestamp fec_ingresa, String usu_modifica,
-			String nom_usuario_modifica, Timestamp fec_modifica, String cor_revisa, String nom_usuario_revisa,
-			Timestamp fec_revision, String obs_coordinador) {
+			long id_solicitante, String nom_solicitante, String id_area, String id_rack, String area, String rack,
+			String descripcion, Timestamp fec_inicio, Timestamp fec_fin, long id_estado_bitacora,
+			String nom_estado_bitacora, String cumplimiento, long id_localidad, String nom_localidad,
+			String est_tarea_proveedor, String usu_ingresa, String nom_usuario_ingresa, Timestamp fec_ingresa,
+			String usu_modifica, String nom_usuario_modifica, Timestamp fec_modifica, String cor_revisa,
+			String nom_usuario_revisa, Timestamp fec_revision, String obs_coordinador) {
 		super();
 		this.id_tarea_proveedor = id_tarea_proveedor;
 		this.id_cliente = id_cliente;
@@ -199,6 +207,8 @@ public class modelo_tarea_proveedor implements Cloneable {
 		this.nom_tipo_tarea = nom_tipo_tarea;
 		this.id_solicitante = id_solicitante;
 		this.nom_solicitante = nom_solicitante;
+		this.id_area = id_area;
+		this.id_rack = id_rack;
 		this.area = area;
 		this.rack = rack;
 		this.descripcion = descripcion;
@@ -416,6 +426,34 @@ public class modelo_tarea_proveedor implements Cloneable {
 	 */
 	public void setNom_solicitante(String nom_solicitante) {
 		this.nom_solicitante = nom_solicitante;
+	}
+
+	/**
+	 * @return the id_area
+	 */
+	public String getId_area() {
+		return id_area;
+	}
+
+	/**
+	 * @param id_area the id_area to set
+	 */
+	public void setId_area(String id_area) {
+		this.id_area = id_area;
+	}
+
+	/**
+	 * @return the id_rack
+	 */
+	public String getId_rack() {
+		return id_rack;
+	}
+
+	/**
+	 * @param id_rack the id_rack to set
+	 */
+	public void setId_rack(String id_rack) {
+		this.id_rack = id_rack;
 	}
 
 	/**
@@ -714,19 +752,18 @@ public class modelo_tarea_proveedor implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "modelo_tarea_proveedor [consultasABaseDeDatos=" + consultasABaseDeDatos + ", fechas=" + fechas
-				+ ", id_tarea_proveedor=" + id_tarea_proveedor + ", id_cliente=" + id_cliente + ", nom_cliente="
-				+ nom_cliente + ", ticket_externo=" + ticket_externo + ", id_turno=" + id_turno + ", nom_turno="
-				+ nom_turno + ", id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio=" + nom_tipo_servicio
-				+ ", id_tipo_clasificacion=" + id_tipo_clasificacion + ", nom_tipo_clasificacion="
+		return "modelo_tarea_proveedor [id_tarea_proveedor=" + id_tarea_proveedor + ", id_cliente=" + id_cliente
+				+ ", nom_cliente=" + nom_cliente + ", ticket_externo=" + ticket_externo + ", id_turno=" + id_turno
+				+ ", nom_turno=" + nom_turno + ", id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio="
+				+ nom_tipo_servicio + ", id_tipo_clasificacion=" + id_tipo_clasificacion + ", nom_tipo_clasificacion="
 				+ nom_tipo_clasificacion + ", id_tipo_tarea=" + id_tipo_tarea + ", nom_tipo_tarea=" + nom_tipo_tarea
-				+ ", id_solicitante=" + id_solicitante + ", nom_solicitante=" + nom_solicitante + ", area=" + area
-				+ ", rack=" + rack + ", descripcion=" + descripcion + ", fec_inicio=" + fec_inicio + ", fec_fin="
-				+ fec_fin + ", id_estado_bitacora=" + id_estado_bitacora + ", nom_estado_bitacora="
-				+ nom_estado_bitacora + ", cumplimiento=" + cumplimiento + ", id_localidad=" + id_localidad
-				+ ", nom_localidad=" + nom_localidad + ", est_tarea_proveedor=" + est_tarea_proveedor + ", usu_ingresa="
-				+ usu_ingresa + ", nom_usuario_ingresa=" + nom_usuario_ingresa + ", fec_ingresa=" + fec_ingresa
-				+ ", usu_modifica=" + usu_modifica + ", nom_usuario_modifica=" + nom_usuario_modifica
+				+ ", id_solicitante=" + id_solicitante + ", nom_solicitante=" + nom_solicitante + ", id_area=" + id_area
+				+ ", id_rack=" + id_rack + ", area=" + area + ", rack=" + rack + ", descripcion=" + descripcion
+				+ ", fec_inicio=" + fec_inicio + ", fec_fin=" + fec_fin + ", id_estado_bitacora=" + id_estado_bitacora
+				+ ", nom_estado_bitacora=" + nom_estado_bitacora + ", cumplimiento=" + cumplimiento + ", id_localidad="
+				+ id_localidad + ", nom_localidad=" + nom_localidad + ", est_tarea_proveedor=" + est_tarea_proveedor
+				+ ", usu_ingresa=" + usu_ingresa + ", nom_usuario_ingresa=" + nom_usuario_ingresa + ", fec_ingresa="
+				+ fec_ingresa + ", usu_modifica=" + usu_modifica + ", nom_usuario_modifica=" + nom_usuario_modifica
 				+ ", fec_modifica=" + fec_modifica + ", cor_revisa=" + cor_revisa + ", nom_usuario_revisa="
 				+ nom_usuario_revisa + ", fec_revision=" + fec_revision + ", obs_coordinador=" + obs_coordinador + "]";
 	}
@@ -792,7 +829,7 @@ public class modelo_tarea_proveedor implements Cloneable {
 		}
 		return observacion;
 	}
-	
+
 	public String mostrarClasificacion() {
 		String nom_tipo_clasificacion = "";
 		if (nom_tipo_clasificacion != null) {

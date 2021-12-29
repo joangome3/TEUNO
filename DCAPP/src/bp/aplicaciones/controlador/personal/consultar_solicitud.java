@@ -66,7 +66,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	@Wire
 	Datebox dtxFechaInicio, dtxFechaFin;
 	@Wire
-	Menuitem mModificar, mEliminar, mCerrar;
+	Menuitem mModificar, mEliminar, mCerrar, mAlcance;
 	@Wire
 	Div winList;
 
@@ -451,10 +451,29 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		long id_solicitud = listaSolicitudPersonal.get(indice).getId_solicitud();
 		String ticket = listaSolicitudPersonal.get(indice).getTicket();
 		Sessions.getCurrent().setAttribute("solicitud_personal", listaSolicitudPersonal.get(indice));
-		crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket);
+		crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket, 1);
 	}
 
-	public void crearPestanaParaRevision(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
+	@Listen("onClick=#mAlcance")
+	public void onClickmAlcance() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxSolicitudesPersonal.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxSolicitudesPersonal.getSelectedIndex();
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		long id_solicitud = listaSolicitudPersonal.get(indice).getId_solicitud();
+		String ticket = listaSolicitudPersonal.get(indice).getTicket();
+		Sessions.getCurrent().setAttribute("solicitud_personal", listaSolicitudPersonal.get(indice));
+		crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket, 2);
+	}
+
+	public void crearPestanaParaRevision(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket, int tipo) {
 		try {
 			Borderlayout bl = new Borderlayout();
 			if (tTab.hasFellow("Tab:" + id_solicitud)) {
@@ -464,7 +483,11 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 				return;
 			}
 			Tab tab = new Tab();
-			tab.setLabel("GESTION DE PERSONAL - MODIFICAR | SOLICITUD " + ticket);
+			if (tipo == 1) {
+				tab.setLabel("GESTION DE PERSONAL - MODIFICAR | SOLICITUD " + ticket);
+			} else {
+				tab.setLabel("GESTION DE PERSONAL - ALCANCE | SOLICITUD " + ticket);
+			}
 			tab.setClosable(true);
 			tab.setSelected(true);
 			tab.setId("Tab:" + id_solicitud);
@@ -476,7 +499,11 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			tabpanel.setStyle("height: calc(100%);");
 			tPanel.appendChild(tabpanel);
 			Include include = null;
-			include = new Include("/personal/solicitud/modificar.zul");
+			if (tipo == 1) {
+				include = new Include("/personal/solicitud/modificar.zul");
+			} else {
+				include = new Include("/personal/solicitud/alcance.zul");
+			}
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

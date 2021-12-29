@@ -15,8 +15,16 @@
 					autodisable="self" />
 			</toolbar>
 			<div visible="true">
-				<space width="20px"></space>
-				<textbox width="350px" id="txtBuscarArea"
+				<space width="5px"></space>
+				<combobox width="260px" id="cmbTipoTrabajo"
+					readonly="true" disabled="false"
+					model="@{zArea$area.obtenerTipoTrabajo}" visible="true">
+					<comboitem self="@{each=lista}"
+						label="@{lista.getNom_tipo_trabajo}"
+						value="@{lista.getId_tipo_trabajo}">
+					</comboitem>
+				</combobox>
+				<textbox width="250px" id="txtBuscarArea"
 					placeholder="Ingrese palabra clave"
 					tooltiptext="Presione enter para realizar la búsqueda"
 					style="font-style: italic;" sclass="demo-search-inp">
