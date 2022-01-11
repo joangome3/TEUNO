@@ -1426,6 +1426,11 @@ public class consultar extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.EXCLAMATION);
 			return;
 		}
+		if (validarSiYaExisteRegistroCierre(ticket, 5) == true) {
+			Messagebox.show(informativos.getMensaje_informativo_37().replace("-?", "CIERRE").replace("?-", ticket),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
 		Sessions.getCurrent().setAttribute("bitacora", listaBitacora.get(indice));
 		crearPestanaParaCerrarRegistro(tTab, tPanel, id_bitacora, ticket);
 	}
@@ -1531,6 +1536,18 @@ public class consultar extends SelectorComposer<Component> {
 			}
 		}
 		return cantidad_tareas_cerradas;
+	}
+	
+	public boolean validarSiYaExisteRegistroCierre(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que no exista un registro de cierre previo
+		 */
+		boolean existe_registro_cierre = true;
+		if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, String.valueOf(id_tipo_tarea)) == 0) {
+			existe_registro_cierre = false;
+		}
+		return existe_registro_cierre;
 	}
 
 }

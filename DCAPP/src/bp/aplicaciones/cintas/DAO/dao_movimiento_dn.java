@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.jdbc.CallableStatement;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import bp.aplicaciones.conexion.conexion;
@@ -40,6 +42,34 @@ public class dao_movimiento_dn {
 			conexion.cerrar();
 		}
 		return id;
+	}
+	
+	public int validarSiExisteSolicitudMovimiento(String ticket)
+			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+		int totalSolicitudes = 0;
+		conexion conexion = new conexion();
+		CallableStatement consulta = null;
+		try {
+			consulta = (CallableStatement) conexion.abrir()
+					.prepareCall("{? = CALL movimientoDN_validarSiSolicitudMovimientoExiste(?)}");
+			consulta.registerOutParameter(1, Types.INTEGER);
+			consulta.setString(2, ticket);
+			consulta.execute();
+			totalSolicitudes = consulta.getInt(1);
+			consulta.close();
+		} catch (SQLException ex) {
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			if (consulta != null) {
+				consulta.close();
+			}
+			if (conexion != null) {
+				conexion.cerrar();
+			}
+		}
+		return totalSolicitudes;
 	}
 
 	public List<modelo_movimiento_dn> obtenerMovimientos(String criterio, String fecha_inicio, String fecha_fin,

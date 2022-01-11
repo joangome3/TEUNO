@@ -214,6 +214,10 @@
 												style="text-align: center !important;">
 											</listheader>
 											<listheader
+												label="CATEGORIA"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
 												label="UBICACION" align="center"
 												style="text-align: center !important;">
 											</listheader>
@@ -264,6 +268,9 @@
 											</listcell>
 											<listcell
 												label="@{lista.getDes_articulo_actual}">
+											</listcell>
+											<listcell
+												label="@{lista.getNom_cat_articulo_actual}" style="@{lista.estiloMostrarCategoria}">
 											</listcell>
 											<listcell
 												label="@{lista.getNom_ubicacion_actual}">
@@ -426,7 +433,7 @@
 					<listcell label="@{lista.getDes_articulo}">
 					</listcell>
 					<listcell label="@{lista.getNom_categoria}"
-						style="text-align: center !important;">
+						style="@{lista.estiloMostrarCategoria}">
 					</listcell>
 					<listcell label="@{lista.getNom_ubicacion}">
 					</listcell>

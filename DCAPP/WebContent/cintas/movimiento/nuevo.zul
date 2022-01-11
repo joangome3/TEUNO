@@ -39,6 +39,20 @@
 										readonly="false"
 										style="font-weight: bold; color:black !important; text-align: center;" />
 								</cell>
+								<label value="* Fecha apertura TICKET:" />
+								<cell colspan="1"
+									class="z-dtx-nuevo-movimiento">
+									<space width="5px"></space>
+									<datebox format="dd/MM/yyyy HH:mm"
+										id="dtxFechaAperturaTicket" width="155px">
+									</datebox>
+								</cell>
+								<space></space>
+								<cell colspan="2"
+									class="z-dtx-nuevo-movimiento">
+								</cell>
+							</row>
+							<row>
 								<label value="* Tipo de Pedido:" />
 								<cell colspan="1">
 									<space width="15px"></space>
@@ -212,6 +226,10 @@
 												style="text-align: center !important;">
 											</listheader>
 											<listheader
+												label="CATEGORIA"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
 												label="UBICACION" align="center"
 												style="text-align: center !important;">
 											</listheader>
@@ -262,6 +280,9 @@
 											</listcell>
 											<listcell
 												label="@{lista.getDes_articulo_actual}">
+											</listcell>
+											<listcell
+												label="@{lista.getNom_cat_articulo_actual}" style="@{lista.estiloMostrarCategoria}">
 											</listcell>
 											<listcell
 												label="@{lista.getNom_ubicacion_actual}">
@@ -426,7 +447,7 @@
 					<listcell label="@{lista.getDes_articulo}">
 					</listcell>
 					<listcell label="@{lista.getNom_categoria}"
-						style="text-align: center !important;">
+						style="@{lista.estiloMostrarCategoria}">
 					</listcell>
 					<listcell label="@{lista.getNom_ubicacion}">
 					</listcell>

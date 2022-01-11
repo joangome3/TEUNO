@@ -327,9 +327,12 @@ public class modificar extends SelectorComposer<Component> {
 		setearObservacion();
 		/* DESCRIPCION **/
 		txtDescripcion.setText(tarea_proveedor.getDescripcion());
+		/* AREA */
+		id_tipo_ubicacion = tarea_proveedor.getId_area();
 		bdxArea.setText(tarea_proveedor.getArea());
 		bdxArea.setTooltiptext(tarea_proveedor.getArea());
 		cargarUbicaciones();
+		/* RACK */
 		bdxRack.setText(tarea_proveedor.getRack());
 		bdxRack.setTooltiptext(tarea_proveedor.getRack());
 		/* TURNO **/

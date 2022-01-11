@@ -1,0 +1,709 @@
+<?page title="Cerrar registro" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zCerrarRegistro" closable="false"
+		apply="bp.aplicaciones.controlador.personal.cerrar_registro"
+		position="center, center" sizable="true" maximizable="false"
+		minimizable="false" title="a" class="w-tittle_a" width="100%"
+		height="100%">
+		<div id="winList" class="m-div-c"></div>
+		<div height="102.5%" width="102.5%">
+			<div class="m-div-a">
+				<label class="m-label-a" value="LOG DE EVENTOS - ">
+				</label>
+				<label class="m-label-a" value="CERRAR REGISTRO"
+					style="font-style: normal; color: #FFD500; font-weight: bold;">
+				</label>
+			</div>
+			<space height="1px"></space>
+			<toolbar class="m-toolbar">
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" />
+				<button id="btnLimpiar"
+					image="/img/botones/ButtonClean1.png" tooltiptext="Limpiar campos"
+					autodisable="self" visible="false" />
+			</toolbar>
+			<borderlayout height="99%" width="99%">
+				<center style="overflow: scroll;">
+					<tabbox>
+						<tabs>
+							<tab label="INFORMACIÓN GENERAL"
+								selected="true" id="tInformacionGeneral">
+							</tab>
+							<tab label="CUMPLIMIENTO DE SLA"
+								id="tCumplimientoSLA">
+							</tab>
+						</tabs>
+						<tabpanels>
+							<tabpanel>
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+									</columns>
+									<rows>
+										<row>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="15px">
+													</space>
+													<label value="ID:"
+														class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<textbox
+																id="txtId" width="135px" readonly="true"
+																class="z-textbox-1" style="" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="15px">
+													</space>
+													<label
+														value="* Cliente:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbCliente"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerClientes}"
+																readonly="true" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.getNom_empresa}"
+																	value="@{lista.getId_empresa}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="cli"
+																style="cursor: help; width: 12px; height: 12px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div>
+													<space
+														width="15px">
+													</space>
+													<label
+														value="TICKET INTERNO:" class="z-label-1"
+														id="lTicketInterno1"
+														style="font-style: normal; position: relative; left: -2.2rem !important;" />
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxTicketInterno" disabled="true" readonly="false"
+																width="130px" style="font-style: normal !important;"
+																maxlength="20">
+															</bandbox>
+															<checkbox
+																id="chkTicketInterno"
+																style="position: relative; left: 2px; font-style: normal !important;"
+																checked="true" visible="true">
+															</checkbox>
+														</hlayout>
+														<label
+															id="lTicketInterno2"
+															style="position: relative; left: 2.9rem; top: -1.1rem; color:red; font-weight: bold;"
+															value="0/20">
+														</label>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+										</row>
+										<row>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="15px">
+													</space>
+													<label
+														value="* Servicio/categoría:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbTipoServicio"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerTipoServicio}"
+																readonly="true" disabled="false">
+																<comboitem
+																	self="@{each=lista}"
+																	label="@{lista.getNom_tipo_servicio}"
+																	value="@{lista.getId_tipo_servicio}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="tip_ser"
+																style="cursor: help; width: 12px; height: 12px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="15px">
+													</space>
+													<label
+														value="* Clasificación:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbClasificacion"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerClasificaciones}"
+																readonly="true" disabled="true">
+																<comboitem
+																	self="@{each=lista}"
+																	label="@{lista.getNom_tipo_clasificacion}"
+																	value="@{lista.getId_tipo_clasificacion}">
+																</comboitem>
+															</combobox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="15px">
+													</space>
+													<label
+														value="* Tipo tarea:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbTipoTarea"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerTipoTarea}"
+																readonly="true" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.getNom_tipo_tarea}"
+																	value="@{lista.getId_tipo_tarea}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="tip_tar"
+																style="cursor: help; width: 12px; height: 12px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+										</row>
+										<row>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="15px">
+													</space>
+													<label
+														value="* Fecha inicio:" class="z-label-1"
+														style="font-style: italic;" />
+													<vlayout>
+														<hlayout>
+															<datebox
+																id="dtxFechaInicio" format="dd/MM/yyyy HH:mm"
+																width="145px">
+															</datebox>
+															<space
+																width="10px">
+															</space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<label
+														value="* Fecha fin:" class="z-label-1"
+														style="font-style: italic; position: relative; left: -15px !important;" />
+													<vlayout>
+														<hlayout>
+															<datebox
+																id="dtxFechaFin" format="dd/MM/yyyy HH:mm"
+																width="145px">
+															</datebox>
+															<space
+																width="10px">
+															</space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center" visible="false">
+													<space
+														width="10px">
+													</space>
+													<label
+														value="Cumplimiento:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbCumplimiento" readonly="true"
+																disabled="false">
+																<comboitem
+																	label="CUMPLIDO" value="C">
+																</comboitem>
+																<comboitem
+																	label="INCUMPLIDO" value="I">
+																</comboitem>
+															</combobox>
+															<space
+																width="12px">
+															</space>
+														</hlayout>
+													</vlayout>
+												</div>
+												<div align="center" visible="true">
+													<space
+														width="20px">
+													</space>
+													<label
+														value="* Estado actividad:" class="z-label-1" style="color:red; font-weight: bold;" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbEstadoActividad" readonly="true"
+																disabled="false">
+																<comboitem
+																	label="EN CURSO" value="EC">
+																</comboitem>
+																<comboitem
+																	label="EJECUTADO" value="EJ">
+																</comboitem>
+																<comboitem
+																	label="NO EJECUTADO" value="NE">
+																</comboitem>
+															</combobox>
+															<space
+																width="12px">
+															</space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+										</row>
+										<row>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="32px">
+													</space>
+													<label
+														value="Solicitante:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxSolicitantes" mold="rounded" autodrop="true"
+																width="150px" readonly="true"
+																style="font-weight: bold; color:black !important;"
+																popup="pSolicitante">
+															</bandbox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="25px">
+													</space>
+													<label value="Area:"
+														class="z-label-1" style="font-style: normal;" />
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxArea" width="135px" readonly="true">
+															</bandbox>
+															<space
+																width="10px">
+															</space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="25px">
+													</space>
+													<label value="Rack:"
+														class="z-label-1" style="font-style: normal;" />
+													<vlayout>
+														<hlayout>
+															<bandbox
+																id="bdxRack" width="135px" readonly="true">
+															</bandbox>
+															<space
+																width="10px">
+															</space>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+										</row>
+										<row>
+											<cell colspan="7">
+												<div>
+													<label
+														value="* Descripción de la tarea:" class="z-label-1"
+														style="position: relative; left: -7rem !important;" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtDescripcion" width="900px" rows="5" top="true"
+																maxlength="2000" multiline="true"
+																style="resize: none;">
+															</textbox>
+														</hlayout>
+														<label
+															id="lDescripcion"
+															style="position: relative; left: 40.0rem; top: -1.1rem; color:red; font-weight: bold;"
+															value="0/2000">
+														</label>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<label
+														value="Turno:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<combobox
+																width="125px" id="cmbTurno" readonly="false"
+																disabled="true"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerTurnos1}">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.getNom_turno}"
+																	value="@{lista.getId_turno}">
+																</comboitem>
+															</combobox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<label
+														value="* Estado:" class="z-label-1" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="125px" id="cmbEstado"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerEstados}"
+																readonly="true" disabled="false">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.getNom_estado}"
+																	value="@{lista.getId_estado}">
+																</comboitem>
+															</combobox>
+															<image
+																src="/img/botones/ButtonPopup.png" tooltip="est"
+																style="cursor: help; width: 12px; height: 12px;" />
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+											<cell colspan="1">
+												<div align="center">
+													<space
+														width="25px">
+													</space>
+													<label
+														value="Operador registra:" class="z-label-1"
+														style="font-style: italic !important;" id="lOperador" />
+													<vlayout>
+														<hlayout>
+															<space
+																width="10px">
+															</space>
+															<combobox
+																width="145px" id="cmbUsuario" readonly="false"
+																disabled="true"
+																model="@{zCerrarRegistro$cerrar_registro.obtenerUsuarios}">
+																<comboitem
+																	self="@{each=lista}" label="@{lista.verNombreCompleto}"
+																	value="@{lista.getId_usuario}">
+																</comboitem>
+															</combobox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+											<space></space>
+										</row>
+										<row>
+											<cell colspan="7"></cell>
+										</row>
+										<row id="rwObservacion"
+											visible="false">
+											<cell colspan="7">
+												<div>
+													<label
+														value="* Observación del incumplimiento:"
+														class="z-label-1"
+														style="position: relative; left: -7rem !important;" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtObservacion" width="900px" rows="5" top="true"
+																maxlength="2000" multiline="true"
+																style="resize: none;">
+															</textbox>
+														</hlayout>
+														<label
+															id="lObservacion"
+															style="position: relative; left: 40.0rem; top: -1.1rem; color:red; font-weight: bold;"
+															value="0/2000">
+														</label>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="7"></cell>
+										</row>
+									</rows>
+								</grid>
+							</tabpanel>
+							<tabpanel>
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"></column>
+										<column align="center"
+											width="8%">
+										</column>
+									</columns>
+									<rows>
+										<row>
+											<space></space>
+											<cell colspan="1">
+												<combobox
+													id="cmbCumplimientoSLA" width="180px" readonly="true"
+													tooltiptext="Seleccione si el ticket cumple o no cumple con el SLA asignado.">
+													<comboitem
+														value="SI" label=" SI CUMPLE SLA"
+														iconSclass="z-icon-check-circle-o">
+													</comboitem>
+													<comboitem
+														value="NO" label=" NO CUMPLE SLA"
+														iconSclass="z-icon-times-circle-o">
+													</comboitem>
+												</combobox>
+											</cell>
+											<space></space>
+											<cell colspan="3">
+												<div align="center">
+													<space
+														width="5px">
+													</space>
+													<label
+														value="* Comentario de incumplimiento:" class="z-label-1"
+														style="left:-0.8rem; font-style: italic !important;" />
+													<vlayout>
+														<hlayout>
+															<textbox
+																id="txtComentarioIncumplimientoSLA" width="500px"
+																readonly="true" rows="5">
+															</textbox>
+														</hlayout>
+													</vlayout>
+												</div>
+											</cell>
+										</row>
+										<row>
+											<cell colspan="7"></cell>
+										</row>
+										<row>
+											<cell colspan="7"></cell>
+										</row>
+									</rows>
+								</grid>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+			</borderlayout>
+		</div>
+
+		<popup id="pSolicitante" width="800px">
+			<space width="12px"></space>
+			<textbox width="280px" id="txtBuscarSolicitante"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				style="font-style: italic;" sclass="demo-search-inp">
+			</textbox>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 12px; height: 12px;" />
+			<listbox mold="paging" pageSize="5" id="lbxSolicitantes"
+				model="@{zCerrarRegistro$cerrar_registro.obtenerSolicitantes}"
+				sizedByContent="false" width="100%">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="DOCUMENTO"
+						style="text-align: center !important;" />
+					<listheader label="NOMBRE" />
+					<listheader label="EMPRESA" />
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell label="@{lista.getNum_documento}"
+						style="text-align: center !important;" />
+					<listcell label="@{lista.toStringSolicitante}" />
+					<listcell label="@{lista.getNom_empresa}" />
+				</listitem>
+			</listbox>
+		</popup>
+
+		<popup id="cli" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el cliente no se muestra en la lista, debe solicitar a
+				la coordinación que sea agregado por el <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> administrador de la
+				aplicación. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+
+		<popup id="tip_ser" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el tipo de servicio no se muestra en la lista, debe
+				validar que se encuentre creado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de tipo de
+				servicios. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+
+		<popup id="tip_tar" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el tipo de tarea no se muestra en la lista, debe validar
+				que se encuentre creado y activo en la <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> configuración de tipo de
+				tarea. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+
+		<popup id="est" width="300px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el estado no se muestra en la lista, debe validar que se
+				encuentre creado y activo en la <span style="color:
+				black; font-size: 12px; font-style: italic; font-weight:
+				bold;"> configuración de estado. </span> </p> ]]>
+				
+
+			</html>
+		</popup>
+
+		<popup id="con" width="450px">
+			<html>
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
+				el solicitante no se encuentra en la lista, valide que
+				se encuentre creado, aprobado, activo y que mantenga una
+				relación creada para poderse usar desde la opción de
+				movimientos en la <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;">
+				configuración de solicitante/proveedores. </span> </br>
+				</br> <span style="color: black; font-size: 12px;
+				font-style: normal; font-weight: bold;"> TIPS: </span>
+				</br> 1.- Puede buscar de una manera rapida entre los
+				solicitantes consultando por numero de documento,
+				nombres, apellidos, empresa, etc. Solo escribiendo parte
+				de la palabra en el campo buscar y presionando la tecla
+				Enter </br> 2.- Para mostrar todos los solicitantes deje
+				limpio el campo buscar y presione la tecla Enter. </p>
+				]]>
+				
+
+			</html>
+		</popup>
+		<zscript>
+	<![CDATA[
+	lbxSolicitantes.pagingChild.mold = "os".equals(lbxSolicitantes.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	</window>
+</zk>

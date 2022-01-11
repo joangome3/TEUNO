@@ -104,7 +104,7 @@ public class DemoCalendarData {
 	public void inicializarListasPersonal(String criterio, int tipo, long id_cliente, long id_localidad, int limite,
 			String fecha_inicio, String fecha_fin, String estado) throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio,
-				fecha_fin, estado, "", id_localidad, limite);
+				fecha_fin, "", "", id_localidad, estado, limite);
 	}
 
 }

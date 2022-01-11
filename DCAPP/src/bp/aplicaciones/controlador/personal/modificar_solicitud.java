@@ -285,19 +285,22 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 		dtxFechaRespuesta.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_respuesta().getTime()));
 		if (solicitud_personal.getEst_solicitud().equals("NE")) {
 			cmbEstado.setText("NO EJECUTADO");
-		} else if (solicitud_personal.getEst_solicitud().equals("A")) {
+		} else if (solicitud_personal.getEst_solicitud().equals("EC")) {
 			cmbEstado.setText("EN CURSO");
-		} else if (solicitud_personal.getEst_solicitud().equals("C")) {
-			cmbEstado.setText("CANCELADO");
-		} else {
+		} else if (solicitud_personal.getEst_solicitud().equals("EJ")) {
 			cmbEstado.setText("EJECUTADO");
+		} else {
+			cmbEstado.setText("EN CURSO");
 		}
 		dtxFechaInicio.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_inicio().getTime()));
 		dtxFechaFin.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_fin().getTime()));
+		/* AREA */
+		id_tipo_ubicacion = solicitud_personal.getId_area();
 		bdxArea.setText(solicitud_personal.getArea());
 		bdxArea.setTooltiptext(solicitud_personal.getArea());
-		bdxRack.setText(solicitud_personal.getRack());
 		cargarUbicaciones();
+		/* RACK */
+		bdxRack.setText(solicitud_personal.getRack());
 		bdxRack.setTooltiptext(solicitud_personal.getRack());
 		setearTipoTrabajo(solicitud_personal.getId_tipo_trabajo());
 		txtDescripcion.setText(solicitud_personal.getDescripcion());

@@ -222,16 +222,19 @@
 												<combobox width="145px"
 													id="cmbEstado" readonly="true" disabled="false">
 													<comboitem
-														label="EN CURSO" value="A">
+														label="ABIERTO" value="AB">
 													</comboitem>
 													<comboitem
-														label="EJECUTADO" value="E">
+														label="EN CURSO" value="EC" visible="false">
 													</comboitem>
 													<comboitem
-														label="NO EJECUTADO" value="NE">
+														label="EJECUTADO" value="EJ" visible="false">
 													</comboitem>
 													<comboitem
-														label="CANCELADO" value="C">
+														label="NO EJECUTADO" value="NE" visible="false">
+													</comboitem>
+													<comboitem
+														label="CANCELADO" value="CA" visible="false">
 													</comboitem>
 												</combobox>
 											</hlayout>

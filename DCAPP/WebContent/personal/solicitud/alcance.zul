@@ -1,7 +1,7 @@
 <?page title="Alcance solicitud" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<window border="normal" id="zModificar" closable="false"
+	<window border="normal" id="zAlcance" closable="false"
 		apply="bp.aplicaciones.controlador.personal.alcance_solicitud"
 		position="center, center" sizable="true"
 		maximizable="false" minimizable="false" title="a"
@@ -68,7 +68,7 @@
 												<space width="10px"></space>
 												<combobox width="125px"
 													id="cmbCliente"
-													model="@{zModificar$modificar_solicitud.obtenerClientes}"
+													model="@{zAlcance$alcance_solicitud.obtenerClientes}"
 													readonly="true" disabled="false">
 													<comboitem
 														self="@{each=lista}" label="@{lista.getNom_empresa}"
@@ -112,7 +112,7 @@
 												<space width="10px"></space>
 												<combobox width="125px"
 													id="cmbTipoIngreso"
-													model="@{zModificar$modificar_solicitud.obtenerTipoIngresos}"
+													model="@{zAlcance$alcance_solicitud.obtenerTipoIngresos}"
 													readonly="true" disabled="false">
 													<comboitem
 														self="@{each=lista}" label="@{lista.getNom_tipo_ingreso}"
@@ -137,7 +137,7 @@
 												<space width="10px"></space>
 												<combobox width="125px"
 													id="cmbTipoAprobador"
-													model="@{zModificar$modificar_solicitud.obtenerTipoAprobadores}"
+													model="@{zAlcance$alcance_solicitud.obtenerTipoAprobadores}"
 													readonly="true" disabled="false">
 													<comboitem
 														self="@{each=lista}"
@@ -221,16 +221,19 @@
 												<combobox width="145px"
 													id="cmbEstado" readonly="true" disabled="false">
 													<comboitem
-														label="EN CURSO" value="A">
+														label="ABIERTO" value="AB">
 													</comboitem>
 													<comboitem
-														label="EJECUTADO" value="E">
+														label="EN CURSO" value="EC" visible="false">
 													</comboitem>
 													<comboitem
-														label="NO EJECUTADO" value="NE">
+														label="EJECUTADO" value="EJ" visible="false">
 													</comboitem>
 													<comboitem
-														label="CANCELADO" value="C">
+														label="NO EJECUTADO" value="NE" visible="false">
+													</comboitem>
+													<comboitem
+														label="CANCELADO" value="CA" visible="false">
 													</comboitem>
 												</combobox>
 											</hlayout>
@@ -319,7 +322,7 @@
 												<space width="10px"></space>
 												<combobox width="125px"
 													id="cmbTipoTrabajo"
-													model="@{zModificar$modificar_solicitud.obtenerTipoTrabajos}"
+													model="@{zAlcance$alcance_solicitud.obtenerTipoTrabajos}"
 													readonly="true" disabled="false">
 													<comboitem
 														self="@{each=lista}" label="@{lista.getNom_tipo_trabajo}"
@@ -408,7 +411,7 @@
 											<hlayout>
 												<combobox width="125px"
 													id="cmbTurno" readonly="false" disabled="true"
-													model="@{zModificar$modificar_solicitud.obtenerTurnos2}">
+													model="@{zAlcance$alcance_solicitud.obtenerTurnos2}">
 													<comboitem
 														self="@{each=lista}" label="@{lista.getNom_turno}"
 														value="@{lista.getId_turno}">
@@ -432,7 +435,7 @@
 												<space width="10px"></space>
 												<combobox width="145px"
 													id="cmbUsuario" readonly="false" disabled="true"
-													model="@{zModificar$modificar_solicitud.obtenerUsuarios}">
+													model="@{zAlcance$alcance_solicitud.obtenerUsuarios}">
 													<comboitem
 														self="@{each=lista}" label="@{lista.verNombreCompleto}"
 														value="@{lista.getId_usuario}">
@@ -474,7 +477,7 @@
 			<image src="/img/botones/ButtonPopup.png" tooltip="con"
 				style="cursor: help; width: 12px; height: 12px;" />
 			<listbox mold="paging" pageSize="5" id="lbxSolicitantes"
-				model="@{zModificar$modificar_solicitud.obtenerSolicitantes}"
+				model="@{zAlcance$alcance_solicitud.obtenerSolicitantes}"
 				sizedByContent="false" width="100%">
 				<listhead sizable="false" style="overflow: scroll;">
 					<listheader label="DOCUMENTO"
@@ -494,7 +497,7 @@
 		<popup id="pProveedor" width="750px">
 			<space width="12px"></space>
 			<combobox width="160px" id="cmbEmpresa"
-				model="@{zModificar$modificar_solicitud.obtenerEmpresas}" readonly="false"
+				model="@{zAlcance$alcance_solicitud.obtenerEmpresas}" readonly="false"
 				disabled="false">
 				<comboitem self="@{each=lista}"
 					label="@{lista.getNom_empresa}" value="@{lista.getId_empresa}">
@@ -508,7 +511,7 @@
 			<image src="/img/botones/ButtonPopup.png" tooltip="con"
 				style="cursor: help; width: 12px; height: 12px;" />
 			<listbox mold="paging" pageSize="15" id="lbxProveedores1"
-				model="@{zModificar$modificar_solicitud.obtenerProveedores}"
+				model="@{zAlcance$alcance_solicitud.obtenerProveedores}"
 				sizedByContent="false" width="100%">
 				<listhead sizable="false" style="overflow: scroll;">
 					<listheader label="DOCUMENTO"

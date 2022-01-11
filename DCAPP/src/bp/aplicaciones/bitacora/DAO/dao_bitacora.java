@@ -16,6 +16,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.bitacora.modelo.modelo_tarea_proveedor;
 import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.personal.modelo.modelo_solicitud_personal;
 
 public class dao_bitacora {
 
@@ -341,6 +342,87 @@ public class dao_bitacora {
 		} catch (SQLException ex) {
 			throw new SQLException(ex);
 		} catch (java.lang.NullPointerException ex) {
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	// METODO PARA ACTUALIZAR ESTADO EN SOLICITUDES DE PERSONAL Y CREAR REGISTRO DE
+	// CIERRE EN LOG DE EVENTOS
+	public void insertarBitacora(modelo_bitacora bitacora, long secuencia, modelo_solicitud_personal personal)
+			throws SQLException, MySQLIntegrityConstraintViolationException, ClassNotFoundException,
+			FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		long id = obtenerNuevoId();
+		long id1 = 0;
+		if (id > secuencia) {
+			id1 = id;
+		} else {
+			id1 = secuencia;
+		}
+		try {
+			PreparedStatement consulta = null;
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL bitacora_insertarBitacora(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta.setLong(1, id1);
+			consulta.setLong(2, bitacora.getId_cliente());
+			consulta.setString(3, bitacora.getTicket_externo().toUpperCase());
+			consulta.setLong(4, bitacora.getId_turno());
+			consulta.setLong(5, bitacora.getId_tipo_servicio());
+			consulta.setLong(6, bitacora.getId_tipo_clasificacion());
+			consulta.setLong(7, bitacora.getId_tipo_tarea());
+			consulta.setLong(8, bitacora.getId_solicitante());
+			consulta.setString(9, bitacora.getId_area());
+			consulta.setString(10, bitacora.getId_rack());
+			consulta.setString(11, bitacora.getArea());
+			consulta.setString(12, bitacora.getRack());
+			consulta.setString(13, bitacora.getDescripcion().toUpperCase());
+			consulta.setTimestamp(14, bitacora.getFec_inicio());
+			consulta.setTimestamp(15, bitacora.getFec_fin());
+			consulta.setLong(16, bitacora.getId_estado_bitacora());
+			consulta.setString(17, bitacora.getCumplimiento());
+			consulta.setString(18, bitacora.getCumplimientoSLA());
+			consulta.setString(19, bitacora.getComentarioCumplimientoSLA());
+			consulta.setLong(20, bitacora.getId_localidad());
+			consulta.setString(21, bitacora.getEst_bitacora());
+			consulta.setString(22, bitacora.getUsu_ingresa());
+			consulta.setTimestamp(23, bitacora.getFec_ingresa());
+			consulta.setString(24, bitacora.getUsu_modifica());
+			consulta.setTimestamp(25, bitacora.getFec_modifica());
+			consulta.executeUpdate();
+			/* ACTUALIZAMOS EL ESTADO DE LA SOLICITUD DE PERSONAL */
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL personal_modificarSolicitudPersonal(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta.setLong(1, personal.getId_cliente());
+			consulta.setString(2, personal.getTicket().toUpperCase().trim());
+			consulta.setLong(3, personal.getId_tipo_ingreso());
+			consulta.setLong(4, personal.getId_tipo_aprobador());
+			consulta.setLong(5, personal.getId_solicitante());
+			consulta.setLong(6, personal.getId_tipo_trabajo());
+			consulta.setString(7, personal.getId_area());
+			consulta.setString(8, personal.getId_rack());
+			consulta.setString(9, personal.getArea());
+			consulta.setString(10, personal.getRack());
+			consulta.setTimestamp(11, personal.getFec_solicitud());
+			consulta.setTimestamp(12, personal.getFec_respuesta());
+			consulta.setTimestamp(13, personal.getFec_inicio());
+			consulta.setTimestamp(14, personal.getFec_fin());
+			consulta.setString(15, personal.getDescripcion());
+			consulta.setLong(16, personal.getId_localidad());
+			consulta.setString(17, personal.getEst_solicitud());
+			consulta.setString(18, personal.getUsu_modifica());
+			consulta.setTimestamp(19, personal.getFec_modifica());
+			consulta.setLong(20, personal.getId_solicitud());
+			consulta.executeUpdate();
+			consulta.close();
+			conexion.abrir().commit();
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
 			throw new java.lang.NullPointerException();
 		} finally {
 			conexion.cerrar();

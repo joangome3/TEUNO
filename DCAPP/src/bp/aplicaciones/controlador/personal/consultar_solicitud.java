@@ -66,7 +66,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	@Wire
 	Datebox dtxFechaInicio, dtxFechaFin;
 	@Wire
-	Menuitem mModificar, mEliminar, mCerrar, mAlcance;
+	Menuitem mModificar, mEliminar, mCerrar, mAlcance, mCierreLogEventos;
 	@Wire
 	Div winList;
 
@@ -118,7 +118,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
 		cmbLimite.setSelectedIndex(3);
-		cmbEstado.setSelectedIndex(0);
+		cmbEstado.setSelectedIndex(1);
 		inicializarListas();
 		inicializarPermisos();
 		setearFechaActual();
@@ -198,7 +198,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			estado = cmbEstado.getSelectedItem().getValue().toString();
 		}
 		listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio,
-				fecha_fin, estado, "", id_dc, Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+				fecha_fin, "", "", id_dc, estado, Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		binder.loadComponent(lbxSolicitudesPersonal);
 	}
 
@@ -333,16 +333,16 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	}
 
 	public void buscarSolicitudesPersonal(String criterio, int tipo, long id_cliente, String fecha_solicitud_i,
-			String fecha_solicitud_f, String fecha_inicio, String fecha_fin, long id_dc)
+			String fecha_solicitud_f, String fecha_inicio, String fecha_fin, long id_dc, String estado)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		if (txtBuscar.getText().length() <= 0) {
 			listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, tipo, id_cliente,
-					fecha_solicitud_i, fecha_solicitud_f, fecha_inicio, fecha_fin, id_dc,
+					fecha_solicitud_i, fecha_solicitud_f, fecha_inicio, fecha_fin, id_dc, estado,
 					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		}
 		if (!txtBuscar.getValue().equals("")) {
 			listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(criterio, tipo, id_cliente,
-					fecha_solicitud_i, fecha_solicitud_f, fecha_inicio, fecha_fin, id_dc,
+					fecha_solicitud_i, fecha_solicitud_f, fecha_inicio, fecha_fin, id_dc, estado,
 					Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
 		}
 		binder.loadComponent(lbxSolicitudesPersonal);
@@ -400,7 +400,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		if (cmbEstado.getSelectedItem() != null) {
 			estado = cmbEstado.getSelectedItem().getValue().toString();
 		}
-		buscarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio, fecha_fin, estado, "", id_dc);
+		buscarSolicitudesPersonal(criterio, 1, id_cliente, fecha_inicio, fecha_fin, "", "", id_dc, estado);
 	}
 
 	@Listen("onClick=#mCerrar")
@@ -451,7 +451,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		long id_solicitud = listaSolicitudPersonal.get(indice).getId_solicitud();
 		String ticket = listaSolicitudPersonal.get(indice).getTicket();
 		Sessions.getCurrent().setAttribute("solicitud_personal", listaSolicitudPersonal.get(indice));
-		crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket, 1);
+		crearPestanaParaModificar(tTab, tPanel, id_solicitud, ticket);
 	}
 
 	@Listen("onClick=#mAlcance")
@@ -465,32 +465,68 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			return;
 		}
 		int indice = lbxSolicitudesPersonal.getSelectedIndex();
+		if (listaSolicitudPersonal.get(indice).getEst_solicitud().equals("EJ")
+				|| listaSolicitudPersonal.get(indice).getEst_solicitud().equals("NE")
+				|| listaSolicitudPersonal.get(indice).getEst_solicitud().equals("CA")) {
+			Messagebox.show(informativos.getMensaje_informativo_118(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
 		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
 		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
 		long id_solicitud = listaSolicitudPersonal.get(indice).getId_solicitud();
 		String ticket = listaSolicitudPersonal.get(indice).getTicket();
 		Sessions.getCurrent().setAttribute("solicitud_personal", listaSolicitudPersonal.get(indice));
-		crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket, 2);
+		crearPestanaParaAlcance(tTab, tPanel, id_solicitud, ticket);
 	}
 
-	public void crearPestanaParaRevision(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket, int tipo) {
+	@Listen("onClick=#mCierreLogEventos")
+	public void onClickmCierreLogEventos()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (lbxSolicitudesPersonal.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxSolicitudesPersonal.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxSolicitudesPersonal.getSelectedIndex();
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		String ticket = listaSolicitudPersonal.get(indice).getTicket();
+		if (validarSiYaExisteRegistroCierre(ticket, 5) == true) {
+			Messagebox.show(informativos.getMensaje_informativo_37().replace("-?", "CIERRE").replace("?-", ticket),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
+		listaBitacora = consultasABaseDeDatos.cargarBitacoras(ticket, 7, 1, "", "", id_dc, "", "", 0, 0, "", 0);
+		if (listaBitacora.size() == 0) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", ticket),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		long id_solicitud = listaSolicitudPersonal.get(indice).getId_solicitud();
+		Sessions.getCurrent().setAttribute("bitacora", listaBitacora.get(0));
+		Sessions.getCurrent().setAttribute("personal", listaSolicitudPersonal.get(indice));
+		crearPestanaParaCierreLogEventos(tTab, tPanel, id_solicitud, ticket);
+	}
+
+	public void crearPestanaParaModificar(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
 		try {
 			Borderlayout bl = new Borderlayout();
-			if (tTab.hasFellow("Tab:" + id_solicitud)) {
-				Tab tab2 = (Tab) tTab.getFellow("Tab:" + id_solicitud);
+			if (tTab.hasFellow("Tab:" + id_solicitud + "M")) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + id_solicitud + "M");
 				tab2.focus();
 				tab2.setSelected(true);
 				return;
 			}
 			Tab tab = new Tab();
-			if (tipo == 1) {
-				tab.setLabel("GESTION DE PERSONAL - MODIFICAR | SOLICITUD " + ticket);
-			} else {
-				tab.setLabel("GESTION DE PERSONAL - ALCANCE | SOLICITUD " + ticket);
-			}
+			tab.setLabel("GESTION DE PERSONAL - MODIFICAR | SOLICITUD " + ticket);
+			tab.setId("Tab:" + id_solicitud + "M");
 			tab.setClosable(true);
 			tab.setSelected(true);
-			tab.setId("Tab:" + id_solicitud);
 			tab.setImage("/img/botones/ButtonSearch4.png");
 			tTab.getTabs().appendChild(tab);
 			Tabpanel tabpanel = new Tabpanel();
@@ -499,11 +535,7 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 			tabpanel.setStyle("height: calc(100%);");
 			tPanel.appendChild(tabpanel);
 			Include include = null;
-			if (tipo == 1) {
-				include = new Include("/personal/solicitud/modificar.zul");
-			} else {
-				include = new Include("/personal/solicitud/alcance.zul");
-			}
+			include = new Include("/personal/solicitud/modificar.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);
@@ -512,6 +544,84 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void crearPestanaParaAlcance(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + id_solicitud + "A")) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + id_solicitud + "A");
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE PERSONAL - ALCANCE | SOLICITUD " + ticket);
+			tab.setId("Tab:" + id_solicitud + "A");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/personal/solicitud/alcance.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void crearPestanaParaCierreLogEventos(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + id_solicitud + "C")) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + id_solicitud + "C");
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE PERSONAL - CIERRE LOG EVENTOS | SOLICITUD " + ticket);
+			tab.setId("Tab:" + id_solicitud + "C");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/personal/solicitud/cerrar_registro.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean validarSiYaExisteRegistroCierre(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que no exista un registro de cierre previo
+		 */
+		boolean existe_registro_cierre = true;
+		if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, String.valueOf(id_tipo_tarea)) == 0) {
+			existe_registro_cierre = false;
+		}
+		return existe_registro_cierre;
 	}
 
 }

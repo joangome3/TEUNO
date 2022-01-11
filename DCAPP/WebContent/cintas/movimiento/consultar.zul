@@ -399,6 +399,12 @@
 	</div>
 	<menupopup id="editPopup">
 		<menuitem id="mValidar" iconSclass="z-icon-edit" />
+		<menuseparator visible="true" id="mSeparador1"/>
+		<menuitem id="mCierreLogEventos"
+			iconSclass="z-icon-check-circle-o"
+			label=" - Crear registro de cierre en log de eventos"
+			tooltiptext="Permite crear el registro de cierre en log de eventos, solo se permite crear el registro de cierre de una tarea a la vez."
+			visible="true" />
 	</menupopup>
 	<popup id="cons" width="300px">
 		<html>

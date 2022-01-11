@@ -68,7 +68,7 @@ public class consultar_permanencia extends SelectorComposer<Component> {
 	@Wire
 	Menuitem mModificar, mRegistrarSalida, mEliminar;
 	@Wire
-	Menuseparator mSeparador1;
+	Menuseparator mSeparador1, mSeparador2;
 	@Wire
 	Div winList;
 
@@ -439,8 +439,9 @@ public class consultar_permanencia extends SelectorComposer<Component> {
 			mModificar.setVisible(false);
 			mModificar.setDisabled(true);
 			mSeparador1.setVisible(false);
-			mRegistrarSalida.setDisabled(true);
-			mRegistrarSalida.setVisible(false);
+			mRegistrarSalida.setDisabled(false);
+			mRegistrarSalida.setVisible(true);
+			mSeparador2.setVisible(true);
 		} else {
 			mModificar.setLabel(" - Modificar salida");
 			mModificar.setVisible(true);
@@ -448,6 +449,7 @@ public class consultar_permanencia extends SelectorComposer<Component> {
 			mSeparador1.setVisible(true);
 			mRegistrarSalida.setDisabled(true);
 			mRegistrarSalida.setVisible(false);
+			mSeparador2.setVisible(false);
 		}
 	}
 
@@ -497,7 +499,7 @@ public class consultar_permanencia extends SelectorComposer<Component> {
 		if (ingresa_a_modificar == false) {
 			ingresa_a_modificar = true;
 			Sessions.getCurrent().setAttribute("registro_permanencia", listaRegistroPermanencia.get(indice));
-			window = (Window) Executions.createComponents("/personal/registro_permanencia/nuevo_salida.zul", null,
+			window = (Window) Executions.createComponents("/personal/registro_permanencia/modificar_salida.zul", null,
 					null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {

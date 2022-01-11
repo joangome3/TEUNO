@@ -105,6 +105,10 @@
 														label="FECHA FIN"
 														style="text-align: center !important;">
 													</listheader>
+													<listheader
+														label="ESTADO"
+														style="text-align: center !important;">
+													</listheader>
 												</listhead>
 												<listitem
 													self="@{each=lista}">
@@ -129,6 +133,9 @@
 													<listcell
 														label="@{lista.mostrarFechaHoraFin}"
 														style="text-align: center !important;" />
+													<listcell
+														label="@{lista.mostrarEstadoSolicitud}"
+														style="@{lista.estiloMostrarEstado}" />
 												</listitem>
 											</listbox>
 										</cell>

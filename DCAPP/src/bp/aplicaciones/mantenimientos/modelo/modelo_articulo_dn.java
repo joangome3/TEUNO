@@ -840,6 +840,18 @@ public class modelo_articulo_dn {
 		return estilo;
 	}
 
+	public String estiloMostrarCategoria() {
+		String estilo = "";
+		if (id_categoria == 1) {
+			estilo = "font-weight: bold !important; font-style: normal !important; background-color: #d6ffba; text-align: center !important;";
+		} else if (id_categoria == 2) {
+			estilo = "font-weight: bold !important; font-style: normal !important; background-color: #d4efed; text-align: center !important;";
+		} else {
+			estilo = "font-weight: bold !important; font-style: normal !important; background-color: #ffbd62; text-align: center !important;";
+		}
+		return estilo;
+	}
+
 	public String mostrarImagenEstadoSolicitud()
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		String imagen = "";

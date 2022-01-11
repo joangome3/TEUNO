@@ -566,7 +566,7 @@ public class registro_ingreso extends SelectorComposer<Component> {
 										.setId_proveedor(listaRegistroPermanencia.get(indice).getId_proveedor());
 								if (txtTarjetaBP.getText().length() >= 0) {
 									if (validarSiProveedorTieneMismaTarjeta(
-											txtTarjetaBP.getText().toString().toUpperCase().trim(), 8) == true) {
+											txtTarjetaBP.getText().toString().toUpperCase().trim(), 8, listaRegistroPermanencia.get(indice).getTicket()) == true) {
 										Messagebox.show(
 												informativos.getMensaje_informativo_112().replace("?1",
 														txtTarjetaBP.getText().toString().toUpperCase().trim()),
@@ -577,7 +577,7 @@ public class registro_ingreso extends SelectorComposer<Component> {
 								}
 								if (txtTarjetaDN.getText().length() >= 0) {
 									if (validarSiProveedorTieneMismaTarjeta(
-											txtTarjetaDN.getText().toString().toUpperCase().trim(), 9) == true) {
+											txtTarjetaDN.getText().toString().toUpperCase().trim(), 9, listaRegistroPermanencia.get(indice).getTicket()) == true) {
 										Messagebox.show(
 												informativos.getMensaje_informativo_112().replace("?1",
 														txtTarjetaDN.getText().toString().toUpperCase().trim()),
@@ -787,11 +787,11 @@ public class registro_ingreso extends SelectorComposer<Component> {
 		return fecha_esta_registrada;
 	}
 
-	public boolean validarSiProveedorTieneMismaTarjeta(String num_tarjeta, int tipo)
+	public boolean validarSiProveedorTieneMismaTarjeta(String num_tarjeta, int tipo, String ticket)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		boolean tiene_misma_tarjeta = false;
 		List<modelo_registro_permanencia> listaPermanencia = new ArrayList<modelo_registro_permanencia>();
-		listaPermanencia = consultasABaseDeDatos.cargarRegistrosPermanencia3(num_tarjeta, tipo, "", id_dc, 0, "", "");
+		listaPermanencia = consultasABaseDeDatos.cargarRegistrosPermanencia3(num_tarjeta, tipo, "", id_dc, 0, ticket, "");
 		if (listaPermanencia.size() > 0) {
 			tiene_misma_tarjeta = true;
 		} else {

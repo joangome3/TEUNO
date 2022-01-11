@@ -115,7 +115,7 @@ public class modificar_salida extends SelectorComposer<Component> {
 		inicializarListas();
 		setearFechaActual();
 		setearFechaIngresaFormulario();
-		setearFechaHoraIngresoDC();
+		setearFechaHoraSalidaDC();
 		validarTurno();
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {

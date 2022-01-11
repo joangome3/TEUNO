@@ -119,6 +119,8 @@ public class Informativos {
 	private String mensaje_informativo_115 = "Ingrese el comentario del incumplimiento.";
 	private String mensaje_informativo_116 = ".:: Cerrar registro ::.";
 	private String mensaje_informativo_117 = "Por favor escoja el registro que tenga la apertura.";
+	private String mensaje_informativo_118 = "La solicitud de personal debe estar en estado abierto o en curso para poder registrar un alcance a esta solicitud.";
+	private String mensaje_informativo_119 = "Ya existe una solicitud de cintas creada para el ticket ?1.";
 
 	public Informativos() {
 
@@ -590,6 +592,14 @@ public class Informativos {
 
 	public String getMensaje_informativo_117() {
 		return mensaje_informativo_117;
+	}
+	
+	public String getMensaje_informativo_118() {
+		return mensaje_informativo_118;
+	}
+	
+	public String getMensaje_informativo_119() {
+		return mensaje_informativo_119;
 	}
 
 }

@@ -40,10 +40,13 @@
 			<space width="10px"></space>
 			<combobox width="145px" id="cmbEstado" readonly="true"
 				disabled="false" visible="true">
-				<comboitem label="EN CURSO" value="A"></comboitem>
-				<comboitem label="EJECUTADO" value="E"></comboitem>
+				<comboitem label="ABIERTO" value="AB"></comboitem>
+				<comboitem label="EN CURSO" value="EC"></comboitem>
+				<comboitem label="EJECUTADO" value="EJ"></comboitem>
 				<comboitem label="NO EJECUTADO" value="NE"></comboitem>
-				<comboitem label="CANCELADO" value="C"></comboitem>
+				<comboitem label="CANCELADO" value="CA"
+					visible="false">
+				</comboitem>
 			</combobox>
 		</hlayout>
 		<borderlayout height="97%">

@@ -111,6 +111,24 @@ public class ConsultasABaseDeDatos {
 	 * cintas Diners
 	 * 
 	 */
+	
+	/*
+	 * Metodo que permite validar si existe ya creada una solicitud de cintas
+	 * 
+	 */
+
+	public int validarSiExisteSolicitudMovimiento(String ticket)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		dao_movimiento_dn dao = new dao_movimiento_dn();
+		int totalSolicitudes = 0;
+		try {
+			totalSolicitudes = dao.validarSiExisteSolicitudMovimiento(ticket);
+		} catch (SQLException e) {
+			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
+					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
+		}
+		return totalSolicitudes;
+	}
 
 	/*
 	 * * Metodo que devuelve las posicion maxima de una ubicacion
@@ -1253,12 +1271,12 @@ public class ConsultasABaseDeDatos {
 
 	public List<modelo_solicitud_personal> cargarSolicitudesPersonal(String criterio, int tipo, long id_cliente,
 			String fecha_solicitud_1, String fecha_solicitud_2, String fecha_inicio, String fecha_fin,
-			long id_localidad, int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
+			long id_localidad, String estado, int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_solicitud_personal dao = new dao_solicitud_personal();
 		List<modelo_solicitud_personal> listaSolicitudPersonal = new ArrayList<modelo_solicitud_personal>();
 		try {
 			listaSolicitudPersonal = dao.obtenerSolicitudesPersonal(criterio, tipo, id_cliente, fecha_solicitud_1,
-					fecha_solicitud_2, fecha_inicio, fecha_fin, id_localidad, limite);
+					fecha_solicitud_2, fecha_inicio, fecha_fin, id_localidad, estado, limite);
 		} catch (SQLException e) {
 			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);

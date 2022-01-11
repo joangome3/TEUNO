@@ -2,6 +2,7 @@ package bp.aplicaciones.controlador.cintas;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ import org.zkoss.zul.Include;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
+import org.zkoss.zul.Menuseparator;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -44,6 +46,7 @@ import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_detalle_dn;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
 
@@ -67,7 +70,9 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Menupopup editPopup;
 	@Wire
-	Menuitem mValidar;
+	Menuitem mValidar, mCierreLogEventos;
+	@Wire
+	Menuseparator mSeparador1;
 	@Wire
 	Div winList;
 
@@ -481,24 +486,28 @@ public class consultar extends SelectorComposer<Component> {
 					"Permite realizar la primera validación del pedido por parte del operador en turno.");
 			mValidar.setDisabled(false);
 			mValidar.setVisible(true);
+			mSeparador1.setVisible(true);
 		} else if (listaMovimiento.get(lbxMovimientos.getSelectedIndex()).getEst_validacion().equals("RV2")) {
 			mValidar.setLabel(" - Validación en horario de [00:00 - 07:59]");
 			mValidar.setTooltiptext(
 					"Permite realizar la segunda validación del pedido por parte del operador en el horario de [00:00 - 07:59].");
 			mValidar.setDisabled(false);
 			mValidar.setVisible(true);
+			mSeparador1.setVisible(true);
 		} else if (listaMovimiento.get(lbxMovimientos.getSelectedIndex()).getEst_validacion().equals("RV3")) {
 			mValidar.setLabel(" - Revisión por parte del auditor");
 			mValidar.setTooltiptext(
 					"Permite realizar la tercera validación del pedido pero esta vez por parte de un auditor.");
 			mValidar.setDisabled(false);
 			mValidar.setVisible(true);
+			mSeparador1.setVisible(true);
 		} else {
 			mValidar.setLabel("");
 			mValidar.setTooltiptext("");
 			mValidar.setDisabled(true);
 			mValidar.setVisible(false);
-			editPopup.close();
+			mSeparador1.setVisible(false);
+			// editPopup.close();
 		}
 		if (cmbTipoBusqueda.getSelectedItem().getValue().toString().equals("LP")) {
 			listaMovimientoDetalle = consultasABaseDeDatos.cargarDetalleMovimientosDN(
@@ -677,6 +686,92 @@ public class consultar extends SelectorComposer<Component> {
 			}
 		}
 		return esta_en_rango_permitido;
+	}
+
+	@Listen("onClick=#mCierreLogEventos")
+	public void onClickmCierreLogEventos()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (lbxMovimientos.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxMovimientos.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxMovimientos.getSelectedIndex();
+		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
+		Tabpanels tPanel = (Tabpanels) zConsultar.getParent().getParent().getParent().getParent().getParent();
+		String ticket = listaMovimiento.get(indice).getTck_movimiento();
+		if (validarSiYaExisteRegistroCierre(ticket, 5) == true) {
+			Messagebox.show(informativos.getMensaje_informativo_37().replace("-?", "CIERRE").replace("?-", ticket),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
+		listaBitacora = consultasABaseDeDatos.cargarBitacoras(ticket, 7, 1, "", "", id_dc, "", "", 0, 0, "", 0);
+		if (listaBitacora.size() == 0) {
+			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", ticket),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		long id_movimiento = listaMovimiento.get(indice).getId_movimiento();
+		String tipo = "MOVIMIENTO";
+		if (listaMovimiento.get(indice).getTip_pedido().equals("M")) {
+			tipo = "MOVIMIENTO";
+		} else {
+			tipo = "REQUERIMIENTO";
+		}
+		Sessions.getCurrent().setAttribute("bitacora", listaBitacora.get(0));
+		Sessions.getCurrent().setAttribute("movimiento_dn", listaMovimiento.get(indice));
+		crearPestanaParaCierreLogEventos(tTab, tPanel, id_movimiento, ticket, tipo);
+	}
+
+	public void crearPestanaParaCierreLogEventos(Tabbox tTab, Tabpanels tPanel, long id_movimiento, String ticket,
+			String tipo) {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + id_movimiento + "C")) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + id_movimiento + "C");
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+
+			tab.setLabel("GESTION DE CINTAS - CIERRE LOG EVENTOS | " + tipo + " " + ticket);
+			tab.setId("Tab:" + id_movimiento + "C");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setImage("/img/botones/ButtonSearch4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = null;
+			include = new Include("/cintas/movimiento/cerrar_registro.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean validarSiYaExisteRegistroCierre(String ticket_externo, long id_tipo_tarea)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		/*
+		 * El metodo valida que no exista un registro de cierre previo
+		 */
+		boolean existe_registro_cierre = true;
+		if (consultasABaseDeDatos.validarSiExisteTareaRegistrada(ticket_externo, String.valueOf(id_tipo_tarea)) == 0) {
+			existe_registro_cierre = false;
+		}
+		return existe_registro_cierre;
 	}
 
 }

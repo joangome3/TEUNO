@@ -40,6 +40,7 @@ public class modelo_registro_permanencia {
 	private long id_localidad;
 	private String nom_localidad;
 	private String est_registro_permanencia;
+	private String est_solicitud;
 	private String usu_ingresa;
 	private String nom_usuario_ingresa;
 	private Timestamp fec_ingresa;
@@ -177,11 +178,12 @@ public class modelo_registro_permanencia {
 	 * @param descripcion
 	 * @param area
 	 * @param rack
+	 * @param est_solicitud
 	 */
 	public modelo_registro_permanencia(long id_solicitud, long id_cliente, String ticket, Timestamp fec_inicio,
 			Timestamp fec_fin, long id_proveedor, String nom_empresa, String nom_proveedor, String num_documento,
 			long id_solicitante, long id_emp_solicitante, String nom_emp_solicitante, String descripcion, String area,
-			String rack) {
+			String rack, String est_solicitud) {
 		super();
 		this.id_solicitud = id_solicitud;
 		this.id_cliente = id_cliente;
@@ -198,6 +200,7 @@ public class modelo_registro_permanencia {
 		this.descripcion = descripcion;
 		this.area = area;
 		this.rack = rack;
+		this.est_solicitud = est_solicitud;
 	}
 
 	/**
@@ -223,12 +226,13 @@ public class modelo_registro_permanencia {
 	 * @param descripcion
 	 * @param area
 	 * @param rack
+	 * @param est_solicitud
 	 */
 	public modelo_registro_permanencia(long id_registro_permanencia, String num_tarjeta_bp, String num_tarjeta_dn,
 			Timestamp fec_ingreso, Timestamp fec_salida, Timestamp fec_ingreso_su, Timestamp fec_salida_su,
 			long id_solicitud, long id_cliente, String ticket, Timestamp fec_inicio, Timestamp fec_fin,
 			long id_proveedor, String nom_empresa, String nom_proveedor, String num_documento, long id_solicitante,
-			long id_emp_solicitante, String nom_emp_solicitante, String descripcion, String area, String rack) {
+			long id_emp_solicitante, String nom_emp_solicitante, String descripcion, String area, String rack, String est_solicitud) {
 		super();
 		this.id_registro_permanencia = id_registro_permanencia;
 		this.num_tarjeta_bp = num_tarjeta_bp;
@@ -252,6 +256,7 @@ public class modelo_registro_permanencia {
 		this.descripcion = descripcion;
 		this.area = area;
 		this.rack = rack;
+		this.est_solicitud = est_solicitud;
 	}
 
 	/**
@@ -661,6 +666,20 @@ public class modelo_registro_permanencia {
 	}
 
 	/**
+	 * @return the est_solicitud
+	 */
+	public String getEst_solicitud() {
+		return est_solicitud;
+	}
+
+	/**
+	 * @param est_solicitud the est_solicitud to set
+	 */
+	public void setEst_solicitud(String est_solicitud) {
+		this.est_solicitud = est_solicitud;
+	}
+
+	/**
 	 * @return the usu_ingresa
 	 */
 	public String getUsu_ingresa() {
@@ -756,10 +775,10 @@ public class modelo_registro_permanencia {
 				+ ", num_tarjeta_dn=" + num_tarjeta_dn + ", num_tarjeta_bp=" + num_tarjeta_bp + ", tipo_autorizador="
 				+ tipo_autorizador + ", tipo_ingreso=" + tipo_ingreso + ", fec_ingreso_su=" + fec_ingreso_su
 				+ ", fec_salida_su=" + fec_salida_su + ", id_localidad=" + id_localidad + ", nom_localidad="
-				+ nom_localidad + ", est_registro_permanencia=" + est_registro_permanencia + ", usu_ingresa="
-				+ usu_ingresa + ", nom_usuario_ingresa=" + nom_usuario_ingresa + ", fec_ingresa=" + fec_ingresa
-				+ ", usu_modifica=" + usu_modifica + ", nom_usuario_modifica=" + nom_usuario_modifica
-				+ ", fec_modifica=" + fec_modifica + "]";
+				+ nom_localidad + ", est_registro_permanencia=" + est_registro_permanencia + ", est_solicitud="
+				+ est_solicitud + ", usu_ingresa=" + usu_ingresa + ", nom_usuario_ingresa=" + nom_usuario_ingresa
+				+ ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", nom_usuario_modifica="
+				+ nom_usuario_modifica + ", fec_modifica=" + fec_modifica + "]";
 	}
 
 	public String mostrarFechaIngreso() {
@@ -906,6 +925,39 @@ public class modelo_registro_permanencia {
 			imagen = "/img/botones/ButtonError.png";
 		}
 		return imagen;
+	}
+
+	public String mostrarEstadoSolicitud() {
+		String estado = "";
+		if (est_solicitud.equals("AB")) {
+			estado = "ABIERTO";
+		} else if (est_solicitud.equals("EC")) {
+			estado = "EN CURSO";
+		} else if (est_solicitud.equals("EJ")) {
+			estado = "EJECUTADO";
+		} else {
+			estado = "NO EJECUTADO";
+		}
+		return estado;
+	}
+
+	/* Estilos en campos */
+
+	public String estiloMostrarEstado() {
+		String estilo = "";
+		if (est_solicitud.equals("AB")) {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FAF8D5;";
+		}
+		if (est_solicitud.equals("EC")) {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #CCFFE1;";
+		}
+		if (est_solicitud.equals("EJ")) {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #CCFFFF;";
+		}
+		if (est_solicitud.equals("NE")) {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FFDDDD;";
+		}
+		return estilo;
 	}
 
 }

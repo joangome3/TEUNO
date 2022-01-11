@@ -104,9 +104,9 @@ public class calendario extends SelectorComposer<Component> {
 		setearFechaInicio();
 		setearFechaFin();
 		inicializarListas();
-		cargarInformacion();
+		cargarSolicitudesPersonal();
 		btnLimpiar.setDisabled(false);
-		cmbEstado.setSelectedIndex(0);
+		cmbEstado.setSelectedIndex(1);
 	}
 
 	public void setearFechaActual() {
@@ -241,7 +241,26 @@ public class calendario extends SelectorComposer<Component> {
 	public void onChange$cmbEstado() throws ClassNotFoundException, FileNotFoundException, IOException {
 		consultarSolicitudesPersonal();
 	}
-	
+
+	public void cargarSolicitudesPersonal() throws ClassNotFoundException, FileNotFoundException, IOException {
+		String fecha_inicio = "", fecha_fin = "";
+		String criterio = txtBuscar.getText();
+		long id_cliente = 0;
+		if (cmbCliente.getSelectedItem() != null) {
+			id_cliente = Long.valueOf(cmbCliente.getSelectedItem().getValue().toString());
+		}
+		if (dtxFechaInicio.getValue() != null) {
+			fecha_inicio = fechas.obtenerFechaFormateada(dtxFechaInicio.getValue(), "yyyy-MM-dd HH:mm:ss");
+		}
+		if (dtxFechaFin.getValue() != null) {
+			fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(), "yyyy-MM-dd HH:mm:ss");
+		}
+		calendarioModel = new DemoCalendarModel(
+				new DemoCalendarData(5, criterio, 1, id_cliente, id_dc, 0, fecha_inicio, fecha_fin, "EC")
+						.getCalendarEvents());
+		calendario.setModel(this.calendarioModel);
+	}
+
 	public void consultarSolicitudesPersonal() throws ClassNotFoundException, FileNotFoundException, IOException {
 		String fecha_inicio = "", fecha_fin = "";
 		String criterio = txtBuscar.getText();
@@ -258,6 +277,8 @@ public class calendario extends SelectorComposer<Component> {
 		}
 		if (cmbEstado.getSelectedItem() != null) {
 			estado = cmbEstado.getSelectedItem().getValue().toString();
+		} else {
+			estado = "";
 		}
 		calendarioModel = new DemoCalendarModel(
 				new DemoCalendarData(5, criterio, 1, id_cliente, id_dc, 0, fecha_inicio, fecha_fin, estado)
@@ -301,7 +322,7 @@ public class calendario extends SelectorComposer<Component> {
 			Tabpanels tPanel = (Tabpanels) zCalendario.getParent().getParent().getParent().getParent().getParent();
 			String ticket = solicitud_personal.getTicket();
 			Sessions.getCurrent().setAttribute("solicitud_personal", solicitud_personal);
-			crearPestanaParaRevision(tTab, tPanel, id_solicitud, ticket);
+			crearPestanaParaModificar(tTab, tPanel, id_solicitud, ticket);
 		}
 	}
 
@@ -314,7 +335,7 @@ public class calendario extends SelectorComposer<Component> {
 		modelo_solicitud_personal solicitud_personal = new modelo_solicitud_personal();
 		List<modelo_solicitud_personal> listaSolicitudPersonal = new ArrayList<modelo_solicitud_personal>();
 		listaSolicitudPersonal = consultasABaseDeDatos.cargarSolicitudesPersonal(String.valueOf(id_solicitud), 2, 0, "",
-				"", "", "", id_dc, 0);
+				"", "", "", id_dc, "", 0);
 		for (int i = 0; i < listaSolicitudPersonal.size(); i++) {
 			if (id_solicitud == listaSolicitudPersonal.get(i).getId_solicitud()) {
 				solicitud_personal = listaSolicitudPersonal.get(i);
@@ -324,7 +345,7 @@ public class calendario extends SelectorComposer<Component> {
 		return solicitud_personal;
 	}
 
-	public void crearPestanaParaRevision(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
+	public void crearPestanaParaModificar(Tabbox tTab, Tabpanels tPanel, long id_solicitud, String ticket) {
 		try {
 			Borderlayout bl = new Borderlayout();
 			if (tTab.hasFellow("Tab:" + id_solicitud)) {

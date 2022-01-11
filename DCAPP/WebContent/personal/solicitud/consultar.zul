@@ -90,19 +90,23 @@
 											</combobox>
 											<space width="10px"></space>
 											<combobox width="145px"
-												id="cmbEstado" readonly="true" disabled="false" visible="true">
+												id="cmbEstado" readonly="true" disabled="false"
+												visible="true">
 												<comboitem
-														label="EN CURSO" value="A">
-													</comboitem>
-													<comboitem
-														label="EJECUTADO" value="E">
-													</comboitem>
-													<comboitem
-														label="NO EJECUTADO" value="NE">
-													</comboitem>
-													<comboitem
-														label="CANCELADO" value="C">
-													</comboitem>
+													label="ABIERTO" value="AB">
+												</comboitem>
+												<comboitem
+													label="EN CURSO" value="EC">
+												</comboitem>
+												<comboitem
+													label="EJECUTADO" value="EJ">
+												</comboitem>
+												<comboitem
+													label="NO EJECUTADO" value="NE">
+												</comboitem>
+												<comboitem
+													label="CANCELADO" value="CA" visible="false">
+												</comboitem>
 											</combobox>
 										</cell>
 									</row>
@@ -195,9 +199,15 @@
 			tooltiptext="Permite cambiar el estado de las tareas que se encuentren seleccionadas a estado cerrado, se pueden cerrar varias tareas a la vez."
 			visible="false" />
 		<menuseparator visible="true" />
-		<menuitem id="mAlcance" iconSclass="z-icon-code"
-			label=" - Crear alcance"
-			tooltiptext="Permite crear el alcance a una solicitud a partir de la solicitud seleccionada."
+		<menuitem id="mAlcance" iconSclass="z-icon-random"
+			label=" - Crear alcance de solicitud"
+			tooltiptext="Permite crear el alcance a una solicitud a partir de la solicitud seleccionada, solo se permite crear el alcance de una tarea a la vez."
+			visible="true" />
+		<menuseparator visible="true" />
+		<menuitem id="mCierreLogEventos"
+			iconSclass="z-icon-check-circle-o"
+			label=" - Crear registro de cierre en log de eventos"
+			tooltiptext="Permite crear el registro de cierre en log de eventos, solo se permite crear el registro de cierre de una tarea a la vez."
 			visible="true" />
 	</menupopup>
 	<popup id="cons" width="300px">

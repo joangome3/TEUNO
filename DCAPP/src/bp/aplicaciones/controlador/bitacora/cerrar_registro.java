@@ -341,6 +341,7 @@ public class cerrar_registro extends SelectorComposer<Component> {
 		/* DESCRIPCION **/
 		txtDescripcion.setText(bitacora.getDescripcion());
 		/* AREA */
+		id_tipo_ubicacion = bitacora.getId_area();
 		bdxArea.setText(bitacora.getArea());
 		bdxArea.setTooltiptext(bitacora.getArea());
 		cargarUbicaciones();
@@ -464,11 +465,7 @@ public class cerrar_registro extends SelectorComposer<Component> {
 				String[] ubicaciones = bitacora.getId_area().split(", ");
 				// System.out.println(ubicaciones.length);
 				for (int i = 0; i < ubicaciones.length; i++) {
-					if (i == ubicaciones.length - 1) {
-						tipo_trabajo = Long.valueOf(ubicaciones[i]);
-					} else {
-						id_ubicaciones.add(Long.valueOf(ubicaciones[i]));
-					}
+					id_ubicaciones.add(Long.valueOf(ubicaciones[i]));
 				}
 				// System.out.println(tipo_trabajo);
 				for (int i = 0; i < _listaTipoUbicacion.size(); i++)
@@ -1490,7 +1487,6 @@ public class cerrar_registro extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
-			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -1500,8 +1496,7 @@ public class cerrar_registro extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
-						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
-						setearAreas(listaTipoUbicacion, tipo_trabajo);
+						setearAreas(listaTipoUbicacion);
 					}
 				});
 			}
@@ -1538,7 +1533,7 @@ public class cerrar_registro extends SelectorComposer<Component> {
 		}
 	}
 
-	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion, long tipo_trabajo) {
+	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
 		String tipo_ubicacion = "";
 		id_tipo_ubicacion = "";
 		if (listaTipoUbicacion.size() > 0) {
@@ -1554,7 +1549,6 @@ public class cerrar_registro extends SelectorComposer<Component> {
 			}
 			bdxArea.setText(tipo_ubicacion);
 			bdxArea.setTooltiptext(tipo_ubicacion);
-			id_tipo_ubicacion = id_tipo_ubicacion + ", " + String.valueOf(tipo_trabajo);
 		} else {
 			tipo_ubicacion = "";
 			id_tipo_ubicacion = "";

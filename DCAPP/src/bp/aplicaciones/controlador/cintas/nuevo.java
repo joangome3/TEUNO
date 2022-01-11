@@ -74,7 +74,7 @@ public class nuevo extends SelectorComposer<Component> {
 	@Wire
 	Combobox cmbEmpresa, cmbTurno, cmbPedido, cmbEstado, cmbTipoUbicacion, cmbUbicacion;
 	@Wire
-	Datebox dtxFechaSolicitud, dtxFechaRespuesta, dtxFechaEjecucion;
+	Datebox dtxFechaSolicitud, dtxFechaRespuesta, dtxFechaEjecucion, dtxFechaAperturaTicket;
 	@Wire
 	Timebox tmxHoraSolicitud, tmxHoraRespuesta, tmxHoraEjecucion, tmx;
 	@Wire
@@ -163,6 +163,7 @@ public class nuevo extends SelectorComposer<Component> {
 		setearCamposInicio();
 		inicializarListas();
 		setearFechaActual();
+		setearFechaHoraInicio();
 		setearFechaIngresaFormulario();
 		inicializarFechas();
 		cargarTipoUbicaciones();
@@ -211,6 +212,13 @@ public class nuevo extends SelectorComposer<Component> {
 		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), new Date().getHours(),
 				new Date().getMinutes(), 0);
 		fecha_ingresa_formulario = d;
+	}
+
+	public void setearFechaHoraInicio() {
+		Date d = null;
+		d = fechas.obtenerFechaArmada(new Date(), new Date().getMonth(), new Date().getDate(), new Date().getHours(),
+				new Date().getMinutes(), new Date().getSeconds());
+		dtxFechaAperturaTicket.setValue(d);
 	}
 
 	public void validarTurno() {
@@ -866,9 +874,24 @@ public class nuevo extends SelectorComposer<Component> {
 			txtId.setFocus(true);
 			return;
 		}
-		if (validarSiExistePrimeroApertura(txtId.getText().trim(), 1) == false) {
-			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtId.getText().trim()),
+//		if (validarSiExistePrimeroApertura(txtId.getText().trim(), 1) == false) {
+//			Messagebox.show(informativos.getMensaje_informativo_96().replace("?1", txtId.getText().trim()),
+//					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+//			return;
+//		}
+		if (validarSiExistePrimeroApertura(txtId.getText().trim(), 1) == true) {
+			Messagebox.show(informativos.getMensaje_informativo_102().replace("?1", txtId.getText().trim()),
 					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (validarSiExisteSolicitudMovimiento(txtId.getText().toUpperCase().trim()) == true) {
+			Messagebox.show(informativos.getMensaje_informativo_119().replace("?1", txtId.getText().trim()),
+					informativos.getMensaje_informativo_17(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (dtxFechaAperturaTicket.getValue() == null) {
+			dtxFechaAperturaTicket.setErrorMessage(validaciones.getMensaje_validacion_4());
+			dtxFechaAperturaTicket.setFocus(true);
 			return;
 		}
 		if (cmbPedido.getSelectedItem() == null) {
@@ -1037,19 +1060,14 @@ public class nuevo extends SelectorComposer<Component> {
 							} else {
 								bitacora.setId_tipo_clasificacion(7);
 							}
-							bitacora.setId_tipo_tarea(7);
+							bitacora.setId_tipo_tarea(1);
 							bitacora.setId_estado_bitacora(2);
-							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(fechas.obtenerFechaArmada(
-									fecha_ingresa_formulario, fecha_ingresa_formulario.getMonth(),
-									fecha_ingresa_formulario.getDate(), fecha_ingresa_formulario.getHours(),
-									fecha_ingresa_formulario.getMinutes(), 0)));
-							bitacora.setFec_fin(fechas
-									.obtenerTimestampDeDate(fechas.obtenerFechaArmada(new Date(), new Date().getMonth(),
-											new Date().getDate(), new Date().getHours(), new Date().getMinutes(), 0)));
+							bitacora.setFec_inicio(fechas.obtenerTimestampDeDate(dtxFechaAperturaTicket.getValue()));
+							bitacora.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaAperturaTicket.getValue()));
 							bitacora.setCumplimiento("C");
-							bitacora.setDescripcion(bdxSolicitantes.getText() + " SOLICITA SE REALICE EL "
-									+ cmbPedido.getSelectedItem().getLabel().toString() + " DE "
-									+ listaMovimientoDetalle.size() + " CINTA(S)");
+							bitacora.setDescripcion("SE APERTURA LA SOLICITUD, EN DONDE " + bdxSolicitantes.getText()
+									+ " SOLICITA SE REALICE EL " + cmbPedido.getSelectedItem().getLabel().toString()
+									+ " DE " + listaMovimientoDetalle.size() + " CINTA(S)");
 							bitacora.setId_turno(id_turno);
 							bitacora.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
@@ -1564,6 +1582,18 @@ public class nuevo extends SelectorComposer<Component> {
 			existe_primero_apertura = false;
 		}
 		return existe_primero_apertura;
+	}
+
+	public boolean validarSiExisteSolicitudMovimiento(String ticket)
+			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		boolean existe_solicitud = false;
+		int totalSolicitudes = consultasABaseDeDatos.validarSiExisteSolicitudMovimiento(ticket);
+		if (totalSolicitudes > 0) {
+			existe_solicitud = true;
+		} else {
+			existe_solicitud = false;
+		}
+		return existe_solicitud;
 	}
 
 }

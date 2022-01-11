@@ -232,14 +232,14 @@
 	</div>
 
 	<menupopup id="editPopup">
-		<menuitem id="mModificar" iconSclass="z-icon-edit"
+		<menuitem id="mModificar" iconSclass="z-icon-check-circle"
 			label=" - Modificar"
 			tooltiptext="Permite modificar el registro seleccionado, solo se permite modificar un item a la vez." visible="false" />
 		<menuseparator id="mSeparador1" visible="false" />
-		<menuitem id="mRegistrarSalida" iconSclass="z-icon-code"
+		<menuitem id="mRegistrarSalida" iconSclass="z-icon-check-circle"
 			label=" - Registrar salida"
-			tooltiptext="Permite registrar la salida del item seleccionado, solo se permite modificar un item a la vez." visible="false" />
-		<menuseparator id="mSeparador2" visible="false" />
+			tooltiptext="Permite registrar la salida del item seleccionado, solo se permite modificar un item a la vez." visible="true" />
+		<menuseparator id="mSeparador2" visible="true" />
 		<menuitem id="mEliminar" iconSclass="z-icon-trash"
 			label=" - Eliminar"
 			tooltiptext="Permite eliminar el item seleccionado, solo se permite eliminar un item a la vez." />

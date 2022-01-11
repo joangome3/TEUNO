@@ -139,7 +139,7 @@
 				<listcell label="@{lista.getDes_articulo}" />
 				<listcell label="@{lista.getNom_empresa}" />
 				<listcell label="@{lista.getNom_categoria}"
-					style="text-align: center !important;" />
+					style="@{lista.estiloMostrarCategoria}" />
 				<listcell label="@{lista.getNom_ubicacion}" />
 				<listcell label="@{lista.getSto_articulo}" />
 				<listcell image="@{lista.mostrarImagenCapacidad}"

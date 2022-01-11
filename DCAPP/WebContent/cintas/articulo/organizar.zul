@@ -29,65 +29,7 @@
 														<hlayout>
 															<bandbox
 																id="bdxUbicacion1" mold="rounded" autodrop="true"
-																width="250px" readonly="true">
-																<bandpopup
-																	width="45%">
-																	<panel
-																		title="">
-																		<panelchildren>
-																			<space
-																				width="15px">
-																			</space>
-																			<textbox
-																				width="280px" id="txtBuscarUbicacion1"
-																				placeholder="Ingrese palabra clave"
-																				tooltiptext="Presione enter para realizar la búsqueda"
-																				visible="true" style="font-style: italic;"
-																				sclass="demo-search-inp">
-																			</textbox>
-																			<space
-																				width="0px">
-																			</space>
-																			<image
-																				src="/img/botones/ButtonPopup.png" tooltip="con"
-																				style="cursor: help; width: 16px; height: 16px;"
-																				visible="true" />
-																			<div
-																				align="center">
-																				<listbox
-																					mold="paging" pageSize="10" id="lbxUbicaciones1"
-																					model="@{zOrganizar$organizar.obtenerUbicaciones1}"
-																					checkmark="false" vflex="true"
-																					sizedByContent="false" width="100%">
-																					<listhead
-																						sizable="false" style="overflow: scroll;">
-																						<listheader
-																							label="CLIENTE" style="text-align: center;">
-																						</listheader>
-																						<listheader
-																							label="UBICACIÓN" style="text-align: center;">
-																						</listheader>
-																						<listheader
-																							label="POSICIÓN" style="text-align: center;">
-																						</listheader>
-																					</listhead>
-																					<listitem
-																						self="@{each=lista}">
-																						<listcell
-																							label="@{lista.getNom_empresa}">
-																						</listcell>
-																						<listcell
-																							label="@{lista.getNom_ubicacion}">
-																						</listcell>
-																						<listcell
-																							label="@{lista.getPos_ubicacion}">
-																						</listcell>
-																					</listitem>
-																				</listbox>
-																			</div>
-																		</panelchildren>
-																	</panel>
-																</bandpopup>
+																width="250px" readonly="true" popup="pUbicacion1">
 															</bandbox>
 															<space
 																width="10px">
@@ -176,7 +118,7 @@
 																	label="@{lista.getDes_articulo}">
 																</listcell>
 																<listcell
-																	label="@{lista.getNom_categoria}">
+																	label="@{lista.getNom_categoria}" style="@{lista.estiloMostrarCategoria}">
 																</listcell>
 															</listitem>
 														</listbox>
@@ -220,65 +162,7 @@
 														<hlayout>
 															<bandbox
 																id="bdxUbicacion2" mold="rounded" autodrop="true"
-																width="250px" readonly="true">
-																<bandpopup
-																	width="45%">
-																	<panel
-																		title="">
-																		<panelchildren>
-																			<space
-																				width="15px">
-																			</space>
-																			<textbox
-																				width="280px" id="txtBuscarUbicacion2"
-																				placeholder="Ingrese palabra clave"
-																				tooltiptext="Presione enter para realizar la búsqueda"
-																				visible="true" style="font-style: italic;"
-																				sclass="demo-search-inp">
-																			</textbox>
-																			<space
-																				width="0px">
-																			</space>
-																			<image
-																				src="/img/botones/ButtonPopup.png" tooltip="con"
-																				style="cursor: help; width: 16px; height: 16px;"
-																				visible="true" />
-																			<div
-																				align="center">
-																				<listbox
-																					mold="paging" pageSize="10" id="lbxUbicaciones2"
-																					model="@{zOrganizar$organizar.obtenerUbicaciones2}"
-																					checkmark="false" vflex="true"
-																					sizedByContent="false" width="100%">
-																					<listhead
-																						sizable="false" style="overflow: scroll;">
-																						<listheader
-																							label="CLIENTE" style="text-align: center;">
-																						</listheader>
-																						<listheader
-																							label="UBICACIÓN" style="text-align: center;">
-																						</listheader>
-																						<listheader
-																							label="POSICIÓN" style="text-align: center;">
-																						</listheader>
-																					</listhead>
-																					<listitem
-																						self="@{each=lista}">
-																						<listcell
-																							label="@{lista.getNom_empresa}">
-																						</listcell>
-																						<listcell
-																							label="@{lista.getNom_ubicacion}">
-																						</listcell>
-																						<listcell
-																							label="@{lista.getPos_ubicacion}">
-																						</listcell>
-																					</listitem>
-																				</listbox>
-																			</div>
-																		</panelchildren>
-																	</panel>
-																</bandpopup>
+																width="250px" readonly="true" popup="pUbicacion2">
 															</bandbox>
 															<space
 																width="10px">
@@ -367,7 +251,7 @@
 																	label="@{lista.getDes_articulo}">
 																</listcell>
 																<listcell
-																	label="@{lista.getNom_categoria}">
+																	label="@{lista.getNom_categoria}" style="@{lista.estiloMostrarCategoria}">
 																</listcell>
 															</listitem>
 														</listbox>
@@ -383,6 +267,89 @@
 				</grid>
 			</hlayout>
 		</vlayout>
+
+		<popup id="pUbicacion1" width="50%">
+			<space width="15px"></space>
+			<textbox width="280px" id="txtBuscarUbicacion1"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				visible="true" style="font-style: italic;"
+				sclass="demo-search-inp">
+			</textbox>
+			<space width="0px"></space>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" visible="true" />
+			<div align="center">
+				<listbox mold="paging" pageSize="10"
+					id="lbxUbicaciones1"
+					model="@{zOrganizar$organizar.obtenerUbicaciones1}"
+					checkmark="false" vflex="true" sizedByContent="false"
+					width="100%">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="CLIENTE"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="UBICACIÓN"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="POSICIÓN"
+							style="text-align: center;">
+						</listheader>
+					</listhead>
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getNom_empresa}">
+						</listcell>
+						<listcell label="@{lista.getNom_ubicacion}">
+						</listcell>
+						<listcell label="@{lista.getPos_ubicacion}">
+						</listcell>
+					</listitem>
+				</listbox>
+			</div>
+		</popup>
+		
+		<popup id="pUbicacion2" width="50%">
+			<space width="15px"></space>
+			<textbox width="280px" id="txtBuscarUbicacion2"
+				placeholder="Ingrese palabra clave"
+				tooltiptext="Presione enter para realizar la búsqueda"
+				visible="true" style="font-style: italic;"
+				sclass="demo-search-inp">
+			</textbox>
+			<space width="0px"></space>
+			<image src="/img/botones/ButtonPopup.png" tooltip="con"
+				style="cursor: help; width: 16px; height: 16px;" visible="true" />
+			<div align="center">
+				<listbox mold="paging" pageSize="10"
+					id="lbxUbicaciones2"
+					model="@{zOrganizar$organizar.obtenerUbicaciones2}"
+					checkmark="false" vflex="true" sizedByContent="false"
+					width="100%">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="CLIENTE"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="UBICACIÓN"
+							style="text-align: center;">
+						</listheader>
+						<listheader label="POSICIÓN"
+							style="text-align: center;">
+						</listheader>
+					</listhead>
+					<listitem self="@{each=lista}">
+						<listcell label="@{lista.getNom_empresa}">
+						</listcell>
+						<listcell label="@{lista.getNom_ubicacion}">
+						</listcell>
+						<listcell label="@{lista.getPos_ubicacion}">
+						</listcell>
+					</listitem>
+				</listbox>
+			</div>
+		</popup>
+
 		<popup id="con" width="450px">
 			<html>
 

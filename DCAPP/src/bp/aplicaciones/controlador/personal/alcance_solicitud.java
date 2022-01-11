@@ -293,10 +293,13 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 		}
 		dtxFechaInicio.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_inicio().getTime()));
 		dtxFechaFin.setValue(fechas.obtenerFechaDeUnLong(solicitud_personal.getFec_fin().getTime()));
+		/* AREA */
+		id_tipo_ubicacion = solicitud_personal.getId_area();
 		bdxArea.setText(solicitud_personal.getArea());
 		bdxArea.setTooltiptext(solicitud_personal.getArea());
-		bdxRack.setText(solicitud_personal.getRack());
 		cargarUbicaciones();
+		/* RACK */
+		bdxRack.setText(solicitud_personal.getRack());
 		bdxRack.setTooltiptext(solicitud_personal.getRack());
 		setearTipoTrabajo(solicitud_personal.getId_tipo_trabajo());
 		txtDescripcion.setText(solicitud_personal.getDescripcion());
@@ -387,11 +390,7 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 				String[] ubicaciones = solicitud_personal.getId_area().split(", ");
 				// System.out.println(ubicaciones.length);
 				for (int i = 0; i < ubicaciones.length; i++) {
-					if (i == ubicaciones.length - 1) {
-						tipo_trabajo = Long.valueOf(ubicaciones[i]);
-					} else {
-						id_ubicaciones.add(Long.valueOf(ubicaciones[i]));
-					}
+					id_ubicaciones.add(Long.valueOf(ubicaciones[i]));
 				}
 				// System.out.println(tipo_trabajo);
 				for (int i = 0; i < _listaTipoUbicacion.size(); i++)
@@ -803,7 +802,6 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 		if (ingresa_a_area_rack == false) {
 			ingresa_a_area_rack = true;
 			Sessions.getCurrent().setAttribute("lista_area", listaTipoUbicacion);
-			Sessions.getCurrent().setAttribute("tipo_trabajo", tipo_trabajo);
 			window = (Window) Executions.createComponents("/emergentes/area.zul", null, null);
 			if (window instanceof Window) {
 				window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
@@ -813,8 +811,7 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 						ingresa_a_area_rack = false;
 						listaTipoUbicacion = (List<modelo_tipo_ubicacion>) Sessions.getCurrent()
 								.getAttribute("lista_area");
-						tipo_trabajo = (Long) Sessions.getCurrent().getAttribute("tipo_trabajo");
-						setearAreas(listaTipoUbicacion, tipo_trabajo);
+						setearAreas(listaTipoUbicacion);
 					}
 				});
 			}
@@ -851,7 +848,7 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 		}
 	}
 
-	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion, long tipo_trabajo) {
+	public void setearAreas(List<modelo_tipo_ubicacion> listaTipoUbicacion) {
 		String tipo_ubicacion = "";
 		id_tipo_ubicacion = "";
 		if (listaTipoUbicacion.size() > 0) {
@@ -867,7 +864,6 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 			}
 			bdxArea.setText(tipo_ubicacion);
 			bdxArea.setTooltiptext(tipo_ubicacion);
-			id_tipo_ubicacion = id_tipo_ubicacion + ", " + String.valueOf(tipo_trabajo);
 		} else {
 			tipo_ubicacion = "";
 			id_tipo_ubicacion = "";
@@ -1107,7 +1103,14 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 								secuencia1 = listaParametros1.get(0).getSecuencia_bitacora();
 							}
 							/* Se inicializa el objeto tarea proveedor */
+							List<modelo_tarea_proveedor> lista_tarea_proveedor = consultasABaseDeDatos
+									.cargarTareasProveedores(alcance_solicitud.this.solicitud_personal.getTicket(), 4,
+											0, "", "", id_dc, "", "", 0, "", 0, 0);
 							modelo_tarea_proveedor tarea_proveedor = new modelo_tarea_proveedor();
+							if (lista_tarea_proveedor.size() > 0) {
+								tarea_proveedor
+										.setId_tarea_proveedor(lista_tarea_proveedor.get(0).getId_tarea_proveedor());
+							}
 							tarea_proveedor.setTicket_externo(txtTicket.getText().toUpperCase().trim());
 							tarea_proveedor
 									.setId_cliente(Long.valueOf(cmbCliente.getSelectedItem().getValue().toString()));
@@ -1135,8 +1138,10 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 							tarea_proveedor.setId_turno(id_turno);
 							tarea_proveedor.setId_localidad(id_dc);
 							tarea_proveedor.setEst_tarea_proveedor("AE");
-							tarea_proveedor.setUsu_ingresa(user);
-							tarea_proveedor.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							tarea_proveedor.setUsu_ingresa(solicitud_personal.getUsu_ingresa());
+							tarea_proveedor.setFec_ingresa(solicitud_personal.getFec_ingresa());
+							tarea_proveedor.setUsu_modifica(user);
+							tarea_proveedor.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							if (listaParametros1.size() > 0) {
 								secuencia2 = listaParametros1.get(0).getSecuencia_tarea_proveedor();
 							}
@@ -1146,9 +1151,14 @@ public class alcance_solicitud extends SelectorComposer<Component> {
 							} else {
 								bandera = 1;
 							}
+							alcance_solicitud.this.solicitud_personal.setEst_solicitud("NE");
+							alcance_solicitud.this.solicitud_personal.setUsu_modifica(user);
+							alcance_solicitud.this.solicitud_personal
+									.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							try {
-								dao.insertarSolicitudPersonal(solicitud, detalle, bitacora, secuencia1, tarea_proveedor,
-										secuencia2, bandera);
+								dao.insertarSolicitudPersonal1(solicitud, detalle, bitacora, secuencia1,
+										tarea_proveedor, secuencia2, bandera,
+										alcance_solicitud.this.solicitud_personal);
 								setearFechaIngresaFormulario();
 								Messagebox.show(informativos.getMensaje_informativo_20(),
 										informativos.getMensaje_informativo_17(), Messagebox.OK,

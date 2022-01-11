@@ -337,6 +337,7 @@ public class modificar extends SelectorComposer<Component> {
 		/* DESCRIPCION **/
 		txtDescripcion.setText(bitacora.getDescripcion());
 		/* AREA */
+		id_tipo_ubicacion = bitacora.getId_area();
 		bdxArea.setText(bitacora.getArea());
 		bdxArea.setTooltiptext(bitacora.getArea());
 		cargarUbicaciones();
