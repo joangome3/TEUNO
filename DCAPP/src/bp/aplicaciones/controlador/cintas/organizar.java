@@ -10,6 +10,7 @@ import java.util.List;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.event.DropEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -88,6 +89,8 @@ public class organizar extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+
+	int bandera = 0;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -417,6 +420,16 @@ public class organizar extends SelectorComposer<Component> {
 		}
 		int indexArticulo = lbxArticulos1.getSelectedIndex();
 		int indexUbicacion = lbxUbicaciones2.getSelectedIndex();
+		if (listaArticulo1.get(indexArticulo).getId_categoria() == 2) {
+			if (listaUbicacion2.get(indexUbicacion).getId_ubicacion() <= 3
+					|| listaUbicacion2.get(indexUbicacion).getId_ubicacion() >= 134) {
+				Messagebox.show(
+						informativos.getMensaje_informativo_129().replace("?1",
+								listaUbicacion2.get(indexUbicacion).toStringUbicacion()),
+						informativos.getMensaje_informativo_5(), Messagebox.OK, Messagebox.EXCLAMATION);
+				return;
+			}
+		}
 		if (validarSiItemEstaEnListaUnico(indexArticulo, indexUbicacion, 1) == true) {
 			Messagebox.show(informativos.getMensaje_informativo_86(), informativos.getMensaje_informativo_5(),
 					Messagebox.OK, Messagebox.INFORMATION);
@@ -464,6 +477,16 @@ public class organizar extends SelectorComposer<Component> {
 		}
 		int indexArticulo = lbxArticulos2.getSelectedIndex();
 		int indexUbicacion = lbxUbicaciones1.getSelectedIndex();
+		if (listaArticulo2.get(indexArticulo).getId_categoria() == 2) {
+			if (listaUbicacion1.get(indexUbicacion).getId_ubicacion() <= 3
+					|| listaUbicacion1.get(indexUbicacion).getId_ubicacion() >= 134) {
+				Messagebox.show(
+						informativos.getMensaje_informativo_129().replace("?1",
+								listaUbicacion1.get(indexUbicacion).toStringUbicacion()),
+						informativos.getMensaje_informativo_5(), Messagebox.OK, Messagebox.EXCLAMATION);
+				return;
+			}
+		}
 		if (validarSiItemEstaEnListaUnico(indexArticulo, indexUbicacion, 2) == true) {
 			Messagebox.show(informativos.getMensaje_informativo_86(), informativos.getMensaje_informativo_5(),
 					Messagebox.OK, Messagebox.INFORMATION);
@@ -511,12 +534,24 @@ public class organizar extends SelectorComposer<Component> {
 			Listitem listItem = it.next();
 			int index = listItem.getIndex();
 			listaArticulo.add(listaArticulo1.get(index));
+
 		}
 		int contador = 0;
 		for (int i = 0; i < listaArticulo.size(); i++) {
 			if (validarSiItemEstaEnListaVarios(listaArticulo.get(i).getId_articulo(), indexUbicacion, 1) == true) {
 				contador++;
 				i = listaArticulo.size() + 1;
+			}
+			if (listaArticulo.get(i).getId_categoria() == 2) {
+				if (listaUbicacion2.get(indexUbicacion).getId_ubicacion() <= 3
+						|| listaUbicacion2.get(indexUbicacion).getId_ubicacion() >= 134) {
+					Messagebox.show(
+							informativos.getMensaje_informativo_130()
+									.replace("?1", listaArticulo.get(i).getCod_articulo())
+									.replace("?2", listaUbicacion2.get(indexUbicacion).toStringUbicacion()),
+							informativos.getMensaje_informativo_5(), Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
 			}
 		}
 		if (contador > 0) {
@@ -579,6 +614,17 @@ public class organizar extends SelectorComposer<Component> {
 				contador++;
 				i = listaArticulo.size() + 1;
 			}
+			if (listaArticulo.get(i).getId_categoria() == 2) {
+				if (listaUbicacion1.get(indexUbicacion).getId_ubicacion() <= 3
+						|| listaUbicacion1.get(indexUbicacion).getId_ubicacion() >= 134) {
+					Messagebox.show(
+							informativos.getMensaje_informativo_130()
+									.replace("?1", listaArticulo.get(i).getCod_articulo())
+									.replace("?2", listaUbicacion1.get(indexUbicacion).toStringUbicacion()),
+							informativos.getMensaje_informativo_5(), Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
+			}
 		}
 		if (contador > 0) {
 			Messagebox.show(informativos.getMensaje_informativo_87(), informativos.getMensaje_informativo_5(),
@@ -608,6 +654,29 @@ public class organizar extends SelectorComposer<Component> {
 		pasarItemsIzquierda(listaArticulo, indexUbicacion);
 		mostrarCantidadDeArticulos(lbxUbicaciones2.getSelectedIndex(), 2);
 		mostrarCantidadDeArticulos(indexUbicacion, 1);
+	}
+
+	@Listen("onDrop=#lbxArticulos1")
+	public void onDragDropUserListbox1(DropEvent dropEvent) {
+		lbxArticulos1.appendChild(dropEvent.getTarget());
+	}
+
+	@Listen("onDrop=#lbxArticulos2")
+	public void onDragDropUserListbox2(DropEvent dropEvent) {
+		lbxArticulos2.appendChild(dropEvent.getTarget());
+	}
+
+	@Listen("onDrop=listitem")
+	public void onDragDropUserListitem(DropEvent dropEvent) {
+		Listitem droppedListitem = (Listitem) dropEvent.getTarget();
+		Listitem draggedListitem = (Listitem) dropEvent.getDragged();
+		if (bandera == 1) {
+			lbxArticulos1.insertBefore(draggedListitem, droppedListitem);
+		}
+		if (bandera == 2) {
+			lbxArticulos2.insertBefore(draggedListitem, droppedListitem);
+		}
+		bandera = 0;
 	}
 
 	public boolean validarSiItemEstaEnListaUnico(int indexArticulo, int indexUbicacion, int tipo)

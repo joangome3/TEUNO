@@ -200,10 +200,10 @@ public class dashboard extends SelectorComposer<Component> {
 				i = listaLocalidad.size() + 1;
 			}
 		}
-		if (validarSiEsUsuarioPermitido() == true) {
-			cmbLocalidad.setDisabled(false);
-		} else {
+		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
 			cmbLocalidad.setDisabled(true);
+		} else {
+			cmbLocalidad.setDisabled(false);
 		}
 	}
 

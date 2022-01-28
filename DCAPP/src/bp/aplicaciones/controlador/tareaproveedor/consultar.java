@@ -420,12 +420,14 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		int indice = lbxTareasProgramadas.getSelectedIndex();
-		if (listaTareasProgramadas.get(indice).getId_cliente() == 9
-				&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
-			if (validarSiSeRealizaRevisionT1(indice) == false) {
-				Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
-						informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
-				return;
+		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
+			if (listaTareasProgramadas.get(indice).getId_cliente() == 9
+					&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
+				if (validarSiSeRealizaRevisionT1(indice) == false) {
+					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
+							informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
 			}
 		}
 		Tabbox tTab = (Tabbox) zConsultar.getParent().getParent().getParent().getParent().getParent().getParent();
@@ -557,14 +559,17 @@ public class consultar extends SelectorComposer<Component> {
 					Messagebox.OK, Messagebox.INFORMATION);
 			return;
 		}
-		if (lbxTareasProgramadas.getSelectedItems().size() == 1) {
-			int indice = lbxTareasProgramadas.getSelectedIndex();
-			if (listaTareasProgramadas.get(indice).getId_cliente() == 9
-					&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
-				if (validarSiSeRealizaRevisionT1(indice) == false) {
-					Messagebox.show(informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
-							informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
-					return;
+		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
+			if (lbxTareasProgramadas.getSelectedItems().size() == 1) {
+				int indice = lbxTareasProgramadas.getSelectedIndex();
+				if (listaTareasProgramadas.get(indice).getId_cliente() == 9
+						&& listaTareasProgramadas.get(indice).getId_tipo_servicio() == 7) {
+					if (validarSiSeRealizaRevisionT1(indice) == false) {
+						Messagebox.show(
+								informativos.getMensaje_informativo_105().replace("?", "realizar esta acción en"),
+								informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+						return;
+					}
 				}
 			}
 		}

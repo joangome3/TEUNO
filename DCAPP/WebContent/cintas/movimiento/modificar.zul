@@ -4,7 +4,7 @@
 	<window title=".:: Modificar registro ::." border="normal"
 		id="zModificar" closable="true"
 		apply="bp.aplicaciones.controlador.cintas.modificar"
-		position="center, center" sizable="true" width="50%" height="80%"
+		position="center, center" sizable="true" width="50%" height="90%"
 		maximizable="false" minimizable="false" mode="overlapped"
 		shadow="false" focus="true" action="show: slideDown;hide: slideUp">
 		<div height="100%" width="100%">

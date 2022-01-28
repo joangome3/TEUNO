@@ -36,6 +36,15 @@
 										</treecell>
 									</treerow>
 								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
+											image="/img/botones/ButtonSearch3.png"
+											label=" - Consultas - Log de articulos" id="tcOpcion5"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
 							</treechildren>
 						</treeitem>
 						<treeitem>

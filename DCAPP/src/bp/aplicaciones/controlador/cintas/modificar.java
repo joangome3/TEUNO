@@ -20,7 +20,6 @@ import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timebox;
@@ -769,7 +768,6 @@ public class modificar extends SelectorComposer<Component> {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnGrabar")
 	public void onClick$btnGrabar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
@@ -836,100 +834,79 @@ public class modificar extends SelectorComposer<Component> {
 				return;
 			}
 		}
-		Messagebox.show(informativos.getMensaje_informativo_16(), informativos.getMensaje_informativo_24(),
-				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
-					@Override
-					public void onEvent(Event event) throws Exception {
-						if (event.getName().equals("onOK")) {
-							modelo_movimiento_detalle_dn movimiento_detalle = new modelo_movimiento_detalle_dn();
-							movimiento_detalle = modificar.this.movimiento_detalle.clone();
-							movimiento_detalle.setCod_articulo_actual(txtCodigoActual.getText().toUpperCase());
-							movimiento_detalle.setDes_articulo_actual(txtDescripcionActual.getText().toUpperCase());
-							movimiento_detalle.setId_cat_articulo_actual(
-									modificar.this.movimiento_detalle.getId_cat_articulo_actual());
-							movimiento_detalle.setNom_cat_articulo_actual(
-									modificar.this.movimiento_detalle.getNom_cat_articulo_actual());
-							movimiento_detalle.setId_cap_articulo_actual(
-									modificar.this.movimiento_detalle.getId_cap_articulo_actual());
-							movimiento_detalle.setNom_id_cap_articulo_actual(
-									modificar.this.movimiento_detalle.getNom_id_cap_articulo_actual());
-							int indice = lbxUbicacionesActual.getSelectedIndex();
-							movimiento_detalle
-									.setId_ubicacion_actual(listaUbicacionActual.get(indice).getId_ubicacion());
-							movimiento_detalle
-									.setNom_ubicacion_actual(listaUbicacionActual.get(indice).getNom_ubicacion() + " - "
-											+ listaUbicacionActual.get(indice).getPos_ubicacion());
-							if (chkIngresaFechaActual.isChecked()) {
-								movimiento_detalle.setSi_ing_fec_inicio_fin_actual("S");
-								if (chkEsFechaActual.isChecked()) {
-									movimiento_detalle.setEs_fecha_actual("S");
-									if (dtxFechaInicioActual.getValue() != null) {
-										movimiento_detalle.setFec_inicio_actual(
-												fechas.obtenerTimestampDeDate(dtxFechaInicioActual.getValue()));
-									} else {
-										movimiento_detalle.setFec_inicio_actual(null);
-									}
-								} else {
-									movimiento_detalle.setEs_fecha_actual("N");
-									if (cmbRespaldoActual1.getSelectedItem() != null) {
-										indice = cmbRespaldoActual1.getSelectedIndex();
-										movimiento_detalle.setId_fec_respaldo_actual(
-												listaRespaldoActual1.get(indice).getId_respaldo());
-										movimiento_detalle.setNom_id_fec_respaldo_actual(
-												listaRespaldoActual1.get(indice).toNombreRespaldo());
-									} else {
-										movimiento_detalle.setId_fec_respaldo_actual(0);
-										movimiento_detalle.setNom_id_fec_respaldo_actual(null);
-									}
-									movimiento_detalle.setFec_inicio_actual(null);
-								}
-							} else {
-								movimiento_detalle.setSi_ing_fec_inicio_fin_actual("N");
-								movimiento_detalle.setEs_fecha_actual("N");
-								movimiento_detalle.setFec_inicio_actual(null);
-								movimiento_detalle.setId_fec_respaldo_actual(0);
-								movimiento_detalle.setNom_id_fec_respaldo_actual(null);
-							}
-							if (dtxFechaFinActual.getValue() != null) {
-								movimiento_detalle
-										.setFec_fin_actual(fechas.obtenerTimestampDeDate(dtxFechaFinActual.getValue()));
-							} else {
-								movimiento_detalle.setFec_fin_actual(null);
-							}
-							if (cmbRespaldoActual.getSelectedItem() != null) {
-								indice = cmbRespaldoActual.getSelectedIndex();
-								movimiento_detalle.setTip_respaldo_actual(
-										String.valueOf(listaRespaldoActual.get(indice).getId_respaldo()));
-								movimiento_detalle
-										.setNom_tip_respaldo_actual(listaRespaldoActual.get(indice).toNombreRespaldo());
-							} else {
-								movimiento_detalle.setTip_respaldo_actual("0");
-								movimiento_detalle.setNom_tip_respaldo_actual(null);
-							}
-							movimiento_detalle.setId_contenedor_actual(txtIDContenedorActual.getText().toUpperCase());
-							if (tmxHoraLlegadaActual.getValue() != null) {
-								movimiento_detalle
-										.setHora_llegada_custodia_actual(tmxHoraLlegadaActual.getValue().getTime());
-							} else {
-								movimiento_detalle.setHora_llegada_custodia_actual(0);
-							}
-							if (tmxHoraSalidaActual.getValue() != null) {
-								movimiento_detalle
-										.setHora_salida_custodia_actual(tmxHoraSalidaActual.getValue().getTime());
-							} else {
-								movimiento_detalle.setHora_salida_custodia_actual(0);
-							}
-							movimiento_detalle
-									.setRemesa_ingreso_custodia_actual(txtRemesaIngresoActual.getText().toUpperCase());
-							movimiento_detalle
-									.setRemesa_salida_custodia_actual(txtRemesaSalidaActual.getText().toUpperCase());
-							movimiento_detalle.setActualiza_inventario(
-									cmbActualizaInventario.getSelectedItem().getValue().toString());
-							Sessions.getCurrent().setAttribute("movimiento_detalle_2", movimiento_detalle);
-							Events.postEvent(new Event("onClose", zModificar));
-						}
-					}
-				});
+		modelo_movimiento_detalle_dn movimiento_detalle = new modelo_movimiento_detalle_dn();
+		movimiento_detalle = modificar.this.movimiento_detalle.clone();
+		movimiento_detalle.setCod_articulo_actual(txtCodigoActual.getText().toUpperCase());
+		movimiento_detalle.setDes_articulo_actual(txtDescripcionActual.getText().toUpperCase());
+		movimiento_detalle.setId_cat_articulo_actual(modificar.this.movimiento_detalle.getId_cat_articulo_actual());
+		movimiento_detalle.setNom_cat_articulo_actual(modificar.this.movimiento_detalle.getNom_cat_articulo_actual());
+		movimiento_detalle.setId_cap_articulo_actual(modificar.this.movimiento_detalle.getId_cap_articulo_actual());
+		movimiento_detalle
+				.setNom_id_cap_articulo_actual(modificar.this.movimiento_detalle.getNom_id_cap_articulo_actual());
+		int indice = lbxUbicacionesActual.getSelectedIndex();
+		movimiento_detalle.setId_ubicacion_actual(listaUbicacionActual.get(indice).getId_ubicacion());
+		movimiento_detalle.setNom_ubicacion_actual(listaUbicacionActual.get(indice).getNom_ubicacion() + " - "
+				+ listaUbicacionActual.get(indice).getPos_ubicacion());
+		if (chkIngresaFechaActual.isChecked()) {
+			movimiento_detalle.setSi_ing_fec_inicio_fin_actual("S");
+			if (chkEsFechaActual.isChecked()) {
+				movimiento_detalle.setEs_fecha_actual("S");
+				if (dtxFechaInicioActual.getValue() != null) {
+					movimiento_detalle
+							.setFec_inicio_actual(fechas.obtenerTimestampDeDate(dtxFechaInicioActual.getValue()));
+				} else {
+					movimiento_detalle.setFec_inicio_actual(null);
+				}
+			} else {
+				movimiento_detalle.setEs_fecha_actual("N");
+				if (cmbRespaldoActual1.getSelectedItem() != null) {
+					indice = cmbRespaldoActual1.getSelectedIndex();
+					movimiento_detalle.setId_fec_respaldo_actual(listaRespaldoActual1.get(indice).getId_respaldo());
+					movimiento_detalle
+							.setNom_id_fec_respaldo_actual(listaRespaldoActual1.get(indice).toNombreRespaldo());
+				} else {
+					movimiento_detalle.setId_fec_respaldo_actual(0);
+					movimiento_detalle.setNom_id_fec_respaldo_actual(null);
+				}
+				movimiento_detalle.setFec_inicio_actual(null);
+			}
+		} else {
+			movimiento_detalle.setSi_ing_fec_inicio_fin_actual("N");
+			movimiento_detalle.setEs_fecha_actual("N");
+			movimiento_detalle.setFec_inicio_actual(null);
+			movimiento_detalle.setId_fec_respaldo_actual(0);
+			movimiento_detalle.setNom_id_fec_respaldo_actual(null);
+		}
+		if (dtxFechaFinActual.getValue() != null) {
+			movimiento_detalle.setFec_fin_actual(fechas.obtenerTimestampDeDate(dtxFechaFinActual.getValue()));
+		} else {
+			movimiento_detalle.setFec_fin_actual(null);
+		}
+		if (cmbRespaldoActual.getSelectedItem() != null) {
+			indice = cmbRespaldoActual.getSelectedIndex();
+			movimiento_detalle.setTip_respaldo_actual(String.valueOf(listaRespaldoActual.get(indice).getId_respaldo()));
+			movimiento_detalle.setNom_tip_respaldo_actual(listaRespaldoActual.get(indice).toNombreRespaldo());
+		} else {
+			movimiento_detalle.setTip_respaldo_actual("0");
+			movimiento_detalle.setNom_tip_respaldo_actual(null);
+		}
+		movimiento_detalle.setId_contenedor_actual(txtIDContenedorActual.getText().toUpperCase());
+		if (tmxHoraLlegadaActual.getValue() != null) {
+			movimiento_detalle.setHora_llegada_custodia_actual(tmxHoraLlegadaActual.getValue().getTime());
+		} else {
+			movimiento_detalle.setHora_llegada_custodia_actual(0);
+		}
+		if (tmxHoraSalidaActual.getValue() != null) {
+			movimiento_detalle.setHora_salida_custodia_actual(tmxHoraSalidaActual.getValue().getTime());
+		} else {
+			movimiento_detalle.setHora_salida_custodia_actual(0);
+		}
+		movimiento_detalle.setRemesa_ingreso_custodia_actual(txtRemesaIngresoActual.getText().toUpperCase());
+		movimiento_detalle.setRemesa_salida_custodia_actual(txtRemesaSalidaActual.getText().toUpperCase());
+		movimiento_detalle.setActualiza_inventario(cmbActualizaInventario.getSelectedItem().getValue().toString());
+		Sessions.getCurrent().setAttribute("movimiento_detalle_2", movimiento_detalle);
+		Events.postEvent(new Event("onClose", zModificar));
+
 	}
 
 	@Listen("onClick=#btnCancelar")

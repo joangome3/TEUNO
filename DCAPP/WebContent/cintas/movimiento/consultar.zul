@@ -234,13 +234,13 @@
 								label="@{lista.getDes_articulo_anterior}">
 							</listcell>
 							<listcell
-								label="@{lista.getNom_cat_articulo_anterior}">
+								label="@{lista.getNom_cat_articulo_anterior}" style="@{lista.estiloMostrarCategoriaAnterior}">
 							</listcell>
 							<listcell
 								label="@{lista.getNom_id_cap_articulo_anterior}">
 							</listcell>
 							<listcell
-								label="@{lista.getNom_ubicacion_anterior}">
+								label="@{lista.getNom_ubicacion_anterior}" style="font-weight: bold !important; font-style: normal !important; background-color: #f6b9a9;">
 							</listcell>
 							<listcell
 								label="@{lista.mostrarFechaInicioAnterior}"
@@ -343,13 +343,13 @@
 								label="@{lista.getDes_articulo_actual}">
 							</listcell>
 							<listcell
-								label="@{lista.getNom_cat_articulo_actual}">
+								label="@{lista.getNom_cat_articulo_actual}" style="@{lista.estiloMostrarCategoria}">
 							</listcell>
 							<listcell
 								label="@{lista.getNom_id_cap_articulo_actual}">
 							</listcell>
 							<listcell
-								label="@{lista.getNom_ubicacion_actual}">
+								label="@{lista.getNom_ubicacion_actual}" style="font-weight: bold !important; font-style: normal !important; background-color: #ffe0ff;">
 							</listcell>
 							<listcell
 								label="@{lista.mostrarFechaInicioActual}"

@@ -3,7 +3,7 @@
 <zk>
 	<window border="normal" id="zNuevo" closable="true"
 		apply="bp.aplicaciones.controlador.personal.registro_ingreso"
-		position="center, center" sizable="false" width="80%" height="80%"
+		position="center, center" sizable="false" width="80%" height="90%"
 		maximizable="false" minimizable="false"
 		title=".:: Registrar ingreso ::." shadow="false" mode="overlapped"
 		focus="true" action="show: slideDown;hide: slideUp">

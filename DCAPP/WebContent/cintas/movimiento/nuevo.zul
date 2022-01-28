@@ -230,7 +230,11 @@
 												style="text-align: center !important;">
 											</listheader>
 											<listheader
-												label="UBICACION" align="center"
+												label="UBICACION INICIAL" align="center"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="UBICACION FINAL" align="center"
 												style="text-align: center !important;">
 											</listheader>
 											<listheader
@@ -285,7 +289,10 @@
 												label="@{lista.getNom_cat_articulo_actual}" style="@{lista.estiloMostrarCategoria}">
 											</listcell>
 											<listcell
-												label="@{lista.getNom_ubicacion_actual}">
+												label="@{lista.getNom_ubicacion_anterior}" style="font-weight: bold !important; font-style: normal !important; background-color: #f6b9a9;">
+											</listcell>
+											<listcell
+												label="@{lista.getNom_ubicacion_actual}" style="font-weight: bold !important; font-style: normal !important; background-color: #ffe0ff;">
 											</listcell>
 											<listcell
 												label="@{lista.mostrarFechaInicioActual}"
@@ -364,7 +371,7 @@
 				visible="false" />
 		</menupopup>
 
-		<popup id="pSolicitante" width="800px">
+		<popup id="pSolicitante" width="950px">
 			<space width="12px"></space>
 			<textbox width="280px" id="txtBuscarProveedor"
 				placeholder="Ingrese palabra clave"

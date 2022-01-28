@@ -16,11 +16,15 @@ import com.mysql.jdbc.CallableStatement;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
+import bp.aplicaciones.mantenimientos.modelo.modelo_log_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_articulo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 
 public class dao_articulo_dn {
+
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	public Long obtenerNuevoId() throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
@@ -265,11 +269,12 @@ public class dao_articulo_dn {
 		return lista_articulos;
 	}
 
-	public void insertarArticulo(modelo_articulo_dn articulo, List<modelo_relacion_articulo_ubicacion_dn> relacion)
+	public void insertarArticulo(modelo_articulo_dn articulo, List<modelo_relacion_articulo_ubicacion_dn> relacion,
+			int se_crea_caja, modelo_articulo_dn articulo1, List<modelo_relacion_articulo_ubicacion_dn> relacion1)
 			throws SQLException, MySQLIntegrityConstraintViolationException, ClassNotFoundException,
 			FileNotFoundException, IOException {
 		conexion conexion = new conexion();
-		conexion.abrir().setAutoCommit(false);
+		// conexion.abrir().setAutoCommit(false);
 		PreparedStatement consulta = null;
 		long id = obtenerNuevoId();
 		try {
@@ -296,6 +301,7 @@ public class dao_articulo_dn {
 			consulta = conexion.abrir().prepareStatement("{CALL relacion_eliminarArticuloDNUbicacion(?)}");
 			consulta.setLong(1, id);
 			consulta.executeUpdate();
+			int pos_ubicacion = 0;
 			for (int i = 0; i < relacion.size(); i++) {
 				Long id_relacion = (long) 0;
 				consulta = conexion.abrir().prepareStatement("{CALL relacion_obtenerNuevoIDArticuloDNUbicacion()}");
@@ -308,20 +314,70 @@ public class dao_articulo_dn {
 				consulta.setLong(1, id_relacion);
 				consulta.setLong(2, id);
 				consulta.setLong(3, relacion.get(i).getId_ubicacion());
-				consulta.setInt(4, relacion.get(i).getPos_ubicacion());
+				pos_ubicacion = consultasABaseDeDatos.posicionMaximaEnUbicacionDN((relacion.get(i).getId_ubicacion()))
+						+ 1;
+				consulta.setInt(4, pos_ubicacion);
 				consulta.setLong(5, relacion.get(i).getSto_articulo());
 				consulta.setString(6, relacion.get(i).getEst_relacion());
 				consulta.setString(7, relacion.get(i).getUsu_ingresa());
 				consulta.setTimestamp(8, relacion.get(i).getFec_ingresa());
 				consulta.executeUpdate();
+			} /* CREACION DE CAJA */
+			id = obtenerNuevoId();
+			pos_ubicacion = 0;
+			if (se_crea_caja == 1) {
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL articuloDN_insertarArticulo (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+				consulta.setLong(1, id);
+				consulta.setString(2, articulo1.getCod_articulo().toUpperCase());
+				consulta.setString(3, articulo1.getDes_articulo().toUpperCase());
+				consulta.setLong(4, 2);
+				consulta.setBlob(5, articulo1.getImg_articulo());
+				consulta.setLong(6, articulo1.getId_localidad());
+				consulta.setLong(7, articulo1.getId_capacidad());
+				consulta.setString(8, articulo1.getSi_ing_fec_inicio_fin());
+				consulta.setString(9, articulo1.getEs_fecha());
+				consulta.setLong(10, articulo1.getId_fec_respaldo());
+				consulta.setTimestamp(11, articulo1.getFec_inicio());
+				consulta.setTimestamp(12, articulo1.getFec_fin());
+				consulta.setLong(13, articulo1.getId_tip_respaldo());
+				consulta.setString(14, articulo1.getId_contenedor());
+				consulta.setString(15, articulo1.getEst_articulo());
+				consulta.setString(16, articulo1.getUsu_ingresa());
+				consulta.setTimestamp(17, articulo1.getFec_ingresa());
+				consulta.executeUpdate();
+				consulta = conexion.abrir().prepareStatement("{CALL relacion_eliminarArticuloDNUbicacion(?)}");
+				consulta.setLong(1, id);
+				consulta.executeUpdate();
+				for (int i = 0; i < relacion1.size(); i++) {
+					Long id_relacion = (long) 0;
+					consulta = conexion.abrir().prepareStatement("{CALL relacion_obtenerNuevoIDArticuloDNUbicacion()}");
+					ResultSet resultado = consulta.executeQuery();
+					while (resultado.next()) {
+						id_relacion = resultado.getLong("id_relacion") + 1;
+					}
+					consulta = conexion.abrir()
+							.prepareStatement("{CALL relacion_insertarArticuloDNUbicacion (?, ?, ?, ?, ?, ?, ?, ?)}");
+					consulta.setLong(1, id_relacion);
+					consulta.setLong(2, id);
+					consulta.setLong(3, relacion1.get(i).getId_ubicacion());
+					pos_ubicacion = consultasABaseDeDatos
+							.posicionMaximaEnUbicacionDN((relacion1.get(i).getId_ubicacion())) + 1;
+					consulta.setInt(4, pos_ubicacion);
+					consulta.setLong(5, relacion1.get(i).getSto_articulo());
+					consulta.setString(6, relacion1.get(i).getEst_relacion());
+					consulta.setString(7, relacion1.get(i).getUsu_ingresa());
+					consulta.setTimestamp(8, relacion1.get(i).getFec_ingresa());
+					consulta.executeUpdate();
+				}
 			}
 			consulta.close();
-			conexion.abrir().commit();
+			// conexion.abrir().commit();
 		} catch (SQLException ex) {
-			conexion.abrir().rollback();
+			// conexion.abrir().rollback();
 			throw new SQLException(ex);
 		} catch (java.lang.NullPointerException ex) {
-			conexion.abrir().rollback();
+			// conexion.abrir().rollback();
 			throw new java.lang.NullPointerException();
 		} finally {
 			conexion.cerrar();
@@ -410,6 +466,113 @@ public class dao_articulo_dn {
 					}
 				}
 			}
+			consulta.close();
+			conexion.abrir().commit();
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	public void modificarArticulo(modelo_articulo_dn articulo, List<modelo_relacion_articulo_ubicacion_dn> relacion,
+			modelo_solicitud solicitud, modelo_log_articulo_dn log, int tipo) throws SQLException,
+			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		try {
+			PreparedStatement consulta = null;
+			conexion.abrir().setAutoCommit(false);
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL articuloDN_modificarArticulo (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setString(1, articulo.getCod_articulo().toUpperCase());
+			consulta.setString(2, articulo.getDes_articulo().toUpperCase());
+			consulta.setLong(3, articulo.getId_categoria());
+			consulta.setBlob(4, articulo.getImg_articulo());
+			consulta.setLong(5, articulo.getId_localidad());
+			consulta.setLong(6, articulo.getId_capacidad());
+			consulta.setString(7, articulo.getSi_ing_fec_inicio_fin());
+			consulta.setString(8, articulo.getEs_fecha());
+			consulta.setLong(9, articulo.getId_fec_respaldo());
+			consulta.setTimestamp(10, articulo.getFec_inicio());
+			consulta.setTimestamp(11, articulo.getFec_fin());
+			consulta.setLong(12, articulo.getId_tip_respaldo());
+			consulta.setString(13, articulo.getId_contenedor());
+			consulta.setString(14, articulo.getEst_articulo());
+			consulta.setString(15, articulo.getUsu_modifica());
+			consulta.setTimestamp(16, articulo.getFec_modifica());
+			consulta.setLong(17, articulo.getId_articulo());
+			consulta.setLong(18, tipo);
+			consulta.executeUpdate();
+			consulta = conexion.abrir().prepareStatement("{CALL relacion_eliminarArticuloDNUbicacion(?)}");
+			consulta.setLong(1, articulo.getId_articulo());
+			consulta.executeUpdate();
+			for (int i = 0; i < relacion.size(); i++) {
+				Long id_relacion = (long) 0;
+				consulta = conexion.abrir().prepareStatement("{CALL relacion_obtenerNuevoIDArticuloDNUbicacion()}");
+				ResultSet resultado = consulta.executeQuery();
+				while (resultado.next()) {
+					id_relacion = resultado.getLong("id_relacion") + 1;
+				}
+				consulta = conexion.abrir()
+						.prepareStatement("{CALL relacion_insertarArticuloDNUbicacion (?, ?, ?, ?, ?, ?, ?, ?)}");
+				consulta.setLong(1, id_relacion);
+				consulta.setLong(2, articulo.getId_articulo());
+				consulta.setLong(3, relacion.get(i).getId_ubicacion());
+				consulta.setInt(4, relacion.get(i).getPos_ubicacion());
+				consulta.setLong(5, relacion.get(i).getSto_articulo());
+				consulta.setString(6, relacion.get(i).getEst_relacion());
+				consulta.setString(7, relacion.get(i).getUsu_ingresa());
+				consulta.setTimestamp(8, relacion.get(i).getFec_ingresa());
+				consulta.executeUpdate();
+			}
+			if (solicitud != null) {
+				if (solicitud.getId_solicitud() != 0) {
+					if (solicitud.getId_mantenimiento() == 16) {
+						consulta = conexion.abrir().prepareStatement(
+								"{CALL solicitud_modificarSolicitud(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						consulta.setLong(1, solicitud.getId_tip_solicitud());
+						consulta.setString(2, solicitud.getComentario_1().toUpperCase());
+						consulta.setString(3, solicitud.getComentario_2().toUpperCase());
+						consulta.setString(4, solicitud.getComentario_3().toUpperCase());
+						consulta.setString(5, solicitud.getComentario_4().toUpperCase());
+						consulta.setString(6, solicitud.getComentario_5().toUpperCase());
+						consulta.setLong(7, solicitud.getId_mantenimiento());
+						consulta.setLong(8, solicitud.getId_registro());
+						consulta.setLong(9, solicitud.getId_campo());
+						consulta.setLong(10, solicitud.getId_user_1());
+						consulta.setLong(11, solicitud.getId_user_2());
+						consulta.setLong(12, solicitud.getId_user_3());
+						consulta.setLong(13, solicitud.getId_user_4());
+						consulta.setLong(14, solicitud.getId_user_5());
+						consulta.setTimestamp(15, solicitud.getFecha_1());
+						consulta.setTimestamp(16, solicitud.getFecha_2());
+						consulta.setTimestamp(17, solicitud.getFecha_3());
+						consulta.setTimestamp(18, solicitud.getFecha_4());
+						consulta.setTimestamp(19, solicitud.getFecha_5());
+						consulta.setString(20, solicitud.getEst_solicitud());
+						consulta.setString(21, solicitud.getUsu_modifica());
+						consulta.setTimestamp(22, solicitud.getFec_modifica());
+						consulta.setLong(23, solicitud.getId_solicitud());
+						consulta.executeUpdate();
+					}
+				}
+			}
+			dao_log_articulo_dn dao = new dao_log_articulo_dn();
+			long id = 0;
+			id = dao.obtenerNuevoId();
+			consulta = conexion.abrir().prepareStatement("{CALL articuloDN_insertarLog (?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setLong(1, id);
+			consulta.setLong(2, log.getId_articulo());
+			consulta.setString(3, log.getDes_log());
+			consulta.setString(4, log.getMot_log());
+			consulta.setString(5, log.getEst_log());
+			consulta.setString(6, log.getUsu_ingresa());
+			consulta.setTimestamp(7, log.getFec_ingresa());
+			consulta.executeUpdate();
 			consulta.close();
 			conexion.abrir().commit();
 		} catch (SQLException ex) {

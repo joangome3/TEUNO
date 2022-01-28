@@ -41,6 +41,7 @@ public class Validaciones {
 	private String mensaje_validacion_37 = "El numero de tarjeta no puede ser asignado al cliente seleccionado.";
 	private String mensaje_validacion_38 = "Seleccione un item de la lista.";
 	private String mensaje_validacion_39 = "La fecha de fin debe ser diferente a la fecha de inicio.";
+	private String mensaje_validacion_40 = "Ingrese el motivo.";
 
 	public String getMensaje_validacion_1() {
 		return mensaje_validacion_1;
@@ -193,9 +194,13 @@ public class Validaciones {
 	public String getMensaje_validacion_38() {
 		return mensaje_validacion_38;
 	}
-	
+
 	public String getMensaje_validacion_39() {
 		return mensaje_validacion_39;
 	}
-	
+
+	public String getMensaje_validacion_40() {
+		return mensaje_validacion_40;
+	}
+
 }

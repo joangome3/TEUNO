@@ -63,9 +63,9 @@ public class nuevo extends SelectorComposer<Component> {
 	Combobox cmbLocalidad, cmbCategoria, cmbRespaldo, cmbRespaldo1, cmbCapacidad;
 	@Wire
 	Row rwCapacidad, rwIngresaFecha, rwEsFecha, rwFechaRespaldo, rwFechaInicio, rwFechaFin, rwTipoRespaldo,
-			rwIDContenedor;
+			rwIDContenedor, rwCreacion;
 	@Wire
-	Checkbox chkIngresaFecha, chkEsFecha;
+	Checkbox chkIngresaFecha, chkEsFecha, chkCreacion;
 	@Wire
 	Listbox lbxUbicaciones;
 	@Wire
@@ -101,6 +101,10 @@ public class nuevo extends SelectorComposer<Component> {
 	private Validaciones validaciones = new Validaciones();
 
 	private Fechas fechas = new Fechas();
+
+	int bandera = 0;
+
+	boolean estado = false;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -271,6 +275,13 @@ public class nuevo extends SelectorComposer<Component> {
 			rwIDContenedor.setVisible(false);
 			vidcontenedor = "N";
 		}
+		if (listaCategoria.get(index).getId_categoria() == 1) {
+			rwCreacion.setVisible(true);
+			chkCreacion.setChecked(false);
+		} else {
+			rwCreacion.setVisible(false);
+			chkCreacion.setChecked(false);
+		}
 	}
 
 	@Listen("onSelect=#cmbRespaldo")
@@ -423,10 +434,18 @@ public class nuevo extends SelectorComposer<Component> {
 					listaUbicacion.get(indexUbicacion).getId_ubicacion(), seValidaCapacidad);
 			int totalArticulos = consultasABaseDeDatos
 					.totalArticulosEnUbicacionDN(listaUbicacion.get(indexUbicacion).getId_ubicacion());
-			if ((totalArticulos + 1) > capacidadMaxima) {
-				Messagebox.show(informativos.getMensaje_informativo_10(), informativos.getMensaje_informativo_17(),
-						Messagebox.OK, Messagebox.INFORMATION);
-				return;
+			if (!chkCreacion.isChecked()) {
+				if ((totalArticulos + 1) > capacidadMaxima) {
+					Messagebox.show(informativos.getMensaje_informativo_10(), informativos.getMensaje_informativo_17(),
+							Messagebox.OK, Messagebox.INFORMATION);
+					return;
+				}
+			} else {
+				if ((totalArticulos + 2) > capacidadMaxima) {
+					Messagebox.show(informativos.getMensaje_informativo_121(), informativos.getMensaje_informativo_17(),
+							Messagebox.OK, Messagebox.INFORMATION);
+					return;
+				}
 			}
 		}
 		Messagebox.show(informativos.getMensaje_informativo_16(), informativos.getMensaje_informativo_15(),
@@ -434,19 +453,27 @@ public class nuevo extends SelectorComposer<Component> {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
+							estado = false;
 							dao_articulo_dn dao = new dao_articulo_dn();
 							modelo_articulo_dn articulo = new modelo_articulo_dn();
+							modelo_articulo_dn articulo1 = new modelo_articulo_dn();
 							articulo.setId_categoria(
 									Long.parseLong(cmbCategoria.getSelectedItem().getValue().toString()));
+							articulo1.setId_categoria(articulo.getId_categoria()); //
 							articulo.setCod_articulo(txtCodigo.getText().toString().trim());
+							articulo1.setCod_articulo(articulo.getCod_articulo()); //
 							articulo.setDes_articulo(txtDescripcion.getText().toString().trim());
+							articulo1.setDes_articulo(articulo.getDes_articulo()); //
 							articulo.setId_localidad(
 									Long.parseLong(cmbLocalidad.getSelectedItem().getValue().toString()));
+							articulo1.setId_localidad(articulo.getId_localidad()); //
 							if (vcapacidad.equals("S")) {
 								articulo.setId_capacidad(
 										Long.valueOf(cmbCapacidad.getSelectedItem().getValue().toString()));
+								articulo1.setId_capacidad(articulo.getId_capacidad()); //
 							} else {
 								articulo.setId_capacidad(0);
+								articulo1.setId_capacidad(articulo.getId_capacidad()); //
 							}
 							if (vfechainicio.equals("S")) {
 								if (chkIngresaFecha.isChecked()) {
@@ -455,59 +482,84 @@ public class nuevo extends SelectorComposer<Component> {
 												fechas.obtenerTimestampDeDate(dtxFechaInicio.getValue()));
 										articulo.setSi_ing_fec_inicio_fin("S");
 										articulo.setEs_fecha("S");
+										articulo1.setFec_inicio(articulo.getFec_inicio()); //
+										articulo1.setSi_ing_fec_inicio_fin(articulo.getSi_ing_fec_inicio_fin()); //
+										articulo1.setEs_fecha(articulo.getEs_fecha()); //
 									} else {
 										articulo.setId_fec_respaldo(
 												Long.parseLong(cmbRespaldo1.getSelectedItem().getValue().toString()));
 										articulo.setSi_ing_fec_inicio_fin("S");
 										articulo.setEs_fecha("N");
+										articulo1.setId_fec_respaldo(articulo.getId_fec_respaldo()); //
+										articulo1.setSi_ing_fec_inicio_fin(articulo.getSi_ing_fec_inicio_fin()); //
+										articulo1.setEs_fecha(articulo.getEs_fecha()); //
 									}
 								} else {
 									articulo.setFec_inicio(null);
 									articulo.setSi_ing_fec_inicio_fin("N");
 									articulo.setEs_fecha("N");
 									articulo.setId_fec_respaldo(0);
+									articulo1.setFec_inicio(articulo.getFec_inicio()); //
+									articulo1.setSi_ing_fec_inicio_fin(articulo.getSi_ing_fec_inicio_fin()); //
+									articulo1.setEs_fecha(articulo.getEs_fecha()); //
+									articulo1.setId_fec_respaldo(articulo.getId_fec_respaldo()); //
 								}
 							} else {
 								articulo.setSi_ing_fec_inicio_fin("N");
 								articulo.setEs_fecha("N");
 								articulo.setFec_inicio(null);
 								articulo.setId_fec_respaldo(0);
+								articulo1.setFec_inicio(articulo.getFec_inicio()); //
+								articulo1.setSi_ing_fec_inicio_fin(articulo.getSi_ing_fec_inicio_fin()); //
+								articulo1.setEs_fecha(articulo.getEs_fecha()); //
+								articulo1.setId_fec_respaldo(articulo.getId_fec_respaldo()); //
 							}
 							if (vfechafin.equals("S")) {
 								if (chkIngresaFecha.isChecked()) {
 									if (chkEsFecha.isChecked()) {
 										if (dtxFechaFin.getValue() == null) {
 											articulo.setFec_fin(null);
+											articulo1.setFec_fin(articulo.getFec_fin()); //
 										} else {
 											articulo.setFec_fin(fechas.obtenerTimestampDeDate(dtxFechaFin.getValue()));
+											articulo1.setFec_fin(articulo.getFec_fin()); //
 										}
 									} else {
 										articulo.setFec_fin(null);
+										articulo1.setFec_fin(articulo.getFec_fin()); //
 									}
 								} else {
 									articulo.setFec_fin(null);
+									articulo1.setFec_fin(articulo.getFec_fin()); //
 								}
 							} else {
 								articulo.setFec_fin(null);
+								articulo1.setFec_fin(articulo.getFec_fin()); //
 							}
 							if (vtiporespaldo.equals("S")) {
 								if (cmbRespaldo.getSelectedItem() == null) {
 									articulo.setId_tip_respaldo(0);
+									articulo1.setId_tip_respaldo(articulo.getId_tip_respaldo()); //
 								} else {
 									articulo.setId_tip_respaldo(
 											Long.valueOf(cmbRespaldo.getSelectedItem().getValue().toString()));
+									articulo1.setId_tip_respaldo(articulo.getId_tip_respaldo()); //
 								}
 							} else {
 								articulo.setId_tip_respaldo(0);
+								articulo1.setId_tip_respaldo(articulo.getId_tip_respaldo()); //
 							}
 							if (vidcontenedor.equals("S")) {
 								if (txtIDContenedor.getText().length() <= 0) {
 									articulo.setId_contenedor("");
+									articulo1.setId_contenedor(articulo.getId_contenedor()); //
 								} else {
 									articulo.setId_contenedor(txtIDContenedor.getText());
+									articulo1.setId_contenedor(articulo.getId_contenedor()); //
 								}
 							} else {
 								articulo.setId_contenedor("");
+								articulo1.setId_contenedor(articulo.getId_contenedor()); //
 							}
 							if (dtxFechaFin.getValue() != null) {
 								if (dtxFechaFin.getValue().compareTo(dtxFechaInicio.getValue()) < 0) {
@@ -559,48 +611,465 @@ public class nuevo extends SelectorComposer<Component> {
 							/*
 							 * Se valida si el codigo ingresado esta registrado anteriormente
 							 */
-							int bandera = 0;
-							List<modelo_articulo_dn> _listaArticulo = new ArrayList<modelo_articulo_dn>();
-							_listaArticulo = consultasABaseDeDatos.cargarArticulosDN(
-									txtCodigo.getText().toUpperCase().trim(), id_dc, "", 13, 0, "", "");
-							if (_listaArticulo.size() > 0) {
-								if (articulo.getId_categoria() == 1) {
-									bandera = 1;
-									articulo.setEst_articulo("PAC");
+							if (!chkIngresaFecha.isChecked() || !chkEsFecha.isChecked()) {
+								List<modelo_articulo_dn> _listaArticulo = new ArrayList<modelo_articulo_dn>();
+								_listaArticulo = consultasABaseDeDatos.cargarArticulosDN(
+										txtCodigo.getText().toUpperCase().trim(), id_dc,
+										String.valueOf(articulo.getId_categoria()), 13, 0, "", "");
+								if (_listaArticulo.size() > 0) {
+									/* Si es cinta */
+									if (_listaArticulo.get(0).getId_categoria() == 1
+											&& articulo.getId_categoria() == 1) {
+										Messagebox.show(
+												informativos.getMensaje_informativo_125().replace("?1",
+														txtCodigo.getText().toUpperCase().trim()),
+												informativos.getMensaje_informativo_15(),
+												Messagebox.OK | Messagebox.CANCEL, Messagebox.ERROR,
+												new org.zkoss.zk.ui.event.EventListener() {
+													public void onEvent(Event evt)
+															throws InterruptedException, ClassNotFoundException,
+															FileNotFoundException, SQLException, IOException {
+														if (evt.getName().equals("onOK")) {
+															bandera = 1;
+															if (articulo.getId_categoria() == 1) {
+																articulo.setEst_articulo("PAC");
+																articulo1.setEst_articulo("AE");
+															} else {
+																articulo.setEst_articulo("AE");
+																articulo1.setEst_articulo(articulo.getEst_articulo());
+															}
+															articulo.setUsu_ingresa(user);
+															articulo1.setUsu_ingresa(articulo.getUsu_ingresa());
+															articulo.setFec_ingresa(
+																	fechas.obtenerTimestampDeDate(new Date()));
+															articulo1.setFec_ingresa(articulo.getFec_ingresa());
+															/*
+															 * Se guarda la relacion de la ubicacion con el articulo
+															 */
+															List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+															List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos1 = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+															int pos_ubicacion = 0;
+															Iterator<Listitem> it = lbxUbicaciones.getSelectedItems()
+																	.iterator();
+															while (it.hasNext()) {
+																Listitem item = it.next();
+																final int indice = item.getIndex();
+																modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion = new modelo_relacion_articulo_ubicacion_dn();
+																modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion1 = new modelo_relacion_articulo_ubicacion_dn();
+																relacion_articulo_ubicacion.setId_articulo(
+																		Long.parseLong(txtId.getText()));
+																relacion_articulo_ubicacion1.setId_articulo(
+																		relacion_articulo_ubicacion.getId_articulo()); //
+																relacion_articulo_ubicacion.setId_ubicacion(
+																		listaUbicacion.get(indice).getId_ubicacion());
+																relacion_articulo_ubicacion1.setId_ubicacion(
+																		relacion_articulo_ubicacion.getId_ubicacion()); //
+																relacion_articulo_ubicacion.setSto_articulo(1);
+																relacion_articulo_ubicacion1.setSto_articulo(
+																		relacion_articulo_ubicacion.getSto_articulo()); //
+																pos_ubicacion = consultasABaseDeDatos
+																		.posicionMaximaEnUbicacionDN((listaUbicacion
+																				.get(indice).getId_ubicacion()))
+																		+ 1;
+																relacion_articulo_ubicacion
+																		.setPos_ubicacion(pos_ubicacion);
+																relacion_articulo_ubicacion1.setPos_ubicacion(
+																		relacion_articulo_ubicacion.getPos_ubicacion()
+																				+ 1); //
+																relacion_articulo_ubicacion.setEst_relacion("A");
+																relacion_articulo_ubicacion1.setEst_relacion(
+																		relacion_articulo_ubicacion.getEst_relacion()); //
+																relacion_articulo_ubicacion.setUsu_ingresa(user);
+																relacion_articulo_ubicacion1.setUsu_ingresa(
+																		relacion_articulo_ubicacion.getUsu_ingresa()); //
+																relacion_articulo_ubicacion.setFec_ingresa(
+																		fechas.obtenerTimestampDeDate(new Date()));
+																relacion_articulo_ubicacion1.setFec_ingresa(
+																		relacion_articulo_ubicacion.getFec_ingresa()); //
+																listaRelacionArticulos.add(relacion_articulo_ubicacion);
+																listaRelacionArticulos1
+																		.add(relacion_articulo_ubicacion1);
+															}
+															int se_crea_caja = 0;
+															if (chkCreacion.isChecked()) {
+																se_crea_caja = 1;
+																String nom_ubicacion = "";
+																for (int i = 0; i < listaUbicacion.size(); i++) {
+																	if (listaUbicacion.get(i)
+																			.getId_ubicacion() == listaRelacionArticulos
+																					.get(0).getId_ubicacion()) {
+																		nom_ubicacion = listaUbicacion.get(i)
+																				.toStringUbicacion();
+																		i = listaUbicacion.size() + 1;
+																	}
+																}
+																if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+																		|| listaRelacionArticulos.get(0)
+																				.getId_ubicacion() >= 134) {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_120()
+																					.replace("?1", nom_ubicacion),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																	return;
+																}	
+															} else {
+																se_crea_caja = 0;
+															}
+															if (articulo.getId_categoria() == 2) {
+																String nom_ubicacion = "";
+																for (int i = 0; i < listaUbicacion.size(); i++) {
+																	if (listaUbicacion.get(i)
+																			.getId_ubicacion() == listaRelacionArticulos
+																					.get(0).getId_ubicacion()) {
+																		nom_ubicacion = listaUbicacion.get(i)
+																				.toStringUbicacion();
+																		i = listaUbicacion.size() + 1;
+																	}
+																}
+																if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+																		|| listaRelacionArticulos.get(0)
+																				.getId_ubicacion() >= 134) {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_120()
+																					.replace("?1", nom_ubicacion),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																	return;
+																}
+															}
+															try {
+																dao.insertarArticulo(articulo, listaRelacionArticulos,
+																		se_crea_caja, articulo1,
+																		listaRelacionArticulos1);
+																if (bandera == 0) {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_20(),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																} else {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_106()
+																					.replace("?", txtCodigo.getText()
+																							.toUpperCase().trim()),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																}
+																limpiarCampos();
+																obtenerId();
+															} catch (Exception e) {
+																Messagebox.show(error.getMensaje_error_4()
+																		+ error.getMensaje_error_1() + e.getMessage(),
+																		informativos.getMensaje_informativo_17(),
+																		Messagebox.OK, Messagebox.EXCLAMATION);
+															}
+														} else {
+															estado = false;
+															bandera = 0;
+														}
+													}
+												});
+									} else if (_listaArticulo.get(0).getId_categoria() == 2
+											&& articulo.getId_categoria() == 2) { // Si es caja
+										Messagebox.show(
+												informativos.getMensaje_informativo_124().replace("?1",
+														txtCodigo.getText().toUpperCase().trim()),
+												informativos.getMensaje_informativo_15(),
+												Messagebox.OK | Messagebox.CANCEL, Messagebox.ERROR,
+												new org.zkoss.zk.ui.event.EventListener() {
+													public void onEvent(Event evt)
+															throws InterruptedException, ClassNotFoundException,
+															FileNotFoundException, SQLException, IOException {
+														if (evt.getName().equals("onOK")) {
+															bandera = 0;
+															if (articulo.getId_categoria() == 1) {
+																articulo.setEst_articulo("PAC");
+																articulo1.setEst_articulo(articulo.getEst_articulo());
+															} else {
+																articulo.setEst_articulo("AE");
+																articulo1.setEst_articulo(articulo.getEst_articulo());
+															}
+															articulo.setUsu_ingresa(user);
+															articulo1.setUsu_ingresa(articulo.getUsu_ingresa());
+															articulo.setFec_ingresa(
+																	fechas.obtenerTimestampDeDate(new Date()));
+															articulo1.setFec_ingresa(articulo.getFec_ingresa());
+															/*
+															 * Se guarda la relacion de la ubicacion con el articulo
+															 */
+															List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+															List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos1 = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+															int pos_ubicacion = 0;
+															Iterator<Listitem> it = lbxUbicaciones.getSelectedItems()
+																	.iterator();
+															while (it.hasNext()) {
+																Listitem item = it.next();
+																final int indice = item.getIndex();
+																modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion = new modelo_relacion_articulo_ubicacion_dn();
+																modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion1 = new modelo_relacion_articulo_ubicacion_dn();
+																relacion_articulo_ubicacion.setId_articulo(
+																		Long.parseLong(txtId.getText()));
+																relacion_articulo_ubicacion1.setId_articulo(
+																		relacion_articulo_ubicacion.getId_articulo()); //
+																relacion_articulo_ubicacion.setId_ubicacion(
+																		listaUbicacion.get(indice).getId_ubicacion());
+																relacion_articulo_ubicacion1.setId_ubicacion(
+																		relacion_articulo_ubicacion.getId_ubicacion()); //
+																relacion_articulo_ubicacion.setSto_articulo(1);
+																relacion_articulo_ubicacion1.setSto_articulo(
+																		relacion_articulo_ubicacion.getSto_articulo()); //
+																pos_ubicacion = consultasABaseDeDatos
+																		.posicionMaximaEnUbicacionDN((listaUbicacion
+																				.get(indice).getId_ubicacion()))
+																		+ 1;
+																relacion_articulo_ubicacion
+																		.setPos_ubicacion(pos_ubicacion);
+																relacion_articulo_ubicacion1.setPos_ubicacion(
+																		relacion_articulo_ubicacion.getPos_ubicacion()
+																				+ 1); //
+																relacion_articulo_ubicacion.setEst_relacion("A");
+																relacion_articulo_ubicacion1.setEst_relacion(
+																		relacion_articulo_ubicacion.getEst_relacion()); //
+																relacion_articulo_ubicacion.setUsu_ingresa(user);
+																relacion_articulo_ubicacion1.setUsu_ingresa(
+																		relacion_articulo_ubicacion.getUsu_ingresa()); //
+																relacion_articulo_ubicacion.setFec_ingresa(
+																		fechas.obtenerTimestampDeDate(new Date()));
+																relacion_articulo_ubicacion1.setFec_ingresa(
+																		relacion_articulo_ubicacion.getFec_ingresa()); //
+																listaRelacionArticulos.add(relacion_articulo_ubicacion);
+																listaRelacionArticulos1
+																		.add(relacion_articulo_ubicacion1);
+															}
+															int se_crea_caja = 0;
+															if (chkCreacion.isChecked()) {
+																se_crea_caja = 1;
+																String nom_ubicacion = "";
+																for (int i = 0; i < listaUbicacion.size(); i++) {
+																	if (listaUbicacion.get(i)
+																			.getId_ubicacion() == listaRelacionArticulos
+																					.get(0).getId_ubicacion()) {
+																		nom_ubicacion = listaUbicacion.get(i)
+																				.toStringUbicacion();
+																		i = listaUbicacion.size() + 1;
+																	}
+																}
+																if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+																		|| listaRelacionArticulos.get(0)
+																				.getId_ubicacion() >= 134) {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_120()
+																					.replace("?1", nom_ubicacion),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																	return;
+																}
+															} else {
+																se_crea_caja = 0;
+															}
+															if (articulo.getId_categoria() == 2) {
+																String nom_ubicacion = "";
+																for (int i = 0; i < listaUbicacion.size(); i++) {
+																	if (listaUbicacion.get(i)
+																			.getId_ubicacion() == listaRelacionArticulos
+																					.get(0).getId_ubicacion()) {
+																		nom_ubicacion = listaUbicacion.get(i)
+																				.toStringUbicacion();
+																		i = listaUbicacion.size() + 1;
+																	}
+																}
+																if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+																		|| listaRelacionArticulos.get(0)
+																				.getId_ubicacion() >= 134) {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_120()
+																					.replace("?1", nom_ubicacion),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																	return;
+																}
+															}
+															try {
+																dao.insertarArticulo(articulo, listaRelacionArticulos,
+																		se_crea_caja, articulo1,
+																		listaRelacionArticulos1);
+																if (bandera == 0) {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_20(),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																} else {
+																	Messagebox.show(
+																			informativos.getMensaje_informativo_106()
+																					.replace("?", txtCodigo.getText()
+																							.toUpperCase().trim()),
+																			informativos.getMensaje_informativo_17(),
+																			Messagebox.OK, Messagebox.EXCLAMATION);
+																}
+																limpiarCampos();
+																obtenerId();
+															} catch (Exception e) {
+																Messagebox.show(error.getMensaje_error_4()
+																		+ error.getMensaje_error_1() + e.getMessage(),
+																		informativos.getMensaje_informativo_17(),
+																		Messagebox.OK, Messagebox.EXCLAMATION);
+															}
+														} else {
+															estado = false;
+															bandera = 0;
+														}
+													}
+												});
+									} else {
+										estado = true;
+										bandera = 0;
+										articulo.setEst_articulo("AE");
+										articulo1.setEst_articulo(articulo.getEst_articulo());
+									}
 								} else {
+									estado = true;
 									bandera = 0;
 									articulo.setEst_articulo("AE");
+									articulo1.setEst_articulo(articulo.getEst_articulo());
 								}
 							} else {
+								estado = true;
 								bandera = 0;
 								articulo.setEst_articulo("AE");
+								articulo1.setEst_articulo(articulo.getEst_articulo());
+							}
+							if (estado == false) {
+								return;
 							}
 							articulo.setUsu_ingresa(user);
+							articulo1.setUsu_ingresa(articulo.getUsu_ingresa());
 							articulo.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							articulo1.setFec_ingresa(articulo.getFec_ingresa());
 							/*
 							 * Se guarda la relacion de la ubicacion con el articulo
 							 */
 							List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+							List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos1 = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
 							int pos_ubicacion = 0;
 							Iterator<Listitem> it = lbxUbicaciones.getSelectedItems().iterator();
 							while (it.hasNext()) {
 								Listitem item = it.next();
 								final int indice = item.getIndex();
 								modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion = new modelo_relacion_articulo_ubicacion_dn();
+								modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion1 = new modelo_relacion_articulo_ubicacion_dn();
 								relacion_articulo_ubicacion.setId_articulo(Long.parseLong(txtId.getText()));
+								relacion_articulo_ubicacion1
+										.setId_articulo(relacion_articulo_ubicacion.getId_articulo()); //
 								relacion_articulo_ubicacion
 										.setId_ubicacion(listaUbicacion.get(indice).getId_ubicacion());
+								relacion_articulo_ubicacion1
+										.setId_ubicacion(relacion_articulo_ubicacion.getId_ubicacion()); //
 								relacion_articulo_ubicacion.setSto_articulo(1);
+								relacion_articulo_ubicacion1
+										.setSto_articulo(relacion_articulo_ubicacion.getSto_articulo()); //
 								pos_ubicacion = consultasABaseDeDatos.posicionMaximaEnUbicacionDN(
 										(listaUbicacion.get(indice).getId_ubicacion())) + 1;
 								relacion_articulo_ubicacion.setPos_ubicacion(pos_ubicacion);
+								relacion_articulo_ubicacion1
+										.setPos_ubicacion(relacion_articulo_ubicacion.getPos_ubicacion() + 1); //
 								relacion_articulo_ubicacion.setEst_relacion("A");
+								relacion_articulo_ubicacion1
+										.setEst_relacion(relacion_articulo_ubicacion.getEst_relacion()); //
 								relacion_articulo_ubicacion.setUsu_ingresa(user);
+								relacion_articulo_ubicacion1
+										.setUsu_ingresa(relacion_articulo_ubicacion.getUsu_ingresa()); //
 								relacion_articulo_ubicacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+								relacion_articulo_ubicacion1
+										.setFec_ingresa(relacion_articulo_ubicacion.getFec_ingresa()); //
 								listaRelacionArticulos.add(relacion_articulo_ubicacion);
+								listaRelacionArticulos1.add(relacion_articulo_ubicacion1);
+							}
+							int se_crea_caja = 0;
+							if (chkCreacion.isChecked()) {
+								se_crea_caja = 1;
+								String nom_ubicacion = "";
+								for (int i = 0; i < listaUbicacion.size(); i++) {
+									if (listaUbicacion.get(i).getId_ubicacion() == listaRelacionArticulos.get(0)
+											.getId_ubicacion()) {
+										nom_ubicacion = listaUbicacion.get(i).toStringUbicacion();
+										i = listaUbicacion.size() + 1;
+									}
+								}
+								if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+										|| listaRelacionArticulos.get(0).getId_ubicacion() >= 134) {
+									Messagebox.show(
+											informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
+											informativos.getMensaje_informativo_17(), Messagebox.OK,
+											Messagebox.EXCLAMATION);
+									return;
+								}
+								if (vfechainicio.equals("S")) {
+									if (chkIngresaFecha.isChecked()) {
+										if (chkEsFecha.isChecked()) {
+											/*
+											 * Se valida si un articulo tiene el mismo codigo, fecha inicio
+											 * 
+											 */
+											String fecha_inicio = fechas
+													.obtenerFechaFormateada(dtxFechaInicio.getValue(), "yyyy/MM/dd");
+											if (dtxFechaFin.getValue() == null) {
+												int totalArticulos = consultasABaseDeDatos
+														.validarSiCodigoYFechaDeInicioDeArticuloExiste(
+																txtCodigo.getText(), fecha_inicio, 2);
+												if (totalArticulos > 0) {
+													Messagebox.show(
+															informativos.getMensaje_informativo_126().replace("?1",
+																	txtCodigo.getText()),
+															informativos.getMensaje_informativo_17(), Messagebox.OK,
+															Messagebox.INFORMATION);
+													return;
+												}
+											} else {
+												/*
+												 * Se valida si un articulo tiene el mismo codigo, fecha inicio y fecha
+												 * de fin
+												 */
+												String fecha_fin = fechas.obtenerFechaFormateada(dtxFechaFin.getValue(),
+														"yyyy/MM/dd");
+												int totalArticulos = consultasABaseDeDatos
+														.validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(
+																txtCodigo.getText(), fecha_inicio, fecha_fin, 2);
+												if (totalArticulos > 0) {
+													Messagebox.show(
+															informativos.getMensaje_informativo_126().replace("?1",
+																	txtCodigo.getText()),
+															informativos.getMensaje_informativo_17(), Messagebox.OK,
+															Messagebox.INFORMATION);
+													return;
+												}
+											}
+										}
+									}
+								}
+							} else {
+								se_crea_caja = 0;
+							}
+							if (articulo.getId_categoria() == 2) {
+								String nom_ubicacion = "";
+								for (int i = 0; i < listaUbicacion.size(); i++) {
+									if (listaUbicacion.get(i).getId_ubicacion() == listaRelacionArticulos.get(0)
+											.getId_ubicacion()) {
+										nom_ubicacion = listaUbicacion.get(i).toStringUbicacion();
+										i = listaUbicacion.size() + 1;
+									}
+								}
+								if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+										|| listaRelacionArticulos.get(0).getId_ubicacion() >= 134) {
+									Messagebox.show(
+											informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
+											informativos.getMensaje_informativo_17(), Messagebox.OK,
+											Messagebox.EXCLAMATION);
+									return;
+								}
 							}
 							try {
-								dao.insertarArticulo(articulo, listaRelacionArticulos);
+								dao.insertarArticulo(articulo, listaRelacionArticulos, se_crea_caja, articulo1,
+										listaRelacionArticulos1);
 								if (bandera == 0) {
 									Messagebox.show(informativos.getMensaje_informativo_20(),
 											informativos.getMensaje_informativo_17(), Messagebox.OK,

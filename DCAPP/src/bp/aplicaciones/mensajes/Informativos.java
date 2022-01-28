@@ -121,6 +121,18 @@ public class Informativos {
 	private String mensaje_informativo_117 = "Por favor escoja el registro que tenga la apertura.";
 	private String mensaje_informativo_118 = "La solicitud de personal debe estar en estado abierto o en curso para poder registrar un alcance a esta solicitud.";
 	private String mensaje_informativo_119 = "Ya existe una solicitud de cintas creada para el ticket ?1.";
+	private String mensaje_informativo_120 = "El artículo se encuentra en ?1, y en esta ubicación no es posible crear la caja, por favor escoja otra ubicación.";
+	private String mensaje_informativo_121 = "El item no se puede mover debido a que se supera la capacidad permitida de la ubicación, considerar que para este item se está realizando la creación de la caja.";
+	private String mensaje_informativo_122 = "El registro no es del tipo cinta, para poder realizar la creación de la caja, debe escoger un item que sea del tipo cinta.";
+	private String mensaje_informativo_123 = "La caja no se puede crear debido a que en la ubicación ?1, se supera la capacidad permitida de la ubicación.";
+	private String mensaje_informativo_124 = "Ya existe una caja con el código ?1, ¿Está seguro de guardar el registro?.";
+	private String mensaje_informativo_125 = "Ya existe una cinta con el código ?1, ¿Está seguro de guardar el registro?, el registro al ser guardado luego deberá ser aprobado por parte de coordinación para poderse utilizar.";
+	private String mensaje_informativo_126 = "Usted seleccionó que desea crear la caja para la cinta ?1, pero ya existe una caja registrada con el mismo código y fecha de inicio.";
+	private String mensaje_informativo_127 = "Usted seleccionó que desea crear la caja para la cinta ?1, pero ya existe una caja registrada con el mismo código, fecha de inicio y fecha de fin.";
+	private String mensaje_informativo_128 = "¿Está seguro de crear la caja para la cinta ?1?.";
+	private String mensaje_informativo_129 = "El artículo es del tipo caja y no puede moverse a la ubicación ?1.";
+	private String mensaje_informativo_130 = "El artículo con código ?1 es del tipo caja y no puede moverse a la ubicación ?2.";
+	private String mensaje_informativo_131 = ".:: Cerrar turno ::.";
 
 	public Informativos() {
 
@@ -593,13 +605,61 @@ public class Informativos {
 	public String getMensaje_informativo_117() {
 		return mensaje_informativo_117;
 	}
-	
+
 	public String getMensaje_informativo_118() {
 		return mensaje_informativo_118;
 	}
-	
+
 	public String getMensaje_informativo_119() {
 		return mensaje_informativo_119;
+	}
+
+	public String getMensaje_informativo_120() {
+		return mensaje_informativo_120;
+	}
+
+	public String getMensaje_informativo_121() {
+		return mensaje_informativo_121;
+	}
+
+	public String getMensaje_informativo_122() {
+		return mensaje_informativo_122;
+	}
+
+	public String getMensaje_informativo_123() {
+		return mensaje_informativo_123;
+	}
+
+	public String getMensaje_informativo_124() {
+		return mensaje_informativo_124;
+	}
+
+	public String getMensaje_informativo_125() {
+		return mensaje_informativo_125;
+	}
+
+	public String getMensaje_informativo_126() {
+		return mensaje_informativo_126;
+	}
+
+	public String getMensaje_informativo_127() {
+		return mensaje_informativo_127;
+	}
+
+	public String getMensaje_informativo_128() {
+		return mensaje_informativo_128;
+	}
+
+	public String getMensaje_informativo_129() {
+		return mensaje_informativo_129;
+	}
+
+	public String getMensaje_informativo_130() {
+		return mensaje_informativo_130;
+	}
+
+	public String getMensaje_informativo_131() {
+		return mensaje_informativo_131;
 	}
 
 }

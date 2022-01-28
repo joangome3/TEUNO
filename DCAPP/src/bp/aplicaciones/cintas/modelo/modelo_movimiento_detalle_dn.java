@@ -1810,5 +1810,17 @@ public class modelo_movimiento_detalle_dn extends modelo_movimiento_dn implement
 		}
 		return estilo;
 	}
+	
+	public String estiloMostrarCategoriaAnterior() {
+		String estilo = "";
+		if (id_cat_articulo_anterior == 1) {
+			estilo = "font-weight: bold !important; font-style: normal !important; background-color: #d6ffba; text-align: center !important;";
+		} else if (id_cat_articulo_actual == 2) {
+			estilo = "font-weight: bold !important; font-style: normal !important; background-color: #d4efed; text-align: center !important;";
+		} else {
+			estilo = "font-weight: bold !important; font-style: normal !important; background-color: #ffbd62; text-align: center !important;";
+		}
+		return estilo;
+	}
 
 }

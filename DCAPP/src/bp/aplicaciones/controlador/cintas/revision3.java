@@ -466,7 +466,7 @@ public class revision3 extends SelectorComposer<Component> {
 		txtBuscarArticulo.setText("");
 		bdxArticulos.setDisabled(false);
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
-				cmbEmpresa.getSelectedItem().getValue().toString(), 2, 0, "A", "");
+				cmbEmpresa.getSelectedItem().getValue().toString(), 14, 0, "A", "");
 		lbxArticulos.clearSelection();
 		binder.loadComponent(lbxArticulos);
 		cargarTipoUbicaciones();
@@ -550,7 +550,7 @@ public class revision3 extends SelectorComposer<Component> {
 			ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
 		}
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 2, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
+				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
 		lbxArticulos.clearSelection();
 		binder.loadComponent(lbxArticulos);
 	}
@@ -578,7 +578,7 @@ public class revision3 extends SelectorComposer<Component> {
 			ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
 		}
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 2, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
+				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
 		binder.loadComponent(lbxArticulos);
 	}
 	
@@ -605,7 +605,7 @@ public class revision3 extends SelectorComposer<Component> {
 			cmbUbicacion.setDisabled(true);
 		}
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 2, (int) tipo_ubicacion, "A", "0");
+				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", "0");
 		binder.loadComponent(lbxArticulos);
 	}
 
@@ -629,7 +629,7 @@ public class revision3 extends SelectorComposer<Component> {
 			ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
 		}
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 2, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
+				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
 		binder.loadComponent(lbxArticulos);
 	}
 
@@ -737,7 +737,7 @@ public class revision3 extends SelectorComposer<Component> {
 	public void actualizarDatosAnterioresDeArticulosAntesDeGuardar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		List<modelo_articulo_dn> listaArticulo = new ArrayList<modelo_articulo_dn>();
-		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim(), id_dc, "0", 2,
+		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim(), id_dc, "0", 14,
 				0, "A", "");
 		for (int i = 0; i < listaArticulo.size(); i++) {
 			for (int j = 0; j < listaMovimientoDetalle.size(); j++) {
@@ -1672,7 +1672,7 @@ public class revision3 extends SelectorComposer<Component> {
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim(), id_dc,
-				cmbEmpresa.getSelectedItem().getValue().toString(), 2, 0, "A", "");
+				cmbEmpresa.getSelectedItem().getValue().toString(), 14, 0, "A", "");
 		binder.loadComponent(lbxArticulos);
 		lbxArticulos.clearSelection();
 		bdxArticulos.setText("");

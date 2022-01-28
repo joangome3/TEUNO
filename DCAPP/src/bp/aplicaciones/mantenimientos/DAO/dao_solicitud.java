@@ -278,8 +278,7 @@ public class dao_solicitud {
 							.prepareStatement("{CALL ubicacionDN_actualizarEstadoUbicacion(?,?,?,?)}");
 				}
 				if (mantenimiento == 16) {
-					consulta = conexion.abrir()
-							.prepareStatement("{CALL articuloDN_actualizarEstadoArticulo(?,?,?,?)}");
+					consulta = conexion.abrir().prepareStatement("{CALL articuloDN_actualizarEstadoArticulo(?,?,?,?)}");
 				}
 				consulta.setString(1, "AE");
 				consulta.setString(2, solicitud.getUsu_modifica());
@@ -342,9 +341,12 @@ public class dao_solicitud {
 
 	public void redactarMail(long id_solicitud, modelo_solicitud solicitud, String id_parametro)
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		@SuppressWarnings("unused")
 		mail mail = new mail();
 		dao_mail dao = new dao_mail();
+		@SuppressWarnings("unused")
 		String destinatarios[] = null;
+		@SuppressWarnings("unused")
 		String remitente = "", clave = "", asunto = "", cuerpo = "", host = "", starttls = "", port = "", auth = "",
 				ssl = "", debug = "", user = "", user1 = "", date = "";
 		List<modelo_mail_parametros> lista_parametros = new ArrayList<modelo_mail_parametros>();
@@ -353,8 +355,8 @@ public class dao_solicitud {
 		if (lista_parametros.size() == 1) {
 			lista_destinatarios = dao.obtenerDestinatarios(String.valueOf(lista_parametros.get(0).getId_parametro()),
 					1);
-			//remitente = lista_parametros.get(0).getNom_remitente();
-			//clave = lista_parametros.get(0).getPas_remitente();
+			// remitente = lista_parametros.get(0).getNom_remitente();
+			// clave = lista_parametros.get(0).getPas_remitente();
 			host = lista_parametros.get(0).getSmtp_host();
 			if (lista_parametros.get(0).getSmtp_starttls().equals("S")) {
 				starttls = "true";
@@ -375,7 +377,7 @@ public class dao_solicitud {
 		if (lista_destinatarios.size() > 0) {
 			destinatarios = new String[lista_destinatarios.size()];
 			for (int i = 0; i < lista_destinatarios.size(); i++) {
-				//destinatarios[i] = lista_destinatarios.get(i).getMail_destinatario();
+				// destinatarios[i] = lista_destinatarios.get(i).getMail_destinatario();
 			}
 		}
 		dao_usuario dao1 = new dao_usuario();
@@ -484,7 +486,8 @@ public class dao_solicitud {
 					+ "Dirección: Av. Perimetral Km. 30.5 y Av. Leopoldo Carrera Calvo \r\n</br>"
 					+ "T: (593) -4-6020660 ext. Prefijo (451) 6301.\r\n</br>" + "M: +593 9 88023236</br></br>";
 		}
-		//mail.enviarMail(remitente, clave, destinatarios, asunto, cuerpo, host, starttls, port, auth, ssl, debug);
+		// mail.enviarMail(remitente, clave, destinatarios, asunto, cuerpo, host,
+		// starttls, port, auth, ssl, debug);
 	}
 
 }

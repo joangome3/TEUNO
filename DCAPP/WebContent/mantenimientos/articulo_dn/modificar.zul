@@ -317,6 +317,24 @@
 								</cell>
 							</row>
 							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Motivo de la modificación"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtMotivo" width="450px" readonly="false" rows="5"
+													class="z-textbox-2" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+							<row>
 								<space></space>
 							</row>
 						</rows>

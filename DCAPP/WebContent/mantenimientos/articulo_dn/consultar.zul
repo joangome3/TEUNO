@@ -29,6 +29,10 @@
 												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
 												autodisable="self" />
 											<space width="5px"></space>
+											<button id="btnCargarArchivo"
+												image="/img/botones/ButtonUp2.png" tooltiptext="Cargar archivo"
+												autodisable="self" />
+											<space width="5px"></space>
 											<button id="btnRefrescar"
 												image="/img/botones/ButtonRefresh.png"
 												tooltiptext="Refrescar lista" autodisable="self" />
@@ -247,6 +251,10 @@
 		<menuitem id="mInactivar" iconSclass="z-icon-italic"
 			label=" - Inactivar"
 			tooltiptext="Permite desactivar los registros que solo sean del tipo caja." />
+		<menuseparator id="mSeparador5" />
+		<menuitem id="mCrearCaja" iconSclass="z-icon-gears"
+			label=" - Crear caja"
+			tooltiptext="Permite crear la caja del item seleccionado, el item que selecciona debe ser del tipo cinta." />
 	</menupopup>
 
 	<popup id="cons" width="300px">

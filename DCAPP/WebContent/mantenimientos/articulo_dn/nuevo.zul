@@ -4,8 +4,8 @@
 	<window title=".:: Nuevo registro ::." border="normal" id="zNuevo"
 		closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.articulo_dn.nuevo"
-		position="center, center" sizable="true" width="45%" height="75%"
-		maximizable="true" minimizable="true" shadow="false" mode="overlapped"
+		position="center, center" sizable="true" width="45%" height="90%"
+		maximizable="false" minimizable="false" shadow="false" mode="overlapped"
 		focus="true" action="show: slideDown;hide: slideUp">
 		<div height="100%" width="100%">
 			<toolbar>
@@ -100,6 +100,13 @@
 												<space width="0px"></space>
 											</hlayout>
 										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row id="rwCreacion" visible="false">
+								<cell colspan="2">
+									<div align="center">
+										<checkbox label="¿Desea crear la caja?" id="chkCreacion"></checkbox>
 									</div>
 								</cell>
 							</row>

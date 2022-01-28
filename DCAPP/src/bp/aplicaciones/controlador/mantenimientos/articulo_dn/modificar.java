@@ -40,6 +40,7 @@ import bp.aplicaciones.mantenimientos.DAO.dao_relacion_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
+import bp.aplicaciones.mantenimientos.modelo.modelo_log_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_articulo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_respaldo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
@@ -58,7 +59,7 @@ public class modificar extends SelectorComposer<Component> {
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtCodigo, txtDescripcion, txtIDContenedor, txtBuscarUbicacion, txtComentario;
+	Textbox txtId, txtCodigo, txtDescripcion, txtIDContenedor, txtBuscarUbicacion, txtComentario, txtMotivo;
 	@Wire
 	Intbox txtCantidad;
 	@Wire
@@ -153,6 +154,11 @@ public class modificar extends SelectorComposer<Component> {
 		txtIDContenedor.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
 				txtIDContenedor.setText(txtIDContenedor.getText().toUpperCase().trim());
+			}
+		});
+		txtMotivo.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				txtMotivo.setText(txtMotivo.getText().toUpperCase().trim());
 			}
 		});
 		inicializarListas();
@@ -685,6 +691,11 @@ public class modificar extends SelectorComposer<Component> {
 			cmbLocalidad.setErrorMessage(validaciones.getMensaje_validacion_9());
 			return;
 		}
+		if (txtMotivo.getText().length() <= 0) {
+			txtMotivo.setErrorMessage(validaciones.getMensaje_validacion_40());
+			txtMotivo.setFocus(true);
+			return;
+		}
 		/*
 		 * Se valida que no se supere la capacidad permitida en la ubicacion
 		 * seleccionada
@@ -903,8 +914,35 @@ public class modificar extends SelectorComposer<Component> {
 								}
 							}
 							int tipo = 1;
+							String log = generarLogModificacionInventario(modificar.this.articulo, articulo,
+									listaRelacionArticulos.get(0));
+							if (articulo.getId_categoria() == 2) {
+								String nom_ubicacion = "";
+								for (int i = 0; i < listaUbicacion.size(); i++) {
+									if (listaUbicacion.get(i).getId_ubicacion() == listaRelacionArticulos.get(0)
+											.getId_ubicacion()) {
+										nom_ubicacion = listaUbicacion.get(i).toStringUbicacion();
+										i = listaUbicacion.size() + 1;
+									}
+								}
+								if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
+										|| listaRelacionArticulos.get(0).getId_ubicacion() >= 134) {
+									Messagebox.show(
+											informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
+											informativos.getMensaje_informativo_17(), Messagebox.OK,
+											Messagebox.EXCLAMATION);
+									return;
+								}
+							}
+							modelo_log_articulo_dn modelo_log = new modelo_log_articulo_dn();
+							modelo_log.setId_articulo(articulo.getId_articulo());
+							modelo_log.setDes_log(log);
+							modelo_log.setMot_log(txtMotivo.getText().toUpperCase().trim());
+							modelo_log.setEst_log("AE");
+							modelo_log.setUsu_ingresa(user);
+							modelo_log.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							try {
-								dao.modificarArticulo(articulo, listaRelacionArticulos, solicitud, tipo);
+								dao.modificarArticulo(articulo, listaRelacionArticulos, solicitud, modelo_log, tipo);
 								if (tipo == 1) {
 									Messagebox.show(informativos.getMensaje_informativo_20(),
 											informativos.getMensaje_informativo_24(), Messagebox.OK,
@@ -914,6 +952,7 @@ public class modificar extends SelectorComposer<Component> {
 											informativos.getMensaje_informativo_24(), Messagebox.OK,
 											Messagebox.EXCLAMATION);
 								}
+								// System.out.println(log);
 								limpiarCampos();
 								Sessions.getCurrent().removeAttribute("articulo");
 								Events.postEvent(new Event("onClose", zModificar));
@@ -945,6 +984,273 @@ public class modificar extends SelectorComposer<Component> {
 		bdxUbicacion.setTooltiptext("");
 		txtBuscarUbicacion.setText("");
 		cmbCategoria.setText("");
+	}
+
+	public String generarLogModificacionInventario(modelo_articulo_dn articulo_antes,
+			modelo_articulo_dn articulo_despues, modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion) {
+		String log = "";
+		List<String> listaLogs = new ArrayList<String>();
+		if (!articulo_antes.getCod_articulo().equals(articulo_despues.getCod_articulo())) {
+			log = "<b>* CODIGO ANTES DEL CAMBIO:</b> " + articulo_antes.getCod_articulo()
+					+ ", <b>CODIGO DESPUES DEL CAMBIO:</b> " + articulo_despues.getCod_articulo();
+			listaLogs.add(log);
+		}
+		if (!articulo_antes.getDes_articulo().equals(articulo_despues.getDes_articulo())) {
+			log = "<b>* DESCRIPCION ANTES DEL CAMBIO:</b> " + articulo_antes.getCod_articulo()
+					+ ", <b>DESCRIPCION DESPUES DEL CAMBIO:</b> " + articulo_despues.getCod_articulo();
+			listaLogs.add(log);
+		}
+		if (articulo_antes.getId_categoria() != articulo_despues.getId_categoria()) {
+			String nom_categoria_antes = "N/A", nom_categoria_despues = "N/A";
+			for (int i = 0; i < listaCategoria.size(); i++) {
+				if (articulo_antes.getId_categoria() == listaCategoria.get(i).getId_categoria()) {
+					nom_categoria_antes = listaCategoria.get(i).getNom_categoria();
+					i = listaCategoria.size() + 1;
+				}
+			}
+			for (int i = 0; i < listaCategoria.size(); i++) {
+				if (articulo_despues.getId_categoria() == listaCategoria.get(i).getId_categoria()) {
+					nom_categoria_despues = listaCategoria.get(i).getNom_categoria();
+					i = listaCategoria.size() + 1;
+				}
+			}
+			log = "<b>* CATEGORIA ANTES DEL CAMBIO:</b> " + nom_categoria_antes
+					+ ", <b>CATEGORIA DESPUES DEL CAMBIO:</b> " + nom_categoria_despues;
+			listaLogs.add(log);
+		}
+		if (articulo_antes.getId_capacidad() != articulo_despues.getId_capacidad()) {
+			String nom_capacidad_antes = "N/A", nom_capacidad_despues = "N/A";
+			for (int i = 0; i < listaCapacidad.size(); i++) {
+				if (articulo_antes.getId_capacidad() == listaCapacidad.get(i).getId_capacidad()) {
+					nom_capacidad_antes = listaCapacidad.get(i).getNom_capacidad();
+					i = listaCapacidad.size() + 1;
+				}
+			}
+			for (int i = 0; i < listaCapacidad.size(); i++) {
+				if (articulo_despues.getId_capacidad() == listaCapacidad.get(i).getId_capacidad()) {
+					nom_capacidad_despues = listaCapacidad.get(i).getNom_capacidad();
+					i = listaCapacidad.size() + 1;
+				}
+			}
+			log = "<b>* CAPACIDAD ANTES DEL CAMBIO:</b> " + nom_capacidad_antes
+					+ ", <b>CAPACIDAD DESPUES DEL CAMBIO:</b> " + nom_capacidad_despues;
+			listaLogs.add(log);
+		}
+		if (!articulo_antes.getSi_ing_fec_inicio_fin().equals(articulo_despues.getSi_ing_fec_inicio_fin())) {
+			String si_ing_fec_inicio_fin_antes = "NO", si_ing_fec_inicio_fin_despues = "NO";
+			if (articulo_antes.getSi_ing_fec_inicio_fin().equals("S")) {
+				si_ing_fec_inicio_fin_antes = "SI";
+			} else {
+				si_ing_fec_inicio_fin_antes = "NO";
+			}
+			if (articulo_despues.getSi_ing_fec_inicio_fin().equals("S")) {
+				si_ing_fec_inicio_fin_despues = "SI";
+			} else {
+				si_ing_fec_inicio_fin_despues = "NO";
+			}
+			log = "<b>* DESEA REGISTRAR FECHA DE RESPALDO ANTES DEL CAMBIO:</b> " + si_ing_fec_inicio_fin_antes
+					+ ", <b>DESEA REGISTRAR FECHA DE RESPALDO DESPUES DEL CAMBIO:</b> " + si_ing_fec_inicio_fin_despues;
+			listaLogs.add(log);
+		}
+		if (!articulo_antes.getEs_fecha().equals(articulo_despues.getEs_fecha())) {
+			String es_fecha_antes = "NO", es_fecha_despues = "NO";
+			if (articulo_antes.getEs_fecha().equals("S")) {
+				es_fecha_antes = "SI";
+			} else {
+				es_fecha_antes = "NO";
+			}
+			if (articulo_despues.getEs_fecha().equals("S")) {
+				es_fecha_despues = "SI";
+			} else {
+				es_fecha_despues = "NO";
+			}
+			log = "<b>* LA FECHA DE RESPALDO ES DEL TIPO FECHA ANTES DEL CAMBIO:</b> " + es_fecha_antes
+					+ ", <b>LA FECHA DE RESPALDO ES DEL TIPO FECHA DESPUES DEL CAMBIO:</b> " + es_fecha_despues;
+			listaLogs.add(log);
+		}
+		if (articulo_antes.getId_fec_respaldo() != articulo_despues.getId_fec_respaldo()) {
+			String nom_fec_respaldo_antes = "N/A", nom_fec_respaldo_despues = "N/A";
+			for (int i = 0; i < listaRespaldo1.size(); i++) {
+				if (articulo_antes.getId_fec_respaldo() == listaRespaldo1.get(i).getId_respaldo()) {
+					nom_fec_respaldo_antes = listaRespaldo1.get(i).toNombreRespaldo();
+					i = listaRespaldo1.size() + 1;
+				}
+			}
+			for (int i = 0; i < listaRespaldo1.size(); i++) {
+				if (articulo_despues.getId_fec_respaldo() == listaRespaldo1.get(i).getId_respaldo()) {
+					nom_fec_respaldo_despues = listaRespaldo1.get(i).toNombreRespaldo();
+					i = listaRespaldo1.size() + 1;
+				}
+			}
+			log = "<b>* FECHA DE RESPALDO ANTES DEL CAMBIO:</b> " + nom_fec_respaldo_antes
+					+ ", <b>FECHA DE RESPALDO DESPUES DEL CAMBIO:</b> " + nom_fec_respaldo_despues;
+			listaLogs.add(log);
+		}
+		if (articulo_antes.getFec_inicio() != null) {
+			if (articulo_despues.getFec_inicio() != null) {
+				if (!articulo_antes.getFec_inicio().equals(articulo_despues.getFec_inicio())) {
+					String fec_antes = "N/A", fec_despues = "N/A";
+					if (articulo_antes.getFec_inicio() != null) {
+						fec_antes = fechas.obtenerFechaFormateada(articulo_antes.getFec_inicio(), "dd/MM/yyyy");
+					} else {
+						fec_antes = "N/A";
+					}
+					if (articulo_despues.getFec_inicio() != null) {
+						fec_despues = fechas.obtenerFechaFormateada(articulo_despues.getFec_inicio(), "dd/MM/yyyy");
+					} else {
+						fec_despues = "N/A";
+					}
+					log = "<b>* FECHA DE INICIO ANTES DEL CAMBIO:</b> " + fec_antes
+							+ ", <b>FECHA DE INICIO DESPUES DEL CAMBIO:</b> " + fec_despues;
+					listaLogs.add(log);
+				}
+			} else {
+				String fec_antes = "N/A", fec_despues = "N/A";
+				if (articulo_antes.getFec_inicio() != null) {
+					fec_antes = fechas.obtenerFechaFormateada(articulo_antes.getFec_inicio(), "dd/MM/yyyy");
+				} else {
+					fec_antes = "N/A";
+				}
+				if (articulo_despues.getFec_inicio() != null) {
+					fec_despues = fechas.obtenerFechaFormateada(articulo_despues.getFec_inicio(), "dd/MM/yyyy");
+				} else {
+					fec_despues = "N/A";
+				}
+				log = "<b>* FECHA DE INICIO ANTES DEL CAMBIO:</b> " + fec_antes
+						+ ", <b>FECHA DE INICIO DESPUES DEL CAMBIO:</b> " + fec_despues;
+				listaLogs.add(log);
+			}
+		} else {
+			if (articulo_despues.getFec_inicio() != null) {
+				String fec_antes = "N/A", fec_despues = "N/A";
+				if (articulo_antes.getFec_inicio() != null) {
+					fec_antes = fechas.obtenerFechaFormateada(articulo_antes.getFec_inicio(), "dd/MM/yyyy");
+				} else {
+					fec_antes = "N/A";
+				}
+				if (articulo_despues.getFec_inicio() != null) {
+					fec_despues = fechas.obtenerFechaFormateada(articulo_despues.getFec_inicio(), "dd/MM/yyyy");
+				} else {
+					fec_despues = "N/A";
+				}
+				log = "<b>* FECHA DE INICIO ANTES DEL CAMBIO:</b> " + fec_antes
+						+ ", <b>FECHA DE INICIO DESPUES DEL CAMBIO:</b> " + fec_despues;
+				listaLogs.add(log);
+			}
+		}
+		if (articulo_antes.getFec_fin() != null) {
+			if (articulo_despues.getFec_fin() != null) {
+				if (!articulo_antes.getFec_fin().equals(articulo_despues.getFec_fin())) {
+					String fec_antes = "N/A", fec_despues = "N/A";
+					if (articulo_antes.getFec_fin() != null) {
+						fec_antes = fechas.obtenerFechaFormateada(articulo_antes.getFec_fin(), "dd/MM/yyyy");
+					} else {
+						fec_antes = "N/A";
+					}
+					if (articulo_despues.getFec_fin() != null) {
+						fec_despues = fechas.obtenerFechaFormateada(articulo_despues.getFec_fin(), "dd/MM/yyyy");
+					} else {
+						fec_despues = "N/A";
+					}
+					log = "<b>* FECHA FIN ANTES DEL CAMBIO:</b> " + fec_antes
+							+ ", <b>FECHA FIN DESPUES DEL CAMBIO:</b> " + fec_despues;
+					listaLogs.add(log);
+				}
+			} else {
+				String fec_antes = "N/A", fec_despues = "N/A";
+				if (articulo_antes.getFec_fin() != null) {
+					fec_antes = fechas.obtenerFechaFormateada(articulo_antes.getFec_fin(), "dd/MM/yyyy");
+				} else {
+					fec_antes = "N/A";
+				}
+				if (articulo_despues.getFec_fin() != null) {
+					fec_despues = fechas.obtenerFechaFormateada(articulo_despues.getFec_fin(), "dd/MM/yyyy");
+				} else {
+					fec_despues = "N/A";
+				}
+				log = "<b>* FECHA FIN ANTES DEL CAMBIO:</b> " + fec_antes + ", <b>FECHA FIN DESPUES DEL CAMBIO:</b> "
+						+ fec_despues;
+				listaLogs.add(log);
+			}
+		} else {
+			if (articulo_despues.getFec_fin() != null) {
+				String fec_antes = "N/A", fec_despues = "N/A";
+				if (articulo_antes.getFec_fin() != null) {
+					fec_antes = fechas.obtenerFechaFormateada(articulo_antes.getFec_fin(), "dd/MM/yyyy");
+				} else {
+					fec_antes = "N/A";
+				}
+				if (articulo_despues.getFec_fin() != null) {
+					fec_despues = fechas.obtenerFechaFormateada(articulo_despues.getFec_fin(), "dd/MM/yyyy");
+				} else {
+					fec_despues = "N/A";
+				}
+				log = "<b>* FECHA FIN ANTES DEL CAMBIO:</b> " + fec_antes + ", <b>FECHA FIN DESPUES DEL CAMBIO:</b> "
+						+ fec_despues;
+				listaLogs.add(log);
+			}
+		}
+		if (articulo_antes.getId_tip_respaldo() != articulo_despues.getId_tip_respaldo()) {
+			String nom_tip_respaldo_antes = "N/A", nom_tip_respaldo_despues = "N/A";
+			for (int i = 0; i < listaRespaldo.size(); i++) {
+				if (articulo_antes.getId_tip_respaldo() == listaRespaldo.get(i).getId_respaldo()) {
+					nom_tip_respaldo_antes = listaRespaldo.get(i).toNombreRespaldo();
+					i = listaRespaldo.size() + 1;
+				}
+			}
+			for (int i = 0; i < listaRespaldo.size(); i++) {
+				if (articulo_despues.getId_tip_respaldo() == listaRespaldo.get(i).getId_respaldo()) {
+					nom_tip_respaldo_despues = listaRespaldo.get(i).toNombreRespaldo();
+					i = listaRespaldo.size() + 1;
+				}
+			}
+			log = "<b>* TIPO DE RESPALDO ANTES DEL CAMBIO:</b> " + nom_tip_respaldo_antes
+					+ ", <b>TIPO DE RESPALDO DESPUES DEL CAMBIO:</b> " + nom_tip_respaldo_despues;
+			listaLogs.add(log);
+		}
+		if (!articulo_antes.getId_contenedor().equals(articulo_despues.getId_contenedor())) {
+			String id_contenedor_antes = "N/A", id_contenedor_despues = "N/A";
+			if (articulo_antes.getId_contenedor() != null) {
+				if (articulo_antes.getId_contenedor().length() > 0) {
+					id_contenedor_antes = articulo_antes.getId_contenedor();
+				}
+			}
+			if (articulo_despues.getId_contenedor() != null) {
+				if (articulo_despues.getId_contenedor().length() > 0) {
+					id_contenedor_despues = articulo_despues.getId_contenedor();
+				}
+			}
+			log = "<b>* ID CONTENEDOR ANTES DEL CAMBIO:</b> " + id_contenedor_antes
+					+ ", <b>ID CONTENEDOR DESPUES DEL CAMBIO:</b> " + id_contenedor_despues;
+			listaLogs.add(log);
+		}
+		if (articulo_antes.getId_ubicacion() != relacion_articulo_ubicacion.getId_ubicacion()) {
+			String nom_ubicacion_antes = "N/A", nom_ubicacion_despues = "N/A";
+			for (int i = 0; i < listaUbicacion.size(); i++) {
+				if (articulo_antes.getId_ubicacion() == listaUbicacion.get(i).getId_ubicacion()) {
+					nom_ubicacion_antes = listaUbicacion.get(i).obtenerNombreUbicacion();
+					i = listaUbicacion.size() + 1;
+				}
+			}
+			for (int i = 0; i < listaUbicacion.size(); i++) {
+				if (relacion_articulo_ubicacion.getId_ubicacion() == listaUbicacion.get(i).getId_ubicacion()) {
+					nom_ubicacion_despues = listaUbicacion.get(i).obtenerNombreUbicacion();
+					i = listaUbicacion.size() + 1;
+				}
+			}
+			log = "<b>* UBICACION ANTES DEL CAMBIO:</b> " + nom_ubicacion_antes
+					+ ", <b>UBICACION DESPUES DEL CAMBIO:</b> " + nom_ubicacion_despues;
+			listaLogs.add(log);
+		}
+		log = "LOS CAMBIOS REALIZADOS EN EL ARTICULO <b>" + articulo_antes.getCod_articulo() + "</b> SON:</br>  ";
+		if (listaLogs.size() > 0) {
+			for (int i = 0; i < listaLogs.size(); i++) {
+				log = log + listaLogs.get(i) + ".</br> ";
+			}
+		} else {
+			log = "";
+		}
+		return log.trim();
 	}
 
 }

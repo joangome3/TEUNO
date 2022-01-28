@@ -92,12 +92,12 @@
 													<div align="center"
 														style="height: 72vh;">
 														<listbox
-															mold="paging" id="lbxArticulos1"
+															mold="paging" id="lbxArticulos1"	
 															model="@{zOrganizar$organizar.obtenerArticulos1}"
 															vflex="true" sizedByContent="true" width="100%"
 															checkmark="true" multiple="true">
 															<listhead
-																sizable="false" style="overflow: scroll;">
+																sizable="false" style="overflow: scroll;" >
 																<listheader
 																	label="CÓDIGO">
 																</listheader>
@@ -105,12 +105,20 @@
 																	label="DESCRIPCIÓN">
 																</listheader>
 																<listheader
-																	label="TIPO">
+																	label="TIPO" style="text-align: center !important;">
 																</listheader>
+																<listheader
+																	label="CAPACIDAD"
+																	style="text-align: center !important;" visible="false"/>
+																<listheader
+																	label="FECHA INICIO RESPALDO"
+																	style="text-align: center !important;" />
+																<listheader
+																	label="FECHA FIN RESPALDO"
+																	style="text-align: center !important;" />
 															</listhead>
 															<listitem
-																self="@{each=lista}" draggable="true"
-																droppable="true">
+																self="@{each=lista}">
 																<listcell
 																	label="@{lista.getCod_articulo}">
 																</listcell>
@@ -118,8 +126,21 @@
 																	label="@{lista.getDes_articulo}">
 																</listcell>
 																<listcell
-																	label="@{lista.getNom_categoria}" style="@{lista.estiloMostrarCategoria}">
+																	label="@{lista.getNom_categoria}"
+																	style="@{lista.estiloMostrarCategoria}">
 																</listcell>
+																<listcell
+																	image="@{lista.mostrarImagenCapacidad}"
+																	label="@{lista.mostrarCapacidad}"
+																	style="text-align: center !important;" />
+																<listcell
+																	image="@{lista.mostrarImagenFechaInicio}"
+																	label="@{lista.mostrarFechaInicio}"
+																	style="text-align: center !important;" />
+																<listcell
+																	image="@{lista.mostrarImagenFechaFin}"
+																	label="@{lista.mostrarFechaFin}"
+																	style="text-align: center !important;" />
 															</listitem>
 														</listbox>
 													</div>
@@ -238,8 +259,17 @@
 																	label="DESCRIPCIÓN">
 																</listheader>
 																<listheader
-																	label="TIPO">
+																	label="TIPO" style="text-align: center !important;">
 																</listheader>
+																<listheader
+																	label="CAPACIDAD"
+																	style="text-align: center !important;" visible="false"/>
+																<listheader
+																	label="FECHA INICIO RESPALDO"
+																	style="text-align: center !important;" />
+																<listheader
+																	label="FECHA FIN RESPALDO"
+																	style="text-align: center !important;" />
 															</listhead>
 															<listitem
 																self="@{each=lista}" draggable="true"
@@ -251,8 +281,21 @@
 																	label="@{lista.getDes_articulo}">
 																</listcell>
 																<listcell
-																	label="@{lista.getNom_categoria}" style="@{lista.estiloMostrarCategoria}">
+																	label="@{lista.getNom_categoria}"
+																	style="@{lista.estiloMostrarCategoria}">
 																</listcell>
+																<listcell
+																	image="@{lista.mostrarImagenCapacidad}"
+																	label="@{lista.mostrarCapacidad}"
+																	style="text-align: center !important;" />
+																<listcell
+																	image="@{lista.mostrarImagenFechaInicio}"
+																	label="@{lista.mostrarFechaInicio}"
+																	style="text-align: center !important;" />
+																<listcell
+																	image="@{lista.mostrarImagenFechaFin}"
+																	label="@{lista.mostrarFechaFin}"
+																	style="text-align: center !important;" />
 															</listitem>
 														</listbox>
 													</div>

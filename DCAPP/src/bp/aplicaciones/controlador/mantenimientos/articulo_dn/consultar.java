@@ -42,7 +42,9 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
+import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
+import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_articulo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_respaldo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
@@ -58,7 +60,7 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Window zConsultar;
 	@Wire
-	Button btnNuevo, btnRefrescar;
+	Button btnNuevo, btnCargarArchivo, btnRefrescar;
 	@Wire
 	Textbox txtBuscar, txtBuscarUbicacion;
 	@Wire
@@ -70,7 +72,7 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Combobox cmbCategoria, cmbLimite, cmbEstado, cmbEmpresa1, cmbTipoUbicacion;
 	@Wire
-	Menuitem mSeguimiento, mSolicitar, mAccion, mModificar, mActivar, mInactivar;
+	Menuitem mSeguimiento, mSolicitar, mAccion, mModificar, mActivar, mInactivar, mCrearCaja;
 	@Wire
 	Menuseparator mSeparador1;
 	@Wire
@@ -96,6 +98,8 @@ public class consultar extends SelectorComposer<Component> {
 
 	validar_datos validar = new validar_datos();
 
+	boolean bandera = false;
+
 	List<modelo_articulo_dn> listaArticulo = new ArrayList<modelo_articulo_dn>();
 	List<modelo_categoria_dn> listaCategoria = new ArrayList<modelo_categoria_dn>();
 	List<modelo_ubicacion_dn> listaUbicacion = new ArrayList<modelo_ubicacion_dn>();
@@ -104,6 +108,7 @@ public class consultar extends SelectorComposer<Component> {
 	List<modelo_capacidad> listaCapacidad = new ArrayList<modelo_capacidad>();
 	List<modelo_empresa> listaEmpresa1 = new ArrayList<modelo_empresa>();
 	List<modelo_tipo_ubicacion> listaTipoUbicacion = new ArrayList<modelo_tipo_ubicacion>();
+	List<modelo_parametros_generales_5> listaParametros5 = new ArrayList<modelo_parametros_generales_5>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	ConsultasEnEnums consultasEnEnums = new ConsultasEnEnums();
@@ -179,6 +184,10 @@ public class consultar extends SelectorComposer<Component> {
 		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
 	}
 
+	public List<modelo_parametros_generales_5> obtenerParametros5() {
+		return listaParametros5;
+	}
+
 	public void inicializarListas() throws WrongValueException, Throwable {
 		listaArticulo = consultasABaseDeDatos.cargarArticulosDN("", id_dc,
 				cmbEstado.getSelectedItem().getValue().toString(), 1,
@@ -187,6 +196,7 @@ public class consultar extends SelectorComposer<Component> {
 		listaCapacidad = consultasABaseDeDatos.cargarCapacidadesDN("", 1, 0, 0);
 		listaCategoria = consultasABaseDeDatos.cargarCategoriasDN("", id_dc, 4, 0, 10);
 		listaUbicacion = consultasABaseDeDatos.cargarUbicacionesDN("", id_dc, 6, 0, 0, 0, 10);
+		listaParametros5 = consultasABaseDeDatos.cargarParametros5("", String.valueOf(id_opcion), 2);
 		binder.loadComponent(cmbCategoria);
 		binder.loadComponent(lbxUbicaciones);
 		binder.loadComponent(lbxArticulos);
@@ -203,7 +213,7 @@ public class consultar extends SelectorComposer<Component> {
 					".:: Cargar ubicacion ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
-	
+
 	public void cargarEmpresas1() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaEmpresa1 = consultasABaseDeDatos.cargarEmpresas("", 2, String.valueOf(id_dc), String.valueOf(id_opcion),
 				0);
@@ -653,6 +663,16 @@ public class consultar extends SelectorComposer<Component> {
 		if (ingresa_a_accion == true) {
 			return;
 		}
+		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
+			if (consultarPermisoUsuario() == false) {
+				if (validarSiExisteSolicitudPendienteActualizacion(
+						listaArticulo.get(indice).getId_articulo()) == false) {
+					Messagebox.show(informativos.getMensaje_informativo_29(), informativos.getMensaje_informativo_24(),
+							Messagebox.OK, Messagebox.EXCLAMATION);
+					return;
+				}
+			}
+		}
 		Sessions.getCurrent().setAttribute("articulo", listaArticulo.get(indice));
 		window = (Window) Executions.createComponents("/mantenimientos/articulo_dn/modificar.zul", null, null);
 		ingresa_a_accion = true;
@@ -794,8 +814,239 @@ public class consultar extends SelectorComposer<Component> {
 		window.setParent(winList);
 	}
 
+	@Listen("onClick=#btnCargarArchivo")
+	public void onClick$btnCargarArchivo() {
+		window = (Window) Executions.createComponents("/mantenimientos/articulo_dn/cargar_archivo.zul", null, null);
+		btnCargarArchivo.setDisabled(true);
+		if (window instanceof Window) {
+			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+				@Override
+				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+					btnCargarArchivo.setDisabled(false);
+					try {
+						buscarArticulos();
+					} catch (WrongValueException e) {
+						e.printStackTrace();
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		window.setParent(winList);
+	}
+
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		txtBuscar.setText("");
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Listen("onClick=#mCrearCaja")
+	public void onClick$mCrearCaja() throws WrongValueException, Throwable {
+		bandera = false;
+		if (lbxArticulos.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxArticulos.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxArticulos.getSelectedIndex();
+		if (listaArticulo.get(indice).getId_categoria() == 2) {
+			Messagebox.show(informativos.getMensaje_informativo_122(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (listaArticulo.get(indice).getEst_articulo().charAt(0) == 'I') {
+			Messagebox.show(informativos.getMensaje_informativo_92(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (listaArticulo.get(indice).getEst_articulo().equals("PAC")) {
+			if (validarSiExisteSolicitudPendienteActualizacion(listaArticulo.get(indice).getId_articulo()) == false) {
+				Messagebox.show(informativos.getMensaje_informativo_107(), informativos.getMensaje_informativo_24(),
+						Messagebox.OK, Messagebox.EXCLAMATION);
+				return;
+			}
+		}
+		String nom_ubicacion = "";
+		for (int i = 0; i < listaUbicacion.size(); i++) {
+			if (listaUbicacion.get(i).getId_ubicacion() == listaArticulo.get(indice).getId_ubicacion()) {
+				nom_ubicacion = listaUbicacion.get(i).toStringUbicacion();
+				i = listaUbicacion.size() + 1;
+			}
+		}
+		/*
+		 * Se valida que el item si es caja no se pueda mover a una ubicacion no
+		 * permitida
+		 */
+		if (listaArticulo.get(indice).getId_ubicacion() <= 3 || listaArticulo.get(indice).getId_ubicacion() >= 134) {
+			Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
+					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		/*
+		 * Se valida que no se supere la capacidad permitida en la ubicacion
+		 * seleccionada
+		 */
+		String seValidaCapacidad = consultasABaseDeDatos
+				.seValidaCapacidadEnUbicacionDN(listaArticulo.get(indice).getId_ubicacion());
+		if (seValidaCapacidad.equals("S")) {
+			int capacidadMaxima = consultasABaseDeDatos
+					.capacidadMaximaEnUbicacionDN(listaArticulo.get(indice).getId_ubicacion(), seValidaCapacidad);
+			int totalArticulos = consultasABaseDeDatos
+					.totalArticulosEnUbicacionDN(listaArticulo.get(indice).getId_ubicacion());
+			if ((totalArticulos + 1) > capacidadMaxima) {
+				Messagebox.show(informativos.getMensaje_informativo_123().replace("?1", nom_ubicacion),
+						informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.INFORMATION);
+				return;
+			}
+		}
+		/* Se valida los atributos del item */
+		if (listaArticulo.get(indice).getSi_ing_fec_inicio_fin().equals("S")) {
+			if (listaArticulo.get(indice).getEs_fecha().equals("S")) {
+				/*
+				 * Se valida si un articulo tiene el mismo codigo, fecha inicio
+				 * 
+				 */
+				String fecha_inicio = fechas.obtenerFechaFormateada(listaArticulo.get(indice).getFec_inicio(),
+						"yyyy/MM/dd");
+				if (listaArticulo.get(indice).getFec_fin() == null) {
+					int totalArticulos = consultasABaseDeDatos.validarSiCodigoYFechaDeInicioDeArticuloExiste(
+							listaArticulo.get(indice).getCod_articulo(), fecha_inicio, 2);
+					if (totalArticulos > 0) {
+						Messagebox.show(informativos.getMensaje_informativo_18(),
+								informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.INFORMATION);
+						return;
+					}
+				} else {
+					/*
+					 * Se valida si un articulo tiene el mismo codigo, fecha inicio y fecha de fin
+					 */
+					String fecha_fin = fechas.obtenerFechaFormateada(listaArticulo.get(indice).getFec_fin(),
+							"yyyy/MM/dd");
+					int totalArticulos = consultasABaseDeDatos.validarSiCodigoYFechaDeInicioYFechaDeFinDeArticuloExiste(
+							listaArticulo.get(indice).getCod_articulo(), fecha_inicio, fecha_fin, 2);
+					if (totalArticulos > 0) {
+						Messagebox.show(informativos.getMensaje_informativo_19(),
+								informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.INFORMATION);
+						return;
+					}
+				}
+			}
+		}
+		/* Se valida si tiene el mismo codigo */
+		if (listaArticulo.get(indice).getSi_ing_fec_inicio_fin().equals("N")
+				|| listaArticulo.get(indice).getEs_fecha().equals("N")) {
+			List<modelo_articulo_dn> _listaArticulo = new ArrayList<modelo_articulo_dn>();
+			_listaArticulo = consultasABaseDeDatos.cargarArticulosDN(listaArticulo.get(indice).getCod_articulo(), id_dc,
+					"2", 13, 0, "", "");
+			if (_listaArticulo.size() > 0) {
+				Messagebox.show(
+						informativos.getMensaje_informativo_124().replace("?1",
+								listaArticulo.get(indice).getCod_articulo()),
+						informativos.getMensaje_informativo_24(), Messagebox.OK | Messagebox.CANCEL, Messagebox.ERROR,
+						new org.zkoss.zk.ui.event.EventListener() {
+							public void onEvent(Event evt) throws InterruptedException, ClassNotFoundException,
+									FileNotFoundException, SQLException, IOException {
+								if (evt.getName().equals("onOK")) {
+									dao_articulo_dn dao = new dao_articulo_dn();
+									modelo_articulo_dn articulo = new modelo_articulo_dn();
+									List<modelo_relacion_articulo_ubicacion_dn> listaRelacion = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+									modelo_relacion_articulo_ubicacion_dn relacion = new modelo_relacion_articulo_ubicacion_dn();
+									articulo = listaArticulo.get(indice);
+									articulo.setId_categoria(2);
+									articulo.setEst_articulo("AE");
+									articulo.setUsu_ingresa(user);
+									articulo.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									relacion.setId_ubicacion(articulo.getId_ubicacion());
+									relacion.setSto_articulo(1);
+									relacion.setEst_relacion("A");
+									relacion.setUsu_ingresa(user);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									listaRelacion.add(relacion);
+									try {
+										dao.insertarArticulo(articulo, listaRelacion, 0, null, null);
+										Messagebox.show(informativos.getMensaje_informativo_20(),
+												informativos.getMensaje_informativo_24(), Messagebox.OK,
+												Messagebox.EXCLAMATION);
+										buscarArticulos();
+									} catch (Exception e) {
+										Messagebox.show(
+												error.getMensaje_error_4() + error.getMensaje_error_1()
+														+ e.getMessage(),
+												informativos.getMensaje_informativo_24(), Messagebox.OK,
+												Messagebox.EXCLAMATION);
+									} catch (Throwable e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							}
+						});
+			} else {
+				bandera = true;
+			}
+		} else {
+			bandera = true;
+		}
+		if (bandera == false) {
+			return;
+		}
+		Messagebox.show(
+				informativos.getMensaje_informativo_128().replace("?1", listaArticulo.get(indice).getCod_articulo()),
+				informativos.getMensaje_informativo_24(), Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION,
+				new org.zkoss.zk.ui.event.EventListener() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						if (event.getName().equals("onOK")) {
+							dao_articulo_dn dao = new dao_articulo_dn();
+							modelo_articulo_dn articulo = new modelo_articulo_dn();
+							List<modelo_relacion_articulo_ubicacion_dn> listaRelacion = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+							modelo_relacion_articulo_ubicacion_dn relacion = new modelo_relacion_articulo_ubicacion_dn();
+							articulo = listaArticulo.get(indice);
+							articulo.setId_categoria(2);
+							articulo.setEst_articulo("AE");
+							articulo.setUsu_ingresa(user);
+							articulo.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							relacion.setId_ubicacion(articulo.getId_ubicacion());
+							relacion.setSto_articulo(1);
+							relacion.setEst_relacion("A");
+							relacion.setUsu_ingresa(user);
+							relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+							listaRelacion.add(relacion);
+							try {
+								dao.insertarArticulo(articulo, listaRelacion, 0, null, null);
+								Messagebox.show(informativos.getMensaje_informativo_20(),
+										informativos.getMensaje_informativo_24(), Messagebox.OK,
+										Messagebox.EXCLAMATION);
+								buscarArticulos();
+							} catch (Exception e) {
+								Messagebox.show(
+										error.getMensaje_error_4() + error.getMensaje_error_1() + e.getMessage(),
+										informativos.getMensaje_informativo_24(), Messagebox.OK,
+										Messagebox.EXCLAMATION);
+							} catch (Throwable e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+				});
+	}
+
+	public boolean consultarPermisoUsuario() {
+		boolean tiene_permiso = false;
+		Iterator<modelo_parametros_generales_5> it = listaParametros5.iterator();
+		while (it.hasNext()) {
+			modelo_parametros_generales_5 modelo = it.next();
+			if (modelo.getId_usuario() == id_user) {
+				tiene_permiso = true;
+				break;
+			}
+		}
+		return tiene_permiso;
 	}
 
 }
