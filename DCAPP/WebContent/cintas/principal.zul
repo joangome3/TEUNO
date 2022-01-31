@@ -30,6 +30,15 @@
 								<treeitem>
 									<treerow>
 										<treecell
+											image="/img/botones/ButtonNew3.png"
+											label=" - Cargar archivo - Nuevo articulo" id="tcOpcion6"
+											style="font-style: normal !important; font-weight: normal;">
+										</treecell>
+									</treerow>
+								</treeitem>
+								<treeitem>
+									<treerow>
+										<treecell
 											image="/img/botones/ButtonOrganize3.png"
 											label=" - Organizar articulos" id="tcOpcion4"
 											style="font-style: normal !important; font-weight: normal;">

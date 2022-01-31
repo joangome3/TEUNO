@@ -71,7 +71,7 @@ public class dashboard extends SelectorComposer<Component> {
 			tcMantenimientoCategorias1, tcMantenimientoSesiones, tcMantenimientoRespaldos, tcMantenimientoCapacidades,
 			tcMantenimientoCategorias2, tcMantenimientoUbicaciones2, tcMantenimientoSolicitudes, tcManosRemotas,
 			tcMantenimientoInformativos, tcBodega, tcBitacora, tcControlCambioGenerar, tcCintas, tcAcercaDe, tcDBodega,
-			tcDBitacora, tcPersonal;
+			tcDBitacora, tcPersonal, tcMantenimientoManuales;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -94,7 +94,8 @@ public class dashboard extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	String mlocalidades, mparametros, mperfiles, musuarios, mempresas, msolicitantes, mcategorias1, mubicaciones1,
-			marticulos, msesiones, mrespaldos, mcapacidades, mcategorias2, mubicaciones2, msolicitudes, minformativos;
+			marticulos, msesiones, mrespaldos, mcapacidades, mcategorias2, mubicaciones2, msolicitudes, minformativos,
+			mmanuales;
 	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas, oPersonal, oManosRemotas;
 
 	List<modelo_solicitud> listaSolicitud = new ArrayList<modelo_solicitud>();
@@ -415,7 +416,7 @@ public class dashboard extends SelectorComposer<Component> {
 	public void onClick$tcAcercaDe() throws ClassNotFoundException, FileNotFoundException, IOException {
 		Messagebox.show(
 				"Sistema creado para integrar aplicaciones que permitan tener un mejor control de la información que se registra en el Datacenter.",
-				".:: DC Aplicaciones v1.9 ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+				".:: DC Aplicaciones v2.5 ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -544,6 +545,11 @@ public class dashboard extends SelectorComposer<Component> {
 				minformativos = "S";
 			} else {
 				minformativos = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "20", 1) == true) {
+				mmanuales = "S";
+			} else {
+				mmanuales = "N";
 			}
 		} catch (SQLException e) {
 			Messagebox.show(
@@ -683,6 +689,12 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tcMantenimientoInformativos.setDisabled(true);
 			tcMantenimientoInformativos.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mmanuales.equals("S")) {
+			tcMantenimientoManuales.setDisabled(false);
+		} else {
+			tcMantenimientoManuales.setDisabled(true);
+			tcMantenimientoManuales.setTooltiptext("No tiene permisos para usar esta configuración.");
 		}
 	}
 
@@ -1509,6 +1521,37 @@ public class dashboard extends SelectorComposer<Component> {
 			Tabpanel tabpanel = new Tabpanel();
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/mantenimientos/informativo/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Listen("onClick=#tcMantenimientoManuales")
+	public void onClick$tcMantenimientoManuales() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoManuales.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoManuales.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTIÓN DE MANUALES - MANUALES Y ARCHIVOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoManuales.getId());
+			tab.setImage("/img/botones/ButtonManual2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/manuales/consultar.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

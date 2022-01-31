@@ -57,6 +57,15 @@ public class modelo_articulo_dn {
 		return articulo_dn;
 	}
 
+	public modelo_articulo_dn clone1() {
+		modelo_articulo_dn articulo_dn = new modelo_articulo_dn(this.id_articulo, this.cod_articulo, this.des_articulo,
+				this.id_categoria, this.id_ubicacion, this.pos_ubicacion, this.sto_articulo, this.img_articulo,
+				this.id_localidad, this.id_capacidad, this.si_ing_fec_inicio_fin, this.es_fecha, this.id_fec_respaldo,
+				this.fec_inicio, this.fec_fin, this.id_tip_respaldo, this.id_contenedor, this.est_articulo,
+				this.usu_ingresa, this.fec_ingresa, this.usu_modifica, this.fec_modifica);
+		return articulo_dn;
+	}
+
 	/**
 	 * @param id_articulo
 	 * @param est_articulo

@@ -31,7 +31,7 @@
 											<space width="5px"></space>
 											<button id="btnCargarArchivo"
 												image="/img/botones/ButtonUp2.png" tooltiptext="Cargar archivo"
-												autodisable="self" />
+												autodisable="self" visible="false"/>
 											<space width="5px"></space>
 											<button id="btnRefrescar"
 												image="/img/botones/ButtonRefresh.png"

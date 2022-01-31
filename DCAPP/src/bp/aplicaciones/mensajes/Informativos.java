@@ -133,6 +133,8 @@ public class Informativos {
 	private String mensaje_informativo_129 = "El artículo es del tipo caja y no puede moverse a la ubicación ?1.";
 	private String mensaje_informativo_130 = "El artículo con código ?1 es del tipo caja y no puede moverse a la ubicación ?2.";
 	private String mensaje_informativo_131 = ".:: Cerrar turno ::.";
+	private String mensaje_informativo_132 = "El item no se puede mover debido a que se supera la capacidad permitida de la ubicación, se consideran todos los registros de esta lista que se encuentran en la ubicacion ?1.";
+	private String mensaje_informativo_133 = "El item no se puede mover debido a que se supera la capacidad permitida de la ubicación, considerar que para este item se está realizando la creación de la caja, se consideran todos los registros de esta lista que se encuentran en la ubicacion ?1.";
 
 	public Informativos() {
 
@@ -660,6 +662,14 @@ public class Informativos {
 
 	public String getMensaje_informativo_131() {
 		return mensaje_informativo_131;
+	}
+
+	public String getMensaje_informativo_132() {
+		return mensaje_informativo_132;
+	}
+
+	public String getMensaje_informativo_133() {
+		return mensaje_informativo_133;
 	}
 
 }

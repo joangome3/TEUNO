@@ -1,0 +1,83 @@
+<?page title="Cargar archivo" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div height="100%" width="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.articulo_dn.cargar_archivo"
+		align="center">
+		<grid>
+			<custom-attributes org.zkoss.zul.nativebar="false" />
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2">
+						<button id="btnGrabar"
+							image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+							autodisable="self" />
+							<space></space>
+							<button id="btnLimpiar"
+							image="/img/botones/ButtonRefresh.png" tooltiptext="Limpiar"
+							autodisable="self" />
+						<space width="30px"></space>
+						<textbox id="txtRuta" width="15%"
+							readonly="true" style="font-style: italic !important;">
+						</textbox>
+						<button id="btnCargar"
+							tooltiptext="Buscar archivo" autodisable="self"
+							upload="true, maxsize=1000" disabled="false"
+							image="/img/botones/ButtonEye.png" class="btn btn-info">
+						</button>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox id="lbxArticulos" mold="paging"
+					sizedByContent="true" width="100%" vflex="1" multiple="true">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="ACCIONES"
+							style="text-align: center !important;" />
+						<listheader label="ITEM"
+							style="text-align: center !important;" />
+						<listheader label="CODIGO"
+							style="text-align: center !important;" />
+						<listheader label="DESCRIPCION"
+							style="text-align: center !important;" />
+						<listheader label="CATEGORIA"
+							style="text-align: center !important;" />
+						<listheader label="¿DESEA CREAR CAJA?"
+							style="text-align: center !important;" />
+						<listheader label="CAPACIDAD"
+							style="text-align: center !important;" />
+						<listheader
+							label="¿DESEA REGISTRAR LA FECHA DE RESPALDO?"
+							style="text-align: center !important;" />
+						<listheader label="¿ES DEL TIPO FECHA?"
+							style="text-align: center !important;" />
+						<listheader label="FECHA INICIO RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="FECHA FIN RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="FECHA DE RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="TIPO RESPALDO"
+							style="text-align: center !important;" />
+						<listheader label="ID CONTENEDOR"
+							style="text-align: center !important;" />
+						<listheader label="UBICACION"
+							style="text-align: center !important;" />
+					</listhead>
+				</listbox>
+			</hlayout>
+		</vlayout>
+	</div>
+	<zscript>
+		<![CDATA[
+	lbxArticulos.pagingChild.mold = "os".equals(lbxArticulos.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+</zk>

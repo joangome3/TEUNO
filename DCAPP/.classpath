@@ -19,7 +19,10 @@
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/args4j.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/breeze.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/bsh.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/calendar.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/calendar-sources.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/chartjs-zk-2.7.3.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/chosenbox.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/ckez.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/closure-compiler-externs.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/closure-compiler-unshaded.jar"/>
@@ -32,6 +35,7 @@
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/commons-io.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/commons-javaflow-20060411.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/dwr.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/error_prone_annotations.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/flashchart.jar"/>
@@ -48,13 +52,18 @@
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jasperreports-functions-6.13.0.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jasperreports-javaflow-6.0.3.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/javassist.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/javax.activation-1.2.0.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jaxb-api-2.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jaxb-core-2.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jaxb-impl-2.3.0.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jcommon-1.0.8.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jfreechart-1.0.12.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/joda-time-2.9.9.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jsinterop-annotations.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jsr305.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/jxl-2.6.10.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/mysql-connector-java-5.1.15-bin.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/poi-3.10.1.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/poi-ooxml-3.10.1.jar"/>
@@ -64,9 +73,11 @@
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/silvertail.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/slf4j-jdk14.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/spire_2.12-0.13.0.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/spring-asm-3.0.5.RELEASE.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/spring-beans-2.5.5.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/spring-core-2.5.5.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/zcommon.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/zel.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/zhtml.jar"/>
@@ -83,9 +94,6 @@
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/zul.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/zweb.jar"/>
 	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/zweb-dsp.jar"/>
-	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/calendar.jar"/>
-	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/calendar-sources.jar"/>
-	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/xmlbeans-2.3.0.jar"/>
-	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/git/TEUNO/DCAPP/WebContent/WEB-INF/lib/Spire.Pdf.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

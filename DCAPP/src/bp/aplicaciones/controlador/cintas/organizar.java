@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,9 +34,11 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
+import bp.aplicaciones.mantenimientos.modelo.modelo_log_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
 import bp.aplicaciones.mensajes.Informativos;
@@ -89,6 +92,8 @@ public class organizar extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+
+	Fechas fechas = new Fechas();
 
 	int bandera = 0;
 
@@ -760,9 +765,34 @@ public class organizar extends SelectorComposer<Component> {
 			SQLException, IOException {
 		final int pos_ubicacion = consultasABaseDeDatos
 				.posicionMaximaEnUbicacionDN(listaUbicacion2.get(indexUbicacion).getId_ubicacion()) + 1;
+		String log = "";
+		List<String> listaLogs = new ArrayList<String>();
+		String nom_ubicacion_antes = "N/A", nom_ubicacion_despues = "N/A";
+		nom_ubicacion_antes = bdxUbicacion1.getText();
+		nom_ubicacion_despues = bdxUbicacion2.getText();
+		log = "<b>* UBICACION ANTES DEL CAMBIO:</b> " + nom_ubicacion_antes + ", <b>UBICACION DESPUES DEL CAMBIO:</b> "
+				+ nom_ubicacion_despues;
+		listaLogs.add(log);
+		log = "LOS CAMBIOS REALIZADOS EN EL ARTICULO <b>" + listaArticulo1.get(indexArticulo).getCod_articulo()
+				+ "</b> SON:</br>  ";
+		if (listaLogs.size() > 0) {
+			for (int i = 0; i < listaLogs.size(); i++) {
+				log = log + listaLogs.get(i) + ".</br> ";
+			}
+		} else {
+			log = "";
+		}
+		log = log.trim();
+		modelo_log_articulo_dn modelo_log = new modelo_log_articulo_dn();
+		modelo_log.setId_articulo(listaArticulo1.get(indexArticulo).getId_articulo());
+		modelo_log.setDes_log(log);
+		modelo_log.setMot_log("ORGANIZAR ARTICULOS");
+		modelo_log.setEst_log("AE");
+		modelo_log.setUsu_ingresa(user);
+		modelo_log.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 		dao_articulo_dn dao = new dao_articulo_dn();
 		if (dao.actualizarUbicacionArticuloIzquierdaDerecha(listaArticulo1.get(indexArticulo).getId_articulo(),
-				listaUbicacion2.get(indexUbicacion).getId_ubicacion(), pos_ubicacion, 1)) {
+				listaUbicacion2.get(indexUbicacion).getId_ubicacion(), pos_ubicacion, 1, modelo_log)) {
 			listaArticulo2.add(listaArticulo1.get(indexArticulo));
 			listaArticulo2.get(listaArticulo2.size() - 1).setPos_ubicacion(pos_ubicacion);
 			listaArticulo1.remove(indexArticulo);
@@ -776,9 +806,34 @@ public class organizar extends SelectorComposer<Component> {
 			SQLException, IOException {
 		final int pos_ubicacion = consultasABaseDeDatos
 				.posicionMaximaEnUbicacionDN(listaUbicacion1.get(indexUbicacion).getId_ubicacion()) + 1;
+		String log = "";
+		List<String> listaLogs = new ArrayList<String>();
+		String nom_ubicacion_antes = "N/A", nom_ubicacion_despues = "N/A";
+		nom_ubicacion_antes = bdxUbicacion2.getText();
+		nom_ubicacion_despues = bdxUbicacion1.getText();
+		log = "<b>* UBICACION ANTES DEL CAMBIO:</b> " + nom_ubicacion_antes + ", <b>UBICACION DESPUES DEL CAMBIO:</b> "
+				+ nom_ubicacion_despues;
+		listaLogs.add(log);
+		log = "LOS CAMBIOS REALIZADOS EN EL ARTICULO <b>" + listaArticulo2.get(indexArticulo).getCod_articulo()
+				+ "</b> SON:</br>  ";
+		if (listaLogs.size() > 0) {
+			for (int i = 0; i < listaLogs.size(); i++) {
+				log = log + listaLogs.get(i) + ".</br> ";
+			}
+		} else {
+			log = "";
+		}
+		log = log.trim();
+		modelo_log_articulo_dn modelo_log = new modelo_log_articulo_dn();
+		modelo_log.setId_articulo(listaArticulo2.get(indexArticulo).getId_articulo());
+		modelo_log.setDes_log(log);
+		modelo_log.setMot_log("ORGANIZAR ARTICULOS");
+		modelo_log.setEst_log("AE");
+		modelo_log.setUsu_ingresa(user);
+		modelo_log.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 		dao_articulo_dn dao = new dao_articulo_dn();
 		if (dao.actualizarUbicacionArticuloIzquierdaDerecha(listaArticulo2.get(indexArticulo).getId_articulo(),
-				listaUbicacion1.get(indexUbicacion).getId_ubicacion(), pos_ubicacion, 1)) {
+				listaUbicacion1.get(indexUbicacion).getId_ubicacion(), pos_ubicacion, 1, modelo_log)) {
 			listaArticulo1.add(listaArticulo2.get(indexArticulo));
 			listaArticulo1.get(listaArticulo1.size() - 1).setPos_ubicacion(pos_ubicacion);
 			listaArticulo2.remove(indexArticulo);
@@ -792,9 +847,32 @@ public class organizar extends SelectorComposer<Component> {
 			SQLException, IOException {
 		final int pos_ubicacion = consultasABaseDeDatos
 				.posicionMaximaEnUbicacionDN(listaUbicacion2.get(indexUbicacion).getId_ubicacion()) + 1;
+		String log = "";
+		List<String> listaLogs = new ArrayList<String>();
+		String nom_ubicacion_antes = "N/A", nom_ubicacion_despues = "N/A";
+		nom_ubicacion_antes = bdxUbicacion1.getText();
+		nom_ubicacion_despues = bdxUbicacion2.getText();
+		log = "<b>* UBICACION ANTES DEL CAMBIO:</b> " + nom_ubicacion_antes + ", <b>UBICACION DESPUES DEL CAMBIO:</b> "
+				+ nom_ubicacion_despues;
+		listaLogs.add(log);
+		log = "LOS CAMBIOS REALIZADOS EN EL ARTICULO <b> ?1 </b> SON:</br>  ";
+		if (listaLogs.size() > 0) {
+			for (int i = 0; i < listaLogs.size(); i++) {
+				log = log + listaLogs.get(i) + ".</br> ";
+			}
+		} else {
+			log = "";
+		}
+		log = log.trim();
+		modelo_log_articulo_dn modelo_log = new modelo_log_articulo_dn();
+		modelo_log.setDes_log(log);
+		modelo_log.setMot_log("ORGANIZAR ARTICULOS");
+		modelo_log.setEst_log("AE");
+		modelo_log.setUsu_ingresa(user);
+		modelo_log.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 		dao_articulo_dn dao = new dao_articulo_dn();
 		if (dao.actualizarUbicacionArticulos(listaArticulos, listaUbicacion2.get(indexUbicacion).getId_ubicacion(),
-				pos_ubicacion, 1)) {
+				pos_ubicacion, 1, modelo_log)) {
 			Iterator<Listitem> it = lbxArticulos1.getSelectedItems().iterator();
 			int pos = pos_ubicacion;
 			while (it.hasNext()) {
@@ -815,9 +893,32 @@ public class organizar extends SelectorComposer<Component> {
 			SQLException, IOException {
 		final int pos_ubicacion = consultasABaseDeDatos
 				.posicionMaximaEnUbicacionDN(listaUbicacion1.get(indexUbicacion).getId_ubicacion()) + 1;
+		String log = "";
+		List<String> listaLogs = new ArrayList<String>();
+		String nom_ubicacion_antes = "N/A", nom_ubicacion_despues = "N/A";
+		nom_ubicacion_antes = bdxUbicacion2.getText();
+		nom_ubicacion_despues = bdxUbicacion1.getText();
+		log = "<b>* UBICACION ANTES DEL CAMBIO:</b> " + nom_ubicacion_antes + ", <b>UBICACION DESPUES DEL CAMBIO:</b> "
+				+ nom_ubicacion_despues;
+		listaLogs.add(log);
+		log = "LOS CAMBIOS REALIZADOS EN EL ARTICULO <b> ?1 </b> SON:</br>  ";
+		if (listaLogs.size() > 0) {
+			for (int i = 0; i < listaLogs.size(); i++) {
+				log = log + listaLogs.get(i) + ".</br> ";
+			}
+		} else {
+			log = "";
+		}
+		log = log.trim();
+		modelo_log_articulo_dn modelo_log = new modelo_log_articulo_dn();
+		modelo_log.setDes_log(log);
+		modelo_log.setMot_log("ORGANIZAR ARTICULOS");
+		modelo_log.setEst_log("AE");
+		modelo_log.setUsu_ingresa(user);
+		modelo_log.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 		dao_articulo_dn dao = new dao_articulo_dn();
 		if (dao.actualizarUbicacionArticulos(listaArticulos, listaUbicacion1.get(indexUbicacion).getId_ubicacion(),
-				pos_ubicacion, 1)) {
+				pos_ubicacion, 1, modelo_log)) {
 			Iterator<Listitem> it = lbxArticulos2.getSelectedItems().iterator();
 			int pos = pos_ubicacion;
 			while (it.hasNext()) {

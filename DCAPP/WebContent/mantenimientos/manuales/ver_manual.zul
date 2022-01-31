@@ -1,0 +1,21 @@
+<?page title="MANUAL" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window title="MANUAL" border="normal" position="center, center"
+		sizable="false" width="70%" height="85%" maximizable="false"
+		minimizable="false" shadow="false" mode="overlapped" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimiento.manuales.ver_manual" id="zManual">
+		<space></space>
+		<borderlayout vflex="max" style="height: calc(100%);"
+			width="100%">
+			<center style="overflow: scroll;">
+				<div width="100%" align="center" height="99%">
+					<iframe id="frManual" visible="true"
+						style="width:99%; height:800px;border:3px inset;" autohide="false">
+					</iframe>
+				</div>
+			</center>
+		</borderlayout>
+		<space></space>
+	</window>
+</zk>

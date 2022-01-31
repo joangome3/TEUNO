@@ -201,6 +201,18 @@
 												height="35px" class="m-item" />
 										</menupopup>
 									</menu>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonManual2.png"
+										label=" - Gestión de manuales" height="35px"
+										class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonManual1.png"
+												label=" - Manuales y archivos" id="tcMantenimientoManuales"
+												height="35px" class="m-item" />
+										</menupopup>
+									</menu>
 								</menupopup>
 							</menu>
 							<menu image="/img/botones/ButtonHelp1.png"
@@ -210,20 +222,20 @@
 									<menuitem
 										image="/img/botones/ButtonPDF3.png"
 										label=" - Descargar manual Gestión de bodega" height="35px"
-										class="m-item" />
+										class="m-item" visible="false"/>
 									<menuseparator visible="false" />
 									<menuitem
 										image="/img/botones/ButtonPDF3.png"
 										label=" - Descargar manual Gestión de bitacora y control de cambio"
-										height="35px" class="m-item" />
+										height="35px" class="m-item" visible="false"/>
 									<menuitem
 										image="/img/botones/ButtonPDF3.png"
 										label=" - Descargar manual Gestión de cintas" height="35px"
-										class="m-item" />
+										class="m-item" visible="false"/>
 									<menuseparator visible="false" />
 									<menuitem
 										image="/img/botones/ButtonAbout2.png" label=" - Acerca de."
-										id="tcAcercaDe" height="35px" class="m-item" />
+										id="tcAcercaDe" height="35px" class="m-item" visible="true"/>
 								</menupopup>
 							</menu>
 						</menubar>

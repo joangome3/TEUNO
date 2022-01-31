@@ -26,7 +26,7 @@ public class principal extends SelectorComposer<Component> {
 	@Wire
 	Div zPrincipal;
 	@Wire
-	Treecell tcOpcion1, tcOpcion2, tcOpcion3, tcOpcion4, tcOpcion5, tcReporte1, tcReporte2, tcReporte3, tcReporte4;
+	Treecell tcOpcion1, tcOpcion2, tcOpcion3, tcOpcion4, tcOpcion5, tcOpcion6, tcReporte1, tcReporte2, tcReporte3, tcReporte4;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -138,6 +138,39 @@ public class principal extends SelectorComposer<Component> {
 			tabpanel.setStyle("height: calc(100%);");
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/cintas/articulo/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Listen("onClick=#tcOpcion6")
+	public void onClick$tcOpcion6() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcOpcion6.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcOpcion6.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE CINTAS - CARGAR ARCHIVO - NUEVO ARTICULO");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcOpcion6.getId());
+			tab.setImage("/img/botones/ButtonNew4.png");
+			tTab.getTabs().appendChild(tab);
+			Tabpanel tabpanel = new Tabpanel();
+			tabpanel.setVflex("max");
+			tabpanel.setWidth("100%");
+			tabpanel.setStyle("height: calc(100%);");
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/cintas/articulo/cargar_archivo.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

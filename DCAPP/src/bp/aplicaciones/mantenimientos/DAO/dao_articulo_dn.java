@@ -785,8 +785,8 @@ public class dao_articulo_dn {
 	}
 
 	public boolean actualizarUbicacionArticuloIzquierdaDerecha(Long id_articulo, long id_ubicacion, int pos_ubicacion,
-			int tipo) throws SQLException, MySQLIntegrityConstraintViolationException, ClassNotFoundException,
-			FileNotFoundException, IOException {
+			int tipo, modelo_log_articulo_dn log) throws SQLException, MySQLIntegrityConstraintViolationException,
+			ClassNotFoundException, FileNotFoundException, IOException {
 		boolean ingresoCorrecto = false;
 		conexion conexion = new conexion();
 		try {
@@ -798,9 +798,22 @@ public class dao_articulo_dn {
 			consulta.setInt(3, pos_ubicacion);
 			consulta.setInt(4, tipo);
 			consulta.executeUpdate();
+			dao_log_articulo_dn dao = new dao_log_articulo_dn();
+			long id = 0;
+			id = dao.obtenerNuevoId();
+			consulta = conexion.abrir().prepareStatement("{CALL articuloDN_insertarLog (?, ?, ?, ?, ?, ?, ?)}");
+			consulta.setLong(1, id);
+			consulta.setLong(2, log.getId_articulo());
+			consulta.setString(3, log.getDes_log());
+			consulta.setString(4, log.getMot_log());
+			consulta.setString(5, log.getEst_log());
+			consulta.setString(6, log.getUsu_ingresa());
+			consulta.setTimestamp(7, log.getFec_ingresa());
+			consulta.executeUpdate();
 			consulta.close();
 			conexion.abrir().commit();
 			ingresoCorrecto = true;
+
 		} catch (SQLException ex) {
 			ingresoCorrecto = false;
 			conexion.abrir().rollback();
@@ -853,15 +866,17 @@ public class dao_articulo_dn {
 	}
 
 	public boolean actualizarUbicacionArticulos(List<modelo_articulo_dn> listaArticulos, long id_ubicacion,
-			int pos_ubicacion, int tipo) throws SQLException, MySQLIntegrityConstraintViolationException,
-			ClassNotFoundException, FileNotFoundException, IOException {
+			int pos_ubicacion, int tipo, modelo_log_articulo_dn log) throws SQLException,
+			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
 		boolean ingresoCorrecto = false;
 		try {
-			conexion.abrir().setAutoCommit(false);
+			conexion.abrir().setAutoCommit(true);
 			PreparedStatement consulta = null;
 			Iterator<modelo_articulo_dn> it = listaArticulos.iterator();
 			int pos = pos_ubicacion;
+			long id = 0;
+			dao_log_articulo_dn dao = new dao_log_articulo_dn();
 			while (it.hasNext()) {
 				consulta = conexion.abrir()
 						.prepareStatement("{CALL articulodn_actualizarubicacionarticulo (?, ?, ?, ?)}");
@@ -871,18 +886,28 @@ public class dao_articulo_dn {
 				consulta.setInt(3, pos);
 				consulta.setInt(4, tipo);
 				consulta.executeUpdate();
+				id = dao.obtenerNuevoId();
+				consulta = conexion.abrir().prepareStatement("{CALL articuloDN_insertarLog (?, ?, ?, ?, ?, ?, ?)}");
+				consulta.setLong(1, id);
+				consulta.setLong(2, articulo.getId_articulo());
+				consulta.setString(3, log.getDes_log().replace("?1", articulo.getCod_articulo()));
+				consulta.setString(4, log.getMot_log());
+				consulta.setString(5, log.getEst_log());
+				consulta.setString(6, log.getUsu_ingresa());
+				consulta.setTimestamp(7, log.getFec_ingresa());
+				consulta.executeUpdate();
 				pos++;
 			}
 			consulta.close();
-			conexion.abrir().commit();
+			//conexion.abrir().commit();
 			ingresoCorrecto = true;
 		} catch (SQLException ex) {
 			ingresoCorrecto = false;
-			conexion.abrir().rollback();
+			//conexion.abrir().rollback();
 			throw new SQLException(ex);
 		} catch (java.lang.NullPointerException ex) {
 			ingresoCorrecto = false;
-			conexion.abrir().rollback();
+			//conexion.abrir().rollback();
 			throw new java.lang.NullPointerException();
 		} finally {
 			conexion.cerrar();

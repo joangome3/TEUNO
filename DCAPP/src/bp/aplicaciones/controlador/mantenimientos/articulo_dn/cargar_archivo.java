@@ -45,6 +45,7 @@ import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_turno;
+import bp.aplicaciones.mantenimientos.DAO.dao_articulo_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
@@ -55,6 +56,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
+import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_articulo_ubicacion_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_respaldo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_4;
 
@@ -66,7 +68,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 	@Wire
 	Window zCargar;
 	@Wire
-	Button btnGrabar, btnCargar;
+	Button btnGrabar, btnCargar, btnLimpiar;
 	@Wire
 	Combobox cmbDia;
 	@Wire
@@ -86,11 +88,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
 	List<modelo_articulo_dn> listaArticulos = new ArrayList<modelo_articulo_dn>();
-	List<modelo_articulo_dn> listaArticulos1 = new ArrayList<modelo_articulo_dn>();
 	List<modelo_parametros_generales_4> listaRelacionTarea = new ArrayList<modelo_parametros_generales_4>();
 	List<modelo_capacidad> listaCapacidad = new ArrayList<modelo_capacidad>();
 	List<modelo_categoria_dn> listaCategoria = new ArrayList<modelo_categoria_dn>();
 	List<modelo_ubicacion_dn> listaUbicacion = new ArrayList<modelo_ubicacion_dn>();
+	List<modelo_ubicacion_dn> listaUbicacion1 = new ArrayList<modelo_ubicacion_dn>();
 	List<modelo_turno> listaTurno = new ArrayList<modelo_turno>();
 	List<modelo_respaldo> listaRespaldo = new ArrayList<modelo_respaldo>();
 	List<modelo_respaldo> listaRespaldo1 = new ArrayList<modelo_respaldo>();
@@ -251,6 +253,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 					Messagebox.INFORMATION);
 			return;
 		}
+		btnCargar.setDisabled(true);
 		txtRuta.setText(media.getName());
 		byte[] buffer = media.getByteData();
 		InputStream is = new ByteArrayInputStream(buffer);
@@ -290,11 +293,15 @@ public class cargar_archivo extends SelectorComposer<Component> {
 					while (cellIterator.hasNext()) {
 						Cell cell = (Cell) cellIterator.next();
 						String contenidoCelda = formatter.formatCellValue(cell).toUpperCase().trim();
-						// System.out.println("celda: " + contenidoCelda);
+						System.out.println("celda: " + contenidoCelda);
 						if (j == 0) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setCod_articulo(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setCod_articulo(contenidoCelda);
+									} else {
+										articulo.setCod_articulo("");
+									}
 								} else {
 									articulo.setCod_articulo("");
 								}
@@ -305,7 +312,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 1) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setDes_articulo(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setDes_articulo(contenidoCelda);
+									} else {
+										articulo.setDes_articulo("");
+									}
 								} else {
 									articulo.setDes_articulo("");
 								}
@@ -316,7 +327,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 2) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setNom_categoria(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setNom_categoria(contenidoCelda);
+									} else {
+										articulo.setNom_categoria(null);
+									}
 								} else {
 									articulo.setNom_categoria(null);
 								}
@@ -327,7 +342,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 3) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setNom_capacidad(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setNom_capacidad(contenidoCelda);
+									} else {
+										articulo.setNom_capacidad(null);
+									}
 								} else {
 									articulo.setNom_capacidad(null);
 								}
@@ -338,7 +357,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 4) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setSi_ing_fec_inicio_fin(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setSi_ing_fec_inicio_fin(contenidoCelda);
+									} else {
+										articulo.setSi_ing_fec_inicio_fin("NO");
+									}
 								} else {
 									articulo.setSi_ing_fec_inicio_fin("NO");
 								}
@@ -349,8 +372,12 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 5) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
-										articulo.setEs_fecha(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
+											articulo.setEs_fecha(contenidoCelda);
+										} else {
+											articulo.setEs_fecha("NO");
+										}
 									} else {
 										articulo.setEs_fecha("NO");
 									}
@@ -364,10 +391,14 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 6) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
-										if (articulo.getEs_fecha().equals("SI")) {
-											articulo.setFec_inicio(fechas.obtenerTimestampDeDate(
-													fechas.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+									if (!contenidoCelda.equals("-")) {
+										if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
+											if (articulo.getEs_fecha().equals("SI")) {
+												articulo.setFec_inicio(fechas.obtenerTimestampDeDate(
+														fechas.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+											} else {
+												articulo.setFec_inicio(null);
+											}
 										} else {
 											articulo.setFec_inicio(null);
 										}
@@ -384,16 +415,21 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 7) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
-										if (articulo.getEs_fecha().equals("SI")) {
-											articulo.setFec_fin(fechas.obtenerTimestampDeDate(
-													fechas.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+									if (!contenidoCelda.equals("-")) {
+										if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
+											if (articulo.getEs_fecha().equals("SI")) {
+												articulo.setFec_fin(fechas.obtenerTimestampDeDate(
+														fechas.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+											} else {
+												articulo.setFec_fin(null);
+											}
 										} else {
 											articulo.setFec_fin(null);
 										}
 									} else {
 										articulo.setFec_fin(null);
 									}
+
 								} else {
 									articulo.setFec_fin(null);
 								}
@@ -404,7 +440,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 8) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setNom_fec_respaldo(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setNom_fec_respaldo(contenidoCelda);
+									} else {
+										articulo.setNom_fec_respaldo(null);
+									}
 								} else {
 									articulo.setNom_fec_respaldo(null);
 								}
@@ -415,7 +455,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 9) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setNom_tip_respaldo(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setNom_tip_respaldo(contenidoCelda);
+									} else {
+										articulo.setNom_tip_respaldo(null);
+									}
 								} else {
 									articulo.setNom_tip_respaldo(null);
 								}
@@ -426,7 +470,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 10) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setId_contenedor(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setId_contenedor(contenidoCelda);
+									} else {
+										articulo.setId_contenedor("");
+									}
 								} else {
 									articulo.setId_contenedor("");
 								}
@@ -437,7 +485,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						if (j == 11) {
 							if (contenidoCelda != null) {
 								if (contenidoCelda.length() > 0) {
-									articulo.setNom_ubicacion(contenidoCelda);
+									if (!contenidoCelda.equals("-")) {
+										articulo.setNom_ubicacion(contenidoCelda);
+									} else {
+										articulo.setNom_ubicacion(null);
+									}
 								} else {
 									articulo.setNom_ubicacion(null);
 								}
@@ -455,7 +507,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// System.out.println(listaArticulos);
+		System.out.println(listaArticulos);
 		return listaArticulos;
 	}
 
@@ -481,6 +533,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 				public void onEvent(Event event) throws Exception {
 					Listitem lItem;
 					lItem = (Listitem) btnEliminar.getParent().getParent();
+					listaArticulos.remove(lbxArticulos.getIndexOfItem(lbxArticulos.getItemAtIndex(lItem.getIndex())));
 					lbxArticulos.removeItemAt(lItem.getIndex());
 				}
 			});
@@ -501,7 +554,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			txtCodigo.setStyle("resize: none;");
 			txtCodigo.setInplace(true);
 			txtCodigo.setReadonly(false);
-			txtCodigo.setText(String.valueOf(listaArticulos.get(i).getCod_articulo()));
+			if (listaArticulos.get(i).getId_contenedor() == null) {
+				txtCodigo.setText("");
+			} else {
+				txtCodigo.setText(String.valueOf(listaArticulos.get(i).getCod_articulo()));
+			}
 			txtCodigo.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 				public void onEvent(Event event) throws Exception {
 					txtCodigo.setText(txtCodigo.getText().toUpperCase().trim());
@@ -519,7 +576,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			txtDescripcion.setStyle("resize: none;");
 			txtDescripcion.setInplace(true);
 			txtDescripcion.setReadonly(false);
-			txtDescripcion.setText(String.valueOf(listaArticulos.get(i).getDes_articulo()));
+			if (listaArticulos.get(i).getId_contenedor() == null) {
+				txtDescripcion.setText("");
+			} else {
+				txtDescripcion.setText(String.valueOf(listaArticulos.get(i).getDes_articulo()));
+			}
 			txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 				public void onEvent(Event event) throws Exception {
 					txtDescripcion.setText(txtDescripcion.getText().toUpperCase().trim());
@@ -530,13 +591,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			/* CATEGORIA */
 			lCell = new Listcell();
 			cmbCategoria = new Combobox();
-			for (int j = 0; j < listaCategoria.size(); j++) {
-				cItem = new Comboitem();
-				cItem.setLabel(listaCategoria.get(j).getNom_categoria());
-				cItem.setValue(listaCategoria.get(j).getId_categoria());
-				cItem.setTooltiptext(listaCategoria.get(j).getNom_categoria());
-				cmbCategoria.appendChild(cItem);
-			}
+			cItem = new Comboitem();
+			cItem.setLabel("CINTA");
+			cItem.setValue(1);
+			cItem.setTooltiptext("CINTA");
+			cmbCategoria.appendChild(cItem);
 			cmbCategoria.setReadonly(true);
 			cmbCategoria.setWidth("100px");
 			cmbCategoria.setInplace(true);
@@ -820,7 +879,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 				cmbFechaRespaldo.appendChild(cItem);
 			}
 			cmbFechaRespaldo.setReadonly(false);
-			cmbFechaRespaldo.setWidth("180px");
+			cmbFechaRespaldo.setWidth("300px");
 			cmbFechaRespaldo.setInplace(true);
 			cmbFechaRespaldo.setText(listaArticulos.get(i).getNom_fec_respaldo());
 			cmbFechaRespaldo.setStyle("text-align: center !important; font-weight: normal !important;");
@@ -852,7 +911,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 				cmbTipoRespaldo.appendChild(cItem);
 			}
 			cmbTipoRespaldo.setReadonly(false);
-			cmbTipoRespaldo.setWidth("180px");
+			cmbTipoRespaldo.setWidth("300px");
 			cmbTipoRespaldo.setInplace(true);
 			cmbTipoRespaldo.setText(listaArticulos.get(i).getNom_tip_respaldo());
 			cmbTipoRespaldo.setStyle("text-align: center !important; font-weight: normal !important;");
@@ -868,7 +927,11 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			txtContenedor.setStyle("resize: none;");
 			txtContenedor.setInplace(true);
 			txtContenedor.setReadonly(false);
-			txtContenedor.setText(String.valueOf(listaArticulos.get(i).getId_contenedor()));
+			if (listaArticulos.get(i).getId_contenedor() == null) {
+				txtContenedor.setText("");
+			} else {
+				txtContenedor.setText(String.valueOf(listaArticulos.get(i).getId_contenedor()));
+			}
 			txtContenedor.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 				public void onEvent(Event event) throws Exception {
 					txtContenedor.setText(txtContenedor.getText().toUpperCase().trim());
@@ -897,6 +960,15 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			/* ANADIR ITEM A LISTBOX */
 			lbxArticulos.appendChild(lItem);
 		}
+	}
+
+	@Listen("onClick=#btnLimpiar")
+	public void onClick$btnLimpiar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		borrarListaConsulta();
+		listaArticulos = new ArrayList<modelo_articulo_dn>();
+		media = null;
+		btnCargar.setDisabled(false);
+		txtRuta.setText("");
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -944,20 +1016,94 @@ public class cargar_archivo extends SelectorComposer<Component> {
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
-						modelo_articulo_dn articulo = null;
-						Combobox cmbCategoria, cmbRegistraCaja, cmbCapacidad, cmbRegistraFecha, cmbEsFecha,
-								cmbFechaRespaldo, cmbTipoRespaldo;
-						Textbox txtCodigo, txtDescripcion, txtContenedor;
-						Listcell lCell;
 						if (event.getName().equals("onOK")) {
+							dao_articulo_dn dao = new dao_articulo_dn();
+							modelo_articulo_dn articulo = new modelo_articulo_dn();
+							modelo_articulo_dn articulo1 = new modelo_articulo_dn();
+							modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion = new modelo_relacion_articulo_ubicacion_dn();
+							modelo_relacion_articulo_ubicacion_dn relacion_articulo_ubicacion1 = new modelo_relacion_articulo_ubicacion_dn();
+							List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+							List<modelo_relacion_articulo_ubicacion_dn> listaRelacionArticulos1 = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+							Combobox cmbCategoria, cmbRegistraCaja;
+							Listcell lCell;
+							int pos_ubicacion = 0;
+							int se_crea_caja = 0;
 							for (int i = 0; i < lbxArticulos.getItemCount(); i++) {
 								articulo = new modelo_articulo_dn();
-								lCell = (Listcell) lbxArticulos.getItemAtIndex(i).getChildren().get(0);
+								articulo1 = new modelo_articulo_dn();
+								relacion_articulo_ubicacion = new modelo_relacion_articulo_ubicacion_dn();
+								relacion_articulo_ubicacion1 = new modelo_relacion_articulo_ubicacion_dn();
+								listaRelacionArticulos = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+								listaRelacionArticulos1 = new ArrayList<modelo_relacion_articulo_ubicacion_dn>();
+								se_crea_caja = 0;
+								pos_ubicacion = 0;
+								lCell = (Listcell) lbxArticulos.getItemAtIndex(i).getChildren().get(4);
+								cmbCategoria = (Combobox) lCell.getChildren().get(0);
+								lCell = (Listcell) lbxArticulos.getItemAtIndex(i).getChildren().get(5);
+								cmbRegistraCaja = (Combobox) lCell.getChildren().get(0);
+								/* Se inicializan los objetos articulos */
+								articulo = listaArticulos
+										.get(lbxArticulos.getIndexOfItem(lbxArticulos.getItemAtIndex(i)));
+								articulo1 = listaArticulos
+										.get(lbxArticulos.getIndexOfItem(lbxArticulos.getItemAtIndex(i)));
+								articulo1 = articulo.clone1();
+								articulo.setId_localidad(id_dc);
+								articulo1.setId_localidad(id_dc);
+								articulo.setUsu_ingresa(user);
+								articulo1.setUsu_ingresa(articulo.getUsu_ingresa());
+								articulo.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+								articulo1.setFec_ingresa(articulo.getFec_ingresa());
+								if (Long.valueOf(cmbCategoria.getSelectedItem().getValue().toString()) == 1) {
+									if (validarSiTienenMismoCodigoEnBD(articulo) == true) {
+										articulo.setEst_articulo("PAC");
+										articulo1.setEst_articulo("AE");
+									} else {
+										articulo.setEst_articulo("AE");
+										articulo1.setEst_articulo(articulo.getEst_articulo());
+									}
+								} else {
+									articulo.setEst_articulo("AE");
+									articulo1.setEst_articulo(articulo.getEst_articulo());
+								}
+								/* Se inicializan los objetos relacion articulo ubicacion */
+								relacion_articulo_ubicacion.setId_ubicacion(
+										listaArticulos.get(lbxArticulos.getIndexOfItem(lbxArticulos.getItemAtIndex(i)))
+												.getId_ubicacion());
+								relacion_articulo_ubicacion1
+										.setId_ubicacion(relacion_articulo_ubicacion.getId_ubicacion()); //
+								relacion_articulo_ubicacion.setSto_articulo(1);
+								relacion_articulo_ubicacion1
+										.setSto_articulo(relacion_articulo_ubicacion.getSto_articulo()); //
+								pos_ubicacion = consultasABaseDeDatos.posicionMaximaEnUbicacionDN(
+										(listaArticulos.get(lbxArticulos.getIndexOfItem(lbxArticulos.getItemAtIndex(i)))
+												.getId_ubicacion()))
+										+ 1;
+								relacion_articulo_ubicacion.setPos_ubicacion(pos_ubicacion);
+								relacion_articulo_ubicacion1
+										.setPos_ubicacion(relacion_articulo_ubicacion.getPos_ubicacion() + 1); //
+								relacion_articulo_ubicacion.setEst_relacion("A");
+								relacion_articulo_ubicacion1
+										.setEst_relacion(relacion_articulo_ubicacion.getEst_relacion()); //
+								relacion_articulo_ubicacion.setUsu_ingresa(user);
+								relacion_articulo_ubicacion1
+										.setUsu_ingresa(relacion_articulo_ubicacion.getUsu_ingresa()); //
+								relacion_articulo_ubicacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+								relacion_articulo_ubicacion1
+										.setFec_ingresa(relacion_articulo_ubicacion.getFec_ingresa()); //
+								listaRelacionArticulos.add(relacion_articulo_ubicacion);
+								listaRelacionArticulos1.add(relacion_articulo_ubicacion1);
+								if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
+									se_crea_caja = 1;
+								} else {
+									se_crea_caja = 0;
+								}
+								dao.insertarArticulo(articulo, listaRelacionArticulos, se_crea_caja, articulo1,
+										listaRelacionArticulos1);
 							}
 							try {
-
 								Messagebox.show("Los registros se guardaron correctamente.", ".:: Cargar archivo ::.",
 										Messagebox.OK, Messagebox.EXCLAMATION);
+								onClick$btnLimpiar();
 
 							} catch (Exception e) {
 								Messagebox.show(
@@ -1090,7 +1236,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 								_lbxArticulos.clearSelection();
 								_lbxArticulos.addItemToSelection(_lbxArticulos.getItemAtIndex(i));
 								dtxFechaInicio.setFocus(true);
-								dtxFechaInicio.setErrorMessage(validacion.getMensaje_validacion_4());
+								dtxFechaInicio.setErrorMessage(validacion.getMensaje_validacion_10());
 								existe_error = true;
 								break;
 							}
@@ -1121,15 +1267,15 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			/*
 			 * Se valida que no se registre el articulo en una ubicacion no permitida
 			 */
-			if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
-				String nom_ubicacion = "";
-				for (int j = 0; j < listaUbicacion.size(); j++) {
-					if (listaUbicacion.get(j).getId_ubicacion() == Long
-							.valueOf(cmbUbicacion.getSelectedItem().getValue().toString())) {
-						nom_ubicacion = listaUbicacion.get(j).toStringUbicacion();
-						j = listaUbicacion.size() + 1;
-					}
+			String nom_ubicacion = "";
+			for (int j = 0; j < listaUbicacion.size(); j++) {
+				if (listaUbicacion.get(j).getId_ubicacion() == Long
+						.valueOf(cmbUbicacion.getSelectedItem().getValue().toString())) {
+					nom_ubicacion = listaUbicacion.get(j).toStringUbicacion();
+					j = listaUbicacion.size() + 1;
 				}
+			}
+			if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
 				if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) <= 3
 						|| Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) >= 134) {
 					Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
@@ -1141,14 +1287,6 @@ public class cargar_archivo extends SelectorComposer<Component> {
 				}
 			}
 			if (Long.valueOf(cmbCategoria.getSelectedItem().getValue().toString()) == 2) {
-				String nom_ubicacion = "";
-				for (int j = 0; j < listaUbicacion.size(); j++) {
-					if (listaUbicacion.get(j).getId_ubicacion() == Long
-							.valueOf(cmbUbicacion.getSelectedItem().getValue().toString())) {
-						nom_ubicacion = listaUbicacion.get(j).toStringUbicacion();
-						j = listaUbicacion.size() + 1;
-					}
-				}
 				if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) <= 3
 						|| Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) >= 134) {
 					Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
@@ -1163,17 +1301,35 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			 * Se valida que no se supere la capacidad permitida en la ubicacion
 			 * seleccionada
 			 */
-			int indexUbicacion = Integer.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
-			String seValidaCapacidad = consultasABaseDeDatos
-					.seValidaCapacidadEnUbicacionDN(listaUbicacion.get(indexUbicacion).getId_ubicacion());
+			long id_ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
+			int totalItemsEnUbicacionSinCaja = 0, totalItemsEnUbicacionConCaja = 0;
+			Listcell lCell2;
+			Combobox cmbUbicacion2;
+			for (int k = _lbxArticulos.getItemCount() - 1; k >= 0; k--) {
+				lCell2 = (Listcell) _lbxArticulos.getItemAtIndex(k).getChildren().get(14);
+				cmbUbicacion2 = (Combobox) lCell2.getChildren().get(0);
+				if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) == Long
+						.valueOf(cmbUbicacion2.getSelectedItem().getValue().toString())) {
+					if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) == id_ubicacion) {
+						if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
+							totalItemsEnUbicacionConCaja = totalItemsEnUbicacionConCaja + 2;
+						} else {
+							totalItemsEnUbicacionSinCaja++;
+						}
+					}
+				}
+			}
+			// System.out.println(cmbUbicacion.getSelectedItem().getLabel());
+			// System.out.println(totalItemsEnUbicacionSinCaja);
+			// System.out.println(totalItemsEnUbicacionConCaja);
+			String seValidaCapacidad = consultasABaseDeDatos.seValidaCapacidadEnUbicacionDN(id_ubicacion);
 			if (seValidaCapacidad.equals("S")) {
-				int capacidadMaxima = consultasABaseDeDatos.capacidadMaximaEnUbicacionDN(
-						listaUbicacion.get(indexUbicacion).getId_ubicacion(), seValidaCapacidad);
-				int totalArticulos = consultasABaseDeDatos
-						.totalArticulosEnUbicacionDN(listaUbicacion.get(indexUbicacion).getId_ubicacion());
+				int capacidadMaxima = consultasABaseDeDatos.capacidadMaximaEnUbicacionDN(id_ubicacion,
+						seValidaCapacidad);
+				int totalArticulos = consultasABaseDeDatos.totalArticulosEnUbicacionDN(id_ubicacion);
 				if (cmbRegistraCaja.getSelectedItem().getValue().equals("N")) {
-					if ((totalArticulos + 1) > capacidadMaxima) {
-						Messagebox.show(informativos.getMensaje_informativo_10(),
+					if ((totalArticulos + totalItemsEnUbicacionSinCaja) > capacidadMaxima) {
+						Messagebox.show(informativos.getMensaje_informativo_132().replace("?1", nom_ubicacion),
 								informativos.getMensaje_informativo_131(), Messagebox.OK, Messagebox.INFORMATION);
 						_lbxArticulos.clearSelection();
 						_lbxArticulos.addItemToSelection(_lbxArticulos.getItemAtIndex(i));
@@ -1181,8 +1337,8 @@ public class cargar_archivo extends SelectorComposer<Component> {
 						break;
 					}
 				} else {
-					if ((totalArticulos + 2) > capacidadMaxima) {
-						Messagebox.show(informativos.getMensaje_informativo_121(),
+					if ((totalArticulos + totalItemsEnUbicacionConCaja) > capacidadMaxima) {
+						Messagebox.show(informativos.getMensaje_informativo_133().replace("?1", nom_ubicacion),
 								informativos.getMensaje_informativo_131(), Messagebox.OK, Messagebox.INFORMATION);
 						_lbxArticulos.clearSelection();
 						_lbxArticulos.addItemToSelection(_lbxArticulos.getItemAtIndex(i));
@@ -1375,6 +1531,37 @@ public class cargar_archivo extends SelectorComposer<Component> {
 													i = listaArticulos.size();
 													j = 0;
 												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return tienen_mismos_datos;
+	}
+
+	public boolean validarSiTienenMismoCodigoEnBD(modelo_articulo_dn articulo)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
+		boolean tienen_mismos_datos = false;
+		List<modelo_articulo_dn> _listaArticulos = new ArrayList<modelo_articulo_dn>();
+		_listaArticulos = consultasABaseDeDatos.cargarArticulosDN("", id_dc, "0", 2, 0, "A", "0");
+		if (articulo.getSi_ing_fec_inicio_fin().equals("N")) {
+			if (articulo.getEs_fecha().equals("N")) {
+				if (articulo.getFec_fin() == null) {
+					for (int j = _listaArticulos.size() - 1; j >= 0; j--) {
+						if (articulo.getId_articulo() != _listaArticulos.get(j).getId_articulo()) {
+							if (_listaArticulos.get(j).getSi_ing_fec_inicio_fin().equals("N")) {
+								if (_listaArticulos.get(j).getEs_fecha().equals("N")) {
+									if (_listaArticulos.get(j).getFec_fin() == null) {
+										if (_listaArticulos.get(j).getId_categoria() == 1) {
+											if (articulo.getCod_articulo()
+													.equals(_listaArticulos.get(j).getCod_articulo())) {
+												tienen_mismos_datos = true;
+												j = 0;
 											}
 										}
 									}
