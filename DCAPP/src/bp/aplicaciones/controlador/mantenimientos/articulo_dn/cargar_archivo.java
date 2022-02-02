@@ -394,8 +394,12 @@ public class cargar_archivo extends SelectorComposer<Component> {
 									if (!contenidoCelda.equals("-")) {
 										if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
 											if (articulo.getEs_fecha().equals("SI")) {
-												articulo.setFec_inicio(fechas.obtenerTimestampDeDate(
-														fechas.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+												if (fechas.esFechaValida(contenidoCelda, "yyy-MM-dd") == true) {
+													articulo.setFec_inicio(fechas.obtenerTimestampDeDate(fechas
+															.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+												} else {
+													articulo.setFec_inicio(null);
+												}
 											} else {
 												articulo.setFec_inicio(null);
 											}
@@ -418,8 +422,12 @@ public class cargar_archivo extends SelectorComposer<Component> {
 									if (!contenidoCelda.equals("-")) {
 										if (articulo.getSi_ing_fec_inicio_fin().equals("SI")) {
 											if (articulo.getEs_fecha().equals("SI")) {
-												articulo.setFec_fin(fechas.obtenerTimestampDeDate(
-														fechas.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+												if (fechas.esFechaValida(contenidoCelda, "yyy-MM-dd") == true) {
+													articulo.setFec_fin(fechas.obtenerTimestampDeDate(fechas
+															.obtenerDateDeUnString(contenidoCelda, "yyyy-MM-dd")));
+												} else {
+													articulo.setFec_fin(null);
+												}
 											} else {
 												articulo.setFec_fin(null);
 											}
@@ -1308,13 +1316,15 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			for (int k = _lbxArticulos.getItemCount() - 1; k >= 0; k--) {
 				lCell2 = (Listcell) _lbxArticulos.getItemAtIndex(k).getChildren().get(14);
 				cmbUbicacion2 = (Combobox) lCell2.getChildren().get(0);
-				if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) == Long
-						.valueOf(cmbUbicacion2.getSelectedItem().getValue().toString())) {
-					if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) == id_ubicacion) {
-						if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
-							totalItemsEnUbicacionConCaja = totalItemsEnUbicacionConCaja + 2;
-						} else {
-							totalItemsEnUbicacionSinCaja++;
+				if (cmbUbicacion2.getSelectedItem() != null) {
+					if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) == Long
+							.valueOf(cmbUbicacion2.getSelectedItem().getValue().toString())) {
+						if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) == id_ubicacion) {
+							if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
+								totalItemsEnUbicacionConCaja = totalItemsEnUbicacionConCaja + 2;
+							} else {
+								totalItemsEnUbicacionSinCaja++;
+							}
 						}
 					}
 				}

@@ -1,6 +1,7 @@
 package bp.aplicaciones.extensiones;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -90,6 +91,17 @@ public class Fechas {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public boolean esFechaValida(String date, String formato) {
+		try {
+			DateFormat df = new SimpleDateFormat(formato);
+			df.setLenient(false);
+			df.parse(date);
+			return true;
+		} catch (ParseException e) {
+			return false;
+		}
 	}
 
 }
