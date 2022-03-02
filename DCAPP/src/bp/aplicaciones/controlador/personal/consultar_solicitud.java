@@ -3,6 +3,9 @@ package bp.aplicaciones.controlador.personal;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -323,13 +326,25 @@ public class consultar_solicitud extends SelectorComposer<Component> {
 	public void setearFechaInicio() {
 		Date fechaActual = new Date();
 		Date primerDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth(), 1);
-		dtxFechaInicio.setValue(primerDiaMes);
+		LocalDateTime localDateTime = null;
+		LocalDate localDate = primerDiaMes.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year = localDate.getYear();
+		localDateTime = LocalDateTime.of(year, 1, 1, 0, 0);
+		Date d = null;
+		d = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		dtxFechaInicio.setValue(d);
 	}
 
 	public void setearFechaFin() {
 		Date fechaActual = new Date();
-		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0, 23, 59, 0);
-		dtxFechaFin.setValue(ultimoDiaMes);
+		Date ultimoDiaMes = new Date(fechaActual.getYear(), fechaActual.getMonth() + 1, 0);
+		LocalDateTime localDateTime = null;
+		LocalDate localDate = ultimoDiaMes.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int year = localDate.getYear();
+		localDateTime = LocalDateTime.of(year, 12, 31, 23, 59);
+		Date d = null;
+		d = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		dtxFechaFin.setValue(d);
 	}
 
 	public void buscarSolicitudesPersonal(String criterio, int tipo, long id_cliente, String fecha_solicitud_i,

@@ -660,18 +660,20 @@ public class consultar extends SelectorComposer<Component> {
 				return;
 			}
 		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
-		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
-			if (consultarPermisoUsuario() == false) {
-				if (validarSiExisteSolicitudPendienteActualizacion(
-						listaArticulo.get(indice).getId_articulo()) == false) {
-					Messagebox.show(informativos.getMensaje_informativo_29(), informativos.getMensaje_informativo_24(),
-							Messagebox.OK, Messagebox.EXCLAMATION);
-					return;
+		if (listaArticulo.get(indice).getId_categoria() == 1) {
+			if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
+				if (consultarPermisoUsuario() == false) {
+					if (validarSiExisteSolicitudPendienteActualizacion(
+							listaArticulo.get(indice).getId_articulo()) == false) {
+						Messagebox.show(informativos.getMensaje_informativo_29(),
+								informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
+						return;
+					}
 				}
 			}
+		}
+		if (ingresa_a_accion == true) {
+			return;
 		}
 		Sessions.getCurrent().setAttribute("articulo", listaArticulo.get(indice));
 		window = (Window) Executions.createComponents("/mantenimientos/articulo_dn/modificar.zul", null, null);
@@ -881,7 +883,7 @@ public class consultar extends SelectorComposer<Component> {
 		 * Se valida que el item si es caja no se pueda mover a una ubicacion no
 		 * permitida
 		 */
-		if (listaArticulo.get(indice).getId_ubicacion() <= 3 || listaArticulo.get(indice).getId_ubicacion() >= 134) {
+		if (listaArticulo.get(indice).getId_ubicacion() <= 3 || listaArticulo.get(indice).getId_ubicacion() >= 139) {
 			Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
 					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;

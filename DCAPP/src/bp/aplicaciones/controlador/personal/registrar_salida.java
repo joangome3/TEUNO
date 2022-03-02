@@ -748,7 +748,12 @@ public class registrar_salida extends SelectorComposer<Component> {
 										}
 									}
 								} else {
-									registro_permanencia.setFec_ingreso_su(null);
+									if (dtxFechaIngresoSU.getValue() != null) {
+										registro_permanencia.setFec_ingreso_su(
+												fechas.obtenerTimestampDeDate(dtxFechaIngresoSU.getValue()));
+									} else {
+										registro_permanencia.setFec_ingreso_su(null);
+									}
 									if (dtxFechaSalidaSU.getValue() != null) {
 										registro_permanencia.setFec_salida_su(
 												fechas.obtenerTimestampDeDate(dtxFechaSalidaSU.getValue()));
@@ -884,7 +889,7 @@ public class registrar_salida extends SelectorComposer<Component> {
 		}
 		return esta_en_permanencia;
 	}
-	
+
 	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		long id_tipo_clasificacion = 0;

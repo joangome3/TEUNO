@@ -926,7 +926,7 @@ public class modificar extends SelectorComposer<Component> {
 									}
 								}
 								if (listaRelacionArticulos.get(0).getId_ubicacion() <= 3
-										|| listaRelacionArticulos.get(0).getId_ubicacion() >= 134) {
+										|| listaRelacionArticulos.get(0).getId_ubicacion() >= 139) {
 									Messagebox.show(
 											informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
 											informativos.getMensaje_informativo_17(), Messagebox.OK,

@@ -1285,7 +1285,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			}
 			if (cmbRegistraCaja.getSelectedItem().getValue().toString().equals("S")) {
 				if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) <= 3
-						|| Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) >= 134) {
+						|| Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) >= 139) {
 					Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
 							informativos.getMensaje_informativo_131(), Messagebox.OK, Messagebox.EXCLAMATION);
 					_lbxArticulos.clearSelection();
@@ -1296,7 +1296,7 @@ public class cargar_archivo extends SelectorComposer<Component> {
 			}
 			if (Long.valueOf(cmbCategoria.getSelectedItem().getValue().toString()) == 2) {
 				if (Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) <= 3
-						|| Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) >= 134) {
+						|| Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString()) >= 139) {
 					Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
 							informativos.getMensaje_informativo_131(), Messagebox.OK, Messagebox.EXCLAMATION);
 					_lbxArticulos.clearSelection();
