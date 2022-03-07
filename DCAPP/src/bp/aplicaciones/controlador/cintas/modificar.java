@@ -20,7 +20,9 @@ import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timebox;
 import org.zkoss.zul.Bandbox;
@@ -30,6 +32,7 @@ import org.zkoss.zul.Window;
 
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_detalle_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
+import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
@@ -54,7 +57,8 @@ public class modificar extends SelectorComposer<Component> {
 			txtDescripcionActual, txtIDContenedorActual, txtBuscarUbicacionActual, txtRemesaIngresoActual,
 			txtRemesaSalidaActual;
 	@Wire
-	Combobox cmbRespaldoAnterior, cmbRespaldoAnterior1, cmbRespaldoActual, cmbRespaldoActual1, cmbActualizaInventario;
+	Combobox cmbRespaldoAnterior, cmbRespaldoAnterior1, cmbRespaldoActual, cmbRespaldoActual1, cmbActualizaInventario,
+			cmbModificaRegistro;
 	@Wire
 	Row rwIngresaFechaAnterior, rwEsFechaAnterior, rwFechaRespaldoAnterior, rwFechaInicioAnterior, rwFechaFinAnterior,
 			rwTipoRespaldoAnterior, rwIDContenedorAnterior, rwIngresaFechaActual, rwEsFechaActual,
@@ -69,6 +73,8 @@ public class modificar extends SelectorComposer<Component> {
 	Datebox dtxFechaInicioAnterior, dtxFechaFinAnterior, dtxFechaInicioActual, dtxFechaFinActual;
 	@Wire
 	Timebox tmxHoraLlegadaAnterior, tmxHoraSalidaAnterior, tmxHoraLlegadaActual, tmxHoraSalidaActual;
+	@Wire
+	Tab Tab1, Tab2;
 
 	String vfechainicioAnterior, vfechafinAnterior, vtiporespaldoAnterior, vidcontenedorAnterior, vfechainicioActual,
 			vfechafinActual, vtiporespaldoActual, vidcontenedorActual;
@@ -118,6 +124,10 @@ public class modificar extends SelectorComposer<Component> {
 
 	private Fechas fechas = new Fechas();
 
+	List<modelo_parametros_generales_5> listaParametros5 = new ArrayList<modelo_parametros_generales_5>();
+
+	long id_opcion = 4;
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -156,11 +166,51 @@ public class modificar extends SelectorComposer<Component> {
 				txtIDContenedorActual.setText(txtIDContenedorActual.getText().toUpperCase());
 			}
 		});
-		cmbActualizaInventario.setSelectedIndex(0);
+		cmbActualizaInventario.setSelectedIndex(1);
+		cmbModificaRegistro.setSelectedIndex(1);
 		inicializarListas();
+		desactivarCamposDeDatosAnteriores();
 		cargarDatosAnterior();
 		cargarDatosActual();
-		desactivarCamposDeDatosAnteriores();
+		validarPermisos();
+	}
+
+	public void validarPermisos() {
+		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
+			if (consultarPermisoUsuario() == false) {
+				cmbModificaRegistro.setDisabled(true);
+			}
+		}
+	}
+
+	public boolean consultarPermisoUsuario() {
+		boolean tiene_permiso = false;
+		Iterator<modelo_parametros_generales_5> it = listaParametros5.iterator();
+		while (it.hasNext()) {
+			modelo_parametros_generales_5 modelo = it.next();
+			if (modelo.getId_usuario() == id_user) {
+				tiene_permiso = true;
+				break;
+			}
+		}
+		return tiene_permiso;
+	}
+
+	@Listen("onSelect=#cmbModificaRegistro")
+	public void onSelectcmbModificaRegistro()
+			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		if (cmbModificaRegistro.getSelectedItem() == null) {
+			return;
+		}
+		if (cmbModificaRegistro.getSelectedItem().getValue().toString().equals("1")) {
+			activarCamposDeDatosAnteriores();
+			Messagebox.show(informativos.getMensaje_informativo_134(), informativos.getMensaje_informativo_24(),
+					Messagebox.OK, Messagebox.INFORMATION);
+		} else {
+			desactivarCamposDeDatosAnteriores();
+		}
+		Tab1.setSelected(true);
+		cargarDatosAnterior();
 	}
 
 	public void desactivarCamposDeDatosAnteriores() {
@@ -179,6 +229,24 @@ public class modificar extends SelectorComposer<Component> {
 		tmxHoraSalidaAnterior.setDisabled(true);
 		dtxFechaInicioAnterior.setDisabled(true);
 		dtxFechaFinAnterior.setDisabled(true);
+	}
+
+	public void activarCamposDeDatosAnteriores() {
+		txtCodigoAnterior.setDisabled(false);
+		txtDescripcionAnterior.setDisabled(false);
+		txtBuscarUbicacionAnterior.setDisabled(false);
+		txtIDContenedorAnterior.setDisabled(false);
+		txtRemesaIngresoAnterior.setDisabled(false);
+		txtRemesaSalidaAnterior.setDisabled(false);
+		cmbRespaldoAnterior.setDisabled(false);
+		cmbRespaldoAnterior1.setDisabled(false);
+		chkEsFechaAnterior.setDisabled(false);
+		chkIngresaFechaAnterior.setDisabled(false);
+		bdxUbicacionAnterior.setDisabled(false);
+		tmxHoraLlegadaAnterior.setDisabled(false);
+		tmxHoraSalidaAnterior.setDisabled(false);
+		dtxFechaInicioAnterior.setDisabled(false);
+		dtxFechaFinAnterior.setDisabled(false);
 	}
 
 	public List<modelo_categoria_dn> obtenerCategoriasAnterior() {
@@ -213,6 +281,10 @@ public class modificar extends SelectorComposer<Component> {
 		return listaRespaldoActual1;
 	}
 
+	public List<modelo_parametros_generales_5> obtenerParametros5() {
+		return listaParametros5;
+	}
+
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaCategoriaAnterior = consultasABaseDeDatos.cargarCategoriasDN("", id_dc, 4, 0, 10);
 		listaRespaldoAnterior = consultasABaseDeDatos.cargarRespaldosDN("", 6, "", "", 0);
@@ -222,6 +294,7 @@ public class modificar extends SelectorComposer<Component> {
 		listaRespaldoActual = consultasABaseDeDatos.cargarRespaldosDN("", 6, "", "", 0);
 		listaRespaldoActual1 = consultasABaseDeDatos.cargarRespaldosDN("", 7, "", "", 0);
 		listaUbicacionActual = consultasABaseDeDatos.cargarUbicacionesDN("", id_dc, 6, 0, 0, 0, 10);
+		listaParametros5 = consultasABaseDeDatos.cargarParametros5("", String.valueOf(id_opcion), 2);
 		binder.loadComponent(cmbRespaldoAnterior);
 		binder.loadComponent(cmbRespaldoAnterior1);
 		binder.loadComponent(lbxUbicacionesAnterior);
@@ -771,11 +844,156 @@ public class modificar extends SelectorComposer<Component> {
 	@Listen("onClick=#btnGrabar")
 	public void onClick$btnGrabar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		modelo_movimiento_detalle_dn movimiento_detalle = new modelo_movimiento_detalle_dn();
+		movimiento_detalle = modificar.this.movimiento_detalle.clone();
+		/** ANTERIOR **/
+		if (txtCodigoAnterior.getText().length() <= 0) {
+			Tab1.setSelected(true);
+			txtCodigoAnterior.setErrorMessage(validaciones.getMensaje_validacion_1());
+			return;
+		}
+		if (txtDescripcionAnterior.getText().length() <= 0) {
+			Tab1.setSelected(true);
+			txtDescripcionAnterior.setErrorMessage(validaciones.getMensaje_validacion_2());
+			return;
+		}
+		if (vfechainicioAnterior.equals("S")) {
+			if (chkIngresaFechaAnterior.isChecked()) {
+				if (chkEsFechaAnterior.isChecked()) {
+					if (dtxFechaInicioAnterior.getValue() == null) {
+						Tab1.setSelected(true);
+						dtxFechaInicioAnterior.setErrorMessage(validaciones.getMensaje_validacion_4());
+						return;
+					}
+				} else {
+					if (cmbRespaldoAnterior1.getSelectedItem() == null) {
+						Tab1.setSelected(true);
+						cmbRespaldoAnterior1.setErrorMessage(validaciones.getMensaje_validacion_4());
+						return;
+					}
+				}
+			}
+		}
+		if (lbxUbicacionesAnterior.getSelectedItem() == null) {
+			Tab1.setSelected(true);
+			bdxUbicacionAnterior.setErrorMessage(validaciones.getMensaje_validacion_6());
+			return;
+		}
+		/*
+		 * Se valida que no se supere la capacidad permitida en la ubicacion
+		 * seleccionada
+		 */
+		/*
+		 * int indexUbicacion = lbxUbicacionesAnterior.getSelectedIndex(); if
+		 * (id_ubicacion_inicial !=
+		 * listaUbicacionAnterior.get(indexUbicacion).getId_ubicacion()) { String
+		 * seValidaCapacidad = consultasABaseDeDatos
+		 * .seValidaCapacidadEnUbicacionDN(listaUbicacionAnterior.get(indexUbicacion).
+		 * getId_ubicacion()); if (seValidaCapacidad.equals("S")) { int capacidadMaxima
+		 * = consultasABaseDeDatos.capacidadMaximaEnUbicacionDN(
+		 * listaUbicacionAnterior.get(indexUbicacion).getId_ubicacion(),
+		 * seValidaCapacidad); int totalArticulos = consultasABaseDeDatos
+		 * .totalArticulosEnUbicacionDN(listaUbicacionAnterior.get(indexUbicacion).
+		 * getId_ubicacion()); if ((totalArticulos + 1) > capacidadMaxima) {
+		 * Messagebox.show(informativos.getMensaje_informativo_10(),
+		 * informativos.getMensaje_informativo_24(), Messagebox.OK,
+		 * Messagebox.INFORMATION); return; } } }
+		 */
+		if (tmxHoraLlegadaAnterior.getValue() != null && tmxHoraSalidaAnterior.getValue() == null) {
+			Tab1.setSelected(true);
+			tmxHoraSalidaAnterior.setFocus(true);
+			tmxHoraSalidaAnterior.setErrorMessage(validaciones.getMensaje_validacion_22());
+			return;
+		}
+		if (tmxHoraLlegadaAnterior.getValue() == null && tmxHoraSalidaAnterior.getValue() != null) {
+			Tab1.setSelected(true);
+			tmxHoraLlegadaAnterior.setFocus(true);
+			tmxHoraLlegadaAnterior.setErrorMessage(validaciones.getMensaje_validacion_21());
+			return;
+		}
+		if (tmxHoraLlegadaAnterior.getValue() != null && tmxHoraSalidaAnterior.getValue() != null) {
+			if (tmxHoraLlegadaAnterior.getValue().after(tmxHoraSalidaAnterior.getValue())) {
+				Tab1.setSelected(true);
+				tmxHoraLlegadaAnterior.setFocus(true);
+				tmxHoraLlegadaAnterior.setErrorMessage(validaciones.getMensaje_validacion_23());
+				return;
+			}
+		}
+		movimiento_detalle.setCod_articulo_anterior(txtCodigoAnterior.getText().toUpperCase());
+		movimiento_detalle.setDes_articulo_anterior(txtDescripcionAnterior.getText().toUpperCase());
+		movimiento_detalle.setId_cat_articulo_anterior(modificar.this.movimiento_detalle.getId_cat_articulo_anterior());
+		movimiento_detalle.setNom_cat_articulo_anterior(modificar.this.movimiento_detalle.getNom_cat_articulo_anterior());
+		movimiento_detalle.setId_cap_articulo_anterior(modificar.this.movimiento_detalle.getId_cap_articulo_anterior());
+		movimiento_detalle
+				.setNom_id_cap_articulo_anterior(modificar.this.movimiento_detalle.getNom_id_cap_articulo_anterior());
+		int indice = lbxUbicacionesAnterior.getSelectedIndex();
+		movimiento_detalle.setId_ubicacion_anterior(listaUbicacionAnterior.get(indice).getId_ubicacion());
+		movimiento_detalle.setNom_ubicacion_anterior(listaUbicacionAnterior.get(indice).getNom_ubicacion() + " - "
+				+ listaUbicacionAnterior.get(indice).getPos_ubicacion());
+		if (chkIngresaFechaAnterior.isChecked()) {
+			movimiento_detalle.setSi_ing_fec_inicio_fin_anterior("S");
+			if (chkEsFechaAnterior.isChecked()) {
+				movimiento_detalle.setEs_fecha_anterior("S");
+				if (dtxFechaInicioAnterior.getValue() != null) {
+					movimiento_detalle
+							.setFec_inicio_anterior(fechas.obtenerTimestampDeDate(dtxFechaInicioAnterior.getValue()));
+				} else {
+					movimiento_detalle.setFec_inicio_anterior(null);
+				}
+			} else {
+				movimiento_detalle.setEs_fecha_anterior("N");
+				if (cmbRespaldoAnterior1.getSelectedItem() != null) {
+					indice = cmbRespaldoAnterior1.getSelectedIndex();
+					movimiento_detalle.setId_fec_respaldo_anterior(listaRespaldoAnterior1.get(indice).getId_respaldo());
+					movimiento_detalle
+							.setNom_id_fec_respaldo_anterior(listaRespaldoAnterior1.get(indice).toNombreRespaldo());
+				} else {
+					movimiento_detalle.setId_fec_respaldo_anterior(0);
+					movimiento_detalle.setNom_id_fec_respaldo_anterior(null);
+				}
+				movimiento_detalle.setFec_inicio_anterior(null);
+			}
+		} else {
+			movimiento_detalle.setSi_ing_fec_inicio_fin_anterior("N");
+			movimiento_detalle.setEs_fecha_anterior("N");
+			movimiento_detalle.setFec_inicio_anterior(null);
+			movimiento_detalle.setId_fec_respaldo_anterior(0);
+			movimiento_detalle.setNom_id_fec_respaldo_anterior(null);
+		}
+		if (dtxFechaFinAnterior.getValue() != null) {
+			movimiento_detalle.setFec_fin_anterior(fechas.obtenerTimestampDeDate(dtxFechaFinAnterior.getValue()));
+		} else {
+			movimiento_detalle.setFec_fin_anterior(null);
+		}
+		if (cmbRespaldoAnterior.getSelectedItem() != null) {
+			indice = cmbRespaldoAnterior.getSelectedIndex();
+			movimiento_detalle.setTip_respaldo_anterior(String.valueOf(listaRespaldoAnterior.get(indice).getId_respaldo()));
+			movimiento_detalle.setNom_tip_respaldo_anterior(listaRespaldoAnterior.get(indice).toNombreRespaldo());
+		} else {
+			movimiento_detalle.setTip_respaldo_anterior("0");
+			movimiento_detalle.setNom_tip_respaldo_anterior(null);
+		}
+		movimiento_detalle.setId_contenedor_anterior(txtIDContenedorAnterior.getText().toUpperCase());
+		if (tmxHoraLlegadaAnterior.getValue() != null) {
+			movimiento_detalle.setHora_llegada_custodia_anterior(tmxHoraLlegadaAnterior.getValue().getTime());
+		} else {
+			movimiento_detalle.setHora_llegada_custodia_anterior(0);
+		}
+		if (tmxHoraSalidaAnterior.getValue() != null) {
+			movimiento_detalle.setHora_salida_custodia_anterior(tmxHoraSalidaAnterior.getValue().getTime());
+		} else {
+			movimiento_detalle.setHora_salida_custodia_anterior(0);
+		}
+		movimiento_detalle.setRemesa_ingreso_custodia_anterior(txtRemesaIngresoAnterior.getText().toUpperCase());
+		movimiento_detalle.setRemesa_salida_custodia_anterior(txtRemesaSalidaAnterior.getText().toUpperCase());
+		/** ACTUAL **/
 		if (txtCodigoActual.getText().length() <= 0) {
+			Tab2.setSelected(true);
 			txtCodigoActual.setErrorMessage(validaciones.getMensaje_validacion_1());
 			return;
 		}
 		if (txtDescripcionActual.getText().length() <= 0) {
+			Tab2.setSelected(true);
 			txtDescripcionActual.setErrorMessage(validaciones.getMensaje_validacion_2());
 			return;
 		}
@@ -783,17 +1001,21 @@ public class modificar extends SelectorComposer<Component> {
 			if (chkIngresaFechaActual.isChecked()) {
 				if (chkEsFechaActual.isChecked()) {
 					if (dtxFechaInicioActual.getValue() == null) {
+						Tab2.setSelected(true);
 						dtxFechaInicioActual.setErrorMessage(validaciones.getMensaje_validacion_4());
 						return;
 					}
 				} else {
 					if (cmbRespaldoActual1.getSelectedItem() == null) {
+						Tab2.setSelected(true);
 						cmbRespaldoActual1.setErrorMessage(validaciones.getMensaje_validacion_4());
+						return;
 					}
 				}
 			}
 		}
 		if (lbxUbicacionesActual.getSelectedItem() == null) {
+			Tab2.setSelected(true);
 			bdxUbicacionActual.setErrorMessage(validaciones.getMensaje_validacion_6());
 			return;
 		}
@@ -818,24 +1040,25 @@ public class modificar extends SelectorComposer<Component> {
 		 * Messagebox.INFORMATION); return; } } }
 		 */
 		if (tmxHoraLlegadaActual.getValue() != null && tmxHoraSalidaActual.getValue() == null) {
+			Tab2.setSelected(true);
 			tmxHoraSalidaActual.setFocus(true);
 			tmxHoraSalidaActual.setErrorMessage(validaciones.getMensaje_validacion_22());
 			return;
 		}
 		if (tmxHoraLlegadaActual.getValue() == null && tmxHoraSalidaActual.getValue() != null) {
+			Tab2.setSelected(true);
 			tmxHoraLlegadaActual.setFocus(true);
 			tmxHoraLlegadaActual.setErrorMessage(validaciones.getMensaje_validacion_21());
 			return;
 		}
 		if (tmxHoraLlegadaActual.getValue() != null && tmxHoraSalidaActual.getValue() != null) {
 			if (tmxHoraLlegadaActual.getValue().after(tmxHoraSalidaActual.getValue())) {
+				Tab2.setSelected(true);
 				tmxHoraLlegadaActual.setFocus(true);
 				tmxHoraLlegadaActual.setErrorMessage(validaciones.getMensaje_validacion_23());
 				return;
 			}
 		}
-		modelo_movimiento_detalle_dn movimiento_detalle = new modelo_movimiento_detalle_dn();
-		movimiento_detalle = modificar.this.movimiento_detalle.clone();
 		movimiento_detalle.setCod_articulo_actual(txtCodigoActual.getText().toUpperCase());
 		movimiento_detalle.setDes_articulo_actual(txtDescripcionActual.getText().toUpperCase());
 		movimiento_detalle.setId_cat_articulo_actual(modificar.this.movimiento_detalle.getId_cat_articulo_actual());
@@ -843,7 +1066,7 @@ public class modificar extends SelectorComposer<Component> {
 		movimiento_detalle.setId_cap_articulo_actual(modificar.this.movimiento_detalle.getId_cap_articulo_actual());
 		movimiento_detalle
 				.setNom_id_cap_articulo_actual(modificar.this.movimiento_detalle.getNom_id_cap_articulo_actual());
-		int indice = lbxUbicacionesActual.getSelectedIndex();
+		indice = lbxUbicacionesActual.getSelectedIndex();
 		movimiento_detalle.setId_ubicacion_actual(listaUbicacionActual.get(indice).getId_ubicacion());
 		movimiento_detalle.setNom_ubicacion_actual(listaUbicacionActual.get(indice).getNom_ubicacion() + " - "
 				+ listaUbicacionActual.get(indice).getPos_ubicacion());
@@ -903,8 +1126,21 @@ public class modificar extends SelectorComposer<Component> {
 		}
 		movimiento_detalle.setRemesa_ingreso_custodia_actual(txtRemesaIngresoActual.getText().toUpperCase());
 		movimiento_detalle.setRemesa_salida_custodia_actual(txtRemesaSalidaActual.getText().toUpperCase());
+		
+		
 		movimiento_detalle.setActualiza_inventario(cmbActualizaInventario.getSelectedItem().getValue().toString());
 		Sessions.getCurrent().setAttribute("movimiento_detalle_2", movimiento_detalle);
+		String se_modifica_movimiento = "false";
+		if (cmbModificaRegistro.getSelectedItem() != null) {
+			if (Integer.valueOf(cmbModificaRegistro.getSelectedItem().getValue().toString()) == 1) {
+				se_modifica_movimiento = "true";
+			} else {
+				se_modifica_movimiento = "false";
+			}
+		} else {
+			se_modifica_movimiento = "false";
+		}
+		Sessions.getCurrent().setAttribute("se_modifica_movimiento", se_modifica_movimiento);
 		Events.postEvent(new Event("onClose", zModificar));
 
 	}

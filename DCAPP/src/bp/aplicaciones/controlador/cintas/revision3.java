@@ -116,6 +116,8 @@ public class revision3 extends SelectorComposer<Component> {
 
 	boolean ingresa_a_modificar = false;
 
+	boolean se_modifica_movimiento = false;
+
 	Date fecha_actual = null;
 	Date fecha_inicio = null;
 	Date fecha_fin = null;
@@ -409,7 +411,7 @@ public class revision3 extends SelectorComposer<Component> {
 	public List<modelo_movimiento_detalle_dn> obtenerMovimientoDetalles() {
 		return listaMovimientoDetalle;
 	}
-	
+
 	public List<modelo_ubicacion_dn> obtenerUbicaciones() {
 		return listaUbicacion;
 	}
@@ -428,7 +430,7 @@ public class revision3 extends SelectorComposer<Component> {
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
-	
+
 	public void cargarUbicaciones(String criterio, long empresa, long tipo_ubicacion)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_ubicacion_dn dao = new dao_ubicacion_dn();
@@ -549,8 +551,8 @@ public class revision3 extends SelectorComposer<Component> {
 		} else {
 			ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
 		}
-		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
+		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(),
+				id_dc, String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
 		lbxArticulos.clearSelection();
 		binder.loadComponent(lbxArticulos);
 	}
@@ -577,11 +579,11 @@ public class revision3 extends SelectorComposer<Component> {
 		} else {
 			ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
 		}
-		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
+		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(),
+				id_dc, String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
 		binder.loadComponent(lbxArticulos);
 	}
-	
+
 	@Listen("onSelect=#cmbTipoUbicacion")
 	public void onSelect$cmbTipoUbicacion()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
@@ -604,8 +606,8 @@ public class revision3 extends SelectorComposer<Component> {
 			cmbUbicacion.setText("");
 			cmbUbicacion.setDisabled(true);
 		}
-		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", "0");
+		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(),
+				id_dc, String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", "0");
 		binder.loadComponent(lbxArticulos);
 	}
 
@@ -628,8 +630,8 @@ public class revision3 extends SelectorComposer<Component> {
 		} else {
 			ubicacion = Long.valueOf(cmbUbicacion.getSelectedItem().getValue().toString());
 		}
-		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(), id_dc,
-				String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
+		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim().trim(),
+				id_dc, String.valueOf(empresa), 14, (int) tipo_ubicacion, "A", String.valueOf(ubicacion));
 		binder.loadComponent(lbxArticulos);
 	}
 
@@ -737,8 +739,8 @@ public class revision3 extends SelectorComposer<Component> {
 	public void actualizarDatosAnterioresDeArticulosAntesDeGuardar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		List<modelo_articulo_dn> listaArticulo = new ArrayList<modelo_articulo_dn>();
-		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim(), id_dc, "0", 14,
-				0, "A", "");
+		listaArticulo = consultasABaseDeDatos.cargarArticulosDN(txtBuscarArticulo.getText().toString().trim(), id_dc,
+				"0", 14, 0, "A", "");
 		for (int i = 0; i < listaArticulo.size(); i++) {
 			for (int j = 0; j < listaMovimientoDetalle.size(); j++) {
 				if (listaArticulo.get(i).getId_articulo() == listaMovimientoDetalle.get(j).getId_articulo()) {
@@ -943,9 +945,24 @@ public class revision3 extends SelectorComposer<Component> {
 						modelo_movimiento_detalle_dn movimiento_detalle2 = (modelo_movimiento_detalle_dn) Sessions
 								.getCurrent().getAttribute("movimiento_detalle_2");
 						Sessions.getCurrent().removeAttribute("movimiento_detalle_2");
+						String se_modifica_registro = "false";
+						se_modifica_registro = (String) Sessions.getCurrent().getAttribute("se_modifica_movimiento");
+						if (se_modifica_registro != null) {
+							if (se_modifica_registro.equals("true")) {
+								se_modifica_movimiento = true;
+							} else {
+								se_modifica_movimiento = false;
+							}
+						} else {
+							se_modifica_movimiento = false;
+						}
+						Sessions.getCurrent().removeAttribute("se_modifica_movimiento");
 						if (movimiento_detalle2 != null) {
 							movimiento_detalle1 = movimiento_detalle2.clone();
-							guardarEnListaParaRegistroDeBaseDeDatos(movimiento_detalle1);
+							guardarEnListaParaRegistroDeBaseDeDatosActual(movimiento_detalle1);
+							if (se_modifica_movimiento) {
+								guardarEnListaParaRegistroDeBaseDeDatosAnterior(movimiento_detalle1);
+							}
 							binder.loadComponent(lbxMovimientos);
 						}
 					}
@@ -955,7 +972,58 @@ public class revision3 extends SelectorComposer<Component> {
 		}
 	}
 
-	public void guardarEnListaParaRegistroDeBaseDeDatos(modelo_movimiento_detalle_dn movimiento_detalle) {
+	public void guardarEnListaParaRegistroDeBaseDeDatosAnterior(modelo_movimiento_detalle_dn movimiento_detalle) {
+		int indice = 0;
+		Iterator<modelo_movimiento_detalle_dn> it = listaMovimientoDetalle.iterator();
+		while (it.hasNext()) {
+			if (it.next().getId_articulo() == movimiento_detalle.getId_articulo()) {
+				break;
+			}
+			indice++;
+		}
+		/* Datos actuales del articulo */
+		listaMovimientoDetalle.get(indice).setCod_articulo_anterior(movimiento_detalle.getCod_articulo_anterior());
+		listaMovimientoDetalle.get(indice).setDes_articulo_anterior(movimiento_detalle.getDes_articulo_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setId_cat_articulo_anterior(movimiento_detalle.getId_cat_articulo_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setNom_cat_articulo_anterior(movimiento_detalle.getNom_cat_articulo_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setId_cap_articulo_anterior(movimiento_detalle.getId_cap_articulo_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setNom_id_cap_articulo_anterior(movimiento_detalle.getNom_id_cap_articulo_anterior());
+		listaMovimientoDetalle.get(indice).setId_ubicacion_anterior(movimiento_detalle.getId_ubicacion_anterior());
+		listaMovimientoDetalle.get(indice).setNom_ubicacion_anterior(movimiento_detalle.getNom_ubicacion_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setSi_ing_fec_inicio_fin_anterior(movimiento_detalle.getSi_ing_fec_inicio_fin_anterior());
+		listaMovimientoDetalle.get(indice).setEs_fecha_anterior(movimiento_detalle.getEs_fecha_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setId_fec_respaldo_anterior(movimiento_detalle.getId_fec_respaldo_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setNom_id_fec_respaldo_anterior(movimiento_detalle.getNom_id_fec_respaldo_anterior());
+		listaMovimientoDetalle.get(indice).setFec_inicio_anterior(movimiento_detalle.getFec_inicio_anterior());
+		listaMovimientoDetalle.get(indice).setFec_fin_anterior(movimiento_detalle.getFec_fin_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setTip_respaldo_anterior(String.valueOf(movimiento_detalle.getTip_respaldo_anterior()));
+		listaMovimientoDetalle.get(indice)
+				.setNom_tip_respaldo_anterior(movimiento_detalle.getNom_tip_respaldo_anterior());
+		listaMovimientoDetalle.get(indice).setId_contenedor_anterior(movimiento_detalle.getId_contenedor_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setHora_llegada_custodia_anterior(movimiento_detalle.getHora_llegada_custodia_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setHora_salida_custodia_anterior(movimiento_detalle.getHora_salida_custodia_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setRemesa_ingreso_custodia_anterior(movimiento_detalle.getRemesa_ingreso_custodia_anterior());
+		listaMovimientoDetalle.get(indice)
+				.setRemesa_salida_custodia_anterior(movimiento_detalle.getRemesa_salida_custodia_anterior());
+		if (cmbEstado.getSelectedItem().getValue().toString().equals("E")) {
+			listaMovimientoDetalle.get(indice).setActualiza_inventario(movimiento_detalle.getActualiza_inventario());
+		} else {
+			listaMovimientoDetalle.get(indice).setActualiza_inventario("N");
+		}
+	}
+
+	public void guardarEnListaParaRegistroDeBaseDeDatosActual(modelo_movimiento_detalle_dn movimiento_detalle) {
 		int indice = 0;
 		Iterator<modelo_movimiento_detalle_dn> it = listaMovimientoDetalle.iterator();
 		while (it.hasNext()) {
@@ -1004,7 +1072,9 @@ public class revision3 extends SelectorComposer<Component> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnGrabar")
 	public void onClick$btnGrabar() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		actualizarDatosAnterioresDeArticulosAntesDeGuardar();
+		if (se_modifica_movimiento == false) {
+			actualizarDatosAnterioresDeArticulosAntesDeGuardar();
+		}
 		if (validarSiSeIniciaTurno() == false) {
 			Messagebox.show(informativos.getMensaje_informativo_33(), informativos.getMensaje_informativo_24(),
 					Messagebox.OK, Messagebox.EXCLAMATION);
@@ -1225,8 +1295,8 @@ public class revision3 extends SelectorComposer<Component> {
 							}
 							List<modelo_bitacora> listaRegistrosBitacora = new ArrayList<modelo_bitacora>();
 							listaRegistrosBitacora = consultasABaseDeDatos.cargarBitacoras(
-									revision3.this.movimiento.getTck_movimiento(), 5, 0, "", "", id_dc, "", "", 0, 0, "",
-									0);
+									revision3.this.movimiento.getTck_movimiento(), 5, 0, "", "", id_dc, "", "", 0, 0,
+									"", 0);
 							/* SOLICITUD */
 							/* Se llena la solicitud */
 							modelo_solicitud solicitud = new modelo_solicitud();

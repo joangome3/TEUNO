@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
@@ -43,10 +44,12 @@ import org.zkoss.zul.Window;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
+import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.bitacora.modelo.modelo_bitacora;
+import bp.aplicaciones.cintas.DAO.dao_movimiento_dn;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_detalle_dn;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
 
@@ -70,7 +73,7 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Menupopup editPopup;
 	@Wire
-	Menuitem mValidar, mCierreLogEventos;
+	Menuitem mValidar, mCierreLogEventos, mHabilitarMovimiento;
 	@Wire
 	Menuseparator mSeparador1;
 	@Wire
@@ -97,6 +100,7 @@ public class consultar extends SelectorComposer<Component> {
 	List<modelo_movimiento_dn> listaMovimiento = new ArrayList<modelo_movimiento_dn>();
 	List<modelo_movimiento_detalle_dn> listaMovimientoDetalle = new ArrayList<modelo_movimiento_detalle_dn>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
+	List<modelo_parametros_generales_5> listaParametros5 = new ArrayList<modelo_parametros_generales_5>();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	Fechas fechas = new Fechas();
@@ -153,8 +157,13 @@ public class consultar extends SelectorComposer<Component> {
 		return listaMovimientoDetalle;
 	}
 
+	public List<modelo_parametros_generales_5> obtenerParametros5() {
+		return listaParametros5;
+	}
+
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
+		listaParametros5 = consultasABaseDeDatos.cargarParametros5("", String.valueOf(id_opcion), 2);
 	}
 
 	public void setearFechaActual() {
@@ -543,6 +552,78 @@ public class consultar extends SelectorComposer<Component> {
 					String.valueOf(listaMovimientoDetalle.get(indice).getId_movimiento()), "", "",
 					String.valueOf(id_dc), 0, 4, "");
 			binder.loadComponent(lbxMovimientos);
+		}
+	}
+
+	public boolean consultarPermisoUsuario() {
+		boolean tiene_permiso = false;
+		Iterator<modelo_parametros_generales_5> it = listaParametros5.iterator();
+		while (it.hasNext()) {
+			modelo_parametros_generales_5 modelo = it.next();
+			if (modelo.getId_usuario() == id_user) {
+				tiene_permiso = true;
+				break;
+			}
+		}
+		return tiene_permiso;
+	}
+
+	@Listen("onClick=#mHabilitarMovimiento")
+	public void onClick$mHabilitarMovimiento() throws Throwable {
+		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
+			Messagebox.show(informativos.getMensaje_informativo_29(), informativos.getMensaje_informativo_21(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (lbxMovimientos.getSelectedItem() == null) {
+			return;
+		}
+		if (lbxMovimientos.getSelectedItems().size() > 1) {
+			Messagebox.show(informativos.getMensaje_informativo_7(), informativos.getMensaje_informativo_21(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		int indice = lbxMovimientos.getSelectedIndex();
+		if (listaMovimiento.get(indice).getEst_validacion().equals("RV1")) {
+			Messagebox.show(informativos.getMensaje_informativo_135().replace("?1", "validación operador en turno"),
+					informativos.getMensaje_informativo_21(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		if (listaMovimiento.get(indice).getEst_validacion().equals("RV2")) {
+			Messagebox.show(
+					informativos.getMensaje_informativo_135().replace("?1",
+							"validación en horario [00:00 - 07:59]"),
+					informativos.getMensaje_informativo_21(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;	
+		}
+		if (listaMovimiento.get(indice).getEst_validacion().equals("RV3")) {
+			Messagebox.show(informativos.getMensaje_informativo_135().replace("?1", "revisión por parte del auditor"),
+					informativos.getMensaje_informativo_21(), Messagebox.OK, Messagebox.EXCLAMATION);
+			return;
+		}
+		try {
+			dao_movimiento_dn dao = new dao_movimiento_dn();
+			modelo_movimiento_dn _modelo_movimiento = new modelo_movimiento_dn();
+			_modelo_movimiento = listaMovimiento.get(indice);
+			_modelo_movimiento.setEst_validacion("RV1");
+			_modelo_movimiento.setUsu_revision_2(null);
+			_modelo_movimiento.setUsu_revision_3(null);
+			List<modelo_movimiento_detalle_dn> _listaMovimientoDetalle = new ArrayList<modelo_movimiento_detalle_dn>();
+			_listaMovimientoDetalle = consultasABaseDeDatos.cargarDetalleMovimientosDN(
+					String.valueOf(listaMovimiento.get(indice).getId_movimiento()), "", "", String.valueOf(id_dc), 0, 3,
+					"");
+			for (int i = 0; i < _listaMovimientoDetalle.size(); i++) {
+				_listaMovimientoDetalle.get(i).setRevision_1("N");
+				_listaMovimientoDetalle.get(i).setRevision_2("N");
+				_listaMovimientoDetalle.get(i).setRevision_3("N");
+				_listaMovimientoDetalle.get(i).setActualiza_inventario("N");
+			}
+			dao.revisarMovimiento(_modelo_movimiento, _listaMovimientoDetalle);
+			Messagebox.show(informativos.getMensaje_informativo_89(), informativos.getMensaje_informativo_21(),
+					Messagebox.OK, Messagebox.EXCLAMATION);
+		} catch (Exception e) {
+			Messagebox.show(error.getMensaje_error_4() + ", " + e.getLocalizedMessage(),
+					informativos.getMensaje_informativo_21(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
 

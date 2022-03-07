@@ -43,7 +43,7 @@ public class dao_movimiento_dn {
 		}
 		return id;
 	}
-	
+
 	public int validarSiExisteSolicitudMovimiento(String ticket)
 			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
 		int totalSolicitudes = 0;
@@ -928,6 +928,121 @@ public class dao_movimiento_dn {
 			consulta.setTimestamp(22, solicitud.getFec_modifica());
 			consulta.setLong(23, solicitud.getId_solicitud());
 			consulta.executeUpdate();
+			/*
+			 * SI NO SE PRESENTAN ERRORES SE APLICAN LOS CAMBIOS Y SE CIERRA LA INSTANCIA DE
+			 * LA BD
+			 */
+			consulta.close();
+			conexion.abrir().commit();
+		} catch (SQLException ex) {
+			conexion.abrir().rollback();
+			throw new SQLException(ex);
+		} catch (java.lang.NullPointerException ex) {
+			conexion.abrir().rollback();
+			throw new java.lang.NullPointerException();
+		} finally {
+			conexion.cerrar();
+		}
+	}
+
+	public void revisarMovimiento(modelo_movimiento_dn movimiento,
+			List<modelo_movimiento_detalle_dn> listaMovimientoDetalle) throws SQLException,
+			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
+		conexion conexion = new conexion();
+		conexion.abrir().setAutoCommit(false);
+		try {
+			PreparedStatement consulta = null;
+			/* CABECERA */
+			consulta = conexion.abrir().prepareStatement(
+					"{CALL movimientoDN_actualizarMovimiento(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			consulta.setString(1, movimiento.getTck_movimiento());
+			consulta.setString(2, movimiento.getTip_pedido());
+			consulta.setTimestamp(3, movimiento.getFec_solicitud());
+			consulta.setLong(4, movimiento.getHor_solicitud());
+			consulta.setTimestamp(5, movimiento.getFec_respuesta());
+			consulta.setLong(6, movimiento.getHor_respuesta());
+			consulta.setTimestamp(7, movimiento.getFec_ejecucion());
+			consulta.setLong(8, movimiento.getHor_ejecucion());
+			consulta.setLong(9, movimiento.getId_localidad());
+			consulta.setLong(10, movimiento.getId_solicitante());
+			consulta.setLong(11, movimiento.getId_usuario());
+			consulta.setString(12, movimiento.getTur_movimiento());
+			consulta.setTimestamp(13, movimiento.getFec_movimiento());
+			consulta.setString(14, movimiento.getObs_movimiento());
+			consulta.setString(15, movimiento.getUsu_revision_1());
+			consulta.setString(16, movimiento.getUsu_revision_2());
+			consulta.setString(17, movimiento.getUsu_revision_3());
+			consulta.setString(18, movimiento.getEst_movimiento());
+			consulta.setString(19, movimiento.getEst_validacion());
+			consulta.setString(20, movimiento.getUsu_ingresa());
+			consulta.setTimestamp(21, movimiento.getFec_ingresa());
+			consulta.setString(22, movimiento.getUsu_modifica());
+			consulta.setTimestamp(23, movimiento.getFec_modifica());
+			consulta.setLong(24, movimiento.getId_movimiento());
+			consulta.executeUpdate();
+			/* SE ELIMINA EL DETALLE ASOCIADO A LA CABECERA */
+			consulta = conexion.abrir().prepareStatement("{CALL movimientoDN_eliminarMovimientoDetalle(?)}");
+			consulta.setLong(1, movimiento.getId_movimiento());
+			consulta.executeUpdate();
+			/* DETALLE */
+			for (int i = 0; i < listaMovimientoDetalle.size(); i++) {
+				consulta = conexion.abrir().prepareStatement(
+						"{CALL movimientoDN_insertarMovimientoDetalle(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+				consulta.setLong(1, movimiento.getId_movimiento());
+				consulta.setLong(2, listaMovimientoDetalle.get(i).getId_articulo());
+				/* ANTERIOR */
+				consulta.setString(3, listaMovimientoDetalle.get(i).getCod_articulo_anterior());
+				consulta.setString(4, listaMovimientoDetalle.get(i).getDes_articulo_anterior());
+				consulta.setLong(5, listaMovimientoDetalle.get(i).getId_cat_articulo_anterior());
+				consulta.setString(6, listaMovimientoDetalle.get(i).getNom_cat_articulo_anterior());
+				consulta.setString(7, listaMovimientoDetalle.get(i).getSi_ing_fec_inicio_fin_anterior());
+				consulta.setString(8, listaMovimientoDetalle.get(i).getEs_fecha_anterior());
+				consulta.setLong(9, listaMovimientoDetalle.get(i).getId_fec_respaldo_anterior());
+				consulta.setString(10, listaMovimientoDetalle.get(i).getNom_id_fec_respaldo_anterior());
+				consulta.setTimestamp(11, listaMovimientoDetalle.get(i).getFec_inicio_anterior());
+				consulta.setTimestamp(12, listaMovimientoDetalle.get(i).getFec_fin_anterior());
+				consulta.setLong(13, listaMovimientoDetalle.get(i).getId_cap_articulo_anterior());
+				consulta.setString(14, listaMovimientoDetalle.get(i).getNom_id_cap_articulo_anterior());
+				consulta.setString(15, listaMovimientoDetalle.get(i).getTip_respaldo_anterior());
+				consulta.setString(16, listaMovimientoDetalle.get(i).getNom_tip_respaldo_anterior());
+				consulta.setString(17, listaMovimientoDetalle.get(i).getId_contenedor_anterior());
+				consulta.setLong(18, listaMovimientoDetalle.get(i).getId_ubicacion_anterior());
+				consulta.setString(19, listaMovimientoDetalle.get(i).getNom_ubicacion_anterior());
+				consulta.setLong(20, listaMovimientoDetalle.get(i).getHora_llegada_custodia_anterior());
+				consulta.setLong(21, listaMovimientoDetalle.get(i).getHora_salida_custodia_anterior());
+				consulta.setString(22, listaMovimientoDetalle.get(i).getRemesa_ingreso_custodia_anterior());
+				consulta.setString(23, listaMovimientoDetalle.get(i).getRemesa_salida_custodia_anterior());
+				/* ACTUAL */
+				consulta.setString(24, listaMovimientoDetalle.get(i).getCod_articulo_actual());
+				consulta.setString(25, listaMovimientoDetalle.get(i).getDes_articulo_actual());
+				consulta.setLong(26, listaMovimientoDetalle.get(i).getId_cat_articulo_actual());
+				consulta.setString(27, listaMovimientoDetalle.get(i).getNom_cat_articulo_actual());
+				consulta.setString(28, listaMovimientoDetalle.get(i).getSi_ing_fec_inicio_fin_actual());
+				consulta.setString(29, listaMovimientoDetalle.get(i).getEs_fecha_actual());
+				consulta.setLong(30, listaMovimientoDetalle.get(i).getId_fec_respaldo_actual());
+				consulta.setString(31, listaMovimientoDetalle.get(i).getNom_id_fec_respaldo_actual());
+				consulta.setTimestamp(32, listaMovimientoDetalle.get(i).getFec_inicio_actual());
+				consulta.setTimestamp(33, listaMovimientoDetalle.get(i).getFec_fin_actual());
+				consulta.setLong(34, listaMovimientoDetalle.get(i).getId_cap_articulo_actual());
+				consulta.setString(35, listaMovimientoDetalle.get(i).getNom_id_cap_articulo_actual());
+				consulta.setString(36, listaMovimientoDetalle.get(i).getTip_respaldo_actual());
+				consulta.setString(37, listaMovimientoDetalle.get(i).getNom_tip_respaldo_actual());
+				consulta.setString(38, listaMovimientoDetalle.get(i).getId_contenedor_actual());
+				consulta.setLong(39, listaMovimientoDetalle.get(i).getId_ubicacion_actual());
+				consulta.setString(40, listaMovimientoDetalle.get(i).getNom_ubicacion_actual());
+				consulta.setLong(41, listaMovimientoDetalle.get(i).getHora_llegada_custodia_actual());
+				consulta.setLong(42, listaMovimientoDetalle.get(i).getHora_salida_custodia_actual());
+				consulta.setString(43, listaMovimientoDetalle.get(i).getRemesa_ingreso_custodia_actual());
+				consulta.setString(44, listaMovimientoDetalle.get(i).getRemesa_salida_custodia_actual());
+				consulta.setString(45, listaMovimientoDetalle.get(i).getRevision_1());
+				consulta.setString(46, listaMovimientoDetalle.get(i).getRevision_2());
+				consulta.setString(47, listaMovimientoDetalle.get(i).getRevision_3());
+				consulta.setString(48, listaMovimientoDetalle.get(i).getActualiza_inventario());
+				consulta.setString(49, listaMovimientoDetalle.get(i).getEst_detalle_movimiento());
+				consulta.setString(50, listaMovimientoDetalle.get(i).getUsu_ingresa());
+				consulta.setTimestamp(51, listaMovimientoDetalle.get(i).getFec_ingresa());
+				consulta.executeUpdate();
+			}
 			/*
 			 * SI NO SE PRESENTAN ERRORES SE APLICAN LOS CAMBIOS Y SE CIERRA LA INSTANCIA DE
 			 * LA BD

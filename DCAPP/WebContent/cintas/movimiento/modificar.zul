@@ -13,10 +13,27 @@
 					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
 					autodisable="self" />
 			</toolbar>
+			<div align="center">
+			<label
+				value="¿Desea modificar el registro antes de pedido?" style="font-style: normal !important; font-weight: bold !important">
+			</label>
+			<space width="20px"></space>
+			<combobox id="cmbModificaRegistro" width="90px" readonly="true">
+				<comboitem value="1" label=" SI" iconSclass="z-icon-check-circle-o"></comboitem>
+				<comboitem value="0" label=" NO" iconSclass="z-icon-times-circle-o"></comboitem>
+			</combobox>
+			<label
+				value="(Debe ser autorizado por coordinación)" style="font-style: normal !important; font-weight: bold !important; color:red;">
+			</label>
+			</div>
 			<tabbox height="100%">
 				<tabs>
-					<tab label="REGISTRO ANTES DE PEDIDO" visible="true"></tab>
-					<tab label="REGISTRO DESPUES DE PEDIDO" selected="true"></tab>
+					<tab label="REGISTRO ANTES DE PEDIDO"
+						visible="true" id="Tab1">
+					</tab>
+					<tab label="REGISTRO DESPUES DE PEDIDO"
+						selected="true" id="Tab2">
+					</tab>
 				</tabs>
 				<tabpanels vflex="max" style="height: calc(100%);"
 					width="100%">
@@ -279,7 +296,9 @@
 																	</panel>
 																</bandpopup>
 															</bandbox>
-															<space width="45px"></space>
+															<space
+																width="45px">
+															</space>
 														</hlayout>
 													</vlayout>
 												</div>
@@ -334,7 +353,7 @@
 													<vlayout>
 														<hlayout>
 															<textbox
-																id="txtRemesaIngresoAnterior" width="450px"
+																id="txtRemesaIngresoAnterior" width="250px"
 																readonly="false" rows="4" class="z-textbox-2" />
 														</hlayout>
 													</vlayout>
@@ -352,12 +371,15 @@
 													<vlayout>
 														<hlayout>
 															<textbox
-																id="txtRemesaSalidaAnterior" width="450px"
+																id="txtRemesaSalidaAnterior" width="250px"
 																readonly="false" rows="4" class="z-textbox-2" />
 														</hlayout>
 													</vlayout>
 												</div>
 											</cell>
+										</row>
+										<row>
+											<space></space>
 										</row>
 										<row>
 											<space></space>
@@ -397,25 +419,33 @@
 											</cell>
 										</row>
 										<row>
-											<cell colspan="2" visible="false">
+											<cell colspan="2"
+												visible="false">
 												<div align="center">
 													<label
 														value="* ¿Desea que se actualice el inventario?:"
 														class="z-label-1" />
-													 <space width="10px"></space>
+													<space
+														width="10px">
+													</space>
 													<vlayout>
 														<hlayout>
 															<combobox
-																id="cmbActualizaInventario" width="120px" readonly="true"
+																id="cmbActualizaInventario" width="120px"
+																readonly="true"
 																style="font-weight: bold; color:black !important;">
 																<comboitem
-																	label="SI" iconSclass="z-icon-unlock" value="S" style="font-weight: bold !important; font-style: normal !important; background-color: #C8FFC8 !important; text-align: center !important;">
+																	label="SI" iconSclass="z-icon-unlock" value="S"
+																	style="font-weight: bold !important; font-style: normal !important; background-color: #C8FFC8 !important; text-align: center !important;">
 																</comboitem>
 																<comboitem
-																	label="NO" iconSclass="z-icon-lock" value="N" style="font-weight: bold !important; font-style: normal !important; background-color: #FFE579 !important; text-align: center !important;">
+																	label="NO" iconSclass="z-icon-lock" value="N"
+																	style="font-weight: bold !important; font-style: normal !important; background-color: #FFE579 !important; text-align: center !important;">
 																</comboitem>
 															</combobox>
-															<space width="25px"></space>
+															<space
+																width="25px">
+															</space>
 														</hlayout>
 													</vlayout>
 												</div>
@@ -447,8 +477,8 @@
 													<vlayout>
 														<hlayout>
 															<textbox
-																id="txtDescripcionActual" width="450px"
-																readonly="false" rows="4" class="z-textbox-2" />
+																id="txtDescripcionActual" width="450px" readonly="false"
+																rows="4" class="z-textbox-2" />
 														</hlayout>
 													</vlayout>
 												</div>
@@ -484,8 +514,8 @@
 												</div>
 											</cell>
 										</row>
-										<row
-											id="rwFechaRespaldoActual" visible="false">
+										<row id="rwFechaRespaldoActual"
+											visible="false">
 											<cell colspan="2">
 												<div align="center">
 													<label
@@ -581,7 +611,9 @@
 															<textbox
 																id="txtIDContenedorActual" width="250px"
 																readonly="false" rows="5" class="z-textbox-2" />
-															<space width="15px"></space>	
+															<space
+																width="15px">
+															</space>
 														</hlayout>
 													</vlayout>
 												</div>
@@ -596,9 +628,12 @@
 														<hlayout>
 															<bandbox
 																id="bdxUbicacionActual" mold="rounded" autodrop="true"
-																width="250px" readonly="true" popup="pUbicacionActual">
+																width="250px" readonly="true"
+																popup="pUbicacionActual">
 															</bandbox>
-															<space width="45px"></space>
+															<space
+																width="45px">
+															</space>
 														</hlayout>
 													</vlayout>
 												</div>
@@ -677,6 +712,9 @@
 													</vlayout>
 												</div>
 											</cell>
+										</row>
+										<row>
+											<space></space>
 										</row>
 										<row>
 											<space></space>

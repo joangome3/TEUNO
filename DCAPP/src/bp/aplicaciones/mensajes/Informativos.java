@@ -135,6 +135,8 @@ public class Informativos {
 	private String mensaje_informativo_131 = ".:: Cerrar turno ::.";
 	private String mensaje_informativo_132 = "El item no se puede mover debido a que se supera la capacidad permitida de la ubicación, se consideran todos los registros de esta lista que se encuentran en la ubicacion ?1.";
 	private String mensaje_informativo_133 = "El item no se puede mover debido a que se supera la capacidad permitida de la ubicación, considerar que para este item se está realizando la creación de la caja, se consideran todos los registros de esta lista que se encuentran en la ubicacion ?1.";
+	private String mensaje_informativo_134 = "Considerar que la información del registro antes del pedido sólo se modificará en el movimiento y no en el inventario, para la actualización del inventario se considera la información del registro después del pedido, siempre y cuando se indique que desea actualizar inventario.";
+	private String mensaje_informativo_135 = "No se puede habilitar el movimiento puesto que se encuentra en ?1.";
 
 	public Informativos() {
 
@@ -670,6 +672,14 @@ public class Informativos {
 
 	public String getMensaje_informativo_133() {
 		return mensaje_informativo_133;
+	}
+
+	public String getMensaje_informativo_134() {
+		return mensaje_informativo_134;
+	}
+	
+	public String getMensaje_informativo_135() {
+		return mensaje_informativo_135;
 	}
 
 }

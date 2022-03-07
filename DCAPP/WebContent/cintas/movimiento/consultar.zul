@@ -405,6 +405,12 @@
 			label=" - Crear registro de cierre en log de eventos"
 			tooltiptext="Permite crear el registro de cierre en log de eventos, solo se permite crear el registro de cierre de una tarea a la vez."
 			visible="true" />
+			<menuseparator visible="true" id="mSeparador2"/>
+		<menuitem id="mHabilitarMovimiento"
+			iconSclass="z-icon-check-circle-o"
+			label=" - Habilitar movimiento"
+			tooltiptext="Permite habilitar el movimiento siempre que no se encuentre en alguna de las validaciones cruzadas."
+			visible="true" />
 	</menupopup>
 	<popup id="cons" width="300px">
 		<html>
