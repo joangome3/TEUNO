@@ -1097,10 +1097,17 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 							bitacora.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
 							bitacora.setId_tipo_servicio(2);
-							if (solicitud.getId_tipo_ingreso() != 1) {
-								bitacora.setId_tipo_clasificacion(11);
-							} else {
+							if (solicitud.getId_tipo_ingreso() == 1) {
 								bitacora.setId_tipo_clasificacion(10);
+							}
+							if (solicitud.getId_tipo_ingreso() == 2) {
+								bitacora.setId_tipo_clasificacion(22);
+							}
+							if (solicitud.getId_tipo_ingreso() == 3) {
+								bitacora.setId_tipo_clasificacion(20);
+							}
+							if (solicitud.getId_tipo_ingreso() == 4) {
+								bitacora.setId_tipo_clasificacion(21);
 							}
 							bitacora.setId_tipo_tarea(1);
 							bitacora.setId_estado_bitacora(2);
@@ -1140,10 +1147,17 @@ public class modificar_solicitud extends SelectorComposer<Component> {
 							tarea_proveedor.setId_solicitante(
 									listaSolicitante.get(lbxSolicitantes.getSelectedIndex()).getId_solicitante());
 							tarea_proveedor.setId_tipo_servicio(2);
-							if (solicitud.getId_tipo_ingreso() != 1) {
-								tarea_proveedor.setId_tipo_clasificacion(11);
-							} else {
+							if (solicitud.getId_tipo_ingreso() == 1) {
 								tarea_proveedor.setId_tipo_clasificacion(10);
+							}
+							if (solicitud.getId_tipo_ingreso() == 2) {
+								tarea_proveedor.setId_tipo_clasificacion(22);
+							}
+							if (solicitud.getId_tipo_ingreso() == 3) {
+								tarea_proveedor.setId_tipo_clasificacion(20);
+							}
+							if (solicitud.getId_tipo_ingreso() == 4) {
+								tarea_proveedor.setId_tipo_clasificacion(21);
 							}
 							tarea_proveedor.setId_area(id_tipo_ubicacion);
 							tarea_proveedor.setId_rack(bdxRack.getText().toString());

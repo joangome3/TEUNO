@@ -999,8 +999,8 @@ public class nuevo extends SelectorComposer<Component> {
 								// Se debe crear un parametro para la configuracion de varios datos por defecto.
 								bitacora.setId_cliente(setearEmpresaDesdeUbicacion(movimiento.getId_ubicacion()));
 								if (chkTicket.isChecked()) {
-									bitacora.setId_tipo_servicio(6);
-									bitacora.setId_tipo_clasificacion(5);
+									bitacora.setId_tipo_servicio(19);
+									bitacora.setId_tipo_clasificacion(37);
 								} else {
 									bitacora.setId_tipo_servicio(obtenerIdTipoServicioAPartirDeTicket(
 											txtTicket.getText().trim().toUpperCase(), 1, id_dc));

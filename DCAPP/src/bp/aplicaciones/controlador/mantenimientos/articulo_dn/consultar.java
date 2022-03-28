@@ -883,7 +883,7 @@ public class consultar extends SelectorComposer<Component> {
 		 * Se valida que el item si es caja no se pueda mover a una ubicacion no
 		 * permitida
 		 */
-		if (listaArticulo.get(indice).getId_ubicacion() <= 3 || listaArticulo.get(indice).getId_ubicacion() >= 139) {
+		if (listaArticulo.get(indice).getId_ubicacion() <= 3 || listaArticulo.get(indice).getId_ubicacion() >= 142) {
 			Messagebox.show(informativos.getMensaje_informativo_120().replace("?1", nom_ubicacion),
 					informativos.getMensaje_informativo_24(), Messagebox.OK, Messagebox.EXCLAMATION);
 			return;

@@ -427,7 +427,7 @@ public class organizar extends SelectorComposer<Component> {
 		int indexUbicacion = lbxUbicaciones2.getSelectedIndex();
 		if (listaArticulo1.get(indexArticulo).getId_categoria() == 2) {
 			if (listaUbicacion2.get(indexUbicacion).getId_ubicacion() <= 3
-					|| listaUbicacion2.get(indexUbicacion).getId_ubicacion() >= 139) {
+					|| listaUbicacion2.get(indexUbicacion).getId_ubicacion() >= 142) {
 				Messagebox.show(
 						informativos.getMensaje_informativo_129().replace("?1",
 								listaUbicacion2.get(indexUbicacion).toStringUbicacion()),
@@ -484,7 +484,7 @@ public class organizar extends SelectorComposer<Component> {
 		int indexUbicacion = lbxUbicaciones1.getSelectedIndex();
 		if (listaArticulo2.get(indexArticulo).getId_categoria() == 2) {
 			if (listaUbicacion1.get(indexUbicacion).getId_ubicacion() <= 3
-					|| listaUbicacion1.get(indexUbicacion).getId_ubicacion() >= 139) {
+					|| listaUbicacion1.get(indexUbicacion).getId_ubicacion() >= 142) {
 				Messagebox.show(
 						informativos.getMensaje_informativo_129().replace("?1",
 								listaUbicacion1.get(indexUbicacion).toStringUbicacion()),
@@ -549,7 +549,7 @@ public class organizar extends SelectorComposer<Component> {
 			}
 			if (listaArticulo.get(i).getId_categoria() == 2) {
 				if (listaUbicacion2.get(indexUbicacion).getId_ubicacion() <= 3
-						|| listaUbicacion2.get(indexUbicacion).getId_ubicacion() >= 139) {
+						|| listaUbicacion2.get(indexUbicacion).getId_ubicacion() >= 142) {
 					Messagebox.show(
 							informativos.getMensaje_informativo_130()
 									.replace("?1", listaArticulo.get(i).getCod_articulo())
@@ -621,7 +621,7 @@ public class organizar extends SelectorComposer<Component> {
 			}
 			if (listaArticulo.get(i).getId_categoria() == 2) {
 				if (listaUbicacion1.get(indexUbicacion).getId_ubicacion() <= 3
-						|| listaUbicacion1.get(indexUbicacion).getId_ubicacion() >= 139) {
+						|| listaUbicacion1.get(indexUbicacion).getId_ubicacion() >= 142) {
 					Messagebox.show(
 							informativos.getMensaje_informativo_130()
 									.replace("?1", listaArticulo.get(i).getCod_articulo())
