@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/dcap_bp?zeroDateTimeBehavior=convertToNull</property>
+        <property name="hibernate.connection.username">sibod</property>
+        <property name="hibernate.connection.password">$1b0d</property>
+        <!-- Especifique el dialecto de la base de datos -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+        <!-- Muestra la declaración de operación de la base de datos ejecutada en la consola -->
+        <property name="hibernate.show_sql">true</property>
+        <!-- Muestra la instrucción de operación de la base de datos ejecutada (formato) en la consola -->
+        <property name="hibernate.format_sql">true</property>
+        <!-- Hibernate genera automáticamente tablas de bases de datos basadas en entidades -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+         <!-- Configurar CurrentSession -->
+        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_localidad" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_empresa" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_tipo_equipo" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_tipo_conector" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_equipo_tipo_conector" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_estado_equipo" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_marca" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_modelo" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_equipo" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_fila" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_rack" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_manual" />
+        <mapping class="bp.aplicaciones.equipos.modelo.modelo_gestion_equipo" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_ur" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_rack_ur_equipo" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_etiquetado_poder" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_etiquetado_pdu" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_observacion" />
+    </session-factory>
+</hibernate-configuration>

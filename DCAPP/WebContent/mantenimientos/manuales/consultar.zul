@@ -2,7 +2,7 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<div id="zConsultar" height="100%" width="100%"
-		apply="bp.aplicaciones.controlador.mantenimiento.manuales.consultar"
+		apply="bp.aplicaciones.controlador.mantenimientos.manuales.consultar"
 		align="center">
 		<div id="winList" class="m-div-c"></div>
 		<grid>
@@ -61,6 +61,8 @@
 							style="text-align: center !important;" />
 						<listheader label="DESCRIPCION"
 							style="text-align: center !important;" />
+						<listheader label="UBICACION"
+							style="text-align: center !important;" />
 						<listheader label="ESTADO"
 							style="text-align: center !important;" />
 					</listhead>
@@ -70,6 +72,8 @@
 							style="text-align: center !important;" />
 						<listcell label="@{lista.getNom_manual}" />
 						<listcell label="@{lista.getDes_manual}"
+							style="font-style: italic !important;" />
+						<listcell label="@{lista.getDir_manual}"
 							style="font-style: italic !important;" />
 						<listcell label="@{lista.mostrarEstado}"
 							style="@{lista.estiloMostrarEstado}" />

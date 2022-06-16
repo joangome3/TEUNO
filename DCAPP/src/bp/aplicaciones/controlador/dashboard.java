@@ -70,8 +70,10 @@ public class dashboard extends SelectorComposer<Component> {
 			tcMantenimientoEmpresas, tcMantenimientoUbicaciones1, tcMantenimientoSolicitantesProveedores,
 			tcMantenimientoCategorias1, tcMantenimientoSesiones, tcMantenimientoRespaldos, tcMantenimientoCapacidades,
 			tcMantenimientoCategorias2, tcMantenimientoUbicaciones2, tcMantenimientoSolicitudes, tcManosRemotas,
+			tcMantenimientoFilas, tcMantenimientoRacks, tcMantenimientoMarcas, tcMantenimientoModelos,
+			tcMantenimientoTipoEquipos, tcMantenimientoTipoConectores, tcMantenimientoEquipos,
 			tcMantenimientoInformativos, tcBodega, tcBitacora, tcControlCambioGenerar, tcCintas, tcAcercaDe, tcDBodega,
-			tcDBitacora, tcPersonal, tcMantenimientoManuales;
+			tcDBitacora, tcPersonal, tcMantenimientoManuales, tcMantenimientoEstadosEquipo;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -95,7 +97,7 @@ public class dashboard extends SelectorComposer<Component> {
 
 	String mlocalidades, mparametros, mperfiles, musuarios, mempresas, msolicitantes, mcategorias1, mubicaciones1,
 			marticulos, msesiones, mrespaldos, mcapacidades, mcategorias2, mubicaciones2, msolicitudes, minformativos,
-			mmanuales;
+			mmanuales, mracks, mfilas, mmarcas, mmodelos, mtipoequipos, mtipoconectores, mequipos, mestadosequipo;
 	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas, oPersonal, oManosRemotas;
 
 	List<modelo_solicitud> listaSolicitud = new ArrayList<modelo_solicitud>();
@@ -126,13 +128,14 @@ public class dashboard extends SelectorComposer<Component> {
 		validarPermisosMantenimientos();
 		inicializarPermisosOpciones();
 		validarPermisosOpciones();
-		cargarSolicitudes();
+		//cargarSolicitudes();
 		cargarMovimientosDN();
 		inicializarSolicitudesPendientes();
 		inicializarValidacionesCruzadasPendientesModuloCintas();
 		cargarParametros();
 		onClick$tcDBitacora();
 		cargarInformativos();
+		Sessions.getCurrent().setAttribute("btn", btnSalir);
 		// Clients.showNotification(usup, "info", btnUsuario, "start_before", 3000);
 	}
 
@@ -381,8 +384,8 @@ public class dashboard extends SelectorComposer<Component> {
 
 	@Listen("onClick=#tDashboard")
 	public void onClick$tDashboard() throws ClassNotFoundException, FileNotFoundException, IOException {
-		cargarSolicitudes();
-		inicializarSolicitudesPendientes();
+		//cargarSolicitudes();
+		//inicializarSolicitudesPendientes();
 		init();
 	}
 
@@ -400,6 +403,7 @@ public class dashboard extends SelectorComposer<Component> {
 							Sessions.getCurrent().removeAttribute("user");
 							Sessions.getCurrent().removeAttribute("id_dc");
 							Sessions.getCurrent().removeAttribute("nom_ape_user");
+							Sessions.getCurrent().setAttribute("div", dSolicitudes);
 							Executions.sendRedirect(url);
 						}
 					}
@@ -451,6 +455,7 @@ public class dashboard extends SelectorComposer<Component> {
 								Sessions.getCurrent().removeAttribute("user");
 								Sessions.getCurrent().removeAttribute("id_dc");
 								Sessions.getCurrent().removeAttribute("nom_ape_user");
+								Sessions.getCurrent().setAttribute("div", dSolicitudes);
 								Executions.sendRedirect(url);
 							} catch (Exception e) {
 								Messagebox.show(
@@ -550,6 +555,46 @@ public class dashboard extends SelectorComposer<Component> {
 				mmanuales = "S";
 			} else {
 				mmanuales = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "21", 1) == true) {
+				mracks = "S";
+			} else {
+				mracks = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "22", 1) == true) {
+				mfilas = "S";
+			} else {
+				mfilas = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "23", 1) == true) {
+				mmarcas = "S";
+			} else {
+				mmarcas = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "24", 1) == true) {
+				mmodelos = "S";
+			} else {
+				mmodelos = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "25", 1) == true) {
+				mtipoequipos = "S";
+			} else {
+				mtipoequipos = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "26", 1) == true) {
+				mequipos = "S";
+			} else {
+				mequipos = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "27", 1) == true) {
+				mtipoconectores = "S";
+			} else {
+				mtipoconectores = "N";
+			}
+			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "28", 1) == true) {
+				mestadosequipo = "S";
+			} else {
+				mestadosequipo = "N";
 			}
 		} catch (SQLException e) {
 			Messagebox.show(
@@ -695,6 +740,54 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tcMantenimientoManuales.setDisabled(true);
 			tcMantenimientoManuales.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mfilas.equals("S")) {
+			tcMantenimientoFilas.setDisabled(false);
+		} else {
+			tcMantenimientoFilas.setDisabled(true);
+			tcMantenimientoFilas.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mracks.equals("S")) {
+			tcMantenimientoRacks.setDisabled(false);
+		} else {
+			tcMantenimientoRacks.setDisabled(true);
+			tcMantenimientoRacks.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mmarcas.equals("S")) {
+			tcMantenimientoMarcas.setDisabled(false);
+		} else {
+			tcMantenimientoMarcas.setDisabled(true);
+			tcMantenimientoMarcas.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mmodelos.equals("S")) {
+			tcMantenimientoModelos.setDisabled(false);
+		} else {
+			tcMantenimientoModelos.setDisabled(true);
+			tcMantenimientoModelos.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mtipoequipos.equals("S")) {
+			tcMantenimientoTipoEquipos.setDisabled(false);
+		} else {
+			tcMantenimientoTipoEquipos.setDisabled(true);
+			tcMantenimientoTipoEquipos.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mequipos.equals("S")) {
+			tcMantenimientoEquipos.setDisabled(false);
+		} else {
+			tcMantenimientoEquipos.setDisabled(true);
+			tcMantenimientoEquipos.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mtipoconectores.equals("S")) {
+			tcMantenimientoTipoConectores.setDisabled(false);
+		} else {
+			tcMantenimientoTipoConectores.setDisabled(true);
+			tcMantenimientoTipoConectores.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mestadosequipo.equals("S")) {
+			tcMantenimientoEstadosEquipo.setDisabled(false);
+		} else {
+			tcMantenimientoEstadosEquipo.setDisabled(true);
+			tcMantenimientoEstadosEquipo.setTooltiptext("No tiene permisos para usar esta configuración.");
 		}
 	}
 
@@ -1530,7 +1623,7 @@ public class dashboard extends SelectorComposer<Component> {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Listen("onClick=#tcMantenimientoManuales")
 	public void onClick$tcMantenimientoManuales() {
 		try {
@@ -1552,6 +1645,255 @@ public class dashboard extends SelectorComposer<Component> {
 			Tabpanel tabpanel = new Tabpanel();
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/mantenimientos/manuales/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoRacks")
+	public void onClick$tcMantenimientoRacks() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoRacks.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoRacks.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | RACKS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoRacks.getId());
+			tab.setImage("/img/botones/ButtonRack2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/rack/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoFilas")
+	public void onClick$tcMantenimientoFilas() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoFilas.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoFilas.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | FILAS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoFilas.getId());
+			tab.setImage("/img/botones/ButtonFila2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/fila/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoMarcas")
+	public void onClick$tcMantenimientoMarcas() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoMarcas.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoMarcas.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | MARCAS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoMarcas.getId());
+			tab.setImage("/img/botones/ButtonMarca2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/marca/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoModelos")
+	public void onClick$tcMantenimientoModelos() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoModelos.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoModelos.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | MODELOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoModelos.getId());
+			tab.setImage("/img/botones/ButtonModelo2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/modelo/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoTipoEquipos")
+	public void onClick$tcMantenimientoTipoEquipos() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoTipoEquipos.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoTipoEquipos.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | TIPOS DE EQUIPO");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoTipoEquipos.getId());
+			tab.setImage("/img/botones/ButtonTipoEquipo2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/tipo_equipo/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoEquipos")
+	public void onClick$tcMantenimientoEquipos() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoEquipos.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoEquipos.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | EQUIPOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoEquipos.getId());
+			tab.setImage("/img/botones/ButtonEquipo2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/equipo/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoTipoConectores")
+	public void onClick$tcMantenimientoTipoConectores() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoTipoConectores.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoTipoConectores.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | TIPOS DE CONECTOR");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoTipoConectores.getId());
+			tab.setImage("/img/botones/ButtonTipoConector2.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/tipo_conector/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@Listen("onClick=#tcMantenimientoEstadosEquipo")
+	public void onClick$tcMantenimientoEstadosEquipo() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoEstadosEquipo.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoEstadosEquipo.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GESTION DE EQUIPOS - CONFIGURACION | ESTADOS DEL EQUIPO");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoEstadosEquipo.getId());
+			tab.setImage("/img/botones/ButtonEquipo3.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/estado_equipo/consultar.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

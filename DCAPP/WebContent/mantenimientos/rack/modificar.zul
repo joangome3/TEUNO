@@ -1,0 +1,294 @@
+<?page title="Modificar rack" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.rack.modificar"
+		position="center, center" sizable="false" width="55%" height="90%"
+		maximizable="false" minimizable="false" title=".:: Modificar rack ::."
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<tabbox height="94%">
+				<tabs>
+					<tab label="INFORMACIÓN GENERAL DEL RACK"
+						visible="true" id="tab1" selected="true"
+						iconSclass="z-icon-gear">
+					</tab>
+					<tab label="DISPONIBILIDAD DEL RACK"
+						selected="false" id="tab2" style="font-style: italic;"
+						iconSclass="z-icon-rss">
+					</tab>
+				</tabs>
+				<tabpanels vflex="max" style="height: calc(100%);"
+					width="100%">
+					<tabpanel>
+						<vlayout vflex="1">
+							<hlayout vflex="1"
+								style="overflow: scroll;">
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column width="135px"
+											align="right">
+										</column>
+										<column width=""></column>
+										<column width="120px"></column>
+										<column width=""></column>
+									</columns>
+									<rows>
+										<row>
+											<space height="10px"></space>
+										</row>
+										<row>
+											* ID:
+											<cell align="left">
+												<space width="60px"></space>
+												<textbox id="txtId"
+													width="150px" disabled="true" class="z-textbox-1">
+												</textbox>
+											</cell>
+											<cell colspan="1"></cell>
+											<cell colspan="1"></cell>
+										</row>
+										<row>
+											* Cliente:
+											<cell colspan="1"
+												align="left">
+												<space width="60px"></space>
+												<combobox width="280px"
+													id="cmbEmpresa" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+											* Fila:
+											<cell colspan="1">
+												<space width="60px"></space>
+												<combobox width="250px"
+													id="cmbFila" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+										</row>
+										<row>
+											* Coordenada:
+											<cell colspan="1"
+												align="right">
+												<vlayout>
+													<hlayout>
+														<textbox
+															id="txtCoordenada" width="280px" rows="5" maxlength="10"
+															style="resize: none;">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lCoordenada.setValue(value.length() + "/10");
+]]>
+													</attribute>
+														</textbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="nom"
+															style="cursor: help; width: 16px; height: 16px;" />
+													</hlayout>
+													<label
+														id="lCoordenada"
+														style="position: relative; left: -5.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/10">
+													</label>
+												</vlayout>
+											</cell>
+											* Marca:
+											<cell colspan="1"
+												align="left">
+												<space width="60px"></space>
+												<combobox width="250px"
+													id="cmbMarca" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+										</row>
+										<row>
+											* Modelo:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="280px"
+													id="cmbModelo" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+											* Serie:
+											<cell colspan="1"
+												align="right">
+												<space width="70px"></space>
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -8.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkSerie" />
+													<hlayout>
+														<textbox
+															id="txtSerie" width="250px" rows="5" maxlength="25"
+															style="resize: none;" disabled="true">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lSerie.setValue(value.length() + "/25");
+]]>
+													</attribute>
+														</textbox>
+														<space
+															width="50px">
+														</space>
+													</hlayout>
+													<label id="lSerie"
+														style="position: relative; left: -8.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/25">
+													</label>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Codigo activo:
+											<cell colspan="1"
+												align="right">
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -4.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkCodigoActivo" />
+													<hlayout>
+														<textbox
+															id="txtCodigoActivo" width="280px" rows="5"
+															maxlength="25" style="resize: none;" disabled="true">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lCodigoActivo.setValue(value.length() + "/25");
+]]>
+													</attribute>
+														</textbox>
+														<space
+															width="10px">
+														</space>
+													</hlayout>
+													<label
+														id="lCodigoActivo"
+														style="position: relative; left: -4.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/25">
+													</label>
+												</vlayout>
+											</cell>
+											* Cantidad UR:
+											<cell colspan="1"
+												align="left">
+												<space width="50px"></space>
+												<intbox
+													id="intCantidadUR" maxlength="2" class="z-textbox-2">
+												</intbox>
+											</cell>
+										</row>
+										<row>
+											<space width="15px"></space>
+										</row>
+									</rows>
+								</grid>
+							</hlayout>
+						</vlayout>
+					</tabpanel>
+					<tabpanel>
+						<div align="left">
+							<space width="30px"></space>
+							<label value="Urs ocupadas:"
+								style="font-weight: bold;">
+							</label>
+							<space width="25px"></space>
+							<textbox id="txtUrsOcupadas" width="100px"
+								class="z-textbox-2" readonly="true"
+								style="font-weight: bold;">
+							</textbox>
+							<space width="15px"></space>
+							<label value="Urs disponibles:"
+								style="font-weight: bold;">
+							</label>
+							<space width="25px"></space>
+							<textbox id="txtUrsDisponibles"
+								width="100px" class="z-textbox-2" readonly="true"
+								style="font-weight: bold;">
+							</textbox>
+							<space width="15px"></space>
+							<label value="% Urs ocupadas:"
+								style="font-weight: bold;">
+							</label>
+							<space width="25px"></space>
+							<textbox id="txtPorcUrsOcupadas"
+								width="100px" class="z-textbox-2" readonly="true"
+								style="font-weight: bold;">
+							</textbox>
+							<space width="15px"></space>
+							<label value="% Urs disponibles:"
+								style="font-weight: bold;">
+							</label>
+							<space width="25px"></space>
+							<textbox id="txtPorcUrsDisponibles"
+								width="100px" class="z-textbox-2" readonly="true"
+								style="font-weight: bold;">
+							</textbox>
+							<space width="15px"></space>
+						</div>
+						<div align="center" height="99%">
+							<vlayout vflex="1">
+								<hlayout vflex="1"
+									style="overflow: scroll;">
+									<listbox id="lbxUrs" mold="paging"
+										vflex="true" width="100%" sizedByContent="true"
+										pageSize="50">
+										<listhead sizable="false"
+											style="overflow: scroll;">
+											<listheader label=""
+												style="text-align: center !important;">
+											</listheader>
+											<listheader label="UR"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader label="ESTADO"
+												style="text-align: center !important;">
+											</listheader>
+										</listhead>
+									</listbox>
+								</hlayout>
+							</vlayout>
+						</div>
+						<space width="10px"></space>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</div>
+		<popup id="nom" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> La
+				coordenada no puede repetirse con alguna otra que ya se
+				haya registrado. <span style="color: black; font-size:
+				12px; font-style: italic; font-weight: bold;"> El
+				sistema validará que el nombre no se encuentre
+				registrado. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<zscript>
+	<![CDATA[
+	lbxUrs.pagingChild.mold = "os".equals(lbxUrs.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	</window>
+</zk>

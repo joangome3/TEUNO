@@ -267,8 +267,8 @@
 									<div width="100%" height="100%"
 										align="center">
 										<listbox id="lbxMovimientos"
-											mold="paging" vflex="true" width="90%"
-											sizedByContent="true">
+											mold="paging" vflex="true" width="100%"
+											sizedByContent="false">
 											<listhead sizable="false"
 												style="overflow: scroll;">
 												<listheader label="ID"

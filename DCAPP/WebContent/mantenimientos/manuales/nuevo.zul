@@ -2,11 +2,11 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window border="normal" id="zNuevo" closable="true"
-		apply="bp.aplicaciones.controlador.mantenimiento.manuales.nuevo"
-		position="center, center" sizable="true" width="50%" height="70%"
-		maximizable="false" minimizable="false"
-		title=".:: Nuevo manual ::." shadow="false" mode="overlapped"
-		focus="true" action="show: slideDown;hide: slideUp">
+		apply="bp.aplicaciones.controlador.mantenimientos.manuales.nuevo"
+		position="center, center" sizable="true" width="50%" height="90%"
+		maximizable="false" minimizable="false" title=".:: Nuevo manual ::."
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
 		<div height="100%" width="100%">
 			<toolbar>
 				<button id="btnGrabar"
@@ -27,7 +27,7 @@
 							<row>
 								<space height="20px"></space>
 							</row>
-							<row>
+							<row visible="false">
 								<cell colspan="2">
 									<div align="center">
 										<label value="ID:"
@@ -45,16 +45,46 @@
 							<row>
 								<cell colspan="2">
 									<div align="center">
+										<button id="btnCargar"
+											tooltiptext="Cargar archivo" autodisable="self"
+											upload="true, maxsize=7000" disabled="false"
+											iconSclass="z-icon-paperclip" class="btn btn-success"
+											label=" - Cargar archivo (7 Mb máximo)" style="padding-top: 10px; padding-bottom: 15px; font-style: italic !important;">
+										</button>
+										<button id="btnConsultar"
+											tooltiptext="Consultar archivo" autodisable="self"
+											disabled="false" image="/img/botones/ButtonEye.png"
+											visible="false">
+										</button>
+										<space width="35px"></space>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
 										<label value="* Nombre:"
 											class="z-label-1" />
 										<vlayout>
 											<hlayout>
 												<textbox id="txtNombre"
-													width="350px" rows="2" constraint="" class="z-textbox-2" />
+													width="350px" rows="4" maxlength="100" class="z-textbox-2"
+													style="resize: none;">
+													<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lNombre.setValue(value.length() + "/100");
+]]>
+													</attribute>
+												</textbox>
 												<image
 													src="/img/botones/ButtonPopup.png" tooltip="nom"
 													style="cursor: help; width: 16px; height: 16px;" />
 											</hlayout>
+											<label id="lNombre"
+												style="position: relative; left: 11.5rem; top: -1.1rem; color:red; font-weight: bold;"
+												value="0/100">
+											</label>
 										</vlayout>
 									</div>
 								</cell>
@@ -67,39 +97,40 @@
 										<vlayout>
 											<hlayout>
 												<textbox
-													id="txtDescripcion" width="450px" rows="4"
-													class="z-textbox-2" />
+													id="txtDescripcion" width="450px" rows="6"
+													class="z-textbox-2" maxlength="200"
+													style="resize: none;">
+													<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lDescripcion.setValue(value.length() + "/200");
+]]>
+													</attribute>
+												</textbox>
 											</hlayout>
+											<label id="lDescripcion"
+												style="position: relative; left: 17.5rem; top: -1.1rem; color:red; font-weight: bold;"
+												value="0/200">
+											</label>
 										</vlayout>
 									</div>
 								</cell>
 							</row>
-							<row>
+							<row visible="true" id="rwManual">
 								<cell colspan="2">
 									<div align="center">
-										<button id="btnCargar"
-											tooltiptext="Cargar archivo" autodisable="self"
-											upload="true, maxsize=7000" disabled="false"
-											image="/img/botones/ButtonUp2.png" class="btn btn-info">
-										</button>
-										<button id="btnConsultar"
-											tooltiptext="Consultar archivo" autodisable="self"
-											disabled="false" image="/img/botones/ButtonEye.png" visible="false">
-										</button>
-										<space width="30px"></space>
+										<space width="20px"></space>
+										<label value="Vista previa:"
+											class="z-label-1" />
+									</div>
+									<div width="100%" align="center">
+										<iframe id="frManual"
+											width="800px" height="600px" style="border: 1px solid gray"
+											src="/img/principal/NoDisponible.png" />
 									</div>
 								</cell>
 							</row>
 							<row visible="false">
-								<cell colspan="2">
-									<div width="100%" align="center">
-										<iframe id="frManual" visible="true"  style="width:99%; height:800px;border:3px inset;"  autohide="false">
-											
-										</iframe>
-									</div>
-								</cell>
-							</row>
-							<row>
 								<cell colspan="2"
 									class="z-cell-check">
 									<div align="center">
@@ -131,71 +162,84 @@
 					</grid>
 				</center>
 			</borderlayout>
+
 		</div>
 		<popup id="nom" width="300px">
 			<html>
 
+				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> El
 				nombre no puede repetirse con algun otro que ya se haya
 				registrado. <span style="color: black; font-size: 12px;
 				font-style: italic; font-weight: bold;"> El sistema
 				validará que el nombre no se encuentre registrado.
 				</span> </p> ]]>
+				
 
 			</html>
 		</popup>
 		<popup id="dc" width="300px">
 			<html>
 
+				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> La
 				localidad que se muestra es la que se asignó a su
 				usuario en la <span style="color: black; font-size:
 				12px; font-style: italic; font-weight: bold;">
 				configuracion de usuarios. </span> </p> ]]>
+				
 
 			</html>
 		</popup>
 		<popup id="mar" width="300px">
 			<html>
 
+				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				se selecciona este campo, cuando se cree un artículo se
 				le solicitará <span style="color: black; font-size:
 				12px; font-style: italic; font-weight: bold;"> registrar
 				la marca. </span> </p> ]]>
+				
 
 			</html>
 		</popup>
 		<popup id="mod" width="300px">
 			<html>
 
+				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				se selecciona este campo, cuando se cree un artículo se
 				le solicitará <span style="color: black; font-size:
 				12px; font-style: italic; font-weight: bold;"> registrar
 				el modelo. </span> </p> ]]>
+				
 
 			</html>
 		</popup>
 		<popup id="ser" width="300px">
 			<html>
 
+				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				se selecciona este campo, cuando se cree un artículo se
 				le solicitará <span style="color: black; font-size:
 				12px; font-style: italic; font-weight: bold;"> registrar
 				la serie. </span> </p> ]]>
+				
 
 			</html>
 		</popup>
 		<popup id="cod" width="300px">
 			<html>
 
+				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> Si
 				se selecciona este campo, cuando se cree un artículo se
 				le solicitará <span style="color: black; font-size:
 				12px; font-style: italic; font-weight: bold;"> registrar
 				el codigo de activo. </span> </p> ]]>
+				
 
 			</html>
 		</popup>

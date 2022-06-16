@@ -103,8 +103,8 @@ public class rack extends SelectorComposer<Component> {
 	}
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaFila = consultasABaseDeDatos.cargarFilas("", id_dc, id_cliente, 1);
-		listaRack1 = consultasABaseDeDatos.cargarRacks("", id_dc, id_cliente, 0, 1);
+		listaFila = consultasABaseDeDatos.consultarFilas(id_dc, id_cliente, "", "", 0, 1);
+		listaRack1 = consultasABaseDeDatos.consultarRacks(id_dc, id_cliente, "", "", 0, 3);
 		binder.loadComponent(lbxRack1);
 		binder.loadComponent(cmbFilas);
 	}
@@ -123,11 +123,11 @@ public class rack extends SelectorComposer<Component> {
 			lItem.appendChild(lCell);
 			/* CLIENTE */
 			lCell = new Listcell();
-			lCell.setLabel(listaRack3.get(i).getNom_cliente());
+			lCell.setLabel(listaRack3.get(i).getEmpresa().getNom_empresa());
 			lItem.appendChild(lCell);
 			/* FILA */
 			lCell = new Listcell();
-			lCell.setLabel(listaRack3.get(i).getNom_fila());
+			lCell.setLabel(listaRack3.get(i).getFila().getNom_fila());
 			lItem.appendChild(lCell);
 			/* COORDENADA */
 			lCell = new Listcell();
@@ -204,8 +204,8 @@ public class rack extends SelectorComposer<Component> {
 		if (cmbFilas.getSelectedItem() != null) {
 			id_fila = Long.valueOf(cmbFilas.getSelectedItem().getValue().toString());
 		}
-		listaRack1 = consultasABaseDeDatos.cargarRacks(txtBuscarRack.getText().toUpperCase().trim(), id_dc, id_cliente,
-				id_fila, 1);
+		listaRack1 = consultasABaseDeDatos.consultarRacks(id_dc, id_cliente,
+				txtBuscarRack.getText().toUpperCase().trim(), String.valueOf(id_fila), 0, 3);
 		bdxRack.setText("");
 		lbxRack1.clearSelection();
 		binder.loadComponent(lbxRack1);
@@ -217,8 +217,8 @@ public class rack extends SelectorComposer<Component> {
 		if (cmbFilas.getSelectedItem() != null) {
 			id_fila = Long.valueOf(cmbFilas.getSelectedItem().getValue().toString());
 		}
-		listaRack1 = consultasABaseDeDatos.cargarRacks(txtBuscarRack.getText().toUpperCase().trim(), id_dc, id_cliente,
-				id_fila, 1);
+		listaRack1 = consultasABaseDeDatos.consultarRacks(id_dc, id_cliente,
+				txtBuscarRack.getText().toUpperCase().trim(), String.valueOf(id_fila), 0, 3);
 		bdxRack.setText("");
 		lbxRack1.clearSelection();
 		binder.loadComponent(lbxRack1);
@@ -274,12 +274,12 @@ public class rack extends SelectorComposer<Component> {
 				lItem.appendChild(lCell);
 				/* CLIENTE */
 				lCell = new Listcell();
-				lCell.setLabel(listaRack1.get(indice).getNom_cliente());
+				lCell.setLabel(listaRack1.get(indice).getEmpresa().getNom_empresa());
 				lCell.setStyle("text-align: center !important;");
 				lItem.appendChild(lCell);
 				/* FILA */
 				lCell = new Listcell();
-				lCell.setLabel(listaRack1.get(indice).getNom_fila());
+				lCell.setLabel(listaRack1.get(indice).getFila().getNom_fila());
 				lItem.appendChild(lCell);
 				/* COORDENADA */
 				lCell = new Listcell();

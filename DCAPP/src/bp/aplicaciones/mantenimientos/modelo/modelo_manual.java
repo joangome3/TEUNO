@@ -1,32 +1,54 @@
 package bp.aplicaciones.mantenimientos.modelo;
 
-import java.sql.Blob;
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "nocap_manuales")
 public class modelo_manual {
 
+	@Id
+	@Column(name = "id_manual", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_manual;
+	@Column(name = "nom_manual", length = 200)
 	private String nom_manual;
+	@Column(name = "des_manual", length = 500)
 	private String des_manual;
-	private long id_localidad;
-	private String nom_localidad;
+	@Column(name = "ext_manual", length = 50)
 	private String ext_manual;
-	private Blob dir_manual;
+	@Column(name = "dir_manual", length = 500)
+	private String dir_manual;
+	@Column(name = "est_manual", length = 5)
 	private String est_manual;
+	@Column(name = "usu_ingresa", length = 20)
 	private String usu_ingresa;
+	@Column(name = "fec_ingresa")
 	private Timestamp fec_ingresa;
+	@Column(name = "usu_modifica", length = 20)
 	private String usu_modifica;
+	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
 
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "id_localidad")
+	private modelo_localidad localidad;
+
 	public modelo_manual() {
-		super();
 	}
 
 	/**
-	 * @param id_manual
 	 * @param nom_manual
 	 * @param des_manual
-	 * @param id_localidad
 	 * @param ext_manual
 	 * @param dir_manual
 	 * @param est_manual
@@ -35,14 +57,11 @@ public class modelo_manual {
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_manual(long id_manual, String nom_manual, String des_manual, long id_localidad, String ext_manual,
-			Blob dir_manual, String est_manual, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
-			Timestamp fec_modifica) {
+	public modelo_manual(String nom_manual, String des_manual, String ext_manual, String dir_manual, String est_manual,
+			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		super();
-		this.id_manual = id_manual;
 		this.nom_manual = nom_manual;
 		this.des_manual = des_manual;
-		this.id_localidad = id_localidad;
 		this.ext_manual = ext_manual;
 		this.dir_manual = dir_manual;
 		this.est_manual = est_manual;
@@ -56,8 +75,6 @@ public class modelo_manual {
 	 * @param id_manual
 	 * @param nom_manual
 	 * @param des_manual
-	 * @param id_localidad
-	 * @param nom_localidad
 	 * @param ext_manual
 	 * @param dir_manual
 	 * @param est_manual
@@ -66,15 +83,12 @@ public class modelo_manual {
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_manual(long id_manual, String nom_manual, String des_manual, long id_localidad, String nom_localidad,
-			String ext_manual, Blob dir_manual, String est_manual, String usu_ingresa, Timestamp fec_ingresa,
-			String usu_modifica, Timestamp fec_modifica) {
+	public modelo_manual(long id_manual, String nom_manual, String des_manual, String ext_manual, String dir_manual,
+			String est_manual, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		super();
 		this.id_manual = id_manual;
 		this.nom_manual = nom_manual;
 		this.des_manual = des_manual;
-		this.id_localidad = id_localidad;
-		this.nom_localidad = nom_localidad;
 		this.ext_manual = ext_manual;
 		this.dir_manual = dir_manual;
 		this.est_manual = est_manual;
@@ -83,8 +97,6 @@ public class modelo_manual {
 		this.usu_modifica = usu_modifica;
 		this.fec_modifica = fec_modifica;
 	}
-
-	/* Se sobreescribe el metodo toString */
 
 	/**
 	 * @return the id_manual
@@ -129,34 +141,6 @@ public class modelo_manual {
 	}
 
 	/**
-	 * @return the id_localidad
-	 */
-	public long getId_localidad() {
-		return id_localidad;
-	}
-
-	/**
-	 * @param id_localidad the id_localidad to set
-	 */
-	public void setId_localidad(long id_localidad) {
-		this.id_localidad = id_localidad;
-	}
-
-	/**
-	 * @return the nom_localidad
-	 */
-	public String getNom_localidad() {
-		return nom_localidad;
-	}
-
-	/**
-	 * @param nom_localidad the nom_localidad to set
-	 */
-	public void setNom_localidad(String nom_localidad) {
-		this.nom_localidad = nom_localidad;
-	}
-
-	/**
 	 * @return the ext_manual
 	 */
 	public String getExt_manual() {
@@ -173,14 +157,14 @@ public class modelo_manual {
 	/**
 	 * @return the dir_manual
 	 */
-	public Blob getDir_manual() {
+	public String getDir_manual() {
 		return dir_manual;
 	}
 
 	/**
 	 * @param dir_manual the dir_manual to set
 	 */
-	public void setDir_manual(Blob dir_manual) {
+	public void setDir_manual(String dir_manual) {
 		this.dir_manual = dir_manual;
 	}
 
@@ -254,13 +238,26 @@ public class modelo_manual {
 		this.fec_modifica = fec_modifica;
 	}
 
+	/**
+	 * @return the localidad
+	 */
+	public modelo_localidad getLocalidad() {
+		return localidad;
+	}
+
+	/**
+	 * @param localidad the localidad to set
+	 */
+	public void setLocalidad(modelo_localidad localidad) {
+		this.localidad = localidad;
+	}
+
 	@Override
 	public String toString() {
 		return "modelo_manual [id_manual=" + id_manual + ", nom_manual=" + nom_manual + ", des_manual=" + des_manual
-				+ ", id_localidad=" + id_localidad + ", nom_localidad=" + nom_localidad + ", ext_manual=" + ext_manual
-				+ ", dir_manual=" + dir_manual + ", est_manual=" + est_manual + ", usu_ingresa=" + usu_ingresa
-				+ ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica=" + fec_modifica
-				+ "]";
+				+ ", ext_manual=" + ext_manual + ", dir_manual=" + dir_manual + ", est_manual=" + est_manual
+				+ ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica
+				+ ", fec_modifica=" + fec_modifica + "]";
 	}
 
 	public String mostrarEstado() {

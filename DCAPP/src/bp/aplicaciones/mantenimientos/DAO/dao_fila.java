@@ -1,70 +1,104 @@
 package bp.aplicaciones.mantenimientos.DAO;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
-import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.conexion.hibernateUtil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_fila;
 
 //Filas
 public class dao_fila {
 
-	public Long obtenerNuevoId() throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
-		conexion conexion = new conexion();
-		Long id = (long) 0;
-		try {
-			PreparedStatement consulta = conexion.abrir().prepareStatement("{CALL fila_obtenerNuevoID()}");
-			ResultSet resultado = consulta.executeQuery();
-			while (resultado.next()) {
-				id = resultado.getLong("id_fila") + 1;
-			}
-			resultado.close();
-			consulta.close();
-		} catch (SQLException ex) {
-			throw new SQLException(ex);
-		} catch (java.lang.NullPointerException ex) {
-			throw new java.lang.NullPointerException();
-		} finally {
-			conexion.cerrar();
-		}
-		return id;
-	}
+	private SessionFactory sessionFactory = hibernateUtil.getSessionFactory();
 
-	public List<modelo_fila> obtenerFilas(String criterio, long id_localidad, long id_cliente, int tipo)
-			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
-		conexion conexion = new conexion();
+	@SuppressWarnings("unchecked")
+	public List<modelo_fila> consultarFilas(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		Session session = null;
+		Transaction transaction = null;
 		List<modelo_fila> lista_filas = new ArrayList<modelo_fila>();
-		PreparedStatement consulta = null;
 		try {
-			consulta = conexion.abrir().prepareStatement("{CALL fila_obtenerFilas(?, ?, ?, ?)}");
-			consulta.setString(1, criterio.toUpperCase());
-			consulta.setLong(2, id_localidad);
-			consulta.setLong(3, id_cliente);
-			consulta.setInt(4, tipo);
-			ResultSet resultado = consulta.executeQuery();
-			while (resultado.next()) {
-				lista_filas.add(new modelo_fila(resultado.getLong("id_fila"), resultado.getString("nom_fila"),
-						resultado.getString("des_fila"), resultado.getLong("id_localidad"),
-						resultado.getString("est_fila"), resultado.getString("usu_ingresa"),
-						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
-						resultado.getTimestamp("fec_modifica")));
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			@SuppressWarnings("rawtypes")
+			Query query = session.createNativeQuery("{CALL fila_obtenerFilas(?, ?, ?, ?, ?, ?)}",
+					modelo_fila.class);
+			query.setParameter(1, id1);
+			query.setParameter(2, id2);
+			query.setParameter(3, criterio1);
+			query.setParameter(4, criterio2);
+			query.setParameter(5, limite);
+			query.setParameter(6, tipo);
+			lista_filas = query.getResultList();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
 			}
-			resultado.close();
-			consulta.close();
-		} catch (SQLException ex) {
-			throw new SQLException(ex);
-		} catch (java.lang.NullPointerException ex) {
-			throw new java.lang.NullPointerException();
+			e.printStackTrace();
 		} finally {
-			conexion.cerrar();
+			session.close();
 		}
 		return lista_filas;
+	}
+
+	public void insertarFila(modelo_fila fila) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.save(fila);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+
+	public void actualizarFila(modelo_fila fila) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.update(fila);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+
+	public void eliminarFila(modelo_fila fila) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.delete(fila);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
 	}
 
 }

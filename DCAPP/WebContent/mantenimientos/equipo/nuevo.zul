@@ -1,0 +1,433 @@
+<?page title="Nuevo equipo" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zNuevo" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.equipo.nuevo"
+		position="center, center" sizable="false" width="55%" height="95%"
+		maximizable="false" minimizable="false" title=".:: Nuevo equipo ::."
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<tabbox height="94%">
+				<tabs>
+					<tab label="INFORMACIÓN GENERAL DEL EQUIPO"
+						visible="true" id="tab1" selected="true" iconSclass="z-icon-gear">
+					</tab>
+					<tab label="INFORMACIÓN DE LAS FUENTES DEL EQUIPO"
+						selected="false" id="tab2" style="font-style: italic;" iconSclass="z-icon-magnet">
+					</tab>
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<vlayout vflex="1">
+							<hlayout vflex="1"
+								style="overflow: scroll;">
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column width="120px"
+											align="right">
+										</column>
+										<column width=""></column>
+										<column width="120px"></column>
+										<column width=""></column>
+									</columns>
+									<rows>
+										<row visible="false">
+											<space height="20px"></space>
+										</row>
+										<row>
+											* Tipo de equipo:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="250px"
+													id="cmbTipoEquipo" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+											* Nombre de equipo:
+											<cell colspan="1"
+												align="right">
+												<space width="70px"></space>
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -8.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkNombreEquipo" />
+													<hlayout>
+														<textbox
+															id="txtNombreEquipo" width="250px" rows="5"
+															maxlength="25" style="resize: none;" disabled="true">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lNombreEquipo.setValue(value.length() + "/25");
+]]>
+													</attribute>
+														</textbox>
+														<space
+															width="50px">
+														</space>
+													</hlayout>
+													<label
+														id="lNombreEquipo"
+														style="position: relative; left: -8.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/25">
+													</label>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Marca:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="250px"
+													id="cmbMarca" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+											* Modelo:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="250px"
+													id="cmbModelo" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+										</row>
+										<row>
+											* Serie:
+											<cell colspan="1"
+												align="right">
+												<space width="70px"></space>
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -8.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkSerie" />
+													<hlayout>
+														<textbox
+															id="txtSerie" width="250px" rows="5" maxlength="25"
+															style="resize: none;" disabled="true">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lSerie.setValue(value.length() + "/25");
+]]>
+													</attribute>
+														</textbox>
+														<space
+															width="50px">
+														</space>
+													</hlayout>
+													<label id="lSerie"
+														style="position: relative; left: -8.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/25">
+													</label>
+												</vlayout>
+											</cell>
+											* Codigo activo:
+											<cell colspan="1"
+												align="right">
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -8.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkCodigoActivo" />
+													<hlayout>
+														<textbox
+															id="txtCodigoActivo" width="250px" rows="5"
+															maxlength="25" style="resize: none;" disabled="true">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lCodigoActivo.setValue(value.length() + "/25");
+]]>
+													</attribute>
+														</textbox>
+														<space
+															width="45px">
+														</space>
+													</hlayout>
+													<label
+														id="lCodigoActivo"
+														style="position: relative; left: -8.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/25">
+													</label>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Número de parte:
+											<cell colspan="1"
+												align="right">
+												<space width="70px"></space>
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -8.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkCodigoProducto" />
+													<hlayout>
+														<textbox
+															id="txtCodigoProducto" width="250px" rows="5"
+															maxlength="25" style="resize: none;" disabled="true">
+															<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lCodigoProducto.setValue(value.length() + "/25");
+]]>
+													</attribute>
+														</textbox>
+														<space
+															width="50px">
+														</space>
+													</hlayout>
+													<label
+														id="lCodigoProducto"
+														style="position: relative; left: -8.2rem; top: -1.1rem; color:red; font-weight: bold;"
+														value="0/25">
+													</label>
+												</vlayout>
+											</cell>
+											* Peso (Kg):
+											<cell colspan="1"
+												align="right">
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -9.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkPeso" />
+													<hlayout>
+														<decimalbox
+															id="decPeso" class="z-textbox-2" width="230px"
+															format="#,##0.##" disabled="true">
+														</decimalbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="format"
+															style="cursor: help; width: 16px; height: 16px;" />
+														<space
+															width="50px">
+														</space>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Profundidad:
+											<cell colspan="1"
+												align="right">
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -8.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkProfundidad" />
+													<hlayout>
+														<decimalbox
+															id="decProfundidad" class="z-textbox-2" width="250px"
+															format="#,##0.##" disabled="true">
+														</decimalbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="format"
+															style="cursor: help; width: 16px; height: 16px;" />
+														<space
+															width="45px">
+														</space>
+													</hlayout>
+												</vlayout>
+											</cell>
+											* BTU (BTU/hr):
+											<cell colspan="1"
+												align="right">
+												<vlayout>
+													<checkbox
+														label="No registra"
+														style="position: relative; left: -9.2rem; color:gray; text-transform: uppercase; font-weight: bold; font-style: italic !important;"
+														id="chkBTU" />
+													<hlayout>
+														<decimalbox
+															id="decBTU" class="z-textbox-2" width="230px"
+															format="#,##0.##" disabled="true">
+														</decimalbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="format"
+															style="cursor: help; width: 16px; height: 16px;" />
+														<space
+															width="50px">
+														</space>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Estado:
+											<cell colspan="1"
+												align="right">
+												<combobox width="250px"
+													id="cmbEstado" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+												<space width="55px"></space>
+											</cell>
+											* Etiquetado cableado de
+											datos:
+											<cell colspan="1"
+												align="right">
+												<combobox width="230px"
+													id="cmbEtiquetadoCableadoDatos" readonly="false"
+													disabled="false" autodrop="true" autocomplete="false"
+													buttonVisible="true">
+													<comboitem value="1"
+														label="SI">
+													</comboitem>
+													<comboitem value="0"
+														label="NO">
+													</comboitem>
+												</combobox>
+												<space width="60px"></space>
+											</cell>
+										</row>
+										<row>
+											* Peinado cableado de datos:
+											<cell colspan="1"
+												align="right">
+												<combobox width="250px"
+													id="cmbPeinadoCableadoDatos" readonly="false"
+													disabled="false" autodrop="true" autocomplete="false"
+													buttonVisible="true">
+													<comboitem value="1"
+														label="SI">
+													</comboitem>
+													<comboitem value="0"
+														label="NO">
+													</comboitem>
+												</combobox>
+												<space width="55px"></space>
+											</cell>
+											* Fecha ingreso:
+											<cell colspan="1"
+												align="left">
+												<space width="65px"></space>
+												<datebox
+													format="dd/MM/yyyy" id="dtxFechaIngreso">
+												</datebox>
+											</cell>
+										</row>
+										<row>
+											* Conexión a ATS:
+											<cell colspan="1"
+												align="right">
+												<combobox width="250px"
+													id="cmbConectadoATS" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+													<comboitem value="1"
+														label="SI">
+													</comboitem>
+													<comboitem value="0"
+														label="NO">
+													</comboitem>
+												</combobox>
+												<space width="55px"></space>
+											</cell>
+											<cell colspan="1"></cell>
+											<cell colspan="1"></cell>
+										</row>
+										<row>
+											<space width="25px"></space>
+										</row>
+										<row>
+											<space width="25px"></space>
+										</row>
+									</rows>
+								</grid>
+							</hlayout>
+						</vlayout>
+					</tabpanel>
+					<tabpanel>
+						<div align="right">
+							<label
+								value="Desea registrar fuente(s) para este equipo?"
+								style="font-weight: bold;">
+							</label>
+							<space width="35px"></space>
+							<combobox id="cmbRegistraFuente"
+								width="100px" readonly="true"
+								tooltiptext="Desea registrar fuente(s) para este equipo?.">
+								<comboitem value="1" label=" SI"
+									iconSclass="z-icon-check-circle-o">
+								</comboitem>
+								<comboitem value="0" label=" NO"
+									iconSclass="z-icon-times-circle-o">
+								</comboitem>
+							</combobox>
+							<button label="Añadir Fuente"
+								style="background-color: green; color: white; font-style: italic;"
+								iconSclass="z-icon-plus" id="btnAnadir"
+								tooltiptext="Permite añadir fuentes a la lista.">
+							</button>
+							<space width="15px"></space>
+						</div>
+						<div align="center" height="100%">
+							<vlayout vflex="1">
+								<hlayout vflex="1"
+									style="overflow: scroll;">
+									<listbox id="lbxFuentes"
+										mold="paging" vflex="true" width="100%"
+										sizedByContent="true">
+										<listhead sizable="false"
+											style="overflow: scroll;">
+											<listheader label=""
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="TIPO DE CONECTOR"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="VOLTAJE (V)"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="POTENCIA (W)"
+												style="text-align: center !important;">
+											</listheader>
+										</listhead>
+									</listbox>
+								</hlayout>
+							</vlayout>
+						</div>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</div>
+		<popup id="format" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: blue; font-size: 12px;"> El
+				formato es de la siguiente manera #,##0.## <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> La coma es el separador de
+				decimales y el punto de miles. </span> </p> ]]>
+
+			</html>
+		</popup>
+		<zscript>
+	<![CDATA[
+	lbxFuentes.pagingChild.mold = "os".equals(lbxFuentes.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	</window>
+</zk>

@@ -32,7 +32,7 @@ public class nuevo extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zNuevo;
+	Window zNuevaEmpresa;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
@@ -148,7 +148,7 @@ public class nuevo extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zNuevo));
+		Events.postEvent(new Event("onClose", zNuevaEmpresa));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

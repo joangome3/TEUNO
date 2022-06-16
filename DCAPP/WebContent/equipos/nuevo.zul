@@ -1,0 +1,490 @@
+<?page title="Nuevo movimiento" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zNuevoMovimiento" closable="true"
+		apply="bp.aplicaciones.equipos.controlador.nuevo"
+		position="center, center" sizable="false" width="58%" height="95%"
+		maximizable="false" minimizable="false"
+		title=".:: Nuevo movimiento ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<div id="winList" class="m-div-c"></div>
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<tabbox height="94%">
+				<tabs>
+					<tab label="INFORMACIÓN GENERAL DEL EQUIPO"
+						visible="true" id="tab1" selected="true">
+					</tab>
+					<tab label="INFORMACIÓN DE LAS FUENTES DEL EQUIPO"
+						visible="true" id="tab2" selected="false">
+					</tab>
+					<tab label="UBICACIÓN EN EL RACK" visible="true"
+						id="tab3" selected="false">
+					</tab>
+					<tab label="ETIQUETADO CABLEADO DE PODER"
+						selected="false" id="tab4"
+						style="font-style: italic !important;">
+					</tab>
+					<tab label="ETIQUETADO CABLEADO DE PDU"
+						selected="false" id="tab5" style="font-style: italic;">
+					</tab>
+					<tab label="OBSERVACIONES" selected="false"
+						id="tab6" style="font-style: italic;">
+					</tab>
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<vlayout vflex="1">
+							<hlayout vflex="1"
+								style="overflow: scroll;">
+								<grid>
+									<custom-attributes
+										org.zkoss.zul.nativebar="false" />
+									<columns>
+										<column width="120px"
+											align="right">
+										</column>
+										<column width="400px"></column>
+										<column width="160px"></column>
+										<column width=""></column>
+									</columns>
+									<rows>
+										<row visible="true">
+											<space height="20px"></space>
+										</row>
+										<row>
+											* Tipo de movimiento:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="250px"
+													id="cmbTipoMovimiento" readonly="true" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+											* Ticket:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtTicket" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="false">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Rack:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="250px"
+													id="cmbRack" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+												<button
+													id="btnNuevoRack" iconSclass="z-icon-plus-circle"
+													tooltiptext="Nuevo rack" autodisable="true">
+												</button>
+											</cell>
+											* Equipo:
+											<cell colspan="1"
+												align="left">
+												<space width="70px"></space>
+												<combobox width="250px"
+													id="cmbEquipo" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+												<button
+													id="btnNuevoEquipo" iconSclass="z-icon-plus-circle"
+													tooltiptext="Nuevo equipo" autodisable="true">
+												</button>
+											</cell>
+										</row>
+										<row>
+											Empresa:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtEmpresa" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+											Fila:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtFila" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											Nombre de equipo:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtNombreEquipo" width="250px" rows="3"
+															maxlength="25" style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+											Tipo de equipo:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtTipoEquipo" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											Marca:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtMarca" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+											Modelo:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtModelo" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											Serie:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtSerie" width="250px" rows="3" maxlength="25"
+															style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+											Codigo activo:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtCodigoActivo" width="250px" rows="3"
+															maxlength="25" style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											Número de parte:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="65px">
+														</space>
+														<textbox
+															id="txtCodigoProducto" width="250px" rows="3"
+															maxlength="25" style="resize: none; font-weight: normal;"
+															readonly="true">
+														</textbox>
+													</hlayout>
+												</vlayout>
+											</cell>
+											Peso (Kg):
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="50px">
+														</space>
+														<decimalbox
+															id="decPeso" class="z-textbox-2" width="230px"
+															format="#,##0.##" readonly="true">
+														</decimalbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="format"
+															style="cursor: help; width: 16px; height: 16px;" />
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											Profundidad:
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="50px">
+														</space>
+														<decimalbox
+															id="decProfundidad" class="z-textbox-2" width="250px"
+															format="#,##0.##" readonly="true">
+														</decimalbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="format"
+															style="cursor: help; width: 16px; height: 16px;" />
+													</hlayout>
+												</vlayout>
+											</cell>
+											BTU (BTU/hr):
+											<cell colspan="1"
+												align="left">
+												<vlayout>
+													<hlayout>
+														<space
+															width="50px">
+														</space>
+														<decimalbox
+															id="decBTU" class="z-textbox-2" width="230px"
+															format="#,##0.##" readonly="true">
+														</decimalbox>
+														<image
+															src="/img/botones/ButtonPopup.png" tooltip="format"
+															style="cursor: help; width: 16px; height: 16px;" />
+													</hlayout>
+												</vlayout>
+											</cell>
+										</row>
+										<row>
+											* Estado:
+											<cell colspan="1"
+												align="center">
+												<space width="45px"></space>
+												<combobox width="250px"
+													id="cmbEstado" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+												</combobox>
+											</cell>
+											* Etiquetado cableado de
+											datos:
+											<cell colspan="1"
+												align="right">
+												<combobox width="230px"
+													id="cmbEtiquetadoCableadoDatos" readonly="false"
+													disabled="false" autodrop="true" autocomplete="false"
+													buttonVisible="true">
+													<comboitem value="1"
+														label="SI">
+													</comboitem>
+													<comboitem value="0"
+														label="NO">
+													</comboitem>
+												</combobox>
+												<space width="50px"></space>
+											</cell>
+										</row>
+										<row>
+											* Peinado cableado de datos:
+											<cell colspan="1"
+												align="right">
+												<combobox width="250px"
+													id="cmbPeinadoCableadoDatos" readonly="false"
+													disabled="false" autodrop="true" autocomplete="false"
+													buttonVisible="true">
+													<comboitem value="1"
+														label="SI">
+													</comboitem>
+													<comboitem value="0"
+														label="NO">
+													</comboitem>
+												</combobox>
+												<space width="55px"></space>
+											</cell>
+											* Fecha ingreso:
+											<cell colspan="1"
+												align="left">
+												<space width="65px"></space>
+												<datebox
+													format="dd/MM/yyyy" id="dtxFechaIngreso">
+												</datebox>
+											</cell>
+										</row>
+										<row>
+											* Conexión a ATS:
+											<cell colspan="1"
+												align="right">
+												<combobox width="250px"
+													id="cmbConectadoATS" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
+													<comboitem value="1"
+														label="SI">
+													</comboitem>
+													<comboitem value="0"
+														label="NO">
+													</comboitem>
+												</combobox>
+												<space width="55px"></space>
+											</cell>
+											<cell colspan="1"></cell>
+											<cell colspan="1"></cell>
+										</row>
+										<row>
+											<space width="25px"></space>
+										</row>
+									</rows>
+								</grid>
+							</hlayout>
+						</vlayout>
+					</tabpanel>
+					<tabpanel>
+						<div align="center" height="100%">
+							<vlayout vflex="1">
+								<hlayout vflex="1"
+									style="overflow: scroll;">
+
+									<listbox mold="paging"
+										id="lbxFuentes" vflex="min" sizedByContent="true" width="100%"
+										height="500px">
+										<listhead sizable="false"
+											style="overflow: scroll;">
+											<listheader label=""
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="TIPO DE CONECTOR"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="VOLTAJE (V)"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="POTENCIA (W)"
+												style="text-align: center !important;">
+											</listheader>
+										</listhead>
+									</listbox>
+								</hlayout>
+							</vlayout>
+						</div>
+					</tabpanel>
+					<tabpanel>
+						<div align="center" height="100%">
+							<vlayout vflex="1">
+								<hlayout vflex="1"
+									style="overflow: scroll;">
+
+									<listbox mold="paging"
+										id="lbxUrs" vflex="min" sizedByContent="true" width="100%"
+										height="500px" pageSize="50">
+										<listhead sizable="false"
+											style="overflow: scroll;">
+											<listheader label=""
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="UR"
+												style="text-align: center !important;">
+											</listheader>
+											<listheader
+												label="ESTADO"
+												style="text-align: center !important;">
+											</listheader>
+										</listhead>
+									</listbox>
+								</hlayout>
+							</vlayout>
+						</div>
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+		</div>
+		<popup id="format" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: blue; font-size: 12px;"> El
+				formato es de la siguiente manera #,##0.## <span
+				style="color: black; font-size: 12px; font-style:
+				italic; font-weight: bold;"> La coma es el separador de
+				decimales y el punto de miles. </span> </p> ]]>
+
+			</html>
+		</popup>
+			<zscript>
+	<![CDATA[
+	lbxUrs.pagingChild.mold = "os".equals(lbxUrs.pagingChild.mold) ? "default" : "os";
+]]>
+	</zscript>
+	</window>
+</zk>

@@ -1,45 +1,91 @@
 package bp.aplicaciones.mantenimientos.modelo;
 
 import java.sql.Timestamp;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "nocap_fila")
 public class modelo_fila {
 
+	@Id
+	@Column(name = "id_fila", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_fila;
+	@Column(name = "nom_fila", length = 50)
 	private String nom_fila;
+	@Column(name = "des_fila", length = 500)
 	private String des_fila;
-	private long id_localidad;
+	@Column(name = "est_fila", length = 5)
 	private String est_fila;
+	@Column(name = "usu_ingresa", length = 20)
 	private String usu_ingresa;
+	@Column(name = "fec_ingresa")
 	private Timestamp fec_ingresa;
+	@Column(name = "usu_modifica", length = 20)
 	private String usu_modifica;
+	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "id_localidad")
+	private modelo_localidad localidad;
+
+	@OneToMany(mappedBy = "fila", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_rack> racks;
 
 	/**
 	 * 
 	 */
 	public modelo_fila() {
-		super();
 	}
 
 	/**
-	 * @param id_fila
 	 * @param nom_fila
 	 * @param des_fila
-	 * @param id_localidad
 	 * @param est_fila
 	 * @param usu_ingresa
 	 * @param fec_ingresa
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_fila(long id_fila, String nom_fila, String des_fila, long id_localidad, String est_fila,
-			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
-		super();
+	public modelo_fila(String nom_fila, String des_fila, String est_fila, String usu_ingresa, Timestamp fec_ingresa,
+			String usu_modifica, Timestamp fec_modifica) {
+		this.nom_fila = nom_fila;
+		this.des_fila = des_fila;
+		this.est_fila = est_fila;
+		this.usu_ingresa = usu_ingresa;
+		this.fec_ingresa = fec_ingresa;
+		this.usu_modifica = usu_modifica;
+		this.fec_modifica = fec_modifica;
+	}
+
+	/**
+	 * @param id_fila
+	 * @param nom_fila
+	 * @param des_fila
+	 * @param est_fila
+	 * @param usu_ingresa
+	 * @param fec_ingresa
+	 * @param usu_modifica
+	 * @param fec_modifica
+	 */
+	public modelo_fila(long id_fila, String nom_fila, String des_fila, String est_fila, String usu_ingresa,
+			Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		this.id_fila = id_fila;
 		this.nom_fila = nom_fila;
 		this.des_fila = des_fila;
-		this.id_localidad = id_localidad;
 		this.est_fila = est_fila;
 		this.usu_ingresa = usu_ingresa;
 		this.fec_ingresa = fec_ingresa;
@@ -87,20 +133,6 @@ public class modelo_fila {
 	 */
 	public void setDes_fila(String des_fila) {
 		this.des_fila = des_fila;
-	}
-
-	/**
-	 * @return the id_localidad
-	 */
-	public long getId_localidad() {
-		return id_localidad;
-	}
-
-	/**
-	 * @param id_localidad the id_localidad to set
-	 */
-	public void setId_localidad(long id_localidad) {
-		this.id_localidad = id_localidad;
 	}
 
 	/**
@@ -173,12 +205,69 @@ public class modelo_fila {
 		this.fec_modifica = fec_modifica;
 	}
 
+	/**
+	 * @return the localidad
+	 */
+	public modelo_localidad getLocalidad() {
+		return localidad;
+	}
+
+	/**
+	 * @param localidad the localidad to set
+	 */
+	public void setLocalidad(modelo_localidad localidad) {
+		this.localidad = localidad;
+	}
+
+	/**
+	 * @return the racks
+	 */
+	public List<modelo_rack> getRacks() {
+		return racks;
+	}
+
+	/**
+	 * @param racks the racks to set
+	 */
+	public void setRacks(List<modelo_rack> racks) {
+		this.racks = racks;
+	}
+
 	@Override
 	public String toString() {
-		return "modelo_fila [id_fila=" + id_fila + ", nom_fila=" + nom_fila + ", des_fila=" + des_fila
-				+ ", id_localidad=" + id_localidad + ", est_fila=" + est_fila + ", usu_ingresa=" + usu_ingresa
-				+ ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica=" + fec_modifica
-				+ "]";
+		return "modelo_fila [id_fila=" + id_fila + ", nom_fila=" + nom_fila + ", des_fila=" + des_fila + ", est_fila="
+				+ est_fila + ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica="
+				+ usu_modifica + ", fec_modifica=" + fec_modifica + "]";
+	}
+
+	public String mostrarEstado() {
+		String estado = "";
+		if (est_fila.charAt(0) == 'A') {
+			estado = "ACTIVO";
+		}
+		if (est_fila.charAt(0) == 'P') {
+			estado = "PENDIENTE APROBAR CREACIÓN";
+		}
+		if (est_fila.charAt(0) == 'I') {
+			estado = "INACTIVO";
+		}
+		return estado;
+	}
+
+	/* Estilos en campos */
+
+	public String estiloMostrarEstado() {
+		String estilo = "";
+		if (est_fila.charAt(0) == 'A') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #CCFFE1;";
+		}
+		if (est_fila.charAt(0) == 'P') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FAF8D5;";
+		}
+		if (est_fila.charAt(0) == 'I') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FFDDDD;";
+		}
+		return estilo;
 	}
 
 }

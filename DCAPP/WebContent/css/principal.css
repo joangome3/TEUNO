@@ -48,23 +48,73 @@ body {
 }
 
 .z-window-header, .z-messagebox, .z-label, .z-tab-text,
-	.z-window-content, .z-textbox, .z-intbox, .z-caption, .z-tab-text,
-	.z-toolbarbutton-content, .z-west-header, .z-listheader-content,
-	.z-listcell-content, .z-listgroup-content, .z-listgroupfoot-content,
-	.z-listfooter-content, .z-paging-button, .z-combobox-input,
-	.z-bandbox-input, .z-datebox-input, .z-timebox-input, .z-spinner-input,
-	.z-doublespinner-input {
+	.z-window-content, .z-textbox, .z-intbox, .z-decimalbox, .z-caption,
+	.z-tab-text, .z-toolbarbutton-content, .z-west-header,
+	.z-listheader-content, .z-listcell-content, .z-listgroup-content,
+	.z-listgroupfoot-content, .z-listfooter-content, .z-paging-button,
+	.z-combobox-input, .z-bandbox-input, .z-datebox-input, .z-timebox-input,
+	.z-spinner-input, .z-doublespinner-input, .z-menu-text,
+	.z-menuitem-text {
 	font-family: "arimoregular";
 }
 
-.z-timebox-input {
+.z-timebox-input, .z-menu-text, .z-menuitem-text {
 	font-size: 13px !important;
 }
 
 .z-notification-info .z-notification-content {
 	font-family: "helvetica-medium";
 	font-size: 12px !important;
-	color: #008000;
+	color: white !important;
+	background: rgba(33, 155, 166, 0.88);
+}
+
+.z-notification-warning .z-notification-content {
+	font-family: "helvetica-medium";
+	font-size: 12px !important;
+	color: white !important;
+	background: rgba(234, 67, 23, 0.88);
+}
+
+.z-notification-error .z-notification-content {
+	font-family: "helvetica-medium";
+	font-size: 12px !important;
+	color: white !important;
+	background: rgba(190, 0, 5, 0.88);
+}
+
+.z-notification-info .z-notification-icon {
+	color: white !important;
+	background: transparent !important;
+}
+
+.z-notification-warning .z-notification-icon {
+	color: white !important;
+	background: transparent !important;
+}
+
+.z-notification-error .z-notification-icon {
+	color: white !important;
+	background: transparent !important;
+}
+
+.z-notification-info .z-notification-close{
+	color: white !important;
+	background: transparent !important;
+}
+
+.z-notification-warning .z-notification-close{
+	color: white !important;
+	background: transparent !important;
+}
+
+.z-notification-error .z-notification-close{
+	color: white !important;
+	background: transparent !important;
+}
+
+.z-icon-times-circle::before {
+	content: "\f057";
 }
 
 .z-error .errornumbers {
@@ -640,7 +690,7 @@ body {
 	font-size: 12px;
 }
 
-.z-textbox, .z-intbox {
+.z-textbox, .z-intbox, .z-decimalbox {
 	color: #000;
 	font-weight: normal;
 	font-size: 12px !important;

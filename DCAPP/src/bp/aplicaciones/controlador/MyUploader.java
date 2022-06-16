@@ -7,7 +7,7 @@ public class MyUploader extends AuUploader {
 
 	protected String handleError(Throwable ex) {
 		if (ex instanceof SizeLimitExceededException) {
-			return "El Tamaño de la imagen no debe superar los 1 Mb.";
+			return "El Tamaño del archivo supera el limite permitido.";
 		}
 		return super.handleError(ex);
 	}

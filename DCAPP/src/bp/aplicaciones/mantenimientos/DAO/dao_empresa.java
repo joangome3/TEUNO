@@ -8,9 +8,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.conexion.hibernateUtil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 
@@ -72,7 +78,7 @@ public class dao_empresa {
 		return lista_empresas;
 	}
 
-	public void insertarEmpresa(modelo_empresa empresa) throws SQLException, MySQLIntegrityConstraintViolationException,
+	public void insertarEmpresas(modelo_empresa empresa) throws SQLException, MySQLIntegrityConstraintViolationException,
 			ClassNotFoundException, FileNotFoundException, IOException {
 		conexion conexion = new conexion();
 		long id = obtenerNuevoId();
@@ -207,6 +213,94 @@ public class dao_empresa {
 			throw new java.lang.NullPointerException();
 		} finally {
 			conexion.cerrar();
+		}
+	}
+	
+	
+	private SessionFactory sessionFactory = hibernateUtil.getSessionFactory();
+
+	@SuppressWarnings("unchecked")
+	public List<modelo_empresa> consultarEmpresas(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		Session session = null;
+		Transaction transaction = null;
+		List<modelo_empresa> lista_empresaes = new ArrayList<modelo_empresa>();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			@SuppressWarnings("rawtypes")
+			Query query = session.createNativeQuery("{CALL empresa_obtenerEmpresas2(?, ?, ?, ?, ?, ?)}",
+					modelo_empresa.class);
+			query.setParameter(1, id1);
+			query.setParameter(2, id2);
+			query.setParameter(3, criterio1);
+			query.setParameter(4, criterio2);
+			query.setParameter(5, limite);
+			query.setParameter(6, tipo);
+			lista_empresaes = query.getResultList();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return lista_empresaes;
+	}
+
+	public void insertarEmpresa(modelo_empresa empresa) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.save(empresa);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+
+	public void actualizarEmpresa(modelo_empresa empresa) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.update(empresa);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+
+	public void eliminarEmpresa(modelo_empresa empresa) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.delete(empresa);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 	}
 

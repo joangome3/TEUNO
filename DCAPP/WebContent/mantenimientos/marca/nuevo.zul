@@ -1,0 +1,79 @@
+<?page title="Nueva marca" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zNuevo" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.marca.nuevo"
+		position="center, center" sizable="true" height="80%" width="768px"
+		maximizable="false" minimizable="false" title=".:: Nueva marca ::."
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp" contentStyle="overflow:auto">
+		<vlayout>
+			<vlayout>
+				<toolbar>
+					<button id="btnGrabar"
+						image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+						autodisable="self" visible="true" />
+				</toolbar>
+				<grid>
+					<custom-attributes org.zkoss.zul.nativebar="false" />
+					<columns>
+						<column hflex="1" align="right"></column>
+						<column hflex="4"></column>
+						<column hflex="1"></column>
+					</columns>
+					<rows>
+						<row>
+							<separator></separator>
+						</row>
+						<row>
+							<separator></separator>
+						</row>
+						<row>
+							* Nombre:
+							<vlayout>
+								<hlayout>
+									<textbox id="txtNombre"
+										width="400px" rows="5" maxlength="100"
+										style="resize: none;">
+										<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lNombre.setValue(value.length() + "/100");
+]]>
+													</attribute>
+									</textbox>
+									<image
+										src="/img/botones/ButtonPopup.png" tooltip="nom"
+										style="cursor: help; width: 16px; height: 16px;" />
+								</hlayout>
+								<label id="lNombre"
+									style="position: relative; left: -5.5rem; top: -1.1rem; color:red; font-weight: bold;"
+									value="0/100">
+								</label>
+							</vlayout>
+							<cell colspan="1"></cell>
+						</row>
+						<row>
+							<separator></separator>
+						</row>
+						<row>
+							<separator></separator>
+						</row>
+					</rows>
+				</grid>
+			</vlayout>
+		</vlayout>
+		<popup id="nom" width="300px">
+			<html>
+		
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				nombre no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el nombre no se encuentre registrado.
+				</span> </p> ]]>
+	
+			</html>
+		</popup>
+	</window>
+</zk>

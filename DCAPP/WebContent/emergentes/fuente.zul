@@ -1,0 +1,43 @@
+<?page title="Fuentes - Gestion de equipos" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zFuente" closable="true"
+		apply="bp.aplicaciones.controlador.emergentes.fuente"
+		position="center, center" sizable="true" width="600px" height="628px"
+		maximizable="false" minimizable="false" title=".:: Fuente(s) ::."
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%" align="center">
+			<listbox mold="paging" pageSize="9" pagingPosition="top"
+				width="600px" id="lbxFuentes"
+				model="@{zFuente$fuente.obtenerFuentes}" sizedByContent="true"
+				multiple="false" checkmark="false">
+				<listhead sizable="false" style="overflow: scroll;">
+					<listheader label="TIPO DE CONECTOR"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="VOLTAJE (V)"
+						style="text-align: center !important;">
+					</listheader>
+					<listheader label="POTENCIA (W)"
+						style="text-align: center !important;">
+					</listheader>
+				</listhead>
+				<listitem self="@{each=lista}">
+					<listcell
+						label="@{lista.getTipo_conector.getNom_tipo_conector}"
+						style="text-align: center !important; text-align: center !important;" />
+					<listcell
+						label="@{lista.getTipo_conector.getVol_tipo_conector}"
+						style="font-style: normal !important; text-align: center !important;" />
+					<listcell label="@{lista.getPotencia}"
+						style="font-style: normal !important; text-align: center !important;" />
+				</listitem>
+			</listbox>
+		</div>
+		<zscript><![CDATA[
+	lbxFuentes.pagingChild.mold = "os".equals(lbxFuentes.pagingChild.mold) ? "default" : "os";
+]]></zscript>
+		<style>.z-listheader-checkable { visibility: visible; }</style>
+	</window>
+</zk>

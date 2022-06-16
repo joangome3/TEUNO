@@ -4,25 +4,88 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import bp.aplicaciones.equipos.modelo.modelo_gestion_equipo;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 
+@Entity
+@Table(name = "sibod_localidad")
 public class modelo_localidad {
 
+	@Id
+	@Column(name = "id_localidad", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_localidad;
+	@Column(name = "nom_localidad", length = 100)
 	private String nom_localidad;
+	@Column(name = "des_localidad", length = 200)
 	private String des_localidad;
+	@Column(name = "est_localidad", length = 5)
 	private String est_localidad;
+	@Column(name = "usu_ingresa", length = 20)
 	private String usu_ingresa;
+	@Column(name = "fec_ingresa")
 	private Timestamp fec_ingresa;
+	@Column(name = "usu_modifica", length = 20)
 	private String usu_modifica;
+	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_equipo> equipos;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_manual> manuales;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_fila> filas;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_rack> racks;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_gestion_equipo> gestion_equipos;
 
 	/**
 	 * 
 	 */
 	public modelo_localidad() {
+	}
+
+	/**
+	 * @param nom_localidad
+	 * @param des_localidad
+	 * @param est_localidad
+	 * @param usu_ingresa
+	 * @param fec_ingresa
+	 * @param usu_modifica
+	 * @param fec_modifica
+	 */
+	public modelo_localidad(String nom_localidad, String des_localidad, String est_localidad, String usu_ingresa,
+			Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		super();
+		this.nom_localidad = nom_localidad;
+		this.des_localidad = des_localidad;
+		this.est_localidad = est_localidad;
+		this.usu_ingresa = usu_ingresa;
+		this.fec_ingresa = fec_ingresa;
+		this.usu_modifica = usu_modifica;
+		this.fec_modifica = fec_modifica;
 	}
 
 	/**
@@ -37,7 +100,6 @@ public class modelo_localidad {
 	 */
 	public modelo_localidad(long id_localidad, String nom_localidad, String des_localidad, String est_localidad,
 			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
-		super();
 		this.id_localidad = id_localidad;
 		this.nom_localidad = nom_localidad;
 		this.des_localidad = des_localidad;
@@ -158,6 +220,76 @@ public class modelo_localidad {
 	 */
 	public void setFec_modifica(Timestamp fec_modifica) {
 		this.fec_modifica = fec_modifica;
+	}
+
+	/**
+	 * @return the equipos
+	 */
+	public List<modelo_equipo> getEquipos() {
+		return equipos;
+	}
+
+	/**
+	 * @param equipo the equipos to set
+	 */
+	public void setEquipos(List<modelo_equipo> equipos) {
+		this.equipos = equipos;
+	}
+
+	/**
+	 * @return the manuales
+	 */
+	public List<modelo_manual> getManuales() {
+		return manuales;
+	}
+
+	/**
+	 * @param manuales the manuales to set
+	 */
+	public void setManuales(List<modelo_manual> manuales) {
+		this.manuales = manuales;
+	}
+
+	/**
+	 * @return the filas
+	 */
+	public List<modelo_fila> getFilas() {
+		return filas;
+	}
+
+	/**
+	 * @param filas the filas to set
+	 */
+	public void setFilas(List<modelo_fila> filas) {
+		this.filas = filas;
+	}
+
+	/**
+	 * @return the racks
+	 */
+	public List<modelo_rack> getRacks() {
+		return racks;
+	}
+
+	/**
+	 * @param racks the racks to set
+	 */
+	public void setRacks(List<modelo_rack> racks) {
+		this.racks = racks;
+	}
+
+	/**
+	 * @return the gestion_equipos
+	 */
+	public List<modelo_gestion_equipo> getGestion_equipos() {
+		return gestion_equipos;
+	}
+
+	/**
+	 * @param gestion_equipos the gestion_equipos to set
+	 */
+	public void setGestion_equipos(List<modelo_gestion_equipo> gestion_equipos) {
+		this.gestion_equipos = gestion_equipos;
 	}
 
 	@Override

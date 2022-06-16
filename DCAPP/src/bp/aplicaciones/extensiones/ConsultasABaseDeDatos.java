@@ -24,10 +24,15 @@ import bp.aplicaciones.mantenimientos.DAO.dao_campo;
 import bp.aplicaciones.mantenimientos.DAO.dao_capacidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_categoria_dn;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
+import bp.aplicaciones.mantenimientos.DAO.dao_equipo;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_bitacora;
+import bp.aplicaciones.mantenimientos.DAO.dao_estado_equipo;
 import bp.aplicaciones.mantenimientos.DAO.dao_fila;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_mantenimiento;
+import bp.aplicaciones.mantenimientos.DAO.dao_manual;
+import bp.aplicaciones.mantenimientos.DAO.dao_marca;
+import bp.aplicaciones.mantenimientos.DAO.dao_modelo;
 import bp.aplicaciones.mantenimientos.DAO.dao_opcion;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_10;
@@ -46,7 +51,9 @@ import bp.aplicaciones.mantenimientos.DAO.dao_solicitud;
 import bp.aplicaciones.mantenimientos.DAO.dao_tarea_periodica;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_aprobador;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_clasificacion;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_conector;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_dispositivo;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_equipo;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_servicio;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_solicitud;
@@ -55,16 +62,22 @@ import bp.aplicaciones.mantenimientos.DAO.dao_tipo_trabajo;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.DAO.dao_turno;
 import bp.aplicaciones.mantenimientos.DAO.dao_ubicacion_dn;
+import bp.aplicaciones.mantenimientos.DAO.dao_ur;
 import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_campo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_capacidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria_dn;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
+import bp.aplicaciones.mantenimientos.modelo.modelo_equipo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_bitacora;
+import bp.aplicaciones.mantenimientos.modelo.modelo_estado_equipo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_fila;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_mantenimiento;
+import bp.aplicaciones.mantenimientos.modelo.modelo_manual;
+import bp.aplicaciones.mantenimientos.modelo.modelo_marca;
+import bp.aplicaciones.mantenimientos.modelo.modelo_modelo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_opcion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10;
@@ -83,7 +96,9 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tarea_periodica;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_aprobador;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_clasificacion;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_conector;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_dispositivo;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_equipo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_solicitud;
@@ -92,6 +107,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_trabajo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_turno;
 import bp.aplicaciones.mantenimientos.modelo.modelo_ubicacion_dn;
+import bp.aplicaciones.mantenimientos.modelo.modelo_ur;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
@@ -111,7 +127,7 @@ public class ConsultasABaseDeDatos {
 	 * cintas Diners
 	 * 
 	 */
-	
+
 	/*
 	 * Metodo que permite validar si existe ya creada una solicitud de cintas
 	 * 
@@ -642,7 +658,7 @@ public class ConsultasABaseDeDatos {
 		}
 		return listaTipoDeServicio;
 	}
-	
+
 	public List<modelo_tipo_servicio> cargarTipoDeServicios1(String criterio, int tipo, long id, int limite)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_tipo_servicio dao = new dao_tipo_servicio();
@@ -914,8 +930,8 @@ public class ConsultasABaseDeDatos {
 	 */
 
 	public List<modelo_bitacora> cargarBitacoras(String criterio, int tipo, long id_cliente, String fecha, String turno,
-			long localidad, String fecha_inicio, String fecha_fin, long id_tipo_servicio, long id_tipo_tarea, String use_usuario,
-			int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
+			long localidad, String fecha_inicio, String fecha_fin, long id_tipo_servicio, long id_tipo_tarea,
+			String use_usuario, int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_bitacora dao = new dao_bitacora();
 		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
 		try {
@@ -1085,7 +1101,7 @@ public class ConsultasABaseDeDatos {
 		}
 		return id_tipo_servicio;
 	}
-	
+
 	public long obtenerIdTipoClasificacionAPartirDeTicket(String ticket, long id_tipo_tarea, long id_dc)
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		dao_movimiento dao = new dao_movimiento();
@@ -1187,46 +1203,6 @@ public class ConsultasABaseDeDatos {
 	/*
 	 * *
 	 * 
-	 * Metodo que devuelve los racks
-	 * 
-	 */
-
-	public List<modelo_rack> cargarRacks(String criterio, long id_localidad, long id_cliente, long id_fila, int tipo)
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_rack dao = new dao_rack();
-		List<modelo_rack> listaRack = new ArrayList<modelo_rack>();
-		try {
-			listaRack = dao.obtenerRacks(criterio, id_localidad, id_cliente, id_fila, tipo);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return listaRack;
-	}
-
-	/*
-	 * *
-	 * 
-	 * Metodo que devuelve las filas
-	 * 
-	 */
-
-	public List<modelo_fila> cargarFilas(String criterio, long id_localidad, long id_cliente, int tipo)
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_fila dao = new dao_fila();
-		List<modelo_fila> listaFila = new ArrayList<modelo_fila>();
-		try {
-			listaFila = dao.obtenerFilas(criterio, id_localidad, id_cliente, tipo);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return listaFila;
-	}
-
-	/*
-	 * *
-	 * 
 	 * Metodo que devuelve los tipos de ubicaciones
 	 * 
 	 */
@@ -1271,7 +1247,8 @@ public class ConsultasABaseDeDatos {
 
 	public List<modelo_solicitud_personal> cargarSolicitudesPersonal(String criterio, int tipo, long id_cliente,
 			String fecha_solicitud_1, String fecha_solicitud_2, String fecha_inicio, String fecha_fin,
-			long id_localidad, String estado, int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
+			long id_localidad, String estado, int limite)
+			throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_solicitud_personal dao = new dao_solicitud_personal();
 		List<modelo_solicitud_personal> listaSolicitudPersonal = new ArrayList<modelo_solicitud_personal>();
 		try {
@@ -1394,6 +1371,130 @@ public class ConsultasABaseDeDatos {
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 		return listaControlCambio;
+	}
+
+	/*
+	 * -----------------------------------------------------------------------------
+	 * 
+	 */
+
+	/* Localidades */
+
+	public List<modelo_localidad> consultarLocalidades(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_localidad> lista = new ArrayList<modelo_localidad>();
+		dao_localidad dao = new dao_localidad();
+		lista = dao.consultarLocalidades(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Manuales */
+
+	public List<modelo_manual> consultarManuales(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_manual> lista = new ArrayList<modelo_manual>();
+		dao_manual dao = new dao_manual();
+		lista = dao.consultarManuales(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Filas */
+
+	public List<modelo_fila> consultarFilas(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_fila> lista = new ArrayList<modelo_fila>();
+		dao_fila dao = new dao_fila();
+		lista = dao.consultarFilas(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Racks */
+
+	public List<modelo_rack> consultarRacks(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_rack> lista = new ArrayList<modelo_rack>();
+		dao_rack dao = new dao_rack();
+		lista = dao.consultarRacks(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Empresas */
+
+	public List<modelo_empresa> consultarEmpresas(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_empresa> lista = new ArrayList<modelo_empresa>();
+		dao_empresa dao = new dao_empresa();
+		lista = dao.consultarEmpresas(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Marcas */
+
+	public List<modelo_marca> consultarMarcas(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_marca> lista = new ArrayList<modelo_marca>();
+		dao_marca dao = new dao_marca();
+		lista = dao.consultarMarcas(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Modelos */
+
+	public List<modelo_modelo> consultarModelos(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_modelo> lista = new ArrayList<modelo_modelo>();
+		dao_modelo dao = new dao_modelo();
+		lista = dao.consultarModelos(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Tipos de equipo */
+
+	public List<modelo_tipo_equipo> consultarTipoEquipos(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_tipo_equipo> lista = new ArrayList<modelo_tipo_equipo>();
+		dao_tipo_equipo dao = new dao_tipo_equipo();
+		lista = dao.consultarTipoEquipos(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Equipos */
+
+	public List<modelo_equipo> consultarEquipos(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_equipo> lista = new ArrayList<modelo_equipo>();
+		dao_equipo dao = new dao_equipo();
+		lista = dao.consultarEquipos(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Tipos de conector */
+
+	public List<modelo_tipo_conector> consultarTipoConectores(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_tipo_conector> lista = new ArrayList<modelo_tipo_conector>();
+		dao_tipo_conector dao = new dao_tipo_conector();
+		lista = dao.consultarTipoConectores(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Estados de equipo */
+
+	public List<modelo_estado_equipo> consultarEstadosEquipo(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_estado_equipo> lista = new ArrayList<modelo_estado_equipo>();
+		dao_estado_equipo dao = new dao_estado_equipo();
+		lista = dao.consultarEstadosEquipo(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Urs */
+
+	public List<modelo_ur> consultarUrs(long id1, long id2, String criterio1, String criterio2, int limite, int tipo) {
+		List<modelo_ur> lista = new ArrayList<modelo_ur>();
+		dao_ur dao = new dao_ur();
+		lista = dao.consultarUrs(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
 	}
 
 }

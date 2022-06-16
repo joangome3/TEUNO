@@ -191,13 +191,41 @@
 									</menu>
 									<menuseparator visible="false" />
 									<menu
-										image="/img/botones/ButtonRequire3.png"
-										label=" - Gestión de solicitudes" height="35px"
+										image="/img/botones/ButtonEquipo1.png"
+										label=" - Gestión de equipos" height="35px"
 										class="m-item_a">
 										<menupopup>
 											<menuitem
-												image="/img/botones/ButtonRequire1.png"
-												label=" - Solicitudes" id="tcMantenimientoSolicitudes"
+												image="/img/botones/ButtonMarca2.png"
+												label=" - Marcas" id="tcMantenimientoMarcas"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonModelo2.png"
+												label=" - Modelos" id="tcMantenimientoModelos"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonFila2.png"
+												label=" - Filas" id="tcMantenimientoFilas"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonRack2.png"
+												label=" - Racks" id="tcMantenimientoRacks"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonTipoEquipo2.png"
+												label=" - Tipos de equipo" id="tcMantenimientoTipoEquipos"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonTipoConector2.png"
+												label=" - Tipos de conector" id="tcMantenimientoTipoConectores"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonEquipo4.png"
+												label=" - Estados del equipo" id="tcMantenimientoEstadosEquipo"
+												height="35px" class="m-item" />
+											<menuitem
+												image="/img/botones/ButtonEquipo2.png"
+												label=" - Equipos" id="tcMantenimientoEquipos"
 												height="35px" class="m-item" />
 										</menupopup>
 									</menu>
@@ -210,6 +238,18 @@
 											<menuitem
 												image="/img/botones/ButtonManual1.png"
 												label=" - Manuales y archivos" id="tcMantenimientoManuales"
+												height="35px" class="m-item" />
+										</menupopup>
+									</menu>
+									<menuseparator visible="false" />
+									<menu
+										image="/img/botones/ButtonRequire3.png"
+										label=" - Gestión de solicitudes" height="35px"
+										class="m-item_a">
+										<menupopup>
+											<menuitem
+												image="/img/botones/ButtonRequire1.png"
+												label=" - Solicitudes" id="tcMantenimientoSolicitudes"
 												height="35px" class="m-item" />
 										</menupopup>
 									</menu>

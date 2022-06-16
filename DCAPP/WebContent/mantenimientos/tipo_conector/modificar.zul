@@ -1,0 +1,112 @@
+<?page title="Modificar tipo de conector" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zModificar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.tipo_conector.modificar"
+		position="center, center" sizable="true" width="45%" height="55%"
+		maximizable="false" minimizable="false"
+		title=".:: Modificar tipo de conector ::." shadow="false"
+		mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<div height="100%" width="100%">
+					<toolbar>
+						<button id="btnGrabar"
+							image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+							autodisable="self" visible="true" />
+					</toolbar>
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column width="120px"></column>
+							<column width="" align="left"></column>
+							<column width="120px"></column>
+						</columns>
+						<rows>
+							<row>
+								<separator></separator>
+							</row>
+							<row>
+								<separator></separator>
+							</row>
+							<row>
+								* ID:
+								<cell align="left">
+									<space width="55px"></space>
+									<textbox id="txtId" width="150px"
+										disabled="true" class="z-textbox-1">
+									</textbox>
+								</cell>
+								<cell colspan="1"></cell>
+							</row>
+							<row>
+								* Nombre:
+								<vlayout>
+									<hlayout>
+										<textbox id="txtNombre"
+											width="500px" rows="5" maxlength="100"
+											style="resize: none;">
+											<attribute name="onChanging">
+													<![CDATA[
+	String value = event.value;
+	lNombre.setValue(value.length() + "/100");
+]]>
+													</attribute>
+										</textbox>
+										<image
+											src="/img/botones/ButtonPopup.png" tooltip="nom"
+											style="cursor: help; width: 16px; height: 16px;" />
+									</hlayout>
+									<label id="lNombre"
+										style="position: relative; left: -5.5rem; top: -1.1rem; color:red; font-weight: bold;"
+										value="0/100">
+									</label>
+								</vlayout>
+								<cell colspan="1"></cell>
+							</row>
+							<row>
+								* Voltaje:
+								<cell colspan="1" align="left">
+									<space width="55px"></space>
+									<combobox width="150px"
+										id="cmbVoltaje" readonly="true" disabled="false"
+										autodrop="false" autocomplete="false" buttonVisible="true">
+										<comboitem label="110 V"
+											value="110">
+										</comboitem>
+										<comboitem label="220 V"
+											value="220">
+										</comboitem>
+									</combobox>
+									<space width="15px"></space>
+								</cell>
+								<cell colspan="1"></cell>
+							</row>
+							<row>
+								<separator></separator>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</hlayout>
+		</vlayout>
+		<popup id="nom" width="300px">
+			<html>
+
+
+				
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				nombre no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el nombre no se encuentre registrado.
+				</span> </p> ]]>
+				
+				
+
+			</html>
+		</popup>
+	</window>
+</zk>

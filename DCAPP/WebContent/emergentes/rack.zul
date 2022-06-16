@@ -70,9 +70,9 @@
 				<listitem self="@{each=lista}">
 					<listcell label="@{lista.getId_rack}"
 						style="text-align: center !important;" />
-					<listcell label="@{lista.getNom_cliente}"
+					<listcell label="@{lista.getEmpresa.getNom_empresa}"
 						style="text-align: center !important;" />
-					<listcell label="@{lista.getNom_fila}"
+					<listcell label="@{lista.getFila.getNom_fila}"
 						style="text-align: center !important;" />
 					<listcell label="@{lista.getCoord_rack}"
 						style="text-align: center !important;" />
