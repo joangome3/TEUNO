@@ -34,12 +34,12 @@ import bp.aplicaciones.controlador.DemoCalendarEvent;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.controlcambio.DAO.dao_control_cambio;
 import bp.aplicaciones.controlcambio.modelo.modelo_control_cambio;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_criticidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.DAO.dao_infraestructura;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_6;
-import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_mantenimiento;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_sistema;
 import bp.aplicaciones.mantenimientos.modelo.modelo_criticidad;
@@ -92,6 +92,8 @@ public class nuevo extends SelectorComposer<Component> {
 	DemoCalendarEvent data = (DemoCalendarEvent) Sessions.getCurrent().getAttribute("data_calendario");
 
 	validar_datos validar = new validar_datos();
+	
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -234,16 +236,8 @@ public class nuevo extends SelectorComposer<Component> {
 	}
 
 	public void cargarResponsables() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitante dao = new dao_solicitante();
-		String criterio = "";
-		try {
-			listaResponsable = dao.obtenerSolicitantes(criterio, 6, String.valueOf(id_dc), String.valueOf(id_opcion),
-					0);
-			binder.loadComponent(cmbResponsable);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los solicitantes. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar responsables ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaResponsable = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
+		binder.loadComponent(cmbResponsable);
 	}
 
 	public void cargarCriticidades() throws ClassNotFoundException, FileNotFoundException, IOException {

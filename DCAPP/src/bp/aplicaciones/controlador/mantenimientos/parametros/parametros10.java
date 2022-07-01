@@ -3,8 +3,8 @@ package bp.aplicaciones.controlador.mantenimientos.parametros;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -15,24 +15,29 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.ComboitemRenderer;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.ListModel;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.ListModels;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
 
 import bp.aplicaciones.controlador.validar_datos;
-import bp.aplicaciones.mantenimientos.DAO.dao_tipo_servicio;
-import bp.aplicaciones.mantenimientos.DAO.dao_opcion;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_10;
-import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
-import bp.aplicaciones.mantenimientos.modelo.modelo_categoria;
+import bp.aplicaciones.mensajes.Error;
+import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.mensajes.Validaciones;
+import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_opcion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10;
@@ -50,6 +55,10 @@ public class parametros10 extends SelectorComposer<Component> {
 	Textbox txtOpcion;
 	@Wire
 	Listbox lbxTipoServicios;
+	@Wire
+	Combobox cmbOpcion;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
@@ -61,13 +70,22 @@ public class parametros10 extends SelectorComposer<Component> {
 
 	validar_datos validar = new validar_datos();
 
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+	Fechas fechas = new Fechas();
+	Validaciones validaciones = new Validaciones();
+
+	Informativos informativos = new Informativos();
+	Error error = new Error();
+
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
-	List<modelo_categoria> listaCategoria = new ArrayList<modelo_categoria>();
 	List<modelo_opcion> listaOpcion = new ArrayList<modelo_opcion>();
 	List<modelo_tipo_servicio> listaTipoServicio = new ArrayList<modelo_tipo_servicio>();
-	List<modelo_parametros_generales_10> listaRelacionTipoServicio = new ArrayList<modelo_parametros_generales_10>();
+	List<modelo_parametros_generales_10> listaParametrosGenerales10 = new ArrayList<modelo_parametros_generales_10>();
 
-	long id_opcion = 3;
+	long id_mantenimiento = 73;
+
+	@SuppressWarnings("rawtypes")
+	private ListModel mySubModel;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -84,144 +102,60 @@ public class parametros10 extends SelectorComposer<Component> {
 			btnGrabar.setVisible(false);
 		}
 		cargarOpciones();
-		cargarTipoServicios("");
-		for (int i = 0; i < listaOpcion.size(); i++) {
-			if (listaOpcion.get(i).getId_opcion() == id_opcion) {
-				txtOpcion.setText(listaOpcion.get(i).getNom_opcion());
-				i = listaOpcion.size() + 1;
-			}
-		}
-		borrarListaConsulta();
-		dibujarListaConsulta();
-		cargarDatos();
+		cargarTipoServicios();
 	}
 
-	public void borrarListaConsulta() {
-		lbxTipoServicios.clearSelection();
-		Listitem lItem;
-		for (int i = lbxTipoServicios.getItemCount() - 1; i >= 0; i--) {
-			lItem = (Listitem) lbxTipoServicios.getItemAtIndex(i);
-			lbxTipoServicios.removeItemAt(lItem.getIndex());
+	public void cargarRelaciones() {
+		if (cmbOpcion.getSelectedItem() == null) {
+			return;
 		}
-		binder.loadComponent(lbxTipoServicios);
-	}
-
-	public void dibujarListaConsulta()
-			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		Listitem lItem;
-		Listcell lCell;
+		modelo_opcion opcion = (modelo_opcion) cmbOpcion.getSelectedItem().getValue();
+		listaParametrosGenerales10 = consultasABaseDeDatos.consultarParametrosGenerales10(0, opcion.getId_opcion(), "",
+				String.valueOf(id_dc), 0, 4);
 		for (int i = 0; i < listaTipoServicio.size(); i++) {
-			Combobox cmbTipoServicio;
-			Comboitem cItem;
-			lItem = new Listitem();
-			/* ID */
-			lCell = new Listcell();
-			lCell.setLabel(String.valueOf(listaTipoServicio.get(i).getId_tipo_servicio()));
-			lCell.setStyle("text-align: center !important;");
-			lItem.appendChild(lCell);
-			/* SERVICIO/CATEGORIA */
-			lCell = new Listcell();
-			lCell.setLabel(listaTipoServicio.get(i).getNom_tipo_servicio());
-			lCell.setStyle("text-align: center !important;");
-			lItem.appendChild(lCell);
-			/* SE PUEDE ELIMINAR */
-			lCell = new Listcell();
-			cmbTipoServicio = new Combobox();
-			cItem = new Comboitem();
-			cItem.setValue("S");
-			cItem.setLabel("SI");
-			cmbTipoServicio.appendChild(cItem);
-			cItem = new Comboitem();
-			cItem.setValue("N");
-			cItem.setLabel("NO");
-			cmbTipoServicio.appendChild(cItem);
-			dao_parametros_generales_10 dao = new dao_parametros_generales_10();
-			long id_tipo_servicio = 0;
-			id_tipo_servicio = listaTipoServicio.get(i).getId_tipo_servicio();
-			listaRelacionTipoServicio = dao.obtenerRelacionesOpciones(String.valueOf(id_opcion),
-					String.valueOf(id_tipo_servicio), String.valueOf(id_dc), 1);
-			if (listaRelacionTipoServicio.size() > 0) {
-				for (int j = 0; j < listaRelacionTipoServicio.size(); j++) {
-					if (listaRelacionTipoServicio.get(j).getId_tipo_servicio() == listaTipoServicio.get(i)
-							.getId_tipo_servicio()) {
-						if (listaRelacionTipoServicio.get(j).getSe_puede_eliminar() != null) {
-							if (!listaRelacionTipoServicio.get(j).getSe_puede_eliminar().equals("")) {
-								if (listaRelacionTipoServicio.get(j).getSe_puede_eliminar().equals("S")) {
-									cmbTipoServicio.setText("SI");
-								} else {
-									cmbTipoServicio.setText("NO");
-								}
-							} else {
-								cmbTipoServicio.setText("NO");
-							}
-						} else {
-							cmbTipoServicio.setText("NO");
-						}
-						j = listaRelacionTipoServicio.size() + 1;
-					}
+			for (int j = 0; j < listaTipoServicio.get(i).getParametros_10().size(); j++) {
+				if (listaTipoServicio.get(i).getParametros_10().get(j).isSe_puede_crear_modificar_eliminar() == true
+						&& listaTipoServicio.get(i).getParametros_10().get(j).getOpcion().getId_opcion() == opcion
+								.getId_opcion()) {
+					lbxTipoServicios.getItemAtIndex(i).setSelected(true);
+					break;
 				}
-			} else {
-				cmbTipoServicio.setText("NO");
 			}
-			lCell.appendChild(cmbTipoServicio);
-			lItem.appendChild(lCell);
-			/* ESTADO */
-			lCell = new Listcell();
-			lCell.setLabel(listaTipoServicio.get(i).toStringEstado());
-			lCell.setStyle("text-align: center !important;");
-			lItem.appendChild(lCell);
-			/* ANADIR ITEM A LISTBOX */
-			lbxTipoServicios.appendChild(lItem);
 		}
+	}
+
+	@Listen("onSelect=#cmbOpcion")
+	public void onSelect$cmbOpcion()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException, SQLException {
+		cargarRelaciones();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void cargarOpciones() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaOpcion = consultasABaseDeDatos.consultarOpciones(id_mantenimiento, 0, "", "", 0, 6);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_opcion bean = (modelo_opcion) o2;
+				return (bean.getNom_opcion()).contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaOpcion), myComparator, 15);
+		cmbOpcion.setModel(mySubModel);
+		ComboitemRenderer<modelo_opcion> myRenderer = new ComboitemRenderer<modelo_opcion>() {
+			@Override
+			public void render(Comboitem item, modelo_opcion bean, int index) throws Exception {
+				item.setLabel(bean.getNom_opcion());
+				item.setValue(bean);
+			}
+		};
+		cmbOpcion.setItemRenderer(myRenderer);
+		binder.loadComponent(cmbOpcion);
 	}
 
 	public void cargarPerfil() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_perfil dao = new dao_perfil();
-		String criterio = "";
-		try {
-			listaPerfil = dao.obtenerPerfiles(criterio, 4, id_perfil);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los perfiles. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-	}
-
-	public void cargarOpciones() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_opcion dao = new dao_opcion();
-		String criterio = "";
-		try {
-			listaOpcion = dao.obtenerOpciones(criterio);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los opcions. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar opcion ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-	}
-
-	public void cargarTipoServicios(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_tipo_servicio dao = new dao_tipo_servicio();
-		try {
-			listaTipoServicio = dao.obtenerTipoServicios(criterio, 1, 0, 0);
-			binder.loadComponent(lbxTipoServicios);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los tipo de servicios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar tipo de servicios ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-	}
-
-	public void cargarDatos() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		dao_parametros_generales_10 dao = new dao_parametros_generales_10();
-		long id_tipo_servicio = 0;
-		for (int i = 0; i < lbxTipoServicios.getItems().size(); i++) {
-			id_tipo_servicio = listaTipoServicio.get(lbxTipoServicios.getItemAtIndex(i).getIndex())
-					.getId_tipo_servicio();
-			listaRelacionTipoServicio = dao.obtenerRelacionesOpciones(String.valueOf(id_opcion),
-					String.valueOf(id_tipo_servicio), String.valueOf(id_dc), 1);
-			if (listaRelacionTipoServicio.size() > 0) {
-				lbxTipoServicios.getItemAtIndex(i).setSelected(true);
-			} else {
-				lbxTipoServicios.getItemAtIndex(i).setSelected(false);
-			}
-		}
+		listaPerfil = consultasABaseDeDatos.cargarPerfil("", 4, id_perfil);
 	}
 
 	public void inicializarPermisos() {
@@ -277,19 +211,19 @@ public class parametros10 extends SelectorComposer<Component> {
 				ejecutar = "N";
 			}
 		} else {
-			Messagebox.show(
-					"Existen inconsistencias con los permisos del perfil asignado al tipo_servicio. ¡Consulte al administrador del sistema!.",
-					".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+			Messagebox.show(error.getMensaje_error_3(), informativos.getMensaje_informativo_1(), Messagebox.OK,
+					Messagebox.EXCLAMATION);
 			return;
 		}
 	}
 
-	public List<modelo_opcion> obtenerOpciones() {
-		return listaOpcion;
+	public void cargarTipoServicios() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaTipoServicio = consultasABaseDeDatos.consultarTipoServicios(0, 0, "", "", 0, 2);
+		binder.loadComponent(lbxTipoServicios);
 	}
 
-	public List<modelo_categoria> obtenerCategorias() {
-		return listaCategoria;
+	public List<modelo_opcion> obtenerOpciones() {
+		return listaOpcion;
 	}
 
 	public List<modelo_tipo_servicio> obtenerTipoServicios() {
@@ -299,52 +233,63 @@ public class parametros10 extends SelectorComposer<Component> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Listen("onClick=#btnGrabar")
 	public void onClick$btnGrabar() {
-		Messagebox.show("Esta seguro de guardar los parametros?", ".:: Parametros generales #10 ::.",
+		if (cmbOpcion.getSelectedItem() == null) {
+			cmbOpcion.setFocus(true);
+			Clients.showNotification("Seleccione un modulo.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"top_right", 2000, true);
+			return;
+		}
+		Messagebox.show("Esta seguro de guardar los parametros?", "Permitir registro manual de servicio",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							long id_tipo_servicio = 0;
-							Combobox cmb1;
 							dao_parametros_generales_10 dao = new dao_parametros_generales_10();
-							modelo_parametros_generales_10 relacion;
+							modelo_parametros_generales_10 relacion = null;
 							List<modelo_parametros_generales_10> listaRelacion = new ArrayList<modelo_parametros_generales_10>();
 							for (int i = 0; i < lbxTipoServicios.getItems().size(); i++) {
-								id_tipo_servicio = listaTipoServicio.get(lbxTipoServicios.getItemAtIndex(i).getIndex())
-										.getId_tipo_servicio();
 								if (lbxTipoServicios.getItemAtIndex(i).isSelected()) {
 									relacion = new modelo_parametros_generales_10();
-									cmb1 = new Combobox();
-									String se_puede_eliminar = "N";
-									cmb1 = (Combobox) lbxTipoServicios.getItemAtIndex(i).getChildren().get(2)
-											.getChildren().get(0);
-									se_puede_eliminar = cmb1.getSelectedItem().getValue().toString();
-									relacion.setId_tipo_servicio(id_tipo_servicio);
-									relacion.setId_opcion(id_opcion);
-									relacion.setSe_puede_eliminar(se_puede_eliminar);
-									relacion.setId_localidad(id_dc);
-									relacion.setEst_relacion("A");
+									relacion.setTipo_servicio(
+											listaTipoServicio.get(lbxTipoServicios.getItemAtIndex(i).getIndex()));
+									relacion.setOpcion((modelo_opcion) cmbOpcion.getSelectedItem().getValue());
+									relacion.setLocalidad(obtenerLocalidad());
+									relacion.setSe_puede_crear_modificar_eliminar(true);
+									relacion.setEst_relacion("AE");
 									relacion.setUsu_ingresa(user);
-									relacion.setFec_ingresa(timestamp);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 									listaRelacion.add(relacion);
 								}
 							}
 							try {
-								dao.insertarRelacion(listaRelacion, id_opcion, id_dc);
-								Messagebox.show("Los parametros se guardaron correctamente.",
-										".:: Parametros generales #10 ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+								for (int i = 0; i < listaParametrosGenerales10.size(); i++) {
+									dao.eliminarParametroGeneral10(listaParametrosGenerales10.get(i));
+								}
+								for (int i = 0; i < listaRelacion.size(); i++) {
+									dao.insertarParametroGeneral10(listaRelacion.get(i));
+								}
+								Clients.showNotification("Los permisos se asignaron correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "dSolicitudes", 4000, true);
 
 							} catch (Exception e) {
-								Messagebox.show(
-										"Error al guardar los parametros. \n\n" + "Mensaje de error: \n\n"
+								Clients.showNotification(
+										"Error al asignar los permisos. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Parametros generales #10 ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
 				});
+	}
+
+	public modelo_localidad obtenerLocalidad() {
+		List<modelo_localidad> lista = new ArrayList<modelo_localidad>();
+		modelo_localidad localidad = new modelo_localidad();
+		lista = consultasABaseDeDatos.consultarLocalidades(id_dc, 0, "", "", 0, 2);
+		if (lista.size() > 0) {
+			localidad = lista.get(0);
+		}
+		return localidad;
 	}
 
 }

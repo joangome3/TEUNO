@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
@@ -15,6 +16,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menuitem;
@@ -24,14 +26,15 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
+import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
-import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
@@ -52,13 +55,15 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Combobox cmbLimite;
 	@Wire
-	Menuitem mSeguimiento, mSolicitar, mAccion;
+	Menuitem mModificar, mEstado;
 	@Wire
-	Menuseparator mSeparador1;
+	Menuseparator mSeparador1, mSeparador2;
 	@Wire
 	Div winList;
 
 	Window window;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	boolean ingresa_a_accion = false;
 
@@ -102,12 +107,14 @@ public class consultar extends SelectorComposer<Component> {
 		}
 		if (insertar.equals("S")) {
 			btnNuevo.setDisabled(false);
+			btnNuevo.setVisible(true);
 		} else {
 			btnNuevo.setDisabled(true);
+			btnNuevo.setVisible(false);
 		}
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(txtBuscar.getText().toUpperCase());
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
 	}
@@ -116,10 +123,14 @@ public class consultar extends SelectorComposer<Component> {
 		return listaUsuario;
 	}
 
+	public List<modelo_usuario> getUsuarios() {
+		ListModelList<modelo_usuario> listado = new ListModelList<modelo_usuario>(listaUsuario);
+		return listado;
+	}
+
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String criterio = txtBuscar.getText();
-		listaUsuario = consultasABaseDeDatos.cargarUsuarios(criterio, 1,
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(0, 0, "", "",
+				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), 1);
 		binder.loadComponent(lbxUsuarios);
 	}
 
@@ -217,9 +228,14 @@ public class consultar extends SelectorComposer<Component> {
 	}
 
 	public void buscarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String criterio = txtBuscar.getText();
-		listaUsuario = consultasABaseDeDatos.cargarUsuarios(criterio, 1,
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		long id1 = 0;
+		long id2 = 0;
+		String criterio1 = "";
+		String criterio2 = "";
+		int limite = 0;
+		criterio1 = txtBuscar.getText().trim();
+		limite = Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString());
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id1, id2, criterio1, criterio2, limite, 1);
 		binder.loadComponent(lbxUsuarios);
 	}
 
@@ -235,110 +251,18 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		lbxUsuarios.setSelectedIndex(indice);
-		if (validarSiExisteSolicitudCreada(listaUsuario.get(indice).getId_usuario()) == false
-				&& validarSiExisteSolicitudPendienteEjecucion(listaUsuario.get(indice).getId_usuario()) == false
-				&& validarSiExisteSolicitudPendienteActualizacion(listaUsuario.get(indice).getId_usuario()) == false) {
-			mSeguimiento.setVisible(false);
-			mSeguimiento.setDisabled(true);
-			mSeparador1.setVisible(false);
-			mSolicitar.setVisible(true);
-			mSolicitar.setDisabled(false);
-			mAccion.setVisible(false);
-			mAccion.setDisabled(true);
-		} else {
-			mSeguimiento.setVisible(true);
-			mSeguimiento.setDisabled(false);
-			mSeparador1.setVisible(false);
-			mSolicitar.setVisible(false);
-			mSolicitar.setDisabled(true);
-			mAccion.setVisible(false);
-			mAccion.setDisabled(true);
+		if (listaUsuario.get(indice).getEst_usuario().equals("AE")) {
+			mEstado.setLabel(" - Inactivar");
+			mEstado.setIconSclass("z-icon-times-circle-o");
 		}
-		if (validarSiExisteSolicitudPendienteEjecucion(listaUsuario.get(indice).getId_usuario()) == true) {
-			mSeparador1.setVisible(true);
-			mAccion.setVisible(true);
-			mAccion.setDisabled(false);
-			if (validarTipoSolicitud(listaUsuario.get(indice).getId_usuario()) == 2) {
-				mAccion.setLabel(" - Actualizar");
-				mAccion.setIconSclass("z-icon-refresh");
-			} else if (validarTipoSolicitud(listaUsuario.get(indice).getId_usuario()) == 3) {
-				mAccion.setLabel(" - Activar");
-				mAccion.setIconSclass("z-icon-font");
-			} else if (validarTipoSolicitud(listaUsuario.get(indice).getId_usuario()) == 4) {
-				mAccion.setLabel(" - Inactivar");
-				mAccion.setIconSclass("z-icon-italic");
-			}
-		}
-		if (validarSiExisteSolicitudPendienteActualizacion(listaUsuario.get(indice).getId_usuario()) == true) {
-			mSeparador1.setVisible(true);
-			mAccion.setVisible(true);
-			mAccion.setDisabled(false);
-			mAccion.setLabel(" - Actualizar");
-			mAccion.setIconSclass("z-icon-refresh");
+		if (listaUsuario.get(indice).getEst_usuario().equals("IE")) {
+			mEstado.setLabel(" - Activar");
+			mEstado.setIconSclass("z-icon-check-circle-o");
 		}
 	}
 
-	public boolean validarSiExisteSolicitudCreada(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_creada = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("P") || estado.equals("R")) {
-					existe_solicitud_creada = true;
-				}
-			}
-		}
-		return existe_solicitud_creada;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteEjecucion(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("S")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteActualizacion(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("T")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public int validarTipoSolicitud(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		int tipo_solicitud = 0;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			tipo_solicitud = (int) solicitud.getId_tip_solicitud();
-		}
-		return tipo_solicitud;
-	}
-
-	@Listen("onClick=#mSeguimiento")
-	public void onClick$mSeguimiento() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+	@Listen("onClick=#mModificar")
+	public void onClick$mModificar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (lbxUsuarios.getSelectedItem() == null) {
 			return;
 		}
@@ -346,110 +270,17 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		int indice = lbxUsuarios.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaUsuario.get(indice).getId_usuario(), 7);
-		if (solicitud == null) {
-			return;
-		} else {
-			if (solicitud.getId_solicitud() == 0) {
-				return;
-			}
-		}
-		Sessions.getCurrent().setAttribute("objeto", solicitud);
-		Sessions.getCurrent().setAttribute("id_mantenimiento", id_mantenimiento);
-		Sessions.getCurrent().setAttribute("id_opcion", (long) 0);
-		Sessions.getCurrent().setAttribute("tipo_solicitud", 0);
-		window = (Window) Executions.createComponents("/mantenimientos/solicitud/seguimiento.zul", null, null);
-		mSeguimiento.setDisabled(true);
-		ingresa_a_accion = true;
-		if (window instanceof Window) {
-			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-				@Override
-				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mSeguimiento.setDisabled(false);
-					ingresa_a_accion = false;
-				}
-			});
-		}
-		window.setParent(winList);
-	}
-
-	@Listen("onClick=#mSolicitar")
-	public void onClick$mSolicitar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (lbxUsuarios.getSelectedItem() == null) {
-			return;
-		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
-		int indice = lbxUsuarios.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaUsuario.get(indice).getId_usuario(), 7);
-		if (solicitud != null) {
-			if (solicitud.getId_solicitud() != 0) {
-				return;
-			}
-		}
-		Sessions.getCurrent().setAttribute("objeto", listaUsuario.get(indice));
-		Sessions.getCurrent().setAttribute("id_mantenimiento", id_mantenimiento);
-		Sessions.getCurrent().setAttribute("id_opcion", (long) 0);
-		Sessions.getCurrent().setAttribute("tipo_solicitud", validarTipoEnEstado(indice));
-		window = (Window) Executions.createComponents("/mantenimientos/solicitud/solicitar.zul", null, null);
-		mSolicitar.setDisabled(true);
-		ingresa_a_accion = true;
-		if (window instanceof Window) {
-			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-				@Override
-				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mSolicitar.setDisabled(false);
-					ingresa_a_accion = false;
-				}
-			});
-		}
-		window.setParent(winList);
-	}
-
-	@Listen("onClick=#mAccion")
-	public void onClick$mAccion() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (lbxUsuarios.getSelectedItem() == null) {
-			return;
-		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
-		int indice = lbxUsuarios.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaUsuario.get(indice).getId_usuario(), 7);
-		if (solicitud == null) {
-			return;
-		} else {
-			if (solicitud.getId_solicitud() == 0) {
-				return;
-			}
-		}
 		Sessions.getCurrent().setAttribute("usuario", listaUsuario.get(indice));
-		if (validarSiExisteSolicitudPendienteEjecucion(listaUsuario.get(indice).getId_usuario()) == true) {
-			if (validarTipoSolicitud(listaUsuario.get(indice).getId_usuario()) == 2) {
-				window = (Window) Executions.createComponents("/mantenimientos/usuario/modificar.zul", null, null);
-			} else if (validarTipoSolicitud(listaUsuario.get(indice).getId_usuario()) == 3) {
-				window = (Window) Executions.createComponents("/mantenimientos/usuario/activar.zul", null, null);
-			} else if (validarTipoSolicitud(listaUsuario.get(indice).getId_usuario()) == 4) {
-				window = (Window) Executions.createComponents("/mantenimientos/usuario/desactivar.zul", null, null);
-			}
-		}
-		if (validarSiExisteSolicitudPendienteActualizacion(listaUsuario.get(indice).getId_usuario()) == true) {
-			window = (Window) Executions.createComponents("/mantenimientos/usuario/modificar.zul", null, null);
-		}
-		mAccion.setDisabled(true);
+		window = (Window) Executions.createComponents("/mantenimientos/usuario/modificar.zul", null, null);
+		mModificar.setDisabled(true);
+		lbxUsuarios.setDisabled(true);
 		ingresa_a_accion = true;
 		if (window instanceof Window) {
 			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
 				@Override
 				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mAccion.setDisabled(false);
+					mModificar.setDisabled(false);
+					lbxUsuarios.setDisabled(false);
 					buscarUsuarios();
 					ingresa_a_accion = false;
 				}
@@ -458,18 +289,34 @@ public class consultar extends SelectorComposer<Component> {
 		window.setParent(winList);
 	}
 
-	public int validarTipoEnEstado(int indice) {
-		int tipo = 0;
-		if (listaUsuario.get(indice).getEst_usuario().charAt(0) == 'A') {
-			tipo = 2;
+	@Listen("onClick=#mEstado")
+	public void onClick$mEstado() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		if (lbxUsuarios.getSelectedItem() == null) {
+			return;
 		}
-		if (listaUsuario.get(indice).getEst_usuario().charAt(0) == 'P') {
-			tipo = 1;
+		int indice = lbxUsuarios.getSelectedIndex();
+		String estado = "";
+		if (listaUsuario.get(indice).getEst_usuario().equals("AE")) {
+			estado = "IE";
 		}
-		if (listaUsuario.get(indice).getEst_usuario().charAt(0) == 'I') {
-			tipo = 3;
+		if (listaUsuario.get(indice).getEst_usuario().equals("IE")) {
+			estado = "AE";
 		}
-		return tipo;
+		modelo_usuario usuario = new modelo_usuario();
+		dao_usuario dao = new dao_usuario();
+		usuario = listaUsuario.get(indice);
+		usuario.setEst_usuario(estado);
+		usuario.setUsu_modifica(user);
+		usuario.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+		dao.actualizarUsuario(usuario);
+		Clients.showNotification("El usuario se actualizó correctamente.", Clients.NOTIFICATION_TYPE_INFO, dSolicitudes,
+				"dSolicitudes", 4000, true);
+		buscarUsuarios();
+		int tamanio_lista = lbxUsuarios.getItemCount();
+		if (indice >= tamanio_lista) {
+			return;
+		}
+		lbxUsuarios.setSelectedIndex(indice);
 	}
 
 	@Listen("onClick=#btnNuevo")

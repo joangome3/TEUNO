@@ -1,0 +1,119 @@
+<?page title="Mantenimiento de perfiles" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<div id="zConsultar" width="100%" height="100%"
+		apply="bp.aplicaciones.controlador.mantenimientos.perfiles.consultar" align="center">
+		<grid>
+			<columns>
+				<column width="50%"></column>
+				<column width="50%"></column>
+			</columns>
+			<rows>
+				<row>
+					<cell colspan="2" class="m-cell-a">
+						<div align="center">
+							<grid>
+								<columns>
+									<column width="2%"></column>
+									<column width="48%"></column>
+									<column width="25%"></column>
+									<column width="25%"></column>
+								</columns>
+								<rows>
+									<row>
+										<cell colspan="4"
+											class="m-cell-b">
+											<button id="btnNuevo"
+												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
+												autodisable="self" />
+											<space width="5px"></space>
+											<button id="btnRefrescar"
+												image="/img/botones/ButtonRefresh.png"
+												tooltiptext="Refrescar lista" autodisable="self" />
+											<space width="20px"></space>
+											<textbox id="txtBuscar"
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;">
+											</textbox>
+										</cell>
+									</row>
+								</rows>
+							</grid>
+						</div>
+					</cell>
+				</row>
+			</rows>
+		</grid>
+		<vlayout vflex="1">
+			<hlayout vflex="1" style="overflow: scroll;">
+				<listbox mold="paging" id="lbxPerfiles" vflex="true"
+					width="100%" sizedByContent="true">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="ID"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="NOMBRE"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="CONSULTAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="INSERTAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="MODIFICAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="RELACIONAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="DESACTIVAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="ELIMINAR"
+							style="text-align: center !important;" visible="false">
+						</listheader>
+						<listheader label="SOLICITAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="REVISAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="APROBAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="EJECUTAR"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="ACCIONES" align="center"
+							style="text-align: center !important;">
+						</listheader>
+					</listhead>
+				</listbox>
+			</hlayout>
+		</vlayout>
+	</div>
+	<popup id="cons" width="300px">
+		<html>
+
+			<![CDATA[ <p style="color: black; font-size: 12px;">
+				Usted puede usar este campo para realizar consultas
+				entre los registros. </br> </br> <span style="color:
+				black; font-size: 12px; font-style: normal; font-weight:
+				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
+				manera rapida entre los registros solo escribiendo parte
+				de la palabra y presionando la tecla Enter. </br> 2.-
+				Para mostrar todos los registros deje limpio el campo y
+				presione la tecla Enter. </br> 3.- Puede usar el boton
+				refrescar para actualizar la información de la lista.
+				</p> ]]>
+
+			</html>
+	</popup>
+	<zscript>
+	<![CDATA[
+            lbxPerfiles.pagingChild.mold = "os".equals(lbxPerfiles.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+</zk>

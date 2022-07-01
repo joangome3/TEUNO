@@ -38,6 +38,7 @@ import org.zkoss.zul.Window;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.controlcambio.DAO.dao_control_cambio;
 import bp.aplicaciones.controlcambio.modelo.modelo_control_cambio;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_criticidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.DAO.dao_infraestructura;
@@ -45,7 +46,6 @@ import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_6;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
-import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_mantenimiento;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_sistema;
 import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
@@ -108,6 +108,8 @@ public class consultar extends SelectorComposer<Component> {
 	List<modelo_parametros_generales_6> listaParametros6 = new ArrayList<modelo_parametros_generales_6>();
 
 	long id_opcion = 2;
+
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -255,13 +257,7 @@ public class consultar extends SelectorComposer<Component> {
 
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_usuario dao = new dao_usuario();
-		String criterio = "";
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 1, 0);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaUsuario = dao.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 	}
 
 	public void cargarControlCambios() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -346,14 +342,8 @@ public class consultar extends SelectorComposer<Component> {
 
 	public void cargarResponsables(String criterio, int tipo)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitante dao = new dao_solicitante();
-		try {
-			listaResponsable = dao.obtenerSolicitantes(criterio, tipo, String.valueOf(id_dc), String.valueOf(id_opcion),
-					0);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los solicitantes. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar responsables ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaResponsable = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, criterio.toUpperCase().trim(),
+				"", 0, 7);
 	}
 
 	public void cargarCriticidades(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {

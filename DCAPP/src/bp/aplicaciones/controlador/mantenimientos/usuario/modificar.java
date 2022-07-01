@@ -3,8 +3,8 @@ package bp.aplicaciones.controlador.mantenimientos.usuario;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -17,9 +17,15 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.ComboitemRenderer;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModel;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.ListModels;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Progressmeter;
 import org.zkoss.zul.Textbox;
@@ -31,8 +37,6 @@ import bp.aplicaciones.controlador.SH2;
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
-import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
-import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
@@ -48,11 +52,11 @@ public class modificar extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zModificar;
+	Window zModificarLocalidad;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtUsuario, txtContrasena1, txtContrasena2, txtNombres, txtApellidos, txtComentario;
+	Textbox txtId, txtUsuario, txtContrasena1, txtContrasena2, txtNombres, txtApellidos;
 	@Wire
 	Combobox cmbLocalidad, cmbPerfil;
 	@Wire
@@ -61,6 +65,8 @@ public class modificar extends SelectorComposer<Component> {
 	Progressmeter pgsSeguridad;
 	@Wire
 	Checkbox chkCambiarPassword;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	String comentario_1 = "";
 	String comentario_2 = "";
@@ -71,6 +77,9 @@ public class modificar extends SelectorComposer<Component> {
 
 	List<modelo_localidad> listaLocalidad = new ArrayList<modelo_localidad>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
+
+	@SuppressWarnings("rawtypes")
+	private ListModel mySubModel;
 
 	long id = 0;
 	long id_mantenimiento = 4;
@@ -101,6 +110,11 @@ public class modificar extends SelectorComposer<Component> {
 		super.doAfterCompose(comp);
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
+		txtUsuario.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
+			public void onEvent(Event event) throws Exception {
+				txtUsuario.setText(validar.soloLetrasyNumeros(txtUsuario.getText()).toLowerCase().trim());
+			}
+		});
 		txtNombres.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
 				txtNombres.setText(txtNombres.getText().toUpperCase());
@@ -111,83 +125,22 @@ public class modificar extends SelectorComposer<Component> {
 				txtApellidos.setText(txtApellidos.getText().toUpperCase());
 			}
 		});
-		txtComentario.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
-			public void onEvent(Event event) throws Exception {
-				txtComentario.setText(txtComentario.getText().toUpperCase());
-			}
-		});
 		cargarPerfiles();
 		cargarLocalidades();
 		cargarDatos();
-		validarCamposActualizar();
-	}
-
-	public void validarCamposActualizar()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, usuario.getId_usuario(), 7);
-		if (solicitud != null) {
-			if (solicitud.getId_tip_solicitud() == 1 || solicitud.getId_tip_solicitud() == 2) {
-				if (solicitud.getEst_solicitud().equals("T")) {
-					txtUsuario.setReadonly(false);
-					txtUsuario.setDisabled(false);
-					txtContrasena1.setDisabled(false);
-					txtContrasena2.setDisabled(false);
-					txtNombres.setDisabled(false);
-					txtApellidos.setDisabled(false);
-					cmbPerfil.setDisabled(false);
-					chkCambiarPassword.setDisabled(false);
-					cmbLocalidad.setDisabled(false);
-				} else {
-					txtUsuario.setReadonly(true);
-					cmbPerfil.setDisabled(true);
-					cmbLocalidad.setDisabled(true);
-					if (solicitud.getId_campo() == 5) {
-						txtNombres.setDisabled(false);
-					} else {
-						txtNombres.setDisabled(true);
-					}
-					if (solicitud.getId_campo() == 6) {
-						txtApellidos.setDisabled(false);
-					} else {
-						txtApellidos.setDisabled(true);
-					}
-					if (solicitud.getId_campo() == 15) {
-						txtContrasena1.setDisabled(false);
-						txtContrasena2.setDisabled(false);
-					} else {
-						txtContrasena1.setDisabled(true);
-						txtContrasena2.setDisabled(true);
-					}
-					if (solicitud.getId_campo() == 17) {
-						chkCambiarPassword.setDisabled(false);
-					} else {
-						chkCambiarPassword.setDisabled(true);
-					}
-				}
-			}
-		}
 	}
 
 	public void cargarDatos() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		txtId.setText(String.valueOf(usuario.getId_usuario()));
 		txtUsuario.setText(usuario.getUse_usuario());
-		txtContrasena1.setText(usuario.getPas_usuario());
-		txtContrasena2.setText(usuario.getPas_usuario());
+		txtContrasena1.setText("");
+		txtContrasena2.setText("");
+		txtContrasena1.setReadonly(true);
+		txtContrasena2.setReadonly(true);
 		txtNombres.setText(usuario.getNom_usuario());
 		txtApellidos.setText(usuario.getApe_usuario());
-		for (int i = 0; i < listaLocalidad.size(); i++) {
-			if (listaLocalidad.get(i).getId_localidad() == usuario.getId_localidad()) {
-				cmbLocalidad.setText(listaLocalidad.get(i).getNom_localidad());
-				i = listaLocalidad.size() + 1;
-			}
-		}
-		for (int i = 0; i < listaPerfil.size(); i++) {
-			if (listaPerfil.get(i).getId_perfil() == usuario.getId_perfil()) {
-				cmbPerfil.setText(listaPerfil.get(i).getNom_perfil());
-				i = listaPerfil.size() + 1;
-			}
-		}
+		cmbPerfil.setText(usuario.getPerfil().getNom_perfil());
+		cmbLocalidad.setText(usuario.getLocalidad().getNom_localidad());
 		if (usuario.getCam_password().equals("S")) {
 			chkCambiarPassword.setChecked(true);
 		} else {
@@ -203,28 +156,52 @@ public class modificar extends SelectorComposer<Component> {
 		return listaLocalidad;
 	}
 
-	public void cargarPerfiles() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_perfil dao = new dao_perfil();
-		String criterio = "";
-		try {
-			listaPerfil = dao.obtenerPerfiles(criterio, 6, 0);
-			binder.loadComponent(cmbPerfil);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los perfiles. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void cargarPerfiles() {
+		listaPerfil = consultasABaseDeDatos.consultarPerfiles(0, 0, "", "", 0, 2);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_perfil bean = (modelo_perfil) o2;
+				return bean.getNom_perfil().contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaPerfil), myComparator, 15);
+		cmbPerfil.setModel(mySubModel);
+		ComboitemRenderer<modelo_perfil> myRenderer = new ComboitemRenderer<modelo_perfil>() {
+			@Override
+			public void render(Comboitem item, modelo_perfil bean, int index) throws Exception {
+				item.setLabel(bean.getNom_perfil());
+				item.setValue(bean);
+			}
+		};
+		cmbPerfil.setItemRenderer(myRenderer);
+		binder.loadComponent(cmbPerfil);
 	}
 
-	public void cargarLocalidades() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_localidad dao = new dao_localidad();
-		String criterio = "";
-		try {
-			listaLocalidad = dao.obtenerLocalidades(criterio, 4, 0, 0);
-			binder.loadComponent(cmbLocalidad);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar las localidades. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void cargarLocalidades() {
+		listaLocalidad = consultasABaseDeDatos.consultarLocalidades(0, 0, "", "", 0, 2);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_localidad bean = (modelo_localidad) o2;
+				return bean.getNom_localidad().contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaLocalidad), myComparator, 15);
+		cmbLocalidad.setModel(mySubModel);
+		ComboitemRenderer<modelo_localidad> myRenderer = new ComboitemRenderer<modelo_localidad>() {
+			@Override
+			public void render(Comboitem item, modelo_localidad bean, int index) throws Exception {
+				item.setLabel(bean.getNom_localidad());
+				item.setValue(bean);
+			}
+		};
+		cmbLocalidad.setItemRenderer(myRenderer);
+		binder.loadComponent(cmbLocalidad);
 	}
 
 	@SuppressWarnings("static-access")
@@ -283,173 +260,64 @@ public class modificar extends SelectorComposer<Component> {
 		}
 	}
 
-	public boolean validarSiExisteSolicitudPendienteEjecucion()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, usuario.getId_usuario(), 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("S")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteActualizacion()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, usuario.getId_usuario(), 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("T")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public void setearDatosAntesDeGuardar()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, usuario.getId_usuario(), 7);
-		if (solicitud != null) {
-			comentario_1 = solicitud.getComentario_1();
-			comentario_2 = solicitud.getComentario_4();
-			fecha_comentario_1 = solicitud.getFecha_1();
-			fecha_comentario_2 = solicitud.getFecha_2();
-			fecha_comentario_3 = solicitud.getFecha_4();
-		}
-	}
-
-	public String setearComentario() {
-		String comentario = "";
-		comentario = "EN LA FECHA " + fechas.obtenerFechaFormateada(fecha_comentario_1, "dd/MM/yyyy HH:mm") + " "
-				+ comentario_1 + "\n" + "EN LA FECHA "
-				+ fechas.obtenerFechaFormateada(fecha_comentario_2, "dd/MM/yyyy HH:mm") + " EL APROBADOR INDICA QUE "
-				+ comentario_2 + "\n" + "EN LA FECHA "
-				+ fechas.obtenerFechaFormateada(fecha_comentario_3, "dd/MM/yyyy HH:mm")
-				+ " SE REALIZA EL CAMBIO SOLICITADO Y SE REGISTRA COMO COMENTARIO ";
-		return comentario;
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnGrabar")
 	public void onClick$btnGrabar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (validarSiExisteSolicitudPendienteEjecucion() == false
-				&& validarSiExisteSolicitudPendienteActualizacion() == false) {
-			Messagebox.show(informativos.getMensaje_informativo_84(), informativos.getMensaje_informativo_24(),
-					Messagebox.OK, Messagebox.EXCLAMATION);
+		if (txtNombres.getText().length() <= 0) {
+			txtNombres.setFocus(true);
+			Clients.showNotification("Ingrese el/los nombres del usuario.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
-		if (solicitud != null) {
-			if (solicitud.getId_tip_solicitud() == 2) {
-				if (solicitud.getEst_solicitud().equals("T")) {
-					if (txtUsuario.getText().length() <= 0) {
-						txtUsuario.setErrorMessage("Ingrese el usuario.");
-						return;
-					}
-					if (txtContrasena1.getText().length() <= 0) {
-						txtContrasena1.setErrorMessage("Ingrese la contraseña.");
-						return;
-					}
-					if (txtContrasena2.getText().length() <= 0) {
-						txtContrasena2.setErrorMessage("Debe confirmar la contraseña.");
-						return;
-					}
-					if (!txtContrasena1.getText().equals(txtContrasena2.getText())) {
-						txtContrasena2.setErrorMessage("Las contraseñas no son iguales.");
-						return;
-					}
-					if (!tmpPassword.equals(txtContrasena1.getText())) {
-						if (validar.validarPassword(txtContrasena2.getText()) == 0) {
-							txtContrasena2.setErrorMessage("La contraseña no es segura.");
-							return;
-						}
-					}
-					if (txtNombres.getText().length() <= 0) {
-						txtNombres.setErrorMessage("Ingrese los nombres.");
-						return;
-					}
-					if (txtApellidos.getText().length() <= 0) {
-						txtApellidos.setErrorMessage("Ingrese los apellidos.");
-						return;
-					}
-					if (cmbPerfil.getSelectedItem() == null) {
-						cmbPerfil.setErrorMessage("Seleccione un perfil.");
-						return;
-					}
-					if (id_perfil != 1 && cmbPerfil.getSelectedItem().getValue().toString().equals("1")) {
-						cmbPerfil.setErrorMessage(
-								"El perfil seleccionado es de administrador y usted no tiene los permisos suficientes, debe seleccionar un perfil diferente.");
-						return;
-					}
-					if (id_perfil != 1 && cmbPerfil.getSelectedItem().getValue().toString().equals("3")) {
-						cmbPerfil.setErrorMessage(
-								"El perfil seleccionado es de aprobador y usted no tiene los permisos suficientes, debe seleccionar un perfil diferente.");
-						return;
-					}
-					if (id_perfil != 1 && cmbPerfil.getSelectedItem().getValue().toString().equals("5")) {
-						cmbPerfil.setErrorMessage(
-								"El perfil seleccionado es de coordinador y usted no tiene los permisos suficientes, debe seleccionar un perfil diferente.");
-						return;
-					}
-					if (cmbLocalidad.getSelectedItem() == null) {
-						cmbLocalidad.setErrorMessage("Seleccione una localidad.");
-						return;
-					}
-				} else {
-					if (solicitud.getId_campo() == 5) {
-						if (txtNombres.getText().length() <= 0) {
-							txtNombres.setErrorMessage("Ingrese los nombres.");
-							return;
-						}
-					}
-					if (solicitud.getId_campo() == 6) {
-						if (txtApellidos.getText().length() <= 0) {
-							txtApellidos.setErrorMessage("Ingrese los apellidos.");
-							return;
-						}
-					}
-					if (solicitud.getId_campo() == 15) {
-						if (txtContrasena1.getText().length() <= 0) {
-							txtContrasena1.setErrorMessage("Ingrese la contraseña.");
-							return;
-						}
-						if (txtContrasena2.getText().length() <= 0) {
-							txtContrasena2.setErrorMessage("Debe confirmar la contraseña.");
-							return;
-						}
-						if (!txtContrasena1.getText().equals(txtContrasena2.getText())) {
-							txtContrasena2.setErrorMessage("Las contraseñas no son iguales.");
-							return;
-						}
-						if (!tmpPassword.equals(txtContrasena1.getText())) {
-							if (validar.validarPassword(txtContrasena2.getText()) == 0) {
-								txtContrasena2.setErrorMessage("La contraseña no es segura.");
-								return;
-							}
-						}
-					}
-				}
-			}
-		}
-		if (txtComentario.getText().length() <= 0) {
-			txtComentario.setErrorMessage("Ingrese un comentario.");
+		if (txtApellidos.getText().length() <= 0) {
+			txtApellidos.setFocus(true);
+			Clients.showNotification("Ingrese el/los apellidos del usuario.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
-		setearDatosAntesDeGuardar();
+		if (cmbPerfil.getSelectedItem() == null) {
+			cmbPerfil.setFocus(true);
+			Clients.showNotification("Seleccione un perfil de la lista.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
+			return;
+		}
+		if (id_perfil != 1 && cmbPerfil.getSelectedItem().getValue().toString().equals("1")) {
+			cmbPerfil.setFocus(true);
+			Clients.showNotification(
+					"El perfil seleccionado es de administrador y usted no tiene los permisos suficientes, debe seleccionar un perfil diferente.",
+					Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right", 2000, true);
+			return;
+		}
+		if (id_perfil != 1 && cmbPerfil.getSelectedItem().getValue().toString().equals("3")) {
+			cmbPerfil.setFocus(true);
+			Clients.showNotification(
+					"El perfil seleccionado es de aprobador y usted no tiene los permisos suficientes, debe seleccionar un perfil diferente.",
+					Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right", 2000, true);
+			return;
+		}
+		if (id_perfil != 1 && cmbPerfil.getSelectedItem().getValue().toString().equals("5")) {
+			cmbPerfil.setFocus(true);
+			Clients.showNotification(
+					"El perfil seleccionado es de coordinador y usted no tiene los permisos suficientes, debe seleccionar un perfil diferente.",
+					Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right", 2000, true);
+			return;
+		}
+		if (cmbLocalidad.getSelectedItem() == null) {
+			cmbLocalidad.setFocus(true);
+			Clients.showNotification("Seleccione una localidad de la lista.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
+			return;
+		}
 		Messagebox.show("Esta seguro de modificar el usuario?", ".:: Modificar usuario ::.",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
+							int tipo = 0;
 							dao_usuario dao = new dao_usuario();
 							modelo_usuario usuario = new modelo_usuario();
+							usuario = modificar.this.usuario;
 							usuario.setId_usuario(Long.parseLong(txtId.getText()));
 							usuario.setUse_usuario(txtUsuario.getText());
 							if (tmpPassword.equals(txtContrasena1.getText())) {
@@ -459,71 +327,36 @@ public class modificar extends SelectorComposer<Component> {
 							}
 							usuario.setNom_usuario(txtNombres.getText());
 							usuario.setApe_usuario(txtApellidos.getText());
-							usuario.setId_perfil(Long.parseLong(cmbPerfil.getSelectedItem().getValue().toString()));
+							usuario.setPerfil(((modelo_perfil) cmbPerfil.getSelectedItem().getValue()));
 							if (chkCambiarPassword.isChecked()) {
 								usuario.setCam_password("S");
 								usuario.setPas_usuario(SH2.getSHA256("noc123"));
+								tipo = 1;
 							} else {
 								usuario.setCam_password("N");
 							}
-							usuario.setId_localidad(
-									Long.parseLong(cmbLocalidad.getSelectedItem().getValue().toString()));
+							usuario.setLocalidad((modelo_localidad) cmbLocalidad.getSelectedItem().getValue());
+							usuario.setEst_usuario("AE");
 							usuario.setUsu_modifica(user);
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							usuario.setFec_modifica(timestamp);
-							if (solicitud.getEst_solicitud().equals("T")) {
-								usuario.setEst_usuario("PACP");
-								solicitud.setEst_solicitud("R");
-								solicitud.setComentario_1(setearComentario() + txtComentario.getText().toUpperCase());
-								solicitud.setComentario_2("");
-								solicitud.setComentario_3("");
-								solicitud.setComentario_4("");
-								solicitud.setComentario_5("");
-								solicitud.setId_user_1(id_user);
-								solicitud.setId_user_2(0);
-								solicitud.setId_user_3(0);
-								solicitud.setId_user_4(0);
-								solicitud.setId_user_5(0);
-								solicitud.setFecha_1(fechas.obtenerTimestampDeDate(fecha_comentario_1));
-								solicitud.setFecha_2(null);
-								solicitud.setFecha_3(null);
-								solicitud.setFecha_4(null);
-								solicitud.setFecha_5(null);
-								solicitud.setUsu_modifica(user);
-								solicitud.setFec_modifica(timestamp);
-							} else {
-								usuario.setEst_usuario("AE");
-								solicitud.setEst_solicitud("E");
-								solicitud.setComentario_3(txtComentario.getText());
-								solicitud.setId_user_3(id_user);
-								solicitud.setFecha_3(timestamp);
-								solicitud.setUsu_modifica(user);
-								solicitud.setFec_modifica(timestamp);
-							}
-							int tipo = 1;
+							usuario.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							try {
-								dao.modificarUsuario(usuario, solicitud, tipo);
+								dao.actualizarUsuario(usuario);
 								if (tipo == 1) {
-									Messagebox.show("El usuario se modificó correctamente.",
-											".:: Modificar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-									if (chkCambiarPassword.isChecked()) {
-										Messagebox.show(
-												"Para realizar el cambio de la contraseña debe ingresar noc123, como contraseña por defecto.",
-												".:: Modificar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-									}
+									Clients.showNotification(
+											"El usuario se actualizó correctamente, para realizar el cambio de la contraseña debe ingresar noc123, como contraseña por defecto.",
+											Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "dSolicitudes", 4000, true);
 								} else {
-									Messagebox.show("No se realizaron cambios en el registro.",
-											".:: Modificar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+									Clients.showNotification("El usuario se actualizó correctamente.",
+											Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "dSolicitudes", 4000, true);
 								}
 								limpiarCampos();
 								Sessions.getCurrent().removeAttribute("usuario");
-								Events.postEvent(new Event("onClose", zModificar));
+								Events.postEvent(new Event("onClose", zModificarLocalidad));
 							} catch (Exception e) {
-								Messagebox.show(
-										"Error al modificar el usuario. \n\n" + "Mensaje de error: \n\n"
+								Clients.showNotification(
+										"Error al actualizar el usuario. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Modificar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -532,7 +365,7 @@ public class modificar extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zModificar));
+		Events.postEvent(new Event("onClose", zModificarLocalidad));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +22,14 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.ComboitemRenderer;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Include;
+import org.zkoss.zul.ListModel;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.ListModels;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Messagebox;
@@ -34,14 +40,12 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.mantenimientos.DAO.dao_relacion_perfil;
-import bp.aplicaciones.mantenimientos.DAO.dao_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.cintas.modelo.modelo_movimiento_dn;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_informativo;
-import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
@@ -66,14 +70,15 @@ public class dashboard extends SelectorComposer<Component> {
 	@Wire
 	Menu tMenu1, tMenu2, tMenu3, tMenu4, tCape, tBodega, tCintas, tControlCambio, tMantenimientos, tPersonal;
 	@Wire
-	Menuitem tcMantenimientoUsuarios, tcMantenimientoPerfiles, tcMantenimientoLocalidades, tcMantenimientoParametros,
+	Menuitem tcMantenimientoUsuarios, tcMantenimientoPerfiles, tcMantenimientoLocalidades, tcMantenimientoParametros1,
 			tcMantenimientoEmpresas, tcMantenimientoUbicaciones1, tcMantenimientoSolicitantesProveedores,
 			tcMantenimientoCategorias1, tcMantenimientoSesiones, tcMantenimientoRespaldos, tcMantenimientoCapacidades,
 			tcMantenimientoCategorias2, tcMantenimientoUbicaciones2, tcMantenimientoSolicitudes, tcManosRemotas,
 			tcMantenimientoFilas, tcMantenimientoRacks, tcMantenimientoMarcas, tcMantenimientoModelos,
 			tcMantenimientoTipoEquipos, tcMantenimientoTipoConectores, tcMantenimientoEquipos,
 			tcMantenimientoInformativos, tcBodega, tcBitacora, tcControlCambioGenerar, tcCintas, tcAcercaDe, tcDBodega,
-			tcDBitacora, tcPersonal, tcMantenimientoManuales, tcMantenimientoEstadosEquipo;
+			tcDBitacora, tcPersonal, tcMantenimientoManuales, tcMantenimientoEstadosEquipo,
+			tcMantenimientoMantenimientos, tcMantenimientoOpciones, tcMantenimientoTipoDocumentos, tcMantenimientoTipoServicios;
 	@Wire
 	Tabbox tTab;
 	@Wire
@@ -95,9 +100,10 @@ public class dashboard extends SelectorComposer<Component> {
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
-	String mlocalidades, mparametros, mperfiles, musuarios, mempresas, msolicitantes, mcategorias1, mubicaciones1,
+	String mlocalidades, mparametros1, mperfiles, musuarios, mempresas, msolicitantes, mcategorias1, mubicaciones1,
 			marticulos, msesiones, mrespaldos, mcapacidades, mcategorias2, mubicaciones2, msolicitudes, minformativos,
-			mmanuales, mracks, mfilas, mmarcas, mmodelos, mtipoequipos, mtipoconectores, mequipos, mestadosequipo;
+			mmanuales, mracks, mfilas, mmarcas, mmodelos, mtipoequipos, mtipoconectores, mequipos, mestadosequipo,
+			mmantenimientos, mopciones, mtipodocumentos, mtipo_servicios;
 	String oarticulos, oBodega, oreporte, ocontrolcambio, obitacora, ocintas, oPersonal, oManosRemotas;
 
 	List<modelo_solicitud> listaSolicitud = new ArrayList<modelo_solicitud>();
@@ -111,8 +117,12 @@ public class dashboard extends SelectorComposer<Component> {
 			sMovimientoCintasValidacionOperadorAuditor = 0;
 
 	Fechas fechas = new Fechas();
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	String usup = "";
+
+	@SuppressWarnings("rawtypes")
+	private ListModel mySubModel;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -128,12 +138,12 @@ public class dashboard extends SelectorComposer<Component> {
 		validarPermisosMantenimientos();
 		inicializarPermisosOpciones();
 		validarPermisosOpciones();
-		//cargarSolicitudes();
+		// cargarSolicitudes();
 		cargarMovimientosDN();
 		inicializarSolicitudesPendientes();
 		inicializarValidacionesCruzadasPendientesModuloCintas();
 		cargarParametros();
-		onClick$tcDBitacora();
+		//onClick$tcDBitacora();
 		cargarInformativos();
 		Sessions.getCurrent().setAttribute("btn", btnSalir);
 		// Clients.showNotification(usup, "info", btnUsuario, "start_before", 3000);
@@ -168,7 +178,7 @@ public class dashboard extends SelectorComposer<Component> {
 
 	public void cargarDatosUsuario() throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		dao_usuario dao = new dao_usuario();
-		usuario = dao.obtenerUsuario(String.valueOf(id_user), "", 2);
+		usuario = dao.consultarUsuarios(id_user, 0, "", "", 0, 5).get(0);
 	}
 
 	public void cargarParametros() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -183,17 +193,27 @@ public class dashboard extends SelectorComposer<Component> {
 		}
 	}
 
-	public void cargarLocalidades() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_localidad dao = new dao_localidad();
-		String criterio = "";
-		try {
-			listaLocalidad = dao.obtenerLocalidades(criterio, 1, 0, 0);
-		} catch (SQLException e) {
-			Messagebox.show(
-					"Error al cargar las localidades. \n\n" + "Codigo de error: " + e.getErrorCode()
-							+ "\n\nMensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void cargarLocalidades() {
+		listaLocalidad = consultasABaseDeDatos.consultarLocalidades(0, 0, "", "", 0, 2);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_localidad bean = (modelo_localidad) o2;
+				return bean.getNom_localidad().contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaLocalidad), myComparator, 15);
+		cmbLocalidad.setModel(mySubModel);
+		ComboitemRenderer<modelo_localidad> myRenderer = new ComboitemRenderer<modelo_localidad>() {
+			@Override
+			public void render(Comboitem item, modelo_localidad bean, int index) throws Exception {
+				item.setLabel(bean.getNom_localidad());
+				item.setValue(bean);
+			}
+		};
+		cmbLocalidad.setItemRenderer(myRenderer);
 		binder.loadComponent(cmbLocalidad);
 	}
 
@@ -206,8 +226,10 @@ public class dashboard extends SelectorComposer<Component> {
 		}
 		if (id_perfil != 1 && id_perfil != 3 && id_perfil != 6) {
 			cmbLocalidad.setDisabled(true);
+			cmbLocalidad.setReadonly(true);
 		} else {
 			cmbLocalidad.setDisabled(false);
+			cmbLocalidad.setReadonly(false);
 		}
 	}
 
@@ -233,7 +255,7 @@ public class dashboard extends SelectorComposer<Component> {
 		dao_perfil dao = new dao_perfil();
 		List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
 		String nom_localidad = "";
-		listaPerfil = dao.obtenerPerfiles("", 4, id_perfil);
+		listaPerfil = dao.consultarPerfiles(id_perfil, 0, "", "", 0, 5);
 		String[] nombre = usuario.getNom_usuario().split(" ");
 		String[] apellido = usuario.getApe_usuario().split(" ");
 		for (int i = 0; i < listaLocalidad.size(); i++) {
@@ -244,12 +266,14 @@ public class dashboard extends SelectorComposer<Component> {
 		}
 		if (listaPerfil.size() == 1) {
 			if (nom_localidad != "") {
-				usup = nombre[0] + " " + apellido[0] + " (<span style='color:#008000; font-style: italic !important;'>"
+				usup = nombre[0] + " " + apellido[0]
+						+ " (<span style='font-weight: bold; font-style: italic !important;'>"
 						+ listaPerfil.get(0).getNom_perfil() + "</span>)</br>" + nom_localidad + "</br>"
 						+ Executions.getCurrent().getRemoteAddr() + "</br>"
 						+ fechas.obtenerFechaFormateada(new Date(), "dd/MM/yyyy HH:mm:ss");
 			} else {
-				usup = nombre[0] + " " + apellido[0] + " (<span style='color:#008000; font-style: italic !important;'>"
+				usup = nombre[0] + " " + apellido[0]
+						+ " (<span style='font-weight: bold; font-style: italic !important;'>"
 						+ listaPerfil.get(0).getNom_perfil() + "</span>)" + "</br>"
 						+ Executions.getCurrent().getRemoteAddr() + "</br>"
 						+ fechas.obtenerFechaFormateada(new Date(), "dd/MM/yyyy HH:mm:ss");
@@ -265,29 +289,29 @@ public class dashboard extends SelectorComposer<Component> {
 		}
 	}
 
-	public void cargarSolicitudes() {
-		dao_solicitud dao = new dao_solicitud();
-		String criterio = "";
-		try {
-			try {
-				listaSolicitud = dao.obtenerSolicitudes(criterio, "", "", "", 0, 0, 6);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (SQLException e) {
-			Messagebox.show(
-					"Error al cargar las solicitudes. \n\n" + "Codigo de error: " + e.getErrorCode()
-							+ "\n\nMensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar solicitud ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-	}
+//	public void cargarSolicitudes() {
+//		dao_solicitud dao = new dao_solicitud();
+//		String criterio = "";
+//		try {
+//			try {
+//				listaSolicitud = dao.obtenerSolicitudes(criterio, "", "", "", 0, 0, 6);
+//			} catch (ClassNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		} catch (SQLException e) {
+//			Messagebox.show(
+//					"Error al cargar las solicitudes. \n\n" + "Codigo de error: " + e.getErrorCode()
+//							+ "\n\nMensaje de error: \n\n" + e.getMessage(),
+//					".:: Cargar solicitud ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+//		}
+//	}
 
 	public void cargarMovimientosDN() throws ClassNotFoundException, FileNotFoundException, IOException {
 		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
@@ -384,9 +408,9 @@ public class dashboard extends SelectorComposer<Component> {
 
 	@Listen("onClick=#tDashboard")
 	public void onClick$tDashboard() throws ClassNotFoundException, FileNotFoundException, IOException {
-		//cargarSolicitudes();
-		//inicializarSolicitudesPendientes();
-		init();
+		// cargarSolicitudes();
+		// inicializarSolicitudesPendientes();
+		// init();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -431,7 +455,7 @@ public class dashboard extends SelectorComposer<Component> {
 			cmbLocalidad.setFocus(true);
 			return;
 		}
-		if (Long.valueOf(cmbLocalidad.getSelectedItem().getValue().toString()) == id_dc) {
+		if (((modelo_localidad) cmbLocalidad.getSelectedItem().getValue()).getId_localidad() == id_dc) {
 			return;
 		}
 		Messagebox.show(
@@ -443,12 +467,13 @@ public class dashboard extends SelectorComposer<Component> {
 						if (event.getName().equals("onOK")) {
 							dao_usuario dao = new dao_usuario();
 							modelo_usuario usuario = new modelo_usuario();
+							usuario = dashboard.this.usuario;
 							usuario.setId_usuario(id_user);
-							usuario.setId_localidad(Long.valueOf(cmbLocalidad.getSelectedItem().getValue().toString()));
+							usuario.setLocalidad((modelo_localidad) cmbLocalidad.getSelectedItem().getValue());
 							usuario.setUsu_modifica(user);
 							usuario.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
 							try {
-								dao.cambiarLocalidad(usuario);
+								dao.actualizarUsuario(usuario);
 								String url = "/index.zul";
 								Sessions.getCurrent().removeAttribute("id_user");
 								Sessions.getCurrent().removeAttribute("id_perfil");
@@ -470,177 +495,184 @@ public class dashboard extends SelectorComposer<Component> {
 
 	public void inicializarPermisosMantenimientos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_relacion_perfil dao = new dao_relacion_perfil();
-		try {
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "1", 1) == true) {
-				msolicitantes = "S";
-			} else {
-				msolicitantes = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "2", 1) == true) {
-				mubicaciones1 = "S";
-			} else {
-				mubicaciones1 = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "3", 1) == true) {
-				mlocalidades = "S";
-			} else {
-				mlocalidades = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "4", 1) == true) {
-				musuarios = "S";
-			} else {
-				musuarios = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "5", 1) == true) {
-				mcategorias1 = "S";
-			} else {
-				mcategorias1 = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "6", 1) == true) {
-				marticulos = "S";
-			} else {
-				marticulos = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "7", 1) == true) {
-				mperfiles = "S";
-			} else {
-				mperfiles = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "8", 1) == true) {
-				mempresas = "S";
-			} else {
-				mempresas = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "9", 1) == true) {
-				msolicitudes = "S";
-			} else {
-				msolicitudes = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "10", 1) == true) {
-				mparametros = "S";
-			} else {
-				mparametros = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "11", 1) == true) {
-				msesiones = "S";
-			} else {
-				msesiones = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "12", 1) == true) {
-				mrespaldos = "S";
-			} else {
-				mrespaldos = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "13", 1) == true) {
-				mcapacidades = "S";
-			} else {
-				mcapacidades = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "14", 1) == true) {
-				mcategorias2 = "S";
-			} else {
-				mcategorias2 = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "15", 1) == true) {
-				mubicaciones2 = "S";
-			} else {
-				mubicaciones2 = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "17", 1) == true) {
-				minformativos = "S";
-			} else {
-				minformativos = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "20", 1) == true) {
-				mmanuales = "S";
-			} else {
-				mmanuales = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "21", 1) == true) {
-				mracks = "S";
-			} else {
-				mracks = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "22", 1) == true) {
-				mfilas = "S";
-			} else {
-				mfilas = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "23", 1) == true) {
-				mmarcas = "S";
-			} else {
-				mmarcas = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "24", 1) == true) {
-				mmodelos = "S";
-			} else {
-				mmodelos = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "25", 1) == true) {
-				mtipoequipos = "S";
-			} else {
-				mtipoequipos = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "26", 1) == true) {
-				mequipos = "S";
-			} else {
-				mequipos = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "27", 1) == true) {
-				mtipoconectores = "S";
-			} else {
-				mtipoconectores = "N";
-			}
-			if (dao.obtenerRelacionesMantenimientos(String.valueOf(id_perfil), "28", 1) == true) {
-				mestadosequipo = "S";
-			} else {
-				mestadosequipo = "N";
-			}
-		} catch (SQLException e) {
-			Messagebox.show(
-					"Error al cargar los permisos de las configuraciones. \n\n" + "Mensaje de error: \n\n"
-							+ e.getMessage(),
-					".:: Permisos de configuraciones ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 1, "", "", 0, 6).size() > 0) {
+			msolicitantes = "S";
+		} else {
+			msolicitantes = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 2, "", "", 0, 6).size() > 0) {
+			mubicaciones1 = "S";
+		} else {
+			mubicaciones1 = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 3, "", "", 0, 6).size() > 0) {
+			mlocalidades = "S";
+		} else {
+			mlocalidades = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 4, "", "", 0, 6).size() > 0) {
+			musuarios = "S";
+		} else {
+			musuarios = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 5, "", "", 0, 6).size() > 0) {
+			mcategorias1 = "S";
+		} else {
+			mcategorias1 = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 6, "", "", 0, 6).size() > 0) {
+			marticulos = "S";
+		} else {
+			marticulos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 7, "", "", 0, 6).size() > 0) {
+			mperfiles = "S";
+		} else {
+			mperfiles = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 8, "", "", 0, 6).size() > 0) {
+			mempresas = "S";
+		} else {
+			mempresas = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 9, "", "", 0, 6).size() > 0) {
+			msolicitudes = "S";
+		} else {
+			msolicitudes = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 11, "", "", 0, 6).size() > 0) {
+			msesiones = "S";
+		} else {
+			msesiones = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 12, "", "", 0, 6).size() > 0) {
+			mrespaldos = "S";
+		} else {
+			mrespaldos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 13, "", "", 0, 6).size() > 0) {
+			mcapacidades = "S";
+		} else {
+			mcapacidades = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 14, "", "", 0, 6).size() > 0) {
+			mcategorias2 = "S";
+		} else {
+			mcategorias2 = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 15, "", "", 0, 6).size() > 0) {
+			mubicaciones2 = "S";
+		} else {
+			mubicaciones2 = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 17, "", "", 0, 6).size() > 0) {
+			minformativos = "S";
+		} else {
+			minformativos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 20, "", "", 0, 6).size() > 0) {
+			mmanuales = "S";
+		} else {
+			mmanuales = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 21, "", "", 0, 6).size() > 0) {
+			mracks = "S";
+		} else {
+			mracks = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 22, "", "", 0, 6).size() > 0) {
+			mfilas = "S";
+		} else {
+			mfilas = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 23, "", "", 0, 6).size() > 0) {
+			mmarcas = "S";
+		} else {
+			mmarcas = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 24, "", "", 0, 6).size() > 0) {
+			mmodelos = "S";
+		} else {
+			mmodelos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 25, "", "", 0, 6).size() > 0) {
+			mtipoequipos = "S";
+		} else {
+			mtipoequipos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 26, "", "", 0, 6).size() > 0) {
+			mequipos = "S";
+		} else {
+			mequipos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 27, "", "", 0, 6).size() > 0) {
+			mtipoconectores = "S";
+		} else {
+			mtipoconectores = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 28, "", "", 0, 6).size() > 0) {
+			mestadosequipo = "S";
+		} else {
+			mestadosequipo = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 70, "", "", 0, 6).size() > 0) {
+			mmantenimientos = "S";
+		} else {
+			mmantenimientos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 71, "", "", 0, 6).size() > 0) {
+			mopciones = "S";
+		} else {
+			mopciones = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 72, "", "", 0, 6).size() > 0) {
+			mtipodocumentos = "S";
+		} else {
+			mtipodocumentos = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 73, "", "", 0, 6).size() > 0) {
+			mparametros1 = "S";
+		} else {
+			mparametros1 = "N";
+		}
+		if (dao.obtenerRelacionesMantenimientos(id_perfil, 74, "", "", 0, 6).size() > 0) {
+			mtipo_servicios = "S";
+		} else {
+			mtipo_servicios = "N";
 		}
 	}
 
 	public void inicializarPermisosOpciones() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_relacion_perfil dao = new dao_relacion_perfil();
-		try {
-			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "1", 2) == true) {
-				oBodega = "S";
-			} else {
-				oBodega = "N";
-			}
-			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "2", 2) == true) {
-				ocontrolcambio = "S";
-			} else {
-				ocontrolcambio = "N";
-			}
-			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "3", 2) == true) {
-				obitacora = "S";
-			} else {
-				obitacora = "N";
-			}
-			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "4", 2) == true) {
-				ocintas = "S";
-			} else {
-				ocintas = "N";
-			}
-			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "5", 2) == true) {
-				oPersonal = "S";
-			} else {
-				oPersonal = "N";
-			}
-			if (dao.obtenerRelacionesOpciones(String.valueOf(id_perfil), "6", 2) == true) {
-				oManosRemotas = "S";
-			} else {
-				oManosRemotas = "N";
-			}
-		} catch (SQLException e) {
-			Messagebox.show(
-					"Error al cargar los permisos de las opciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Permisos de opciones ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+		if (dao.obtenerRelacionesOpciones(id_perfil, 1, "", "", 0, 7).size() > 0) {
+			oBodega = "S";
+		} else {
+			oBodega = "N";
+		}
+		if (dao.obtenerRelacionesOpciones(id_perfil, 2, "", "", 0, 7).size() > 0) {
+			ocontrolcambio = "S";
+		} else {
+			ocontrolcambio = "N";
+		}
+		if (dao.obtenerRelacionesOpciones(id_perfil, 3, "", "", 0, 7).size() > 0) {
+			obitacora = "S";
+		} else {
+			obitacora = "N";
+		}
+		if (dao.obtenerRelacionesOpciones(id_perfil, 4, "", "", 0, 7).size() > 0) {
+			ocintas = "S";
+		} else {
+			ocintas = "N";
+		}
+		if (dao.obtenerRelacionesOpciones(id_perfil, 5, "", "", 0, 7).size() > 0) {
+			oPersonal = "S";
+		} else {
+			oPersonal = "N";
+		}
+		if (dao.obtenerRelacionesOpciones(id_perfil, 6, "", "", 0, 7).size() > 0) {
+			oManosRemotas = "S";
+		} else {
+			oManosRemotas = "N";
 		}
 	}
 
@@ -692,12 +724,6 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tcMantenimientoSolicitudes.setDisabled(true);
 			tcMantenimientoSolicitudes.setTooltiptext("No tiene permisos para usar esta configuración.");
-		}
-		if (mparametros.equals("S")) {
-			tcMantenimientoParametros.setDisabled(false);
-		} else {
-			tcMantenimientoParametros.setDisabled(true);
-			tcMantenimientoParametros.setTooltiptext("No tiene permisos para usar esta configuración.");
 		}
 		if (msesiones.equals("S")) {
 			tcMantenimientoSesiones.setDisabled(false);
@@ -788,6 +814,36 @@ public class dashboard extends SelectorComposer<Component> {
 		} else {
 			tcMantenimientoEstadosEquipo.setDisabled(true);
 			tcMantenimientoEstadosEquipo.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mmantenimientos.equals("S")) {
+			tcMantenimientoMantenimientos.setDisabled(false);
+		} else {
+			tcMantenimientoMantenimientos.setDisabled(true);
+			tcMantenimientoMantenimientos.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mopciones.equals("S")) {
+			tcMantenimientoOpciones.setDisabled(false);
+		} else {
+			tcMantenimientoOpciones.setDisabled(true);
+			tcMantenimientoOpciones.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mtipodocumentos.equals("S")) {
+			tcMantenimientoTipoDocumentos.setDisabled(false);
+		} else {
+			tcMantenimientoTipoDocumentos.setDisabled(true);
+			tcMantenimientoTipoDocumentos.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mparametros1.equals("S")) {
+			tcMantenimientoParametros1.setDisabled(false);
+		} else {
+			tcMantenimientoParametros1.setDisabled(true);
+			tcMantenimientoParametros1.setTooltiptext("No tiene permisos para usar esta configuración.");
+		}
+		if (mtipo_servicios.equals("S")) {
+			tcMantenimientoTipoServicios.setDisabled(false);
+		} else {
+			tcMantenimientoTipoServicios.setDisabled(true);
+			tcMantenimientoTipoServicios.setTooltiptext("No tiene permisos para usar esta configuración.");
 		}
 	}
 
@@ -1156,27 +1212,27 @@ public class dashboard extends SelectorComposer<Component> {
 	 * MANTENIMIENTOS
 	 */
 
-	@Listen("onClick=#tcMantenimientoParametros")
-	public void onClick$tcMantenimientoParametros() {
+	@Listen("onClick=#tcMantenimientoParametros1")
+	public void onClick$tcMantenimientoParametros1() {
 		try {
 			Borderlayout bl = new Borderlayout();
-			if (tTab.hasFellow("Tab:" + tcMantenimientoParametros.getId())) {
-				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoParametros.getId());
+			if (tTab.hasFellow("Tab:" + tcMantenimientoParametros1.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoParametros1.getId());
 				tab2.focus();
 				tab2.setSelected(true);
 				return;
 			}
 			Tab tab = new Tab();
-			tab.setLabel("ADMINISTRACION - CONFIGURACION | PARAMETROS GENERALES");
+			tab.setLabel("PERMITIR REGISTRO MANUAL DE SERVICIO | PARAMETROS GENERALES");
 			tab.setClosable(true);
 			tab.setSelected(true);
-			tab.setId("Tab:" + tcMantenimientoParametros.getId());
+			tab.setId("Tab:" + tcMantenimientoParametros1.getId());
 			tab.setImage("/img/botones/ButtonParameters2.png");
 			tTab.getTabs().appendChild(tab);
 			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
 			Tabpanel tabpanel = new Tabpanel();
 			tPanel.appendChild(tabpanel);
-			Include include = new Include("/mantenimientos/parametros/principal.zul");
+			Include include = new Include("/mantenimientos/parametros/parametros10.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);
@@ -1871,8 +1927,7 @@ public class dashboard extends SelectorComposer<Component> {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Listen("onClick=#tcMantenimientoEstadosEquipo")
 	public void onClick$tcMantenimientoEstadosEquipo() {
 		try {
@@ -1894,6 +1949,130 @@ public class dashboard extends SelectorComposer<Component> {
 			Tabpanel tabpanel = new Tabpanel();
 			tPanel.appendChild(tabpanel);
 			Include include = new Include("/mantenimientos/estado_equipo/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoMantenimientos")
+	public void onClick$tcMantenimientoMantenimientos() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoMantenimientos.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoMantenimientos.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("ADMINISTRACIÓN - CONFIGURACION | MANTENIMIENTOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoMantenimientos.getId());
+			tab.setImage("/img/botones/ButtonEquipo3.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/mantenimiento/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoOpciones")
+	public void onClick$tcMantenimientoOpciones() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoOpciones.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoOpciones.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("ADMINISTRACIÓN - CONFIGURACION | MÓDULOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoOpciones.getId());
+			tab.setImage("/img/botones/ButtonEquipo3.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/opcion/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Listen("onClick=#tcMantenimientoTipoDocumentos")
+	public void onClick$tcMantenimientoTipoDocumentos() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoTipoDocumentos.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoTipoDocumentos.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GENERALES - CONFIGURACION | TIPO DE DOCUMENTOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoTipoDocumentos.getId());
+			tab.setImage("/img/botones/ButtonEquipo3.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/tipo_documento/consultar.zul");
+			Center c = new Center();
+			// c.setAutoscroll(true);
+			c.appendChild(include);
+			bl.appendChild(c);
+			tabpanel.appendChild(bl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Listen("onClick=#tcMantenimientoTipoServicios")
+	public void onClick$tcMantenimientoTipoServicios() {
+		try {
+			Borderlayout bl = new Borderlayout();
+			if (tTab.hasFellow("Tab:" + tcMantenimientoTipoServicios.getId())) {
+				Tab tab2 = (Tab) tTab.getFellow("Tab:" + tcMantenimientoTipoServicios.getId());
+				tab2.focus();
+				tab2.setSelected(true);
+				return;
+			}
+			Tab tab = new Tab();
+			tab.setLabel("GENERALES - CONFIGURACION | SERVICIOS");
+			tab.setClosable(true);
+			tab.setSelected(true);
+			tab.setId("Tab:" + tcMantenimientoTipoServicios.getId());
+			tab.setImage("/img/botones/ButtonEquipo3.png");
+			tTab.getTabs().appendChild(tab);
+			// tTab.setStyle("font-family:Trebuchet MS; font-size:10px;");
+			Tabpanel tabpanel = new Tabpanel();
+			tPanel.appendChild(tabpanel);
+			Include include = new Include("/mantenimientos/tipo_servicio/consultar.zul");
 			Center c = new Center();
 			// c.setAutoscroll(true);
 			c.appendChild(include);

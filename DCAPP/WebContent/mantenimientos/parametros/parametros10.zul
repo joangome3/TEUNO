@@ -21,22 +21,32 @@
 					<space></space>
 					<cell colspan="1" align="left">
 						<space width="2px"></space>
-						<textbox id="txtOpcion" width="250px"
-							readonly="true">
-						</textbox>
+						<combobox width="250px" id="cmbOpcion"
+							readonly="false" disabled="false" autodrop="true"
+							autocomplete="false" buttonVisible="true">
+						</combobox>
 						<space></space>
 					</cell>
 				</row>
 			</rows>
 		</grid>
+		<label value="Si el item de la lista (NO) se encuentra marcado, los usuarios que (NO) tengan permisos, (NO) podrán crear, modificar y eliminar ese servicio para el módulo escogido." class="z-label-1"></label>
 		<listbox mold="paging" id="lbxTipoServicios" vflex="true"
-			sizedByContent="true" width="50%" multiple="true" checkmark="true">
+			sizedByContent="true" width="50%" multiple="true" checkmark="true"
+			model="@{zParametros$parametros10.obtenerTipoServicios}">
 			<listhead sizable="false" style="overflow: scroll;">
 				<listheader label="ID" width="100px"></listheader>
-				<listheader label="SERVICIO"></listheader>
-				<listheader label="SE PUEDE ELIMINAR"></listheader>
+				<listheader label="SERVICIO"
+					style="text-align: center !important;">
+				</listheader>
 				<listheader label="ESTADO"></listheader>
 			</listhead>
+			<listitem self="@{each=lista}">
+				<listcell label="@{lista.getId_tipo_servicio}" />
+				<listcell label="@{lista.getNom_tipo_servicio}" />
+				<listcell label="@{lista.mostrarEstado}"
+					style="@{lista.estiloMostrarEstado}" />
+			</listitem>
 		</listbox>
 	</div>
 	<zscript>

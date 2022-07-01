@@ -5,62 +5,80 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 
+@Entity
+@Table(name = "sibod_usuario")
 public class modelo_usuario {
 
+	@Id
+	@Column(name = "id_usuario", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_usuario;
+	@Column(name = "use_usuario", length = 20)
 	private String use_usuario;
+	@Column(name = "pas_usuario", length = 256)
 	private String pas_usuario;
+	@Column(name = "nom_usuario", length = 100)
 	private String nom_usuario;
+	@Column(name = "ape_usuario", length = 100)
 	private String ape_usuario;
-	private long id_perfil;
-	private String nom_perfil;
+	@Column(name = "cam_password", length = 5)
 	private String cam_password;
-	private long id_localidad;
-	private String nom_localidad;
+	@Column(name = "est_usuario", length = 5)
 	private String est_usuario;
+	@Column(name = "usu_ingresa", length = 20)
 	private String usu_ingresa;
+	@Column(name = "fec_ingresa")
 	private Timestamp fec_ingresa;
+	@Column(name = "usu_modifica", length = 20)
 	private String usu_modifica;
+	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "id_perfil")
+	private modelo_perfil perfil;
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "id_localidad")
+	private modelo_localidad localidad;
 
 	public modelo_usuario() {
 		super();
 	}
 
 	/**
-	 * @param id_usuario
 	 * @param use_usuario
 	 * @param pas_usuario
 	 * @param nom_usuario
 	 * @param ape_usuario
-	 * @param id_perfil
-	 * @param nom_perfil
 	 * @param cam_password
-	 * @param id_localidad
-	 * @param nom_localidad
 	 * @param est_usuario
 	 * @param usu_ingresa
 	 * @param fec_ingresa
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_usuario(long id_usuario, String use_usuario, String pas_usuario, String nom_usuario,
-			String ape_usuario, long id_perfil, String nom_perfil, String cam_password, long id_localidad,
-			String nom_localidad, String est_usuario, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
+	public modelo_usuario(String use_usuario, String pas_usuario, String nom_usuario, String ape_usuario,
+			String cam_password, String est_usuario, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
 			Timestamp fec_modifica) {
 		super();
-		this.id_usuario = id_usuario;
 		this.use_usuario = use_usuario;
 		this.pas_usuario = pas_usuario;
 		this.nom_usuario = nom_usuario;
 		this.ape_usuario = ape_usuario;
-		this.id_perfil = id_perfil;
-		this.nom_perfil = nom_perfil;
 		this.cam_password = cam_password;
-		this.id_localidad = id_localidad;
-		this.nom_localidad = nom_localidad;
 		this.est_usuario = est_usuario;
 		this.usu_ingresa = usu_ingresa;
 		this.fec_ingresa = fec_ingresa;
@@ -74,9 +92,7 @@ public class modelo_usuario {
 	 * @param pas_usuario
 	 * @param nom_usuario
 	 * @param ape_usuario
-	 * @param id_perfil
 	 * @param cam_password
-	 * @param id_localidad
 	 * @param est_usuario
 	 * @param usu_ingresa
 	 * @param fec_ingresa
@@ -84,17 +100,15 @@ public class modelo_usuario {
 	 * @param fec_modifica
 	 */
 	public modelo_usuario(long id_usuario, String use_usuario, String pas_usuario, String nom_usuario,
-			String ape_usuario, long id_perfil, String cam_password, long id_localidad, String est_usuario,
-			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
+			String ape_usuario, String cam_password, String est_usuario, String usu_ingresa, Timestamp fec_ingresa,
+			String usu_modifica, Timestamp fec_modifica) {
 		super();
 		this.id_usuario = id_usuario;
 		this.use_usuario = use_usuario;
 		this.pas_usuario = pas_usuario;
 		this.nom_usuario = nom_usuario;
 		this.ape_usuario = ape_usuario;
-		this.id_perfil = id_perfil;
 		this.cam_password = cam_password;
-		this.id_localidad = id_localidad;
 		this.est_usuario = est_usuario;
 		this.usu_ingresa = usu_ingresa;
 		this.fec_ingresa = fec_ingresa;
@@ -173,34 +187,6 @@ public class modelo_usuario {
 	}
 
 	/**
-	 * @return the id_perfil
-	 */
-	public long getId_perfil() {
-		return id_perfil;
-	}
-
-	/**
-	 * @param id_perfil the id_perfil to set
-	 */
-	public void setId_perfil(long id_perfil) {
-		this.id_perfil = id_perfil;
-	}
-
-	/**
-	 * @return the nom_perfil
-	 */
-	public String getNom_perfil() {
-		return nom_perfil;
-	}
-
-	/**
-	 * @param nom_perfil the nom_perfil to set
-	 */
-	public void setNom_perfil(String nom_perfil) {
-		this.nom_perfil = nom_perfil;
-	}
-
-	/**
 	 * @return the cam_password
 	 */
 	public String getCam_password() {
@@ -212,34 +198,6 @@ public class modelo_usuario {
 	 */
 	public void setCam_password(String cam_password) {
 		this.cam_password = cam_password;
-	}
-
-	/**
-	 * @return the id_localidad
-	 */
-	public long getId_localidad() {
-		return id_localidad;
-	}
-
-	/**
-	 * @param id_localidad the id_localidad to set
-	 */
-	public void setId_localidad(long id_localidad) {
-		this.id_localidad = id_localidad;
-	}
-
-	/**
-	 * @return the nom_localidad
-	 */
-	public String getNom_localidad() {
-		return nom_localidad;
-	}
-
-	/**
-	 * @param nom_localidad the nom_localidad to set
-	 */
-	public void setNom_localidad(String nom_localidad) {
-		this.nom_localidad = nom_localidad;
 	}
 
 	/**
@@ -312,14 +270,40 @@ public class modelo_usuario {
 		this.fec_modifica = fec_modifica;
 	}
 
+	/**
+	 * @return the perfil
+	 */
+	public modelo_perfil getPerfil() {
+		return perfil;
+	}
+
+	/**
+	 * @param perfil the perfil to set
+	 */
+	public void setPerfil(modelo_perfil perfil) {
+		this.perfil = perfil;
+	}
+
+	/**
+	 * @return the localidad
+	 */
+	public modelo_localidad getLocalidad() {
+		return localidad;
+	}
+
+	/**
+	 * @param localidad the localidad to set
+	 */
+	public void setLocalidad(modelo_localidad localidad) {
+		this.localidad = localidad;
+	}
+
 	@Override
 	public String toString() {
 		return "modelo_usuario [id_usuario=" + id_usuario + ", use_usuario=" + use_usuario + ", pas_usuario="
-				+ pas_usuario + ", nom_usuario=" + nom_usuario + ", ape_usuario=" + ape_usuario + ", id_perfil="
-				+ id_perfil + ", nom_perfil=" + nom_perfil + ", cam_password=" + cam_password + ", id_localidad="
-				+ id_localidad + ", nom_localidad=" + nom_localidad + ", est_usuario=" + est_usuario + ", usu_ingresa="
-				+ usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica="
-				+ fec_modifica + "]";
+				+ pas_usuario + ", nom_usuario=" + nom_usuario + ", ape_usuario=" + ape_usuario + ", cam_password="
+				+ cam_password + ", est_usuario=" + est_usuario + ", usu_ingresa=" + usu_ingresa + ", fec_ingresa="
+				+ fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica=" + fec_modifica + "]";
 	}
 
 	public String verNombreCompleto() {
@@ -373,7 +357,7 @@ public class modelo_usuario {
 		estilo = "text-align: center !important; color: transparent;";
 		return estilo;
 	}
-	
+
 	public String mostrarImagenEstadoSolicitud()
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		String imagen = "";

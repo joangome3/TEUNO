@@ -1,0 +1,212 @@
+<?page title="Relacionar empresa" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zRelacionar" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.empresa.relacionar"
+		position="center, center" sizable="true" width="35%" height="85%"
+		maximizable="false" minimizable="false"
+		title=".:: Relacionar empresa ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="true" />
+						<columns>
+							<column width="30%"></column>
+							<column width="70%"></column>
+						</columns>
+						<rows>
+							<row>
+								<space height="15px"></space>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="ID:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtId"
+													width="220px" readonly="true" class="z-textbox-1" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<label value="* Nombre:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtNombre"
+													width="350px" rows="2" constraint="" class="z-textbox-2"
+													readonly="true" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="nom"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<groupbox>
+											<caption
+												label="Lista de Configuraciones">
+											</caption>
+											<div>
+												<hlayout hflex="1">
+													<div hflex="1">
+														<div
+															hflex="1">
+															<listbox
+																mold="paging" pageSize="5" id="lbxMantenimientos"
+																model="@{zRelacionar$relacionar.obtenerMantenimientos}"
+																checkmark="true" multiple="true" vflex="true" sizedByContent="true" width="100%">
+																<listhead
+																	sizable="true">
+																	<listheader
+																		label="ID">
+																	</listheader>
+																	<listheader
+																		label="CONFIGURACION">
+																	</listheader>
+																</listhead>
+																<listitem
+																	self="@{each=lista}">
+																	<listcell
+																		label="@{lista.getId_mantenimiento}">
+																	</listcell>
+																	<listcell
+																		label="@{lista.getNom_mantenimiento}">
+																	</listcell>
+																</listitem>
+															</listbox>
+														</div>
+													</div>
+												</hlayout>
+											</div>
+										</groupbox>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<groupbox>
+											<caption
+												label="Lista de Opciones">
+											</caption>
+											<div>
+												<hlayout hflex="1">
+													<div hflex="1">
+														<div
+															hflex="1">
+															<listbox
+																mold="paging" pageSize="5" id="lbxOpciones"
+																model="@{zRelacionar$relacionar.obtenerOpciones}"
+																checkmark="true" multiple="true" vflex="true" sizedByContent="true" width="100%">
+																<listhead
+																	sizable="true">
+																	<listheader
+																		label="ID">
+																	</listheader>
+																	<listheader
+																		label="OPCION">
+																	</listheader>
+																</listhead>
+																<listitem
+																	self="@{each=lista}">
+																	<listcell
+																		label="@{lista.getId_opcion}" tooltip="per">
+																	</listcell>
+																	<listcell
+																		label="@{lista.getNom_opcion}">
+																	</listcell>
+																</listitem>
+															</listbox>
+														</div>
+													</div>
+												</hlayout>
+											</div>
+										</groupbox>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<cell colspan="2">
+									<div align="center">
+										<groupbox>
+											<caption
+												label="Lista de Localidades">
+											</caption>
+											<div>
+												<hlayout hflex="1">
+													<div hflex="1">
+														<div
+															hflex="1">
+															<listbox
+																mold="paging" pageSize="5" id="lbxLocalidades"
+																model="@{zRelacionar$relacionar.obtenerLocalidades}"
+																checkmark="true" multiple="true" vflex="true" sizedByContent="true" width="100%">
+																<listhead
+																	sizable="true">
+																	<listheader
+																		label="ID">
+																	</listheader>
+																	<listheader
+																		label="LOCALIDAD">
+																	</listheader>
+																</listhead>
+																<listitem
+																	self="@{each=lista}">
+																	<listcell
+																		label="@{lista.getId_localidad}">
+																	</listcell>
+																	<listcell
+																		label="@{lista.getNom_localidad}">
+																	</listcell>
+																</listitem>
+															</listbox>
+														</div>
+													</div>
+												</hlayout>
+											</div>
+										</groupbox>
+									</div>
+								</cell>
+							</row>
+							<row>
+								<space></space>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<zscript>
+	<![CDATA[
+            lbxMantenimientos.pagingChild.mold = "os".equals(lbxMantenimientos.pagingChild.mold) ? "default" : "os";
+            lbxOpciones.pagingChild.mold = "os".equals(lbxOpciones.pagingChild.mold) ? "default" : "os";
+            lbxLocalidades.pagingChild.mold = "os".equals(lbxLocalidades.pagingChild.mold) ? "default" : "os";
+        ]]>
+	</zscript>
+		<style>
+	   .z-listheader-checkable {
+	       visibility: hidden;
+	   	}
+	</style>
+	</window>
+</zk>

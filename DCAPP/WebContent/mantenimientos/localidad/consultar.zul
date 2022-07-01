@@ -1,8 +1,8 @@
 <?page title="Mantenimiento de localidades" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<div id="zConsultar" width="100%" height="100%"
-		apply="bp.aplicaciones.controlador.mantenimientos.localidad.consultar" align="center">
+	<div id="zConsultar" width="100%" height="100%" apply="bp.aplicaciones.controlador.mantenimientos.localidad.consultar"
+		align="center">
 		<div id="winList" class="m-div-c"></div>
 		<grid>
 			<columns>
@@ -14,8 +14,6 @@
 					<cell colspan="2" class="m-cell-a">
 						<div align="center">
 							<grid>
-								<custom-attributes
-									org.zkoss.zul.nativebar="false" />
 								<columns>
 									<column width="2%"></column>
 									<column width="48%"></column>
@@ -24,7 +22,8 @@
 								</columns>
 								<rows>
 									<row>
-										<cell colspan="4" class="m-cell-b">
+										<cell colspan="4"
+											class="m-cell-b">
 											<button id="btnNuevo"
 												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
 												autodisable="self" />
@@ -34,7 +33,8 @@
 												tooltiptext="Refrescar lista" autodisable="self" />
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
-												width="205px" placeholder="Ingrese palabra clave" tooltip="cons" style="font-style: italic;">
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;"  maxlength="50">
 											</textbox>
 											<space width="5px"></space>
 											<combobox id="cmbLimite"
@@ -69,50 +69,47 @@
 		<vlayout vflex="1">
 			<hlayout vflex="1" style="overflow: scroll;">
 				<listbox mold="paging" id="lbxLocalidades" vflex="true"
-					sizedByContent="true" width="100%" model="@{zConsultar$consultar.obtenerLocalidades}">
+					sizedByContent="true" width="100%"
+					model="@{zConsultar$consultar.obtenerLocalidades}">
 					<listhead sizable="false"
 						style="overflow: scroll;">
-						<listheader></listheader>
 						<listheader label="ID"
 							style="text-align: center !important;">
 						</listheader>
 						<listheader label="NOMBRE"></listheader>
-						<listheader label="DESCRIPCIÓN"></listheader>
+						<listheader label="DESCRIPCION"></listheader>
 						<listheader label="ESTADO"
 							style="text-align: center !important;">
 						</listheader>
 					</listhead>
 					<listitem context="editPopup"
 						self="@{each=lista}">
-						<listcell image="@{lista.mostrarImagenEstadoSolicitud}" style="text-align: center !important;"/>
-						<listcell label="@{lista.getId_localidad}" />
 						<listcell
-							label="@{lista.getNom_localidad}" />
-						<listcell label="@{lista.getDes_localidad}" />
-						<listcell label="@{lista.mostrarEstado}" style="@{lista.estiloMostrarEstado}"/>
+							label="@{lista.getId_localidad}" />
+						<listcell
+							label="@{lista.getNom_localidad}"/>
+							<listcell
+							label="@{lista.getDes_localidad}"/>
+						<listcell label="@{lista.mostrarEstado}"
+							style="@{lista.estiloMostrarEstado}" />
 					</listitem>
 				</listbox>
 			</hlayout>
 		</vlayout>
 	</div>
-	
+
 	<menupopup id="editPopup">
-		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
-			label=" - Seguimiento"
-			tooltiptext="Permite visualizar el estado de la solicitud." />
-		<menuseparator id="mSeparador1" />
-		<menuitem id="mSolicitar" iconSclass="z-icon-check"
-			label=" - Solicitar"
-			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador." />
-		<menuitem id="mAccion" iconSclass="z-icon-check"
-			label=" - Accion"
-			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador." />
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar el registro seleccionado."
+			visible="true" />
+		<menuseparator id="mSeparador1"></menuseparator>
+		<menuitem id="mEstado" label="" tooltiptext="" visible="true" />
 	</menupopup>
-	
+
 	<popup id="cons" width="300px">
 		<html>
 
-			
 			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
 			puede usar este campo para realizar consultas entre los
 			registros. </br> </br> <span style="color: black; font-size:
@@ -123,13 +120,12 @@
 			deje limpio el campo y presione la tecla Enter. </br> 3.-
 			Puede usar el boton refrescar para actualizar la información
 			de la lista. </p> ]]>
-			
 
 			</html>
 	</popup>
 	<zscript>
 	<![CDATA[
-            lbxLocalidades.pagingChild.mold = "os".equals(lbxLocalidades.pagingChild.mold) ? "default" : "os";
-        ]]>
+	lbxLocalidades.pagingChild.mold = "os".equals(lbxLocalidades.pagingChild.mold) ? "default" : "os";
+]]>
 	</zscript>
 </zk>

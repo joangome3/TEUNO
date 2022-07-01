@@ -28,9 +28,9 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_servicio;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_tarea;
-import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_bitacora;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
@@ -71,6 +71,8 @@ public class reporte_tarea_proveedor_1 extends SelectorComposer<Component> {
 	List<modelo_tipo_servicio> listaTipoServicio = new ArrayList<modelo_tipo_servicio>();
 	List<modelo_tipo_tarea> listaTipoTarea = new ArrayList<modelo_tipo_tarea>();
 	List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
+	
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -120,15 +122,8 @@ public class reporte_tarea_proveedor_1 extends SelectorComposer<Component> {
 	}
 
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_usuario dao = new dao_usuario();
-		String criterio = String.valueOf(id_dc);
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 3, 0);
-			binder.loadComponent(cmbUsuario);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
+		binder.loadComponent(cmbUsuario);
 	}
 
 	public void cargarFechaHoraInicio() {

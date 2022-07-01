@@ -619,22 +619,22 @@ public class modelo_solicitud {
 		String s = new SimpleDateFormat("dd/MM/yyyy").format(getFecha_1());
 		return s;
 	}
-
-	public String mostrarSolicitante() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String nombre_usuario = "";
-		ConsultasABaseDeDatos consultaABaseDeDatos = new ConsultasABaseDeDatos();
-		List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
-		listaUsuario = consultaABaseDeDatos.cargarUsuarios("", 1, 0);
-		Iterator<modelo_usuario> it = listaUsuario.iterator();
-		while (it.hasNext()) {
-			modelo_usuario usuario = it.next();
-			if (usuario.getId_usuario() == getId_user_1()) {
-				nombre_usuario = usuario.verNombreCompleto();
-				break;
-			}
-		}
-		return nombre_usuario;
-	}
+//
+//	public String mostrarSolicitante() throws ClassNotFoundException, FileNotFoundException, IOException {
+//		String nombre_usuario = "";
+//		ConsultasABaseDeDatos consultaABaseDeDatos = new ConsultasABaseDeDatos();
+//		List<modelo_usuario_bk> listaUsuario = new ArrayList<modelo_usuario_bk>();
+//		listaUsuario = consultaABaseDeDatos.cargarUsuarios("", 1, 0);
+//		Iterator<modelo_usuario_bk> it = listaUsuario.iterator();
+//		while (it.hasNext()) {
+//			modelo_usuario_bk usuario = it.next();
+//			if (usuario.getId_usuario() == getId_user_1()) {
+//				nombre_usuario = usuario.verNombreCompleto();
+//				break;
+//			}
+//		}
+//		return nombre_usuario;
+//	}
 
 	public String mostrarNombreOpcion() throws ClassNotFoundException, FileNotFoundException, IOException {
 		String nombre_opcion = "";

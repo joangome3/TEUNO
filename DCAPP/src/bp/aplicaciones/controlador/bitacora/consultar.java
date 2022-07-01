@@ -217,7 +217,7 @@ public class consultar extends SelectorComposer<Component> {
 		listaTipoTarea = consultasABaseDeDatos.cargarTipoDeTareas("", 1, 0, 0);
 		listaTurno = consultasABaseDeDatos.cargarTurnos("A");
 		listaParametros5 = consultasABaseDeDatos.cargarParametros5("", String.valueOf(id_opcion), 2);
-		listaUsuario = consultasABaseDeDatos.cargarUsuarios(String.valueOf(id_dc), 4, 0);
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 		binder.loadComponent(cmbCliente);
 		binder.loadComponent(cmbTipoServicio);
 		binder.loadComponent(cmbTipoTarea);
@@ -752,13 +752,13 @@ public class consultar extends SelectorComposer<Component> {
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		boolean tiene_permiso = false;
 		List<modelo_parametros_generales_10> listaParametros = new ArrayList<modelo_parametros_generales_10>();
-		listaParametros = consultasABaseDeDatos.cargarParametros10(String.valueOf(id_opcion),
-				String.valueOf(id_tipo_servicio), String.valueOf(id_dc), 1);
+		listaParametros = consultasABaseDeDatos.consultarParametrosGenerales10(id_opcion, id_tipo_servicio, "",
+				String.valueOf(id_dc), 0, 5);
 		Iterator<modelo_parametros_generales_10> it = listaParametros.iterator();
 		while (it.hasNext()) {
 			modelo_parametros_generales_10 modelo = it.next();
-			if (modelo.getId_tipo_servicio() == id_tipo_servicio) {
-				if (modelo.getSe_puede_eliminar().equals("S")) {
+			if (modelo.getTipo_servicio().getId_tipo_servicio() == id_tipo_servicio) {
+				if (modelo.isSe_puede_crear_modificar_eliminar() == true) {
 					tiene_permiso = true;
 				} else {
 					tiene_permiso = false;
@@ -1165,7 +1165,7 @@ public class consultar extends SelectorComposer<Component> {
 	public String consultarUsuario(String usuario) throws ClassNotFoundException, FileNotFoundException, IOException {
 		String nombre_usuario = "";
 		List<modelo_usuario> listaUsuarios = new ArrayList<modelo_usuario>();
-		listaUsuarios = consultasABaseDeDatos.cargarUsuarios("", 1, 0);
+		listaUsuarios = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 		Iterator<modelo_usuario> it = listaUsuarios.iterator();
 		while (it.hasNext()) {
 			modelo_usuario modelo = it.next();
@@ -1506,8 +1506,8 @@ public class consultar extends SelectorComposer<Component> {
 		int cantidad_tareas_cerradas = 0;
 		List<modelo_bitacora> listaBitacora = new ArrayList<modelo_bitacora>();
 		List<modelo_parametros_generales_10> listaParametros10 = new ArrayList<modelo_parametros_generales_10>();
-		listaParametros10 = consultasABaseDeDatos.cargarParametros10(String.valueOf(id_opcion), "",
-				String.valueOf(id_dc), 2);
+		listaParametros10 = consultasABaseDeDatos.consultarParametrosGenerales10(0, id_opcion, "",
+				String.valueOf(id_dc), 0, 4);
 		listaBitacora = consultasABaseDeDatos.cargarBitacoras("", 3, 0, "", "", id_dc, "", "", 0, 0, "", 0);
 		listaTipoServicio = consultasABaseDeDatos.cargarTipoDeServicios("", 1, 0, 0);
 		dao_bitacora dao = new dao_bitacora();
@@ -1522,7 +1522,7 @@ public class consultar extends SelectorComposer<Component> {
 			if (id_estado_bitacora == 1) {
 				modelo_bitacora bitacora = new modelo_bitacora();
 				for (int j = 0; j < listaParametros10.size(); j++) {
-					if (listaParametros10.get(j).getId_tipo_servicio() == id_tipo_servicio) {
+					if (listaParametros10.get(j).getTipo_servicio().getId_tipo_servicio() == id_tipo_servicio) {
 						contador = contador + 1;
 						bitacora.setId_bitacora(id_bitacora);
 						bitacora.setId_estado_bitacora(id_estado);
@@ -1537,7 +1537,7 @@ public class consultar extends SelectorComposer<Component> {
 		}
 		return cantidad_tareas_cerradas;
 	}
-	
+
 	public boolean validarSiYaExisteRegistroCierre(String ticket_externo, long id_tipo_tarea)
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		/*

@@ -53,6 +53,7 @@ import bp.aplicaciones.mantenimientos.DAO.dao_tipo_aprobador;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_clasificacion;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_conector;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_dispositivo;
+import bp.aplicaciones.mantenimientos.DAO.dao_tipo_documento;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_equipo;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_servicio;
@@ -98,6 +99,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_aprobador;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_clasificacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_conector;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_dispositivo;
+import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_documento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_equipo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_ingreso;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio;
@@ -502,26 +504,6 @@ public class ConsultasABaseDeDatos {
 	/*
 	 * *
 	 * 
-	 * Metodo que devuelve los Parametros #10
-	 * 
-	 */
-
-	public List<modelo_parametros_generales_10> cargarParametros10(String opcion, String tipo_servicio,
-			String localidad, int tipo) throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_parametros_generales_10 dao = new dao_parametros_generales_10();
-		List<modelo_parametros_generales_10> listaParametros = new ArrayList<modelo_parametros_generales_10>();
-		try {
-			listaParametros = dao.obtenerRelacionesOpciones(opcion, tipo_servicio, localidad, tipo);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return listaParametros;
-	}
-
-	/*
-	 * *
-	 * 
 	 * Metodo que devuelve los Parametros #11
 	 * 
 	 */
@@ -880,46 +862,6 @@ public class ConsultasABaseDeDatos {
 					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 		return listaRegistroTurno;
-	}
-
-	/*
-	 * *
-	 * 
-	 * Metodo que devuelve los usuarios
-	 * 
-	 */
-
-	public List<modelo_usuario> cargarUsuarios(String criterio, int tipo, int limite)
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_usuario dao = new dao_usuario();
-		List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, tipo, limite);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return listaUsuario;
-	}
-
-	/*
-	 * *
-	 * 
-	 * Metodo que devuelve los solicitantes
-	 * 
-	 */
-
-	public List<modelo_solicitante> cargarSolicitantes(String criterio, int tipo, String localidad,
-			String mantenimiento_opcion, int limite) throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitante dao = new dao_solicitante();
-		List<modelo_solicitante> listaSolicitante = new ArrayList<modelo_solicitante>();
-		try {
-			listaSolicitante = dao.obtenerSolicitantes(criterio, tipo, localidad, mantenimiento_opcion, limite);
-		} catch (SQLException e) {
-			Messagebox.show(error.getMensaje_error_2() + error.getMensaje_error_1() + e.getMessage(),
-					informativos.getMensaje_informativo_1(), Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-		return listaSolicitante;
 	}
 
 	/*
@@ -1494,6 +1436,86 @@ public class ConsultasABaseDeDatos {
 		List<modelo_ur> lista = new ArrayList<modelo_ur>();
 		dao_ur dao = new dao_ur();
 		lista = dao.consultarUrs(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Usuarios */
+
+	public List<modelo_usuario> consultarUsuarios(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_usuario> lista = new ArrayList<modelo_usuario>();
+		dao_usuario dao = new dao_usuario();
+		lista = dao.consultarUsuarios(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Perfiles */
+
+	public List<modelo_perfil> consultarPerfiles(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_perfil> lista = new ArrayList<modelo_perfil>();
+		dao_perfil dao = new dao_perfil();
+		lista = dao.consultarPerfiles(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Mantenimientos */
+
+	public List<modelo_mantenimiento> consultarMantenimientos(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_mantenimiento> lista = new ArrayList<modelo_mantenimiento>();
+		dao_mantenimiento dao = new dao_mantenimiento();
+		lista = dao.consultarMantenimientos(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Opciones */
+
+	public List<modelo_opcion> consultarOpciones(long id1, long id2, String criterio1, String criterio2, int limite,
+			int tipo) {
+		List<modelo_opcion> lista = new ArrayList<modelo_opcion>();
+		dao_opcion dao = new dao_opcion();
+		lista = dao.consultarOpciones(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Tipo Documentos */
+
+	public List<modelo_tipo_documento> consultarTipoDocumentos(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_tipo_documento> lista = new ArrayList<modelo_tipo_documento>();
+		dao_tipo_documento dao = new dao_tipo_documento();
+		lista = dao.consultarTipoDocumentos(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Solicitantes */
+
+	public List<modelo_solicitante> consultarSolicitantes(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_solicitante> lista = new ArrayList<modelo_solicitante>();
+		dao_solicitante dao = new dao_solicitante();
+		lista = dao.consultarSolicitantes(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Tipo de Servicios */
+
+	public List<modelo_tipo_servicio> consultarTipoServicios(long id1, long id2, String criterio1, String criterio2,
+			int limite, int tipo) {
+		List<modelo_tipo_servicio> lista = new ArrayList<modelo_tipo_servicio>();
+		dao_tipo_servicio dao = new dao_tipo_servicio();
+		lista = dao.consultarTipoServicios(id1, id2, criterio1, criterio2, limite, tipo);
+		return lista;
+	}
+
+	/* Parametros Generales 10 */
+
+	public List<modelo_parametros_generales_10> consultarParametrosGenerales10(long id1, long id2, String criterio1,
+			String criterio2, int limite, int tipo) {
+		List<modelo_parametros_generales_10> lista = new ArrayList<modelo_parametros_generales_10>();
+		dao_parametros_generales_10 dao = new dao_parametros_generales_10();
+		lista = dao.consultarParametrosGenerales10(id1, id2, criterio1, criterio2, limite, tipo);
 		return lista;
 	}
 

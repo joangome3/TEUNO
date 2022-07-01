@@ -3,7 +3,6 @@ package bp.aplicaciones.controlador.mantenimientos.empresa;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.zkoss.zk.ui.Component;
@@ -15,14 +14,15 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 
@@ -36,12 +36,12 @@ public class nuevo extends SelectorComposer<Component> {
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtNombre, txtDescripcion;
-	@Wire
-	Label lNombre, lDescripcion;
+	Textbox txtNombre, txtDescripcion;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	long id = 0;
-	long id_mantenimiento = 8;
+	long id_mantenimiento = 3;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
@@ -50,6 +50,7 @@ public class nuevo extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+	Fechas fechas = new Fechas();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -57,29 +58,15 @@ public class nuevo extends SelectorComposer<Component> {
 		binder = new AnnotateDataBinder(comp);
 		binder.loadAll();
 		txtNombre.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
-			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtNombre.setText(validar.soloLetrasyNumeros(txtNombre.getText()));
+				txtNombre.setText(txtNombre.getText().toUpperCase().trim());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
-			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtDescripcion.setText(validar.soloLetrasyNumeros(txtDescripcion.getText()));
+				txtDescripcion.setText(txtDescripcion.getText().toUpperCase().trim());
 			}
 		});
-		obtenerId();
-	}
-
-	public void obtenerId() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_empresa dao = new dao_empresa();
-		try {
-			id = dao.obtenerNuevoId();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		txtId.setText(String.valueOf(id));
 	}
 
 	@Listen("onBlur=#txtNombre")
@@ -89,30 +76,35 @@ public class nuevo extends SelectorComposer<Component> {
 			return;
 		}
 		dao_empresa dao = new dao_empresa();
-		if (dao.obtenerEmpresas(txtNombre.getText(), 3, "", "", 0).size() > 0) {
-			txtNombre.setErrorMessage("El nombre ya se encuentra registrado.");
+		if (dao.consultarEmpresas(0, 0, txtNombre.getText(), "", 0, 3).size() > 0) {
 			txtNombre.setFocus(true);
+			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnGrabar")
-	public void onClick$btnGrabar() throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+	public void onClick$btnGrabar()
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (txtNombre.getText().length() <= 0) {
-			txtNombre.setErrorMessage("Ingrese el nombre.");
 			txtNombre.setFocus(true);
+			Clients.showNotification("Ingrese el nombre.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right",
+					2000, true);
 			return;
 		}
 		dao_empresa dao = new dao_empresa();
-		if (dao.obtenerEmpresas(txtNombre.getText(), 3, "", "", 0).size() > 0) {
-			txtNombre.setErrorMessage("El nombre ya se encuentra registrado.");
+		if (dao.consultarEmpresas(0, 0, txtNombre.getText(), "", 0, 3).size() > 0) {
 			txtNombre.setFocus(true);
+			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 		if (txtDescripcion.getText().length() <= 0) {
-			txtDescripcion.setErrorMessage("Ingrese la descripción.");
 			txtDescripcion.setFocus(true);
+			Clients.showNotification("Ingrese la descripción.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"top_right", 2000, true);
 			return;
 		}
 		Messagebox.show("Esta seguro de guardar la empresa?", ".:: Nueva empresa ::.",
@@ -124,22 +116,19 @@ public class nuevo extends SelectorComposer<Component> {
 							modelo_empresa empresa = new modelo_empresa();
 							empresa.setNom_empresa(txtNombre.getText());
 							empresa.setDes_empresa(txtDescripcion.getText());
-							empresa.setEst_empresa("PAC");
+							empresa.setEst_empresa("AE");
 							empresa.setUsu_ingresa(user);
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							empresa.setFec_ingresa(timestamp);
+							empresa.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							try {
 								dao.insertarEmpresa(empresa);
-								Messagebox.show(
-										"La empresa se guardó correctamente. \n\n No olvide crear las relaciones para la empresa.",
-										".:: Nueva empresa ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+								Clients.showNotification("La empresa se guardó correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "top_right", 4000);
 								limpiarCampos();
-								obtenerId();
 							} catch (Exception e) {
-								Messagebox.show(
-										"Error al guardar la empresa. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-										".:: Nueva empresa ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+								Clients.showNotification(
+										"Error al guardar la empresa. \n\n" + "Mensaje de error: \n\n"
+												+ e.getMessage(),
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -154,8 +143,6 @@ public class nuevo extends SelectorComposer<Component> {
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		txtNombre.setText("");
 		txtDescripcion.setText("");
-		lNombre.setValue("0/500");
-		lDescripcion.setValue("0/2");
 	}
 
 }

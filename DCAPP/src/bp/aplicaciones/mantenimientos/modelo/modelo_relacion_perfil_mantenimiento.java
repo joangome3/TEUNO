@@ -2,16 +2,42 @@ package bp.aplicaciones.mantenimientos.modelo;
 
 import java.sql.Timestamp;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "nocap_relacion_perfiles_mantenimiento")
 public class modelo_relacion_perfil_mantenimiento {
 
+	@Id
+	@Column(name = "id_relacion", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_relacion;
-	private long id_perfil;
-	private long id_mantenimiento;
+	@Column(name = "est_relacion", length = 5)
 	private String est_relacion;
+	@Column(name = "usu_ingresa", length = 20)
 	private String usu_ingresa;
+	@Column(name = "fec_ingresa")
 	private Timestamp fec_ingresa;
+	@Column(name = "usu_modifica", length = 20)
 	private String usu_modifica;
+	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "id_perfil")
+	private modelo_perfil perfil;
+
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JoinColumn(name = "id_mantenimiento")
+	private modelo_mantenimiento mantenimiento;
 
 	/**
 	 * 
@@ -21,22 +47,34 @@ public class modelo_relacion_perfil_mantenimiento {
 	}
 
 	/**
-	 * @param id_relacion
-	 * @param id_perfil
-	 * @param id_mantenimiento
 	 * @param est_relacion
 	 * @param usu_ingresa
 	 * @param fec_ingresa
 	 * @param usu_modifica
 	 * @param fec_modifica
 	 */
-	public modelo_relacion_perfil_mantenimiento(long id_relacion, long id_perfil, long id_mantenimiento,
-			String est_relacion, String usu_ingresa, Timestamp fec_ingresa, String usu_modifica,
-			Timestamp fec_modifica) {
+	public modelo_relacion_perfil_mantenimiento(String est_relacion, String usu_ingresa, Timestamp fec_ingresa,
+			String usu_modifica, Timestamp fec_modifica) {
+		super();
+		this.est_relacion = est_relacion;
+		this.usu_ingresa = usu_ingresa;
+		this.fec_ingresa = fec_ingresa;
+		this.usu_modifica = usu_modifica;
+		this.fec_modifica = fec_modifica;
+	}
+
+	/**
+	 * @param id_relacion
+	 * @param est_relacion
+	 * @param usu_ingresa
+	 * @param fec_ingresa
+	 * @param usu_modifica
+	 * @param fec_modifica
+	 */
+	public modelo_relacion_perfil_mantenimiento(long id_relacion, String est_relacion, String usu_ingresa,
+			Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
 		super();
 		this.id_relacion = id_relacion;
-		this.id_perfil = id_perfil;
-		this.id_mantenimiento = id_mantenimiento;
 		this.est_relacion = est_relacion;
 		this.usu_ingresa = usu_ingresa;
 		this.fec_ingresa = fec_ingresa;
@@ -56,34 +94,6 @@ public class modelo_relacion_perfil_mantenimiento {
 	 */
 	public void setId_relacion(long id_relacion) {
 		this.id_relacion = id_relacion;
-	}
-
-	/**
-	 * @return the id_perfil
-	 */
-	public long getId_perfil() {
-		return id_perfil;
-	}
-
-	/**
-	 * @param id_perfil the id_perfil to set
-	 */
-	public void setId_perfil(long id_perfil) {
-		this.id_perfil = id_perfil;
-	}
-
-	/**
-	 * @return the id_mantenimiento
-	 */
-	public long getId_mantenimiento() {
-		return id_mantenimiento;
-	}
-
-	/**
-	 * @param id_mantenimiento the id_mantenimiento to set
-	 */
-	public void setId_mantenimiento(long id_mantenimiento) {
-		this.id_mantenimiento = id_mantenimiento;
 	}
 
 	/**
@@ -156,12 +166,39 @@ public class modelo_relacion_perfil_mantenimiento {
 		this.fec_modifica = fec_modifica;
 	}
 
+	/**
+	 * @return the perfil
+	 */
+	public modelo_perfil getPerfil() {
+		return perfil;
+	}
+
+	/**
+	 * @param perfil the perfil to set
+	 */
+	public void setPerfil(modelo_perfil perfil) {
+		this.perfil = perfil;
+	}
+
+	/**
+	 * @return the mantenimiento
+	 */
+	public modelo_mantenimiento getMantenimiento() {
+		return mantenimiento;
+	}
+
+	/**
+	 * @param mantenimiento the mantenimiento to set
+	 */
+	public void setMantenimiento(modelo_mantenimiento mantenimiento) {
+		this.mantenimiento = mantenimiento;
+	}
+
 	@Override
 	public String toString() {
-		return "modelo_relacion_perfil_mantenimiento [id_relacion=" + id_relacion + ", id_perfil=" + id_perfil
-				+ ", id_mantenimiento=" + id_mantenimiento + ", est_relacion=" + est_relacion + ", usu_ingresa="
-				+ usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica="
-				+ fec_modifica + "]";
+		return "modelo_relacion_perfil_mantenimiento [id_relacion=" + id_relacion + ", est_relacion=" + est_relacion
+				+ ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica
+				+ ", fec_modifica=" + fec_modifica + "]";
 	}
 
 	public String toStringEstado() {

@@ -28,11 +28,11 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo;
 import bp.aplicaciones.mantenimientos.DAO.dao_categoria;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
-import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
@@ -62,6 +62,8 @@ public class reporte_inventario extends SelectorComposer<Component> {
 	Checkbox chkArticulo, chkCategoria, chkMovimiento, chkProveedor;
 
 	String imagen = null;
+	
+	long id_opcion = 1;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_dc = (long) Sessions.getCurrent().getAttribute("id_dc");
@@ -72,6 +74,8 @@ public class reporte_inventario extends SelectorComposer<Component> {
 	List<modelo_articulo> listaArticulo = new ArrayList<modelo_articulo>();
 	List<modelo_categoria> listaCategoria = new ArrayList<modelo_categoria>();
 	List<modelo_solicitante> listaSolicitante = new ArrayList<modelo_solicitante>();
+	
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -116,14 +120,8 @@ public class reporte_inventario extends SelectorComposer<Component> {
 	}
 
 	public void cargarSolicitantes(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitante dao = new dao_solicitante();
-		try {
-			listaSolicitante = dao.obtenerSolicitantes(criterio, 2, String.valueOf(id_dc), "1", 0);
-			binder.loadComponent(lbxSolicitantes);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los solicitantes. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar solicitante ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
+		binder.loadComponent(lbxSolicitantes);
 	}
 
 	public void cargarEmpresas() throws ClassNotFoundException, FileNotFoundException, IOException {

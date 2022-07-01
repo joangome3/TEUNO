@@ -3,7 +3,7 @@ package bp.aplicaciones.controlador.mantenimientos.articulo;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_articulo;
-import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
+import bp.aplicaciones.mantenimientos.modelo.modelo_usuario_bk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class foto extends SelectorComposer<Component> {
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	long id_dc = (long) Sessions.getCurrent().getAttribute("id_dc");
 
-	List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
+	List<modelo_usuario_bk> listaUsuario = new ArrayList<modelo_usuario_bk>();
 	List<modelo_estado_articulo> listaEstados = new ArrayList<modelo_estado_articulo>();
 	List<modelo_articulo> listaArticulo = new ArrayList<modelo_articulo>();
 

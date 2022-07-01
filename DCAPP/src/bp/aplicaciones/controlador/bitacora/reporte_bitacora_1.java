@@ -121,14 +121,8 @@ public class reporte_bitacora_1 extends SelectorComposer<Component> {
 
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_usuario dao = new dao_usuario();
-		String criterio = String.valueOf(id_dc);
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 3, 0);
-			binder.loadComponent(cmbUsuario);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaUsuario = dao.consultarUsuarios(id_dc, 0, "", "", 0, 2);
+		binder.loadComponent(cmbUsuario);
 	}
 
 	public void cargarFechaHoraInicio() {

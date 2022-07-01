@@ -3,7 +3,6 @@ package bp.aplicaciones.controlador.mantenimientos.perfiles;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,14 +14,15 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_mantenimiento;
 import bp.aplicaciones.mantenimientos.DAO.dao_opcion;
 import bp.aplicaciones.mantenimientos.DAO.dao_relacion_perfil;
@@ -38,13 +38,13 @@ public class relacionar extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zRelacionar;
+	Window zRelacionarPerfil;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtNombre;
-	@Wire
 	Listbox lbxMantenimientos, lbxOpciones;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	long id = 0;
 
@@ -59,6 +59,7 @@ public class relacionar extends SelectorComposer<Component> {
 	modelo_perfil perfil = (modelo_perfil) Sessions.getCurrent().getAttribute("perfil");
 
 	validar_datos validar = new validar_datos();
+	Fechas fechas = new Fechas();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -73,25 +74,23 @@ public class relacionar extends SelectorComposer<Component> {
 	}
 
 	public void cargarDatos() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		txtId.setText(String.valueOf(perfil.getId_perfil()));
-		txtNombre.setText(perfil.getNom_perfil());
-		dao_relacion_perfil dao = new dao_relacion_perfil();
-		try {
-			for (int i = 0; i < lbxMantenimientos.getItems().size(); i++) {
-				if (dao.obtenerRelacionesMantenimientos(String.valueOf(perfil.getId_perfil()),
-						String.valueOf(listaMantenimientos.get(i).getId_mantenimiento()), 1) == true) {
-					lbxMantenimientos.getItemAtIndex(i).setSelected(true);
+		for (int i = 0; i < perfil.getRelaciones_perfil_mantenimiento().size(); i++) {
+			for (int j = 0; j < listaMantenimientos.size(); j++) {
+				if (perfil.getRelaciones_perfil_mantenimiento().get(i).getMantenimiento()
+						.getId_mantenimiento() == listaMantenimientos.get(j).getId_mantenimiento()) {
+					lbxMantenimientos.getItemAtIndex(j).setSelected(true);
+					break;
 				}
 			}
-			for (int i = 0; i < lbxOpciones.getItems().size(); i++) {
-				if (dao.obtenerRelacionesOpciones(String.valueOf(perfil.getId_perfil()),
-						String.valueOf(listaOpciones.get(i).getId_opcion()), 2) == true) {
-					lbxOpciones.getItemAtIndex(i).setSelected(true);
+		}
+		for (int i = 0; i < perfil.getRelaciones_perfil_opcion().size(); i++) {
+			for (int j = 0; j < listaOpciones.size(); j++) {
+				if (perfil.getRelaciones_perfil_opcion().get(i).getOpcion().getId_opcion() == listaOpciones.get(j)
+						.getId_opcion()) {
+					lbxOpciones.getItemAtIndex(j).setSelected(true);
+					break;
 				}
 			}
-		} catch (SQLException e) {
-			Messagebox.show("Error al validar relaciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Validar relaciones ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
 
@@ -105,32 +104,20 @@ public class relacionar extends SelectorComposer<Component> {
 
 	public void cargarMantenimientos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_mantenimiento dao = new dao_mantenimiento();
-		String criterio = "";
-		try {
-			listaMantenimientos = dao.obtenerMantenimientos(criterio, 1);
-			binder.loadComponent(lbxMantenimientos);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los mantenimientos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar mantenimiento ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaMantenimientos = dao.consultarMantenimientos(0, 0, "", "", 0, 2);
+		binder.loadComponent(lbxMantenimientos);
 	}
 
 	public void cargarOpciones() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_opcion dao = new dao_opcion();
-		String criterio = "";
-		try {
-			listaOpciones = dao.obtenerOpciones(criterio);
-			binder.loadComponent(lbxOpciones);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar las opciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar opciones ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaOpciones = dao.consultarOpciones(0, 0, "", "", 0, 2);
+		binder.loadComponent(lbxOpciones);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnGrabar")
 	public void onClick$btnGrabar() {
-		Messagebox.show("Esta seguro de guardar la relacion?", ".:: Relacionar perfil ::.",
+		Messagebox.show("Esta seguro de guardar los permisos?", ".:: Asignar permisos ::.",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
@@ -138,47 +125,52 @@ public class relacionar extends SelectorComposer<Component> {
 							dao_relacion_perfil dao = new dao_relacion_perfil();
 							List<modelo_relacion_perfil_mantenimiento> listaRelacionMantenimientos = new ArrayList<modelo_relacion_perfil_mantenimiento>();
 							List<modelo_relacion_perfil_opcion> listaRelacionOpciones = new ArrayList<modelo_relacion_perfil_opcion>();
-							for (int i = 0; i < lbxMantenimientos.getItems().size(); i++) {
+							for (int i = 0; i < lbxMantenimientos.getItemCount(); i++) {
+								modelo_relacion_perfil_mantenimiento relacion = new modelo_relacion_perfil_mantenimiento();
 								if (lbxMantenimientos.getItemAtIndex(i).isSelected()) {
-									modelo_relacion_perfil_mantenimiento relacion_perfil_mantenimiento = new modelo_relacion_perfil_mantenimiento();
-									relacion_perfil_mantenimiento
-											.setId_perfil(Long.parseLong(txtId.getText()));
-									final int indice = lbxMantenimientos.getItemAtIndex(i).getIndex();
-									relacion_perfil_mantenimiento
-											.setId_mantenimiento(listaMantenimientos.get(indice).getId_mantenimiento());
-									relacion_perfil_mantenimiento.setEst_relacion("A");
-									relacion_perfil_mantenimiento.setUsu_ingresa(user);
-									java.util.Date date = new Date();
-									Timestamp timestamp = new Timestamp(date.getTime());
-									relacion_perfil_mantenimiento.setFec_ingresa(timestamp);
-									listaRelacionMantenimientos.add(relacion_perfil_mantenimiento);
+									relacion.setPerfil(perfil);
+									relacion.setMantenimiento(
+											listaMantenimientos.get(lbxMantenimientos.getItemAtIndex(i).getIndex()));
+									relacion.setEst_relacion("AE");
+									relacion.setUsu_ingresa(user);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									listaRelacionMantenimientos.add(relacion);
 								}
 							}
-							for (int i = 0; i < lbxOpciones.getItems().size(); i++) {
+							for (int i = 0; i < lbxOpciones.getItemCount(); i++) {
+								modelo_relacion_perfil_opcion relacion = new modelo_relacion_perfil_opcion();
 								if (lbxOpciones.getItemAtIndex(i).isSelected()) {
-									modelo_relacion_perfil_opcion relacion_perfil_opcion = new modelo_relacion_perfil_opcion();
-									relacion_perfil_opcion.setId_perfil(Long.parseLong(txtId.getText()));
-									final int indice = lbxOpciones.getItemAtIndex(i).getIndex();
-									relacion_perfil_opcion.setId_opcion(listaOpciones.get(indice).getId_opcion());
-									relacion_perfil_opcion.setEst_relacion("A");
-									relacion_perfil_opcion.setUsu_ingresa(user);
-									java.util.Date date = new Date();
-									Timestamp timestamp = new Timestamp(date.getTime());
-									relacion_perfil_opcion.setFec_ingresa(timestamp);
-									listaRelacionOpciones.add(relacion_perfil_opcion);
+									relacion.setPerfil(perfil);
+									relacion.setOpcion(listaOpciones.get(lbxOpciones.getItemAtIndex(i).getIndex()));
+									relacion.setEst_relacion("AE");
+									relacion.setUsu_ingresa(user);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									listaRelacionOpciones.add(relacion);
 								}
 							}
 							try {
-								dao.insertarRelacion(listaRelacionMantenimientos, listaRelacionOpciones, Long.parseLong(txtId.getText()));
-								Messagebox.show("La relacion se guardo correctamente.",
-										".:: Relacionar perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+								for (int i = 0; i < perfil.getRelaciones_perfil_mantenimiento().size(); i++) {
+									dao.eliminarRelacionMantenimiento(
+											perfil.getRelaciones_perfil_mantenimiento().get(i));
+								}
+								for (int i = 0; i < perfil.getRelaciones_perfil_opcion().size(); i++) {
+									dao.eliminarRelacionOpcion(perfil.getRelaciones_perfil_opcion().get(i));
+								}
+								for (int i = 0; i < listaRelacionMantenimientos.size(); i++) {
+									dao.insertarRelacionMantenimiento(listaRelacionMantenimientos.get(i));
+								}
+								for (int i = 0; i < listaRelacionOpciones.size(); i++) {
+									dao.insertarRelacionOpcion(listaRelacionOpciones.get(i));
+								}
+								Clients.showNotification("Los permisos se asignaron correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "dSolicitudes", 4000, true);
 								Sessions.getCurrent().removeAttribute("perfil");
-								Events.postEvent(new Event("onClose", zRelacionar));
+								Events.postEvent(new Event("onClose", zRelacionarPerfil));
 							} catch (Exception e) {
-								Messagebox.show(
-										"Error al guardar la relacion. \n\n" + "Mensaje de error: \n\n"
+								Clients.showNotification(
+										"Error al asignar los permisos. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Relacionar perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -187,7 +179,7 @@ public class relacionar extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zRelacionar));
+		Events.postEvent(new Event("onClose", zRelacionarPerfil));
 	}
 
 }

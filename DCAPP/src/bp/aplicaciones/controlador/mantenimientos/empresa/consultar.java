@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
@@ -15,6 +17,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menuitem;
@@ -22,16 +25,23 @@ import org.zkoss.zul.Menuseparator;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.ComboitemRenderer;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.ListModel;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.ListModels;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
+import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
+import bp.aplicaciones.mantenimientos.DAO.dao_relacion_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
-import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
@@ -44,21 +54,25 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Window zConsultar;
 	@Wire
-	Button btnNuevo, btnRefrescar;
+	Button btnNuevo, btnRefrescar, btnClonarPermisos;
 	@Wire
 	Textbox txtBuscar;
 	@Wire
 	Listbox lbxEmpresas;
 	@Wire
-	Combobox cmbLimite;
+	Combobox cmbLimite, cmbEmpresa;
 	@Wire
-	Menuitem mSeguimiento, mSolicitar, mAccion, mRelacionar;
+	Menuitem mModificar, mRelacionar, mEstado;
 	@Wire
 	Menuseparator mSeparador1, mSeparador2;
+	@Wire
+	Checkbox chkClonarPermisos;
 	@Wire
 	Div winList;
 
 	Window window;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	boolean ingresa_a_accion = false;
 
@@ -79,10 +93,14 @@ public class consultar extends SelectorComposer<Component> {
 
 	String consultar, insertar, modificar, relacionar, desactivar, eliminar, solicitar, revisar, aprobar, ejecutar;
 
-	List<modelo_empresa> listaEmpresa = new ArrayList<modelo_empresa>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
+	List<modelo_empresa> listaEmpresa1 = new ArrayList<modelo_empresa>();
+	List<modelo_empresa> listaEmpresa2 = new ArrayList<modelo_empresa>();
 
 	long id_mantenimiento = 8;
+
+	@SuppressWarnings("rawtypes")
+	private ListModel mySubModel;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -91,9 +109,10 @@ public class consultar extends SelectorComposer<Component> {
 		binder.loadAll();
 		cmbLimite.setSelectedIndex(1);
 		cargarPerfil();
+		cargarEmpresas1();
 		inicializarPermisos();
 		if (consultar.equals("S")) {
-			cargarEmpresas();
+			cargarEmpresas2();
 			txtBuscar.setDisabled(false);
 			lbxEmpresas.setEmptyMessage(informativos.getMensaje_informativo_2());
 		} else {
@@ -108,21 +127,43 @@ public class consultar extends SelectorComposer<Component> {
 			btnNuevo.setVisible(false);
 		}
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
-			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(validar.soloLetrasyNumeros(txtBuscar.getText()));
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
 	}
 
 	public List<modelo_empresa> obtenerEmpresas() {
-		return listaEmpresa;
+		return listaEmpresa2;
 	}
 
-	public void cargarEmpresas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String criterio = txtBuscar.getText();
-		listaEmpresa = consultasABaseDeDatos.cargarEmpresas(criterio, 0, String.valueOf(id_dc), "",
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void cargarEmpresas1() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaEmpresa1 = consultasABaseDeDatos.consultarEmpresas(0, 0, "", "", 0, 2);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_empresa bean = (modelo_empresa) o2;
+				return bean.getNom_empresa().contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaEmpresa1), myComparator, 15);
+		cmbEmpresa.setModel(mySubModel);
+		ComboitemRenderer<modelo_empresa> myRenderer = new ComboitemRenderer<modelo_empresa>() {
+			@Override
+			public void render(Comboitem item, modelo_empresa bean, int index) throws Exception {
+				item.setLabel(bean.getNom_empresa());
+				item.setValue(bean);
+			}
+		};
+		cmbEmpresa.setItemRenderer(myRenderer);
+		binder.loadComponent(cmbEmpresa);
+	}
+
+	public void cargarEmpresas2() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaEmpresa2 = consultasABaseDeDatos.consultarEmpresas(id_dc, 0, "", "",
+				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), 1);
 		binder.loadComponent(lbxEmpresas);
 	}
 
@@ -188,6 +229,19 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 	}
+	
+	@Listen("onClick=#chkClonarPermisos")
+	public void onCheck$chkClonarPermisos() {
+		if(chkClonarPermisos.isChecked()) {
+			cmbEmpresa.setDisabled(false);
+			cmbEmpresa.setText("");
+			btnClonarPermisos.setDisabled(false);
+		}else {
+			cmbEmpresa.setText("");
+			cmbEmpresa.setDisabled(true);
+			btnClonarPermisos.setDisabled(true);
+		}
+	}
 
 	@Listen("onOK=#txtBuscar")
 	public void onOK$txtBuscar() {
@@ -220,9 +274,14 @@ public class consultar extends SelectorComposer<Component> {
 	}
 
 	public void buscarEmpresas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String criterio = txtBuscar.getText();
-		listaEmpresa = consultasABaseDeDatos.cargarEmpresas(criterio, 0, String.valueOf(id_dc), "",
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		long id1 = 0;
+		long id2 = 0;
+		String criterio1 = "";
+		String criterio2 = "";
+		int limite = 0;
+		criterio1 = txtBuscar.getText().trim();
+		limite = Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString());
+		listaEmpresa2 = consultasABaseDeDatos.consultarEmpresas(id1, id2, criterio1, criterio2, limite, 1);
 		binder.loadComponent(lbxEmpresas);
 	}
 
@@ -238,119 +297,18 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		lbxEmpresas.setSelectedIndex(indice);
-		if (validarSiExisteSolicitudCreada(listaEmpresa.get(indice).getId_empresa()) == false
-				&& validarSiExisteSolicitudPendienteEjecucion(listaEmpresa.get(indice).getId_empresa()) == false
-				&& validarSiExisteSolicitudPendienteActualizacion(listaEmpresa.get(indice).getId_empresa()) == false) {
-			mSeguimiento.setVisible(false);
-			mSeguimiento.setDisabled(true);
-			mSeparador1.setVisible(false);
-			mSolicitar.setVisible(true);
-			mSolicitar.setDisabled(false);
-			mAccion.setVisible(false);
-			mAccion.setDisabled(true);
-		} else {
-			mSeguimiento.setVisible(true);
-			mSeguimiento.setDisabled(false);
-			mSeparador1.setVisible(false);
-			mSolicitar.setVisible(false);
-			mSolicitar.setDisabled(true);
-			mAccion.setVisible(false);
-			mAccion.setDisabled(true);
+		if (listaEmpresa2.get(indice).getEst_empresa().equals("AE")) {
+			mEstado.setLabel(" - Inactivar");
+			mEstado.setIconSclass("z-icon-times-circle-o");
 		}
-		if (validarSiExisteSolicitudPendienteEjecucion(listaEmpresa.get(indice).getId_empresa()) == true) {
-			mSeparador1.setVisible(true);
-			mAccion.setVisible(true);
-			mAccion.setDisabled(false);
-			if (validarTipoSolicitud(listaEmpresa.get(indice).getId_empresa()) == 2) {
-				mAccion.setLabel(" - Actualizar");
-				mAccion.setIconSclass("z-icon-refresh");
-			} else if (validarTipoSolicitud(listaEmpresa.get(indice).getId_empresa()) == 3) {
-				mAccion.setLabel(" - Activar");
-				mAccion.setIconSclass("z-icon-font");
-			} else if (validarTipoSolicitud(listaEmpresa.get(indice).getId_empresa()) == 4) {
-				mAccion.setLabel(" - Inactivar");
-				mAccion.setIconSclass("z-icon-italic");
-			}
-		}
-		if (validarSiExisteSolicitudPendienteActualizacion(listaEmpresa.get(indice).getId_empresa()) == true) {
-			mSeparador1.setVisible(true);
-			mAccion.setVisible(true);
-			mAccion.setDisabled(false);
-			mAccion.setLabel(" - Actualizar");
-			mAccion.setIconSclass("z-icon-refresh");
-		}
-		if (listaEmpresa.get(indice).getEst_empresa().charAt(0) != 'P') {
-			mSeparador2.setVisible(true);
-			mRelacionar.setVisible(true);
-			mRelacionar.setDisabled(false);
-		} else {
-			mSeparador2.setVisible(false);
-			mRelacionar.setVisible(false);
-			mRelacionar.setDisabled(true);
+		if (listaEmpresa2.get(indice).getEst_empresa().equals("IE")) {
+			mEstado.setLabel(" - Activar");
+			mEstado.setIconSclass("z-icon-check-circle-o");
 		}
 	}
 
-	public boolean validarSiExisteSolicitudCreada(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_creada = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("P") || estado.equals("R")) {
-					existe_solicitud_creada = true;
-				}
-			}
-		}
-		return existe_solicitud_creada;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteEjecucion(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("S")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteActualizacion(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("T")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public int validarTipoSolicitud(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		int tipo_solicitud = 0;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			tipo_solicitud = (int) solicitud.getId_tip_solicitud();
-		}
-		return tipo_solicitud;
-	}
-
-	@Listen("onClick=#mSeguimiento")
-	public void onClick$mSeguimiento() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+	@Listen("onClick=#mModificar")
+	public void onClick$mModificar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (lbxEmpresas.getSelectedItem() == null) {
 			return;
 		}
@@ -358,29 +316,16 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		int indice = lbxEmpresas.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaEmpresa.get(indice).getId_empresa(), 7);
-		if (solicitud == null) {
-			return;
-		} else {
-			if (solicitud.getId_solicitud() == 0) {
-				return;
-			}
-		}
-		Sessions.getCurrent().setAttribute("objeto", solicitud);
-		Sessions.getCurrent().setAttribute("id_mantenimiento", id_mantenimiento);
-		Sessions.getCurrent().setAttribute("id_opcion", (long) 0);
-		Sessions.getCurrent().setAttribute("tipo_solicitud", 0);
-		window = (Window) Executions.createComponents("/mantenimientos/solicitud/seguimiento.zul", null, null);
-		mSeguimiento.setDisabled(true);
+		Sessions.getCurrent().setAttribute("empresa", listaEmpresa2.get(indice));
+		window = (Window) Executions.createComponents("/mantenimientos/empresa/modificar.zul", null, null);
+		mModificar.setDisabled(true);
 		lbxEmpresas.setDisabled(true);
 		ingresa_a_accion = true;
 		if (window instanceof Window) {
 			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
 				@Override
 				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mSeguimiento.setDisabled(false);
+					mModificar.setDisabled(false);
 					lbxEmpresas.setDisabled(false);
 					buscarEmpresas();
 					ingresa_a_accion = false;
@@ -390,106 +335,34 @@ public class consultar extends SelectorComposer<Component> {
 		window.setParent(winList);
 	}
 
-	@Listen("onClick=#mSolicitar")
-	public void onClick$mSolicitar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+	@Listen("onClick=#mEstado")
+	public void onClick$mEstado() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (lbxEmpresas.getSelectedItem() == null) {
 			return;
 		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
 		int indice = lbxEmpresas.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaEmpresa.get(indice).getId_empresa(), 7);
-		if (solicitud != null) {
-			if (solicitud.getId_solicitud() != 0) {
-				return;
-			}
+		String estado = "";
+		if (listaEmpresa2.get(indice).getEst_empresa().equals("AE")) {
+			estado = "IE";
 		}
-		Sessions.getCurrent().setAttribute("objeto", listaEmpresa.get(indice));
-		Sessions.getCurrent().setAttribute("id_mantenimiento", id_mantenimiento);
-		Sessions.getCurrent().setAttribute("id_opcion", (long) 0);
-		Sessions.getCurrent().setAttribute("tipo_solicitud", validarTipoEnEstado(indice));
-		window = (Window) Executions.createComponents("/mantenimientos/solicitud/solicitar.zul", null, null);
-		mSolicitar.setDisabled(true);
-		lbxEmpresas.setDisabled(true);
-		ingresa_a_accion = true;
-		if (window instanceof Window) {
-			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-				@Override
-				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mSolicitar.setDisabled(false);
-					lbxEmpresas.setDisabled(false);
-					buscarEmpresas();
-					ingresa_a_accion = false;
-				}
-			});
+		if (listaEmpresa2.get(indice).getEst_empresa().equals("IE")) {
+			estado = "AE";
 		}
-		window.setParent(winList);
-	}
-
-	@Listen("onClick=#mAccion")
-	public void onClick$mAccion() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (lbxEmpresas.getSelectedItem() == null) {
+		modelo_empresa empresa = new modelo_empresa();
+		dao_empresa dao = new dao_empresa();
+		empresa = listaEmpresa2.get(indice);
+		empresa.setEst_empresa(estado);
+		empresa.setUsu_modifica(user);
+		empresa.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+		dao.actualizarEmpresa(empresa);
+		Clients.showNotification("La empresa se actualizó correctamente.", Clients.NOTIFICATION_TYPE_INFO, dSolicitudes,
+				"dSolicitudes", 4000, true);
+		buscarEmpresas();
+		int tamanio_lista = lbxEmpresas.getItemCount();
+		if (indice >= tamanio_lista) {
 			return;
 		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
-		int indice = lbxEmpresas.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaEmpresa.get(indice).getId_empresa(), 7);
-		if (solicitud == null) {
-			return;
-		} else {
-			if (solicitud.getId_solicitud() == 0) {
-				return;
-			}
-		}
-		Sessions.getCurrent().setAttribute("empresa", listaEmpresa.get(indice));
-		if (validarSiExisteSolicitudPendienteEjecucion(listaEmpresa.get(indice).getId_empresa()) == true) {
-			if (validarTipoSolicitud(listaEmpresa.get(indice).getId_empresa()) == 2) {
-				window = (Window) Executions.createComponents("/mantenimientos/empresa/modificar.zul", null, null);
-			} else if (validarTipoSolicitud(listaEmpresa.get(indice).getId_empresa()) == 3) {
-				window = (Window) Executions.createComponents("/mantenimientos/empresa/activar.zul", null, null);
-			} else if (validarTipoSolicitud(listaEmpresa.get(indice).getId_empresa()) == 4) {
-				window = (Window) Executions.createComponents("/mantenimientos/empresa/desactivar.zul", null, null);
-			}
-		}
-		if (validarSiExisteSolicitudPendienteActualizacion(listaEmpresa.get(indice).getId_empresa()) == true) {
-			window = (Window) Executions.createComponents("/mantenimientos/empresa/modificar.zul", null, null);
-		}
-		mAccion.setDisabled(true);
-		lbxEmpresas.setDisabled(true);
-		ingresa_a_accion = true;
-		if (window instanceof Window) {
-			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-				@Override
-				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mAccion.setDisabled(false);
-					lbxEmpresas.setDisabled(false);
-					buscarEmpresas();
-					ingresa_a_accion = false;
-				}
-			});
-		}
-		window.setParent(winList);
-	}
-
-	public int validarTipoEnEstado(int indice) {
-		int tipo = 0;
-		if (listaEmpresa.get(indice).getEst_empresa().charAt(0) == 'A') {
-			tipo = 2;
-		}
-		if (listaEmpresa.get(indice).getEst_empresa().charAt(0) == 'P') {
-			tipo = 1;
-		}
-		if (listaEmpresa.get(indice).getEst_empresa().charAt(0) == 'I') {
-			tipo = 3;
-		}
-		return tipo;
+		lbxEmpresas.setSelectedIndex(indice);
 	}
 
 	@Listen("onClick=#btnNuevo")
@@ -517,7 +390,7 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		int indice = lbxEmpresas.getSelectedIndex();
-		Sessions.getCurrent().setAttribute("empresa", listaEmpresa.get(indice));
+		Sessions.getCurrent().setAttribute("empresa", listaEmpresa2.get(indice));
 		window = (Window) Executions.createComponents("/mantenimientos/empresa/relacionar.zul", null, null);
 		mRelacionar.setDisabled(true);
 		lbxEmpresas.setDisabled(true);
@@ -534,6 +407,64 @@ public class consultar extends SelectorComposer<Component> {
 			});
 		}
 		window.setParent(winList);
+	}
+
+	@Listen("onClick=#btnClonarPermisos")
+	public void onClick$btnClonarPermisos() {
+		if (lbxEmpresas.getSelectedItems().size() == 0) {
+			Clients.showNotification("Seleccione alguno de los items de la lista.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "dSolicitudes", 4000, true);
+			return;
+		}
+		if (cmbEmpresa.getSelectedItem() == null) {
+			Clients.showNotification("Seleccione una empresa.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"dSolicitudes", 4000, true);
+			cmbEmpresa.setFocus(true);
+			return;
+		}
+		modelo_empresa empresa1 = (modelo_empresa) cmbEmpresa.getSelectedItem().getValue();
+		dao_relacion_empresa dao = new dao_relacion_empresa();
+		for (int i = 0; i < lbxEmpresas.getItemCount(); i++) {
+			modelo_empresa empresa2 = new modelo_empresa();
+			if (lbxEmpresas.getItemAtIndex(i).isSelected()) {
+				empresa2 = listaEmpresa2.get(i);
+				for (int j = 0; j < empresa2.getRelaciones_empresa_mantenimiento().size(); j++) {
+					dao.eliminarRelacionMantenimiento(empresa2.getRelaciones_empresa_mantenimiento().get(j));
+				}
+				for (int j = 0; j < empresa2.getRelaciones_empresa_opcion().size(); j++) {
+					dao.eliminarRelacionOpcion(empresa2.getRelaciones_empresa_opcion().get(j));
+				}
+				for (int j = 0; j < empresa2.getRelaciones_empresa_localidad().size(); j++) {
+					dao.eliminarRelacionLocalidad(empresa2.getRelaciones_empresa_localidad().get(j));
+				}
+				for (int j = 0; j < empresa1.getRelaciones_empresa_mantenimiento().size(); j++) {
+					empresa1.getRelaciones_empresa_mantenimiento().get(j).getEmpresa()
+							.setId_empresa(empresa2.getId_empresa());
+					empresa1.getRelaciones_empresa_mantenimiento().get(j).setUsu_modifica(user);
+					empresa1.getRelaciones_empresa_mantenimiento().get(j)
+							.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+					dao.insertarRelacionMantenimiento(empresa1.getRelaciones_empresa_mantenimiento().get(j));
+				}
+				for (int j = 0; j < empresa1.getRelaciones_empresa_opcion().size(); j++) {
+					empresa1.getRelaciones_empresa_opcion().get(j).getEmpresa()
+							.setId_empresa(empresa2.getId_empresa());
+					empresa1.getRelaciones_empresa_opcion().get(j).setUsu_modifica(user);
+					empresa1.getRelaciones_empresa_opcion().get(j)
+							.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+					dao.insertarRelacionOpcion(empresa1.getRelaciones_empresa_opcion().get(j));
+				}
+				for (int j = 0; j < empresa1.getRelaciones_empresa_localidad().size(); j++) {
+					empresa1.getRelaciones_empresa_localidad().get(j).getEmpresa()
+							.setId_empresa(empresa2.getId_empresa());
+					empresa1.getRelaciones_empresa_localidad().get(j).setUsu_modifica(user);
+					empresa1.getRelaciones_empresa_localidad().get(j)
+							.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+					dao.insertarRelacionLocalidad(empresa1.getRelaciones_empresa_localidad().get(j));
+				}
+			}
+		}
+		Clients.showNotification("El/Las empresas se actualizaron correctamente.", Clients.NOTIFICATION_TYPE_INFO,
+				dSolicitudes, "dSolicitudes", 4000, true);
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

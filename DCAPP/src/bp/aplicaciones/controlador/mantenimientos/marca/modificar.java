@@ -33,7 +33,7 @@ public class modificar extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zModificar;
+	Window zModificarMarca;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
@@ -138,13 +138,13 @@ public class modificar extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zModificar));
+		Events.postEvent(new Event("onClose", zModificarMarca));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		txtNombre.setText("");
 		lNombre.setValue("0/100");
-		Events.postEvent(new Event("onClose", zModificar));
+		Events.postEvent(new Event("onClose", zModificarMarca));
 	}
 
 }

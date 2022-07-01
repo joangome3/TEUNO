@@ -157,13 +157,7 @@ public class panel7 extends SelectorComposer<Component> {
 
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_usuario dao = new dao_usuario();
-		String criterio = "";
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 1, 0);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaUsuario = dao.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 	}
 
 	public void cargarTareasProveedores(int dibujaLista)

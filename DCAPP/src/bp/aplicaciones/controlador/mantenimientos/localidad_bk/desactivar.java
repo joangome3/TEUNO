@@ -1,4 +1,4 @@
-package bp.aplicaciones.controlador.mantenimientos.localidad;
+package bp.aplicaciones.controlador.mantenimientos.localidad_bk;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
-import bp.aplicaciones.controlador.mantenimientos.localidad.activar;
+import bp.aplicaciones.controlador.mantenimientos.localidad_bk.desactivar;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
@@ -33,18 +33,19 @@ import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
 
 @SuppressWarnings({ "serial", "deprecation" })
-public class activar extends SelectorComposer<Component> {
+public class desactivar extends SelectorComposer<Component> {
 
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zActivar;
+	Window zDesactivar;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
 	Textbox txtComentario;
 
 	long id = 0;
+
 	long id_mantenimiento = 3;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
@@ -79,6 +80,7 @@ public class activar extends SelectorComposer<Component> {
 	}
 
 	public void cargarDatos() {
+
 	}
 	
 	public boolean validarSiExisteSolicitudPendienteEjecucion()
@@ -111,17 +113,17 @@ public class activar extends SelectorComposer<Component> {
 			txtComentario.setFocus(true);
 			return;
 		}
-		Messagebox.show("Esta seguro de activar el registro?", ".:: Activar localidad ::.",
+		Messagebox.show("Esta seguro de desactivar el registro?", ".:: Desactivar localidad ::.",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
 							dao_localidad dao = new dao_localidad();
 							modelo_localidad localidad = new modelo_localidad();
-							localidad.setId_localidad(activar.this.localidad.getId_localidad());
-							localidad.setNom_localidad(activar.this.localidad.getNom_localidad());
-							localidad.setDes_localidad(activar.this.localidad.getDes_localidad());
-							localidad.setEst_localidad("AE");
+							localidad.setId_localidad(desactivar.this.localidad.getId_localidad());
+							localidad.setNom_localidad(desactivar.this.localidad.getNom_localidad());
+							localidad.setDes_localidad(desactivar.this.localidad.getDes_localidad());
+							localidad.setEst_localidad("IE");
 							localidad.setUsu_modifica(user);
 							java.util.Date date = new Date();
 							Timestamp timestamp = new Timestamp(date.getTime());
@@ -136,20 +138,20 @@ public class activar extends SelectorComposer<Component> {
 							try {
 								dao.modificarLocalidad(localidad, solicitud, tipo);
 								if (tipo == 2) {
-									Messagebox.show("La localidad se activó correctamente.",
-											".:: Activar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+									Messagebox.show("La localidad se desactivó correctamente.",
+											".:: Desactivar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 								} else {
 									Messagebox.show("No se realizaron cambios en el registro.",
-											".:: Activar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+											".:: Desactivar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 								}
 								limpiarCampos();
 								Sessions.getCurrent().removeAttribute("localidad");
-								Events.postEvent(new Event("onClose", zActivar));
+								Events.postEvent(new Event("onClose", zDesactivar));
 							} catch (Exception e) {
 								Messagebox.show(
 										"Error al guardar el registro. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Activar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										".:: Desactivar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 							}
 						}
 					}
@@ -158,7 +160,7 @@ public class activar extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zActivar));
+		Events.postEvent(new Event("onClose", zDesactivar));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

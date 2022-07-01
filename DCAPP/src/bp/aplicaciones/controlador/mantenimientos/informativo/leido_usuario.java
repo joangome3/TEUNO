@@ -21,7 +21,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
@@ -64,13 +63,7 @@ public class leido_usuario extends SelectorComposer<Component> {
 
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_usuario dao = new dao_usuario();
-		String criterio = String.valueOf(id_dc);
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 3, 0);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaUsuario = dao.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 	}
 
 	public void dibujarListaConsulta()

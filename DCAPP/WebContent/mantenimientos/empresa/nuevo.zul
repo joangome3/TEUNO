@@ -3,100 +3,81 @@
 <zk>
 	<window border="normal" id="zNuevaEmpresa" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.empresa.nuevo"
-		position="center, center" sizable="true" height="80%" width="768px"
+		position="center, center" sizable="true" height="55%" width="768px"
 		maximizable="false" minimizable="false"
 		title=".:: Nueva empresa ::." shadow="false" mode="overlapped"
-		focus="true" action="show: slideDown;hide: slideUp" contentStyle="overflow:auto">
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
 			<toolbar>
 				<button id="btnGrabar"
 					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
 					autodisable="self" visible="true" />
 			</toolbar>
-			<vlayout>
-			<vlayout>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
 					<grid>
 						<custom-attributes
 							org.zkoss.zul.nativebar="false" />
 						<columns>
-						<column hflex="2" align="right"></column>
-						<column hflex="5"></column>
-						<column hflex="1"></column>
-					</columns>
+							<column hflex="1"></column>
+							<column hflex="5"></column>
+							<column hflex="1"></column>
+						</columns>
 						<rows>
 							<row>
-								<space height="20px"></space>
+								<separator></separator>
 							</row>
-							<row visible="false">
-								<cell colspan="2">
+							<row>
+								<separator></separator>
+							</row>
+							<row>
+								<separator></separator>
+								<cell colspan="1">
 									<div align="center">
-										<label value="ID:"
+										<label value="* Nombre:"
 											class="z-label-1" />
 										<vlayout>
 											<hlayout>
-												<textbox id="txtId"
-													width="220px" readonly="true" class="z-textbox-1" />
+												<textbox id="txtNombre"
+													width="425px" rows="3" maxlength="100" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="nom"
+													style="cursor: help; width: 16px; height: 16px;" />
 											</hlayout>
 										</vlayout>
 									</div>
 								</cell>
+								<separator></separator>
 							</row>
 							<row>
-							* Nombre:
-							<vlayout>
-								<hlayout>
-									<textbox id="txtNombre"
-										width="400px" rows="5" maxlength="100"
-										style="resize: none;">
-										<attribute name="onChanging">
-													<![CDATA[
-	String value = event.value;
-	lNombre.setValue(value.length() + "/100");
-]]>
-													</attribute>
-									</textbox>
-									<image
-										src="/img/botones/ButtonPopup.png" tooltip="nom"
-										style="cursor: help; width: 16px; height: 16px;" />
-								</hlayout>
-								<label id="lNombre"
-									style="position: relative; left: -5.5rem; top: -1.1rem; color:red; font-weight: bold;"
-									value="0/100">
-								</label>
-							</vlayout>
-							<cell colspan="1"></cell>
-						</row>
+								<separator></separator>
+								<cell colspan="1">
+									<div align="center">
+										<label value="* Descripción:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox
+													id="txtDescripcion" width="450px" rows="7"
+													maxlength="2000" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<separator></separator>
+							</row>
 							<row>
-							* Descripcion:
-							<vlayout>
-								<hlayout>
-									<textbox id="txtDescripcion"
-										width="400px" rows="5" maxlength="100"
-										style="resize: none;">
-										<attribute name="onChanging">
-													<![CDATA[
-	String value = event.value;
-	lNombre.setValue(value.length() + "/100");
-]]>
-													</attribute>
-									</textbox>
-									<image
-										src="/img/botones/ButtonPopup.png" tooltip="nom"
-										style="cursor: help; width: 16px; height: 16px;" />
-								</hlayout>
-								<label id="lDescripcion"
-									style="position: relative; left: -5.5rem; top: -1.1rem; color:red; font-weight: bold;"
-									value="0/100">
-								</label>
-							</vlayout>
-							<cell colspan="1"></cell>
-						</row>
+								<separator></separator>
+							</row>
 							<row>
-								<space></space>
+								<separator></separator>
 							</row>
 						</rows>
 					</grid>
-				</vlayout>
-		</vlayout>
+				</center>
+			</borderlayout>
+		</div>
 		<popup id="nom" width="300px">
 			<html>
 

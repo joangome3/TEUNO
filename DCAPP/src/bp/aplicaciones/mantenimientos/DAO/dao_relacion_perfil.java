@@ -1,150 +1,153 @@
 package bp.aplicaciones.mantenimientos.DAO;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
-import bp.aplicaciones.conexion.conexion;
+import bp.aplicaciones.conexion.hibernateUtil;
+import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_perfil_mantenimiento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_perfil_opcion;
 
 public class dao_relacion_perfil {
 
-	public boolean obtenerRelacionesMantenimientos(String perfil, String mantenimiento, int tipo)
-			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
-		conexion conexion = new conexion();
-		PreparedStatement consulta = null;
-		modelo_relacion_perfil_mantenimiento relacion = null;
+	private SessionFactory sessionFactory = hibernateUtil.getSessionFactory();
+
+	@SuppressWarnings("unchecked")
+	public List<modelo_relacion_perfil_mantenimiento> obtenerRelacionesMantenimientos(long id1, long id2,
+			String criterio1, String criterio2, int limite, int tipo) {
+		Session session = null;
+		Transaction transaction = null;
+		List<modelo_relacion_perfil_mantenimiento> lista_relaciones = new ArrayList<modelo_relacion_perfil_mantenimiento>();
 		try {
-			consulta = conexion.abrir().prepareStatement("{CALL relacion_obtenerRelacionesPerfiles(?, ?, ?)}");
-			consulta.setString(1, perfil);
-			consulta.setString(2, mantenimiento);
-			consulta.setInt(3, tipo);
-			ResultSet resultado = consulta.executeQuery();
-			while (resultado.next()) {
-				relacion = new modelo_relacion_perfil_mantenimiento(resultado.getLong("id_relacion"),
-						resultado.getLong("id_perfil"), resultado.getLong("id_mantenimiento"),
-						resultado.getString("est_relacion"), resultado.getString("usu_ingresa"),
-						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
-						resultado.getTimestamp("fec_modifica"));
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			@SuppressWarnings("rawtypes")
+			Query query = session.createNativeQuery("{CALL perfil_obtenerPerfiles2(?, ?, ?, ?, ?, ?)}",
+					modelo_perfil.class);
+			query.setParameter(1, id1);
+			query.setParameter(2, id2);
+			query.setParameter(3, criterio1);
+			query.setParameter(4, criterio2);
+			query.setParameter(5, limite);
+			query.setParameter(6, tipo);
+			lista_relaciones = query.getResultList();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
 			}
-			resultado.close();
-			consulta.close();
-			if (relacion != null) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (SQLException ex) {
-			throw new SQLException(ex);
-		} catch (java.lang.NullPointerException ex) {
-			throw new java.lang.NullPointerException();
+			e.printStackTrace();
 		} finally {
-			conexion.cerrar();
+			session.close();
+		}
+		return lista_relaciones;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<modelo_relacion_perfil_opcion> obtenerRelacionesOpciones(long id1, long id2, String criterio1,
+			String criterio2, int limite, int tipo) {
+		Session session = null;
+		Transaction transaction = null;
+		List<modelo_relacion_perfil_opcion> lista_relaciones = new ArrayList<modelo_relacion_perfil_opcion>();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			@SuppressWarnings("rawtypes")
+			Query query = session.createNativeQuery("{CALL perfil_obtenerPerfiles2(?, ?, ?, ?, ?, ?)}",
+					modelo_perfil.class);
+			query.setParameter(1, id1);
+			query.setParameter(2, id2);
+			query.setParameter(3, criterio1);
+			query.setParameter(4, criterio2);
+			query.setParameter(5, limite);
+			query.setParameter(6, tipo);
+			lista_relaciones = query.getResultList();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return lista_relaciones;
+	}
+
+	public void insertarRelacionMantenimiento(modelo_relacion_perfil_mantenimiento relacion) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.save(relacion);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 	}
 
-	public boolean obtenerRelacionesOpciones(String perfil, String opcion, int tipo)
-			throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
-		conexion conexion = new conexion();
-		PreparedStatement consulta = null;
-		modelo_relacion_perfil_opcion relacion = null;
+	public void insertarRelacionOpcion(modelo_relacion_perfil_opcion relacion) {
+		Session session = null;
+		Transaction transaction = null;
 		try {
-			consulta = conexion.abrir().prepareStatement("{CALL relacion_obtenerRelacionesPerfiles(?, ?, ?)}");
-			consulta.setString(1, perfil);
-			consulta.setString(2, opcion);
-			consulta.setInt(3, tipo);
-			ResultSet resultado = consulta.executeQuery();
-			while (resultado.next()) {
-				relacion = new modelo_relacion_perfil_opcion(resultado.getLong("id_relacion"),
-						resultado.getLong("id_perfil"), resultado.getLong("id_opcion"),
-						resultado.getString("est_relacion"), resultado.getString("usu_ingresa"),
-						resultado.getTimestamp("fec_ingresa"), resultado.getString("usu_modifica"),
-						resultado.getTimestamp("fec_modifica"));
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.save(relacion);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
 			}
-			resultado.close();
-			consulta.close();
-			if (relacion != null) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (SQLException ex) {
-			throw new SQLException(ex);
-		} catch (java.lang.NullPointerException ex) {
-			throw new java.lang.NullPointerException();
+			e.printStackTrace();
 		} finally {
-			conexion.cerrar();
+			session.close();
 		}
 	}
 
-
-	public void insertarRelacion(List<modelo_relacion_perfil_mantenimiento> relacionMantenimiento,
-			List<modelo_relacion_perfil_opcion> relacionOpcion, long id_perfil) throws SQLException,
-			MySQLIntegrityConstraintViolationException, ClassNotFoundException, FileNotFoundException, IOException {
-		conexion conexion = new conexion();
-		PreparedStatement consulta = null;
-		conexion.abrir().setAutoCommit(false);
+	public void eliminarRelacionMantenimiento(modelo_relacion_perfil_mantenimiento relacion) {
+		Session session = null;
+		Transaction transaction = null;
 		try {
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL relacion_eliminarMantenimientoPerfiles(?)}");
-			consulta.setLong(1, id_perfil);
-			consulta.executeUpdate();
-			for (int i = 0; i < relacionMantenimiento.size(); i++) {
-				Long id = (long) 0;
-				consulta = conexion.abrir().prepareStatement(
-						"{CALL relacion_obtenerNuevoIDMantenimientoPerfiles()}");
-				ResultSet resultado = consulta.executeQuery();
-				while (resultado.next()) {
-					id = resultado.getLong("id_relacion") + 1;
-				}
-				consulta = conexion.abrir().prepareStatement(
-						"{CALL relacion_insertarMantenimientoPerfiles (?, ?, ?, ?, ?, ?)}");
-				consulta.setLong(1, id);
-				consulta.setLong(2, relacionMantenimiento.get(i).getId_perfil());
-				consulta.setLong(3, relacionMantenimiento.get(i).getId_mantenimiento());
-				consulta.setString(4, relacionMantenimiento.get(i).getEst_relacion());
-				consulta.setString(5, relacionMantenimiento.get(i).getUsu_ingresa());
-				consulta.setTimestamp(6, relacionMantenimiento.get(i).getFec_ingresa());
-				consulta.executeUpdate();
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.delete(relacion);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
 			}
-			consulta = conexion.abrir()
-					.prepareStatement("{CALL relacion_eliminarOpcionPerfiles(?)}");
-			consulta.setLong(1, id_perfil);
-			consulta.executeUpdate();
-			for (int i = 0; i < relacionOpcion.size(); i++) {
-				Long id = (long) 0;
-				consulta = conexion.abrir().prepareStatement(
-						"{CALL relacion_obtenerNuevoIDOpcionPerfiles()}");
-				ResultSet resultado = consulta.executeQuery();
-				while (resultado.next()) {
-					id = resultado.getLong("id_relacion") + 1;
-				}
-				consulta = conexion.abrir().prepareStatement(
-						"{CALL relacion_insertarOpcionPerfiles (?, ?, ?, ?, ?, ?)}");
-				consulta.setLong(1, id);
-				consulta.setLong(2, relacionOpcion.get(i).getId_perfil());
-				consulta.setLong(3, relacionOpcion.get(i).getId_opcion());
-				consulta.setString(4, relacionOpcion.get(i).getEst_relacion());
-				consulta.setString(5, relacionOpcion.get(i).getUsu_ingresa());
-				consulta.setTimestamp(6, relacionOpcion.get(i).getFec_ingresa());
-				consulta.executeUpdate();
-			}
-			consulta.close();
-			conexion.abrir().commit();
-		} catch (SQLException ex) {
-			conexion.abrir().rollback();
-			throw new SQLException(ex);
-		} catch (java.lang.NullPointerException ex) {
-			conexion.abrir().rollback();
-			throw new java.lang.NullPointerException();
+			e.printStackTrace();
 		} finally {
-			conexion.cerrar();
+			session.close();
+		}
+	}
+
+	public void eliminarRelacionOpcion(modelo_relacion_perfil_opcion relacion) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.delete(relacion);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 	}
 

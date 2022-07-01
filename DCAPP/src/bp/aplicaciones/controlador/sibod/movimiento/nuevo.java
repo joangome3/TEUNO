@@ -49,7 +49,6 @@ import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_articulo;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_7;
-import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
 import bp.aplicaciones.mantenimientos.DAO.dao_ubicacion;
 import bp.aplicaciones.mantenimientos.DAO.dao_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
@@ -138,6 +137,9 @@ public class nuevo extends SelectorComposer<Component> {
 	boolean es_turno_extendido = false;
 
 	String turno = "";
+	
+	
+	long id_opcion = 1;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -273,14 +275,8 @@ public class nuevo extends SelectorComposer<Component> {
 	}
 
 	public void cargarSolicitantes(String criterio) throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitante dao = new dao_solicitante();
-		try {
-			listaSolicitante = dao.obtenerSolicitantes(criterio, 8, String.valueOf(id_dc), "1", 0);
-			binder.loadComponent(lbxSolicitantes);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los solicitantes. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar solicitante ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
+		binder.loadComponent(lbxSolicitantes);
 	}
 
 	public void cargarEmpresas() throws ClassNotFoundException, FileNotFoundException, IOException {

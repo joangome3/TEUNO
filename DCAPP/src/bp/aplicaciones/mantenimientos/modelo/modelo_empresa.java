@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -21,6 +23,7 @@ public class modelo_empresa {
 
 	@Id
 	@Column(name = "id_empresa", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_empresa;
 	@Column(name = "nom_empresa", length = 100)
 	private String nom_empresa;
@@ -36,10 +39,26 @@ public class modelo_empresa {
 	private String usu_modifica;
 	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
-	
+
 	@OneToMany(mappedBy = "empresa", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	private List<modelo_rack> racks;
+
+	@OneToMany(mappedBy = "empresa", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_relacion_empresa_localidad> relaciones_empresa_localidad;
+
+	@OneToMany(mappedBy = "empresa", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_relacion_empresa_mantenimiento> relaciones_empresa_mantenimiento;
+
+	@OneToMany(mappedBy = "empresa", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_relacion_empresa_opcion> relaciones_empresa_opcion;
+
+	@OneToMany(mappedBy = "empresa", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_solicitante> solicitantes;
 
 	/**
 	 * 
@@ -213,6 +232,64 @@ public class modelo_empresa {
 	 */
 	public void setRacks(List<modelo_rack> racks) {
 		this.racks = racks;
+	}
+
+	/**
+	 * @return the relaciones_empresa_localidad
+	 */
+	public List<modelo_relacion_empresa_localidad> getRelaciones_empresa_localidad() {
+		return relaciones_empresa_localidad;
+	}
+
+	/**
+	 * @param relaciones_empresa_localidad the relaciones_empresa_localidad to set
+	 */
+	public void setRelaciones_empresa_localidad(List<modelo_relacion_empresa_localidad> relaciones_empresa_localidad) {
+		this.relaciones_empresa_localidad = relaciones_empresa_localidad;
+	}
+
+	/**
+	 * @return the relaciones_empresa_mantenimiento
+	 */
+	public List<modelo_relacion_empresa_mantenimiento> getRelaciones_empresa_mantenimiento() {
+		return relaciones_empresa_mantenimiento;
+	}
+
+	/**
+	 * @param relaciones_empresa_mantenimiento the relaciones_empresa_mantenimiento
+	 *                                         to set
+	 */
+	public void setRelaciones_empresa_mantenimiento(
+			List<modelo_relacion_empresa_mantenimiento> relaciones_empresa_mantenimiento) {
+		this.relaciones_empresa_mantenimiento = relaciones_empresa_mantenimiento;
+	}
+
+	/**
+	 * @return the relaciones_empresa_opcion
+	 */
+	public List<modelo_relacion_empresa_opcion> getRelaciones_empresa_opcion() {
+		return relaciones_empresa_opcion;
+	}
+
+	/**
+	 * @param relaciones_empresa_opcion the relaciones_empresa_opcion to set
+	 */
+	public void setRelaciones_empresa_opcion(List<modelo_relacion_empresa_opcion> relaciones_empresa_opcion) {
+		this.relaciones_empresa_opcion = relaciones_empresa_opcion;
+	}
+
+	/**
+	 * @return the solicitantes
+	 */
+	public List<modelo_solicitante> getSolicitantes() {
+		return solicitantes;
+	}
+
+	/**
+	 * @param solicitantes the solicitantes to set
+	 */
+	public void setSolicitantes(List<modelo_solicitante> solicitantes) {
+		this.solicitantes = solicitantes;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package bp.aplicaciones.controlador.mantenimientos.localidad;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.zkoss.zk.ui.Component;
@@ -15,6 +14,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -22,6 +22,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 
@@ -31,11 +32,13 @@ public class nuevo extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zNuevo;
+	Window zNuevaLocalidad;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtNombre, txtDescripcion;
+	Textbox txtNombre, txtDescripcion;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	long id = 0;
 	long id_mantenimiento = 3;
@@ -47,6 +50,7 @@ public class nuevo extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+	Fechas fechas = new Fechas();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -55,27 +59,14 @@ public class nuevo extends SelectorComposer<Component> {
 		binder.loadAll();
 		txtNombre.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtNombre.setText(txtNombre.getText().toUpperCase());
+				txtNombre.setText(txtNombre.getText().toUpperCase().trim());
 			}
 		});
 		txtDescripcion.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				txtDescripcion.setText(txtDescripcion.getText().toUpperCase());
+				txtDescripcion.setText(txtDescripcion.getText().toUpperCase().trim());
 			}
 		});
-		obtenerId();
-	}
-
-	public void obtenerId() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_localidad dao = new dao_localidad();
-		try {
-			id = dao.obtenerNuevoId();
-			txtId.setText(String.valueOf(id));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			Messagebox.show("Error al obtener el nuevo Id. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Obtener ID ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
 	}
 
 	@Listen("onBlur=#txtNombre")
@@ -85,9 +76,10 @@ public class nuevo extends SelectorComposer<Component> {
 			return;
 		}
 		dao_localidad dao = new dao_localidad();
-		if (dao.obtenerLocalidades(txtNombre.getText(), 2, 0, 0).size() > 0) {
-			txtNombre.setErrorMessage("El nombre ya se encuentra registrado.");
+		if (dao.consultarLocalidades(0, 0, txtNombre.getText(), "", 0, 3).size() > 0) {
 			txtNombre.setFocus(true);
+			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 	}
@@ -97,19 +89,22 @@ public class nuevo extends SelectorComposer<Component> {
 	public void onClick$btnGrabar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (txtNombre.getText().length() <= 0) {
-			txtNombre.setErrorMessage("Ingrese el nombre.");
 			txtNombre.setFocus(true);
+			Clients.showNotification("Ingrese el nombre.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right",
+					2000, true);
 			return;
 		}
 		dao_localidad dao = new dao_localidad();
-		if (dao.obtenerLocalidades(txtNombre.getText(), 2, 0, 0).size() > 0) {
-			txtNombre.setErrorMessage("El nombre ya se encuentra registrado.");
+		if (dao.consultarLocalidades(0, 0, txtNombre.getText(), "", 0, 3).size() > 0) {
 			txtNombre.setFocus(true);
+			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 		if (txtDescripcion.getText().length() <= 0) {
-			txtDescripcion.setErrorMessage("Ingrese la descripción.");
 			txtDescripcion.setFocus(true);
+			Clients.showNotification("Ingrese la descripción.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"top_right", 2000, true);
 			return;
 		}
 		Messagebox.show("Esta seguro de guardar la localidad?", ".:: Nueva localidad ::.",
@@ -121,22 +116,19 @@ public class nuevo extends SelectorComposer<Component> {
 							modelo_localidad localidad = new modelo_localidad();
 							localidad.setNom_localidad(txtNombre.getText());
 							localidad.setDes_localidad(txtDescripcion.getText());
-							localidad.setEst_localidad("PAC");
+							localidad.setEst_localidad("AE");
 							localidad.setUsu_ingresa(user);
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							localidad.setFec_ingresa(timestamp);
+							localidad.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							try {
 								dao.insertarLocalidad(localidad);
-								Messagebox.show("La localidad se guardó correctamente.", ".:: Nueva localidad ::.",
-										Messagebox.OK, Messagebox.EXCLAMATION);
+								Clients.showNotification("La localidad se guardó correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "top_right", 4000);
 								limpiarCampos();
-								obtenerId();
 							} catch (Exception e) {
-								Messagebox.show(
+								Clients.showNotification(
 										"Error al guardar la localidad. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Nueva localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -145,7 +137,7 @@ public class nuevo extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zNuevo));
+		Events.postEvent(new Event("onClose", zNuevaLocalidad));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

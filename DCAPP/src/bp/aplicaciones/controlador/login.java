@@ -81,95 +81,87 @@ public class login extends SelectorComposer<Component> {
 		dao_usuario dao = new dao_usuario();
 		user = txtUsuario.getText().toUpperCase();
 		pass = txtContrasena.getText();
-		try {
-			usuario = dao.obtenerUsuario(user, SH2.getSHA256(pass), 0);
-			if (usuario != null) {
-				if (usuario.getEst_usuario().charAt(0) == 'I') {
-					Messagebox.show("El usuario se encuentra inactivo. ¡Consulte al administrador del sistema!.",
-							".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-					cTimer.stop();
-					return;
-				}
-				if (usuario.getEst_usuario().charAt(0) == 'P') {
-					Messagebox.show(
-							"Existe una solicitud de aprobación para la creación de este usuario. ¡Consulte al administrador del sistema!.",
-							".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-					cTimer.stop();
-					return;
-				}
-				if (usuario.getEst_usuario().charAt(0) == 'A') {
-					dao_perfil dao_perfil = new dao_perfil();
-					String criterio = "";
-					try {
-						listaPerfil = dao_perfil.obtenerPerfiles(criterio, 4, usuario.getId_perfil());
-					} catch (SQLException e) {
-						Messagebox.show(
-								"Error al cargar los perfiles. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-								".:: Cargar perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-						cTimer.stop();
-						return;
-					}
-					if (listaPerfil.size() == 0) {
-						Messagebox.show(
-								"Existen inconsistencias con los permisos del perfil asignado al usuario. ¡Consulte al administrador del sistema!.",
-								".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-						cTimer.stop();
-						return;
-					}
-					if (listaPerfil.size() > 1) {
-						Messagebox.show(
-								"Existen inconsistencias con los permisos del perfil asignado al usuario. ¡Consulte al administrador del sistema!.",
-								".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-						cTimer.stop();
-						return;
-					}
-					if (listaPerfil.get(0).getEst_perfil().equals("I")) {
-						Messagebox.show(
-								"El perfil con los permisos asignado al usuario se encuentra inactivo. ¡Consulte al administrador del sistema!.",
-								".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-						cTimer.stop();
-						return;
-					} else {
-						if (usuario.getCam_password().equals("S")) {
-							Sessions.getCurrent().setAttribute("usuario", usuario);
-							Component comp = Executions
-									.createComponents("/mantenimientos/usuario/cambiar_contrasena.zul", null, null);
-							if (comp instanceof Window) {
-								((Window) comp).doModal();
-								comp.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-									@Override
-									public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-										limpiar();
-										cTimer.stop();
-									}
-								});
-							}
-						} else {
-							id_user = usuario.getId_usuario();
-							id_perfil = usuario.getId_perfil();
-							user = usuario.getUse_usuario();
-							id_dc = usuario.getId_localidad();
-							nom_ape_user = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-							Sessions.getCurrent().setAttribute("id_user", id_user);
-							Sessions.getCurrent().setAttribute("id_perfil", id_perfil);
-							Sessions.getCurrent().setAttribute("user", user);
-							Sessions.getCurrent().setAttribute("id_dc", id_dc);
-							Sessions.getCurrent().setAttribute("nom_ape_user", nom_ape_user);
-							limpiar();
-							cTimer.stop();
-							Executions.sendRedirect("/dashboard.zul");
-						}
-					}
-				}
-			} else {
-				Messagebox.show("Usuario o contraseña incorrectos.", ".:: Ingreso al sistema ::.", Messagebox.OK,
-						Messagebox.EXCLAMATION);
+		usuario = dao.consultarUsuarios(0, 0, user, SH2.getSHA256(pass), 0, 6).get(0);
+		if (usuario != null) {
+			if (usuario.getEst_usuario().charAt(0) == 'I') {
+				Messagebox.show("El usuario se encuentra inactivo. ¡Consulte al administrador del sistema!.",
+						".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 				cTimer.stop();
 				return;
 			}
-		} catch (SQLException e) {
-			Messagebox.show("Error al ingresar al sistema. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+			if (usuario.getEst_usuario().charAt(0) == 'P') {
+				Messagebox.show(
+						"Existe una solicitud de aprobación para la creación de este usuario. ¡Consulte al administrador del sistema!.",
+						".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+				cTimer.stop();
+				return;
+			}
+			if (usuario.getEst_usuario().charAt(0) == 'A') {
+				dao_perfil dao_perfil = new dao_perfil();
+				String criterio = "";
+				try {
+					listaPerfil = dao_perfil.obtenerPerfiles(criterio, 4, usuario.getPerfil().getId_perfil());
+				} catch (SQLException e) {
+					Messagebox.show("Error al cargar los perfiles. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
+							".:: Cargar perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+					cTimer.stop();
+					return;
+				}
+				if (listaPerfil.size() == 0) {
+					Messagebox.show(
+							"Existen inconsistencias con los permisos del perfil asignado al usuario. ¡Consulte al administrador del sistema!.",
+							".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+					cTimer.stop();
+					return;
+				}
+				if (listaPerfil.size() > 1) {
+					Messagebox.show(
+							"Existen inconsistencias con los permisos del perfil asignado al usuario. ¡Consulte al administrador del sistema!.",
+							".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+					cTimer.stop();
+					return;
+				}
+				if (listaPerfil.get(0).getEst_perfil().equals("I")) {
+					Messagebox.show(
+							"El perfil con los permisos asignado al usuario se encuentra inactivo. ¡Consulte al administrador del sistema!.",
+							".:: Ingreso al sistema ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+					cTimer.stop();
+					return;
+				} else {
+					if (usuario.getCam_password().equals("S")) {
+						Sessions.getCurrent().setAttribute("usuario", usuario);
+						Component comp = Executions.createComponents("/mantenimientos/usuario/cambiar_contrasena.zul",
+								null, null);
+						if (comp instanceof Window) {
+							((Window) comp).doModal();
+							comp.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
+								@Override
+								public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
+									limpiar();
+									cTimer.stop();
+								}
+							});
+						}
+					} else {
+						id_user = usuario.getId_usuario();
+						id_perfil = usuario.getPerfil().getId_perfil();
+						user = usuario.getUse_usuario();
+						id_dc = usuario.getLocalidad().getId_localidad();
+						nom_ape_user = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+						Sessions.getCurrent().setAttribute("id_user", id_user);
+						Sessions.getCurrent().setAttribute("id_perfil", id_perfil);
+						Sessions.getCurrent().setAttribute("user", user);
+						Sessions.getCurrent().setAttribute("id_dc", id_dc);
+						Sessions.getCurrent().setAttribute("nom_ape_user", nom_ape_user);
+						limpiar();
+						cTimer.stop();
+						Executions.sendRedirect("/dashboard.zul");
+					}
+				}
+			}
+		} else {
+			Messagebox.show("Usuario o contraseña incorrectos.", ".:: Ingreso al sistema ::.", Messagebox.OK,
+					Messagebox.EXCLAMATION);
 			cTimer.stop();
 			return;
 		}

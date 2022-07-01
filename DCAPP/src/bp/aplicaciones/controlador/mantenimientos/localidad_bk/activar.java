@@ -1,4 +1,4 @@
-package bp.aplicaciones.controlador.mantenimientos.usuario;
+package bp.aplicaciones.controlador.mantenimientos.localidad_bk;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,12 +22,12 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
-import bp.aplicaciones.controlador.mantenimientos.usuario.activar;
+import bp.aplicaciones.controlador.mantenimientos.localidad_bk.activar;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
-import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
+import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
+import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
-import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
@@ -45,21 +45,19 @@ public class activar extends SelectorComposer<Component> {
 	Textbox txtComentario;
 
 	long id = 0;
-	long id_mantenimiento = 4;
+	long id_mantenimiento = 3;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
 	long id_dc = (long) Sessions.getCurrent().getAttribute("id_dc");
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
-	modelo_usuario usuario = (modelo_usuario) Sessions.getCurrent().getAttribute("usuario");
-
-	String tmpPassword = usuario.getPas_usuario();
+	modelo_localidad localidad = (modelo_localidad) Sessions.getCurrent().getAttribute("localidad");
 
 	validar_datos validar = new validar_datos();
 
 	modelo_solicitud solicitud = new modelo_solicitud();
-
+	
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 	Fechas fechas = new Fechas();
 	Validaciones validaciones = new Validaciones();
@@ -80,14 +78,14 @@ public class activar extends SelectorComposer<Component> {
 		cargarDatos();
 	}
 
-	public void cargarDatos() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-
+	public void cargarDatos() {
 	}
-
+	
 	public boolean validarSiExisteSolicitudPendienteEjecucion()
 			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		boolean existe_solicitud_pendiente = false;
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, usuario.getId_usuario(), 7);
+		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, localidad.getId_localidad(),
+				7);
 		if (solicitud != null) {
 			String estado = solicitud.getEst_solicitud();
 			if (estado != null) {
@@ -110,27 +108,24 @@ public class activar extends SelectorComposer<Component> {
 		}
 		if (txtComentario.getText().length() <= 0) {
 			txtComentario.setErrorMessage("Ingrese un comentario.");
+			txtComentario.setFocus(true);
 			return;
 		}
-		Messagebox.show("Esta seguro de activar el registro?", ".:: Activar usuario ::.",
+		Messagebox.show("Esta seguro de activar el registro?", ".:: Activar localidad ::.",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						if (event.getName().equals("onOK")) {
-							dao_usuario dao = new dao_usuario();
-							modelo_usuario usuario = new modelo_usuario();
-							usuario.setId_usuario(activar.this.usuario.getId_usuario());
-							usuario.setPas_usuario(activar.this.usuario.getPas_usuario());
-							usuario.setNom_usuario(activar.this.usuario.getNom_usuario());
-							usuario.setApe_usuario(activar.this.usuario.getApe_usuario());
-							usuario.setId_perfil(activar.this.usuario.getId_perfil());
-							usuario.setCam_password(activar.this.usuario.getCam_password());
-							usuario.setId_localidad(activar.this.usuario.getId_localidad());
-							usuario.setEst_usuario("AE");
-							usuario.setUsu_modifica(user);
+							dao_localidad dao = new dao_localidad();
+							modelo_localidad localidad = new modelo_localidad();
+							localidad.setId_localidad(activar.this.localidad.getId_localidad());
+							localidad.setNom_localidad(activar.this.localidad.getNom_localidad());
+							localidad.setDes_localidad(activar.this.localidad.getDes_localidad());
+							localidad.setEst_localidad("AE");
+							localidad.setUsu_modifica(user);
 							java.util.Date date = new Date();
 							Timestamp timestamp = new Timestamp(date.getTime());
-							usuario.setFec_modifica(timestamp);
+							localidad.setFec_modifica(timestamp);
 							solicitud.setComentario_3(txtComentario.getText());
 							solicitud.setId_user_3(id_user);
 							solicitud.setEst_solicitud("E");
@@ -139,22 +134,22 @@ public class activar extends SelectorComposer<Component> {
 							solicitud.setFec_modifica(timestamp);
 							int tipo = 2;
 							try {
-								dao.modificarUsuario(usuario, solicitud, tipo);
+								dao.modificarLocalidad(localidad, solicitud, tipo);
 								if (tipo == 2) {
-									Messagebox.show("El usuario se activó correctamente.", ".:: Activar usuario ::.",
-											Messagebox.OK, Messagebox.EXCLAMATION);
+									Messagebox.show("La localidad se activó correctamente.",
+											".:: Activar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 								} else {
 									Messagebox.show("No se realizaron cambios en el registro.",
-											".:: Activar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+											".:: Activar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 								}
 								limpiarCampos();
-								Sessions.getCurrent().removeAttribute("usuario");
+								Sessions.getCurrent().removeAttribute("localidad");
 								Events.postEvent(new Event("onClose", zActivar));
 							} catch (Exception e) {
 								Messagebox.show(
 										"Error al guardar el registro. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Activar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										".:: Activar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 							}
 						}
 					}
@@ -167,6 +162,7 @@ public class activar extends SelectorComposer<Component> {
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {
+
 	}
 
 }

@@ -3,7 +3,6 @@ package bp.aplicaciones.controlador.mantenimientos.empresa;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,25 +14,26 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_mantenimiento;
 import bp.aplicaciones.mantenimientos.DAO.dao_opcion;
 import bp.aplicaciones.mantenimientos.DAO.dao_relacion_empresa;
-import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
-import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_mantenimiento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_opcion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_empresa_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_empresa_mantenimiento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_empresa_opcion;
+import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
+import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 
 @SuppressWarnings({ "serial", "deprecation" })
 public class relacionar extends SelectorComposer<Component> {
@@ -41,13 +41,13 @@ public class relacionar extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zRelacionar;
+	Window zRelacionarEmpresa;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtNombre;
-	@Wire
 	Listbox lbxMantenimientos, lbxOpciones, lbxLocalidades;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	long id = 0;
 	long id_mantenimiento = 8;
@@ -64,6 +64,7 @@ public class relacionar extends SelectorComposer<Component> {
 	modelo_empresa empresa = (modelo_empresa) Sessions.getCurrent().getAttribute("empresa");
 
 	validar_datos validar = new validar_datos();
+	Fechas fechas = new Fechas();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -72,7 +73,6 @@ public class relacionar extends SelectorComposer<Component> {
 		binder.loadAll();
 		lbxMantenimientos.setEmptyMessage("!No existen datos que mostrar¡.");
 		lbxOpciones.setEmptyMessage("!No existen datos que mostrar¡.");
-		lbxLocalidades.setEmptyMessage("!No existen datos que mostrar¡.");
 		cargarMantenimientos();
 		cargarOpciones();
 		cargarLocalidades();
@@ -80,31 +80,32 @@ public class relacionar extends SelectorComposer<Component> {
 	}
 
 	public void cargarDatos() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		txtId.setText(String.valueOf(empresa.getId_empresa()));
-		txtNombre.setText(empresa.getNom_empresa());
-		dao_relacion_empresa dao = new dao_relacion_empresa();
-		try {
-			for (int i = 0; i < lbxMantenimientos.getItems().size(); i++) {
-				if (dao.obtenerRelacionesMantenimientos(String.valueOf(empresa.getId_empresa()),
-						String.valueOf(listaMantenimientos.get(i).getId_mantenimiento())) == true) {
-					lbxMantenimientos.getItemAtIndex(i).setSelected(true);
+		for (int i = 0; i < empresa.getRelaciones_empresa_mantenimiento().size(); i++) {
+			for (int j = 0; j < listaMantenimientos.size(); j++) {
+				if (empresa.getRelaciones_empresa_mantenimiento().get(i).getMantenimiento()
+						.getId_mantenimiento() == listaMantenimientos.get(j).getId_mantenimiento()) {
+					lbxMantenimientos.getItemAtIndex(j).setSelected(true);
+					break;
 				}
 			}
-			for (int i = 0; i < lbxOpciones.getItems().size(); i++) {
-				if (dao.obtenerRelacionesOpciones(String.valueOf(empresa.getId_empresa()),
-						String.valueOf(listaOpciones.get(i).getId_opcion())) == true) {
-					lbxOpciones.getItemAtIndex(i).setSelected(true);
+		}
+		for (int i = 0; i < empresa.getRelaciones_empresa_opcion().size(); i++) {
+			for (int j = 0; j < listaOpciones.size(); j++) {
+				if (empresa.getRelaciones_empresa_opcion().get(i).getOpcion().getId_opcion() == listaOpciones.get(j)
+						.getId_opcion()) {
+					lbxOpciones.getItemAtIndex(j).setSelected(true);
+					break;
 				}
 			}
-			for (int i = 0; i < lbxLocalidades.getItems().size(); i++) {
-				if (dao.obtenerRelacionesLocalidades(String.valueOf(empresa.getId_empresa()),
-						String.valueOf(listaLocalidades.get(i).getId_localidad())) == true) {
-					lbxLocalidades.getItemAtIndex(i).setSelected(true);
+		}
+		for (int i = 0; i < empresa.getRelaciones_empresa_localidad().size(); i++) {
+			for (int j = 0; j < listaLocalidades.size(); j++) {
+				if (empresa.getRelaciones_empresa_localidad().get(i).getLocalidad()
+						.getId_localidad() == listaLocalidades.get(j).getId_localidad()) {
+					lbxLocalidades.getItemAtIndex(j).setSelected(true);
+					break;
 				}
 			}
-		} catch (SQLException e) {
-			Messagebox.show("Error al validar relaciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Validar relaciones ::.", Messagebox.OK, Messagebox.EXCLAMATION);
 		}
 	}
 
@@ -122,44 +123,26 @@ public class relacionar extends SelectorComposer<Component> {
 
 	public void cargarMantenimientos() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_mantenimiento dao = new dao_mantenimiento();
-		String criterio = "";
-		try {
-			listaMantenimientos = dao.obtenerMantenimientos(criterio, 3);
-			binder.loadComponent(lbxMantenimientos);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los mantenimientos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar mantenimiento ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaMantenimientos = dao.consultarMantenimientos(id_mantenimiento, 0, "", "", 0, 6);
+		binder.loadComponent(lbxMantenimientos);
 	}
 
 	public void cargarOpciones() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_opcion dao = new dao_opcion();
-		String criterio = "";
-		try {
-			listaOpciones = dao.obtenerOpciones(criterio);
-			binder.loadComponent(lbxOpciones);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar las opciones. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar opciones ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaOpciones = dao.consultarOpciones(id_mantenimiento, 0, "", "", 0, 6);
+		binder.loadComponent(lbxOpciones);
 	}
 
 	public void cargarLocalidades() throws ClassNotFoundException, FileNotFoundException, IOException {
 		dao_localidad dao = new dao_localidad();
-		String criterio = "";
-		try {
-			listaLocalidades = dao.obtenerLocalidades(criterio, 4, 0, 0);
-			binder.loadComponent(lbxLocalidades);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar las localidades. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar localidad ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaLocalidades = dao.consultarLocalidades(0, 0, "", "", 0, 2);
+		binder.loadComponent(lbxLocalidades);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Listen("onClick=#btnGrabar")
-	public void onClick$btnGrabar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		Messagebox.show("Esta seguro de guardar la relacion?", ".:: Relacionar empresa ::.",
+	public void onClick$btnGrabar() {
+		Messagebox.show("Esta seguro de guardar los permisos?", ".:: Asignar permisos ::.",
 				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
 					@Override
 					public void onEvent(Event event) throws Exception {
@@ -168,68 +151,70 @@ public class relacionar extends SelectorComposer<Component> {
 							List<modelo_relacion_empresa_mantenimiento> listaRelacionMantenimientos = new ArrayList<modelo_relacion_empresa_mantenimiento>();
 							List<modelo_relacion_empresa_opcion> listaRelacionOpciones = new ArrayList<modelo_relacion_empresa_opcion>();
 							List<modelo_relacion_empresa_localidad> listaRelacionLocalidades = new ArrayList<modelo_relacion_empresa_localidad>();
-							for (int i = 0; i < lbxMantenimientos.getItems().size(); i++) {
+							for (int i = 0; i < lbxMantenimientos.getItemCount(); i++) {
+								modelo_relacion_empresa_mantenimiento relacion = new modelo_relacion_empresa_mantenimiento();
 								if (lbxMantenimientos.getItemAtIndex(i).isSelected()) {
-									modelo_relacion_empresa_mantenimiento relacion_empresa_mantenimiento = new modelo_relacion_empresa_mantenimiento();
-									relacion_empresa_mantenimiento.setId_empresa(Long.parseLong(txtId.getText()));
-									final int indice = lbxMantenimientos.getItemAtIndex(i).getIndex();
-									relacion_empresa_mantenimiento
-											.setId_mantenimiento(listaMantenimientos.get(indice).getId_mantenimiento());
-									relacion_empresa_mantenimiento.setEst_relacion("A");
-									relacion_empresa_mantenimiento.setUsu_ingresa(user);
-									java.util.Date date = new Date();
-									Timestamp timestamp = new Timestamp(date.getTime());
-									relacion_empresa_mantenimiento.setFec_ingresa(timestamp);
-									listaRelacionMantenimientos.add(relacion_empresa_mantenimiento);
+									relacion.setEmpresa(empresa);
+									relacion.setMantenimiento(
+											listaMantenimientos.get(lbxMantenimientos.getItemAtIndex(i).getIndex()));
+									relacion.setEst_relacion("AE");
+									relacion.setUsu_ingresa(user);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									listaRelacionMantenimientos.add(relacion);
 								}
 							}
-							for (int i = 0; i < lbxOpciones.getItems().size(); i++) {
+							for (int i = 0; i < lbxOpciones.getItemCount(); i++) {
+								modelo_relacion_empresa_opcion relacion = new modelo_relacion_empresa_opcion();
 								if (lbxOpciones.getItemAtIndex(i).isSelected()) {
-									modelo_relacion_empresa_opcion relacion_empresa_opcion = new modelo_relacion_empresa_opcion();
-									relacion_empresa_opcion.setId_empresa(Long.parseLong(txtId.getText()));
-									final int indice = lbxOpciones.getItemAtIndex(i).getIndex();
-									relacion_empresa_opcion.setId_opcion(listaOpciones.get(indice).getId_opcion());
-									relacion_empresa_opcion.setEst_relacion("A");
-									relacion_empresa_opcion.setUsu_ingresa(user);
-									java.util.Date date = new Date();
-									Timestamp timestamp = new Timestamp(date.getTime());
-									relacion_empresa_opcion.setFec_ingresa(timestamp);
-									listaRelacionOpciones.add(relacion_empresa_opcion);
+									relacion.setEmpresa(empresa);
+									relacion.setOpcion(listaOpciones.get(lbxOpciones.getItemAtIndex(i).getIndex()));
+									relacion.setEst_relacion("AE");
+									relacion.setUsu_ingresa(user);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									listaRelacionOpciones.add(relacion);
 								}
 							}
-							for (int i = 0; i < lbxLocalidades.getItems().size(); i++) {
+							for (int i = 0; i < lbxLocalidades.getItemCount(); i++) {
+								modelo_relacion_empresa_localidad relacion = new modelo_relacion_empresa_localidad();
 								if (lbxLocalidades.getItemAtIndex(i).isSelected()) {
-									modelo_relacion_empresa_localidad relacion_empresa_localidad = new modelo_relacion_empresa_localidad();
-									relacion_empresa_localidad.setId_empresa(Long.parseLong(txtId.getText()));
-									final int indice = lbxLocalidades.getItemAtIndex(i).getIndex();
-									relacion_empresa_localidad
-											.setId_localidad(listaLocalidades.get(indice).getId_localidad());
-									relacion_empresa_localidad.setEst_relacion("A");
-									relacion_empresa_localidad.setUsu_ingresa(user);
-									java.util.Date date = new Date();
-									Timestamp timestamp = new Timestamp(date.getTime());
-									relacion_empresa_localidad.setFec_ingresa(timestamp);
-									listaRelacionLocalidades.add(relacion_empresa_localidad);
+									relacion.setEmpresa(empresa);
+									relacion.setLocalidad(
+											listaLocalidades.get(lbxLocalidades.getItemAtIndex(i).getIndex()));
+									relacion.setEst_relacion("AE");
+									relacion.setUsu_ingresa(user);
+									relacion.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
+									listaRelacionLocalidades.add(relacion);
 								}
 							}
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							empresa.setEst_empresa("AE");
-							empresa.setUsu_modifica(user);
-							empresa.setFec_modifica(timestamp);
-							int tipo = 2;
 							try {
-								dao.insertarRelacion(listaRelacionMantenimientos, listaRelacionOpciones,
-										listaRelacionLocalidades, Long.parseLong(txtId.getText()), empresa, tipo);
-								Messagebox.show("La relacion se guardo correctamente.", ".:: Relacionar empresa ::.",
-										Messagebox.OK, Messagebox.EXCLAMATION);
+								for (int i = 0; i < empresa.getRelaciones_empresa_mantenimiento().size(); i++) {
+									dao.eliminarRelacionMantenimiento(
+											empresa.getRelaciones_empresa_mantenimiento().get(i));
+								}
+								for (int i = 0; i < empresa.getRelaciones_empresa_opcion().size(); i++) {
+									dao.eliminarRelacionOpcion(empresa.getRelaciones_empresa_opcion().get(i));
+								}
+								for (int i = 0; i < empresa.getRelaciones_empresa_localidad().size(); i++) {
+									dao.eliminarRelacionLocalidad(empresa.getRelaciones_empresa_localidad().get(i));
+								}
+								for (int i = 0; i < listaRelacionMantenimientos.size(); i++) {
+									dao.insertarRelacionMantenimiento(listaRelacionMantenimientos.get(i));
+								}
+								for (int i = 0; i < listaRelacionOpciones.size(); i++) {
+									dao.insertarRelacionOpcion(listaRelacionOpciones.get(i));
+								}
+								for (int i = 0; i < listaRelacionLocalidades.size(); i++) {
+									dao.insertarRelacionLocalidad(listaRelacionLocalidades.get(i));
+								}
+								Clients.showNotification("Los permisos se asignaron correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "dSolicitudes", 4000, true);
 								Sessions.getCurrent().removeAttribute("empresa");
-								Events.postEvent(new Event("onClose", zRelacionar));
+								Events.postEvent(new Event("onClose", zRelacionarEmpresa));
 							} catch (Exception e) {
-								Messagebox.show(
-										"Error al guardar la relacion. \n\n" + "Mensaje de error: \n\n"
+								Clients.showNotification(
+										"Error al asignar los permisos. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Relacionar empresa ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -238,7 +223,7 @@ public class relacionar extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zRelacionar));
+		Events.postEvent(new Event("onClose", zRelacionarEmpresa));
 	}
 
 }

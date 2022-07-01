@@ -379,7 +379,7 @@
 					<listcell label="@{lista.getNum_documento}"
 						style="text-align: center !important;" />
 					<listcell label="@{lista.toStringSolicitante}" />
-					<listcell label="@{lista.getNom_empresa}" />
+					<listcell label="@{lista.getEmpresa.getNom_empresa}" />
 				</listitem>
 			</listbox>
 		</popup>

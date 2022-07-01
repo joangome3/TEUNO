@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.zkoss.zk.ui.Component;
@@ -15,6 +16,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Menuitem;
@@ -24,14 +26,15 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
 import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.extensiones.Fechas;
+import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
-import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
 import bp.aplicaciones.mensajes.Error;
 import bp.aplicaciones.mensajes.Informativos;
 import bp.aplicaciones.mensajes.Validaciones;
@@ -42,7 +45,7 @@ public class consultar extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Div zConsultar;
+	Window zConsultar;
 	@Wire
 	Button btnNuevo, btnRefrescar;
 	@Wire
@@ -52,13 +55,15 @@ public class consultar extends SelectorComposer<Component> {
 	@Wire
 	Combobox cmbLimite;
 	@Wire
-	Menuitem mSeguimiento, mSolicitar, mAccion;
+	Menuitem mModificar, mEstado;
 	@Wire
-	Menuseparator mSeparador1;
+	Menuseparator mSeparador1, mSeparador2;
 	@Wire
 	Div winList;
 
 	Window window;
+	
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	boolean ingresa_a_accion = false;
 
@@ -68,8 +73,6 @@ public class consultar extends SelectorComposer<Component> {
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
-	String consultar, insertar, modificar, relacionar, desactivar, eliminar, solicitar, revisar, aprobar, ejecutar;
-
 	validar_datos validar = new validar_datos();
 
 	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
@@ -78,6 +81,8 @@ public class consultar extends SelectorComposer<Component> {
 
 	Informativos informativos = new Informativos();
 	Error error = new Error();
+
+	String consultar, insertar, modificar, relacionar, desactivar, eliminar, solicitar, revisar, aprobar, ejecutar;
 
 	List<modelo_localidad> listaLocalidad = new ArrayList<modelo_localidad>();
 	List<modelo_perfil> listaPerfil = new ArrayList<modelo_perfil>();
@@ -108,9 +113,8 @@ public class consultar extends SelectorComposer<Component> {
 			btnNuevo.setVisible(false);
 		}
 		txtBuscar.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
-			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtBuscar.setText(txtBuscar.getText().toUpperCase());
+				txtBuscar.setText(txtBuscar.getText().toUpperCase().trim());
 			}
 		});
 	}
@@ -118,11 +122,15 @@ public class consultar extends SelectorComposer<Component> {
 	public List<modelo_localidad> obtenerLocalidades() {
 		return listaLocalidad;
 	}
+	
+	public List<modelo_localidad> getLocalidades() {
+		ListModelList<modelo_localidad> listado = new  ListModelList<modelo_localidad>(listaLocalidad);
+		return listado;
+	}
 
 	public void cargarLocalidades() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String criterio = txtBuscar.getText();
-		listaLocalidad = consultasABaseDeDatos.cargarLocalidades(criterio, 1, 0,
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		listaLocalidad = consultasABaseDeDatos.consultarLocalidades(0, 0, "", "",
+				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()), 1);
 		binder.loadComponent(lbxLocalidades);
 	}
 
@@ -220,9 +228,14 @@ public class consultar extends SelectorComposer<Component> {
 	}
 
 	public void buscarLocalidades() throws ClassNotFoundException, FileNotFoundException, IOException {
-		String criterio = txtBuscar.getText();
-		listaLocalidad = consultasABaseDeDatos.cargarLocalidades(criterio, 1, 0,
-				Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString()));
+		long id1 = 0;
+		long id2 = 0;
+		String criterio1 = "";
+		String criterio2 = "";
+		int limite = 0;
+		criterio1 = txtBuscar.getText().trim();
+		limite = Integer.valueOf(cmbLimite.getSelectedItem().getValue().toString());
+		listaLocalidad = consultasABaseDeDatos.consultarLocalidades(id1, id2, criterio1, criterio2, limite, 1);
 		binder.loadComponent(lbxLocalidades);
 	}
 
@@ -238,111 +251,18 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		lbxLocalidades.setSelectedIndex(indice);
-		if (validarSiExisteSolicitudCreada(listaLocalidad.get(indice).getId_localidad()) == false
-				&& validarSiExisteSolicitudPendienteEjecucion(listaLocalidad.get(indice).getId_localidad()) == false
-				&& validarSiExisteSolicitudPendienteActualizacion(
-						listaLocalidad.get(indice).getId_localidad()) == false) {
-			mSeguimiento.setVisible(false);
-			mSeguimiento.setDisabled(true);
-			mSeparador1.setVisible(false);
-			mSolicitar.setVisible(true);
-			mSolicitar.setDisabled(false);
-			mAccion.setVisible(false);
-			mAccion.setDisabled(true);
-		} else {
-			mSeguimiento.setVisible(true);
-			mSeguimiento.setDisabled(false);
-			mSeparador1.setVisible(false);
-			mSolicitar.setVisible(false);
-			mSolicitar.setDisabled(true);
-			mAccion.setVisible(false);
-			mAccion.setDisabled(true);
+		if (listaLocalidad.get(indice).getEst_localidad().equals("AE")) {
+			mEstado.setLabel(" - Inactivar");
+			mEstado.setIconSclass("z-icon-times-circle-o");
 		}
-		if (validarSiExisteSolicitudPendienteEjecucion(listaLocalidad.get(indice).getId_localidad()) == true) {
-			mSeparador1.setVisible(true);
-			mAccion.setVisible(true);
-			mAccion.setDisabled(false);
-			if (validarTipoSolicitud(listaLocalidad.get(indice).getId_localidad()) == 2) {
-				mAccion.setLabel(" - Actualizar");
-				mAccion.setIconSclass("z-icon-refresh");
-			} else if (validarTipoSolicitud(listaLocalidad.get(indice).getId_localidad()) == 3) {
-				mAccion.setLabel(" - Activar");
-				mAccion.setIconSclass("z-icon-font");
-			} else if (validarTipoSolicitud(listaLocalidad.get(indice).getId_localidad()) == 4) {
-				mAccion.setLabel(" - Inactivar");
-				mAccion.setIconSclass("z-icon-italic");
-			}
-		}
-		if (validarSiExisteSolicitudPendienteActualizacion(listaLocalidad.get(indice).getId_localidad()) == true) {
-			mSeparador1.setVisible(true);
-			mAccion.setVisible(true);
-			mAccion.setDisabled(false);
-			mAccion.setLabel(" - Actualizar");
-			mAccion.setIconSclass("z-icon-refresh");
+		if (listaLocalidad.get(indice).getEst_localidad().equals("IE")) {
+			mEstado.setLabel(" - Activar");
+			mEstado.setIconSclass("z-icon-check-circle-o");
 		}
 	}
 
-	public boolean validarSiExisteSolicitudCreada(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_creada = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("P") || estado.equals("R")) {
-					existe_solicitud_creada = true;
-				}
-			}
-		}
-		return existe_solicitud_creada;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteEjecucion(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("S")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteActualizacion(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("T")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
-	}
-
-	public int validarTipoSolicitud(long id_registro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		int tipo_solicitud = 0;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento, id_registro, 7);
-		if (solicitud != null) {
-			tipo_solicitud = (int) solicitud.getId_tip_solicitud();
-		}
-		return tipo_solicitud;
-	}
-
-	@Listen("onClick=#mSeguimiento")
-	public void onClick$mSeguimiento() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+	@Listen("onClick=#mModificar")
+	public void onClick$mModificar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (lbxLocalidades.getSelectedItem() == null) {
 			return;
 		}
@@ -350,110 +270,17 @@ public class consultar extends SelectorComposer<Component> {
 			return;
 		}
 		int indice = lbxLocalidades.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaLocalidad.get(indice).getId_localidad(), 7);
-		if (solicitud == null) {
-			return;
-		} else {
-			if (solicitud.getId_solicitud() == 0) {
-				return;
-			}
-		}
-		Sessions.getCurrent().setAttribute("objeto", solicitud);
-		Sessions.getCurrent().setAttribute("id_mantenimiento", id_mantenimiento);
-		Sessions.getCurrent().setAttribute("id_opcion", (long) 0);
-		Sessions.getCurrent().setAttribute("tipo_solicitud", 0);
-		window = (Window) Executions.createComponents("/mantenimientos/solicitud/seguimiento.zul", null, null);
-		mSeguimiento.setDisabled(true);
-		ingresa_a_accion = true;
-		if (window instanceof Window) {
-			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-				@Override
-				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mSeguimiento.setDisabled(false);
-					ingresa_a_accion = false;
-				}
-			});
-		}
-		window.setParent(winList);
-	}
-
-	@Listen("onClick=#mSolicitar")
-	public void onClick$mSolicitar() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (lbxLocalidades.getSelectedItem() == null) {
-			return;
-		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
-		int indice = lbxLocalidades.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaLocalidad.get(indice).getId_localidad(), 7);
-		if (solicitud != null) {
-			if (solicitud.getId_solicitud() != 0) {
-				return;
-			}
-		}
-		Sessions.getCurrent().setAttribute("objeto", listaLocalidad.get(indice));
-		Sessions.getCurrent().setAttribute("id_mantenimiento", id_mantenimiento);
-		Sessions.getCurrent().setAttribute("id_opcion", (long) 0);
-		Sessions.getCurrent().setAttribute("tipo_solicitud", validarTipoEnEstado(indice));
-		window = (Window) Executions.createComponents("/mantenimientos/solicitud/solicitar.zul", null, null);
-		mSolicitar.setDisabled(true);
-		ingresa_a_accion = true;
-		if (window instanceof Window) {
-			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
-				@Override
-				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mSolicitar.setDisabled(false);
-					ingresa_a_accion = false;
-				}
-			});
-		}
-		window.setParent(winList);
-	}
-
-	@Listen("onClick=#mAccion")
-	public void onClick$mAccion() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (lbxLocalidades.getSelectedItem() == null) {
-			return;
-		}
-		if (ingresa_a_accion == true) {
-			return;
-		}
-		int indice = lbxLocalidades.getSelectedIndex();
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", id_mantenimiento,
-				listaLocalidad.get(indice).getId_localidad(), 7);
-		if (solicitud == null) {
-			return;
-		} else {
-			if (solicitud.getId_solicitud() == 0) {
-				return;
-			}
-		}
 		Sessions.getCurrent().setAttribute("localidad", listaLocalidad.get(indice));
-		if (validarSiExisteSolicitudPendienteEjecucion(listaLocalidad.get(indice).getId_localidad()) == true) {
-			if (validarTipoSolicitud(listaLocalidad.get(indice).getId_localidad()) == 2) {
-				window = (Window) Executions.createComponents("/mantenimientos/localidad/modificar.zul", null, null);
-			} else if (validarTipoSolicitud(listaLocalidad.get(indice).getId_localidad()) == 3) {
-				window = (Window) Executions.createComponents("/mantenimientos/localidad/activar.zul", null, null);
-			} else if (validarTipoSolicitud(listaLocalidad.get(indice).getId_localidad()) == 4) {
-				window = (Window) Executions.createComponents("/mantenimientos/localidad/desactivar.zul", null, null);
-			}
-		}
-		if (validarSiExisteSolicitudPendienteActualizacion(listaLocalidad.get(indice).getId_localidad()) == true) {
-			window = (Window) Executions.createComponents("/mantenimientos/localidad/modificar.zul", null, null);
-		}
-		mAccion.setDisabled(true);
+		window = (Window) Executions.createComponents("/mantenimientos/localidad/modificar.zul", null, null);
+		mModificar.setDisabled(true);
+		lbxLocalidades.setDisabled(true);
 		ingresa_a_accion = true;
 		if (window instanceof Window) {
 			window.addEventListener("onClose", new EventListener<org.zkoss.zk.ui.event.Event>() {
 				@Override
 				public void onEvent(org.zkoss.zk.ui.event.Event arg0) throws Exception {
-					mAccion.setDisabled(false);
+					mModificar.setDisabled(false);
+					lbxLocalidades.setDisabled(false);
 					buscarLocalidades();
 					ingresa_a_accion = false;
 				}
@@ -461,19 +288,35 @@ public class consultar extends SelectorComposer<Component> {
 		}
 		window.setParent(winList);
 	}
-
-	public int validarTipoEnEstado(int indice) {
-		int tipo = 0;
-		if (listaLocalidad.get(indice).getEst_localidad().charAt(0) == 'A') {
-			tipo = 2;
+	
+	@Listen("onClick=#mEstado")
+	public void onClick$mEstado() throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+		if (lbxLocalidades.getSelectedItem() == null) {
+			return;
 		}
-		if (listaLocalidad.get(indice).getEst_localidad().charAt(0) == 'P') {
-			tipo = 1;
+		int indice = lbxLocalidades.getSelectedIndex();
+		String estado = "";
+		if (listaLocalidad.get(indice).getEst_localidad().equals("AE")) {
+			estado = "IE";
 		}
-		if (listaLocalidad.get(indice).getEst_localidad().charAt(0) == 'I') {
-			tipo = 3;
+		if (listaLocalidad.get(indice).getEst_localidad().equals("IE")) {
+			estado = "AE";
 		}
-		return tipo;
+		modelo_localidad localidad = new modelo_localidad();
+		dao_localidad dao = new dao_localidad();
+		localidad = listaLocalidad.get(indice);
+		localidad.setEst_localidad(estado);
+		localidad.setUsu_modifica(user);
+		localidad.setFec_modifica(fechas.obtenerTimestampDeDate(new Date()));
+		dao.actualizarLocalidad(localidad);
+		Clients.showNotification("La localidad se actualizó correctamente.", Clients.NOTIFICATION_TYPE_INFO, dSolicitudes,
+				"dSolicitudes", 4000, true);
+		buscarLocalidades();
+		int tamanio_lista = lbxLocalidades.getItemCount();
+		if (indice >= tamanio_lista) {
+			return;
+		}
+		lbxLocalidades.setSelectedIndex(indice);
 	}
 
 	@Listen("onClick=#btnNuevo")

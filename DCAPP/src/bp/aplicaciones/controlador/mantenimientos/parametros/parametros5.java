@@ -23,7 +23,7 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Listbox;
 
 import bp.aplicaciones.controlador.validar_datos;
-import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_opcion;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_5;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
@@ -64,6 +64,8 @@ public class parametros5 extends SelectorComposer<Component> {
 	List<modelo_parametros_generales_5> listaRelacionUsuario = new ArrayList<modelo_parametros_generales_5>();
 
 	long id_opcion = 10;
+	
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -80,7 +82,7 @@ public class parametros5 extends SelectorComposer<Component> {
 			btnGrabar.setVisible(false);
 		}
 		cargarOpciones();
-		cargarUsuarios("", 0, 0);
+		cargarUsuarios();
 	}
 
 	public void cargarPerfil() throws ClassNotFoundException, FileNotFoundException, IOException {
@@ -106,18 +108,9 @@ public class parametros5 extends SelectorComposer<Component> {
 		}
 	}
 
-	public void cargarUsuarios(String criterio, int tipo, long id)
-			throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_usuario dao = new dao_usuario();
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 1, 0);
-			binder.loadComponent(lbxUsuarios);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 	}
-
 	public void inicializarPermisos() {
 		if (listaPerfil.size() == 1) {
 			if (listaPerfil.get(0).getConsultar().equals("S")) {

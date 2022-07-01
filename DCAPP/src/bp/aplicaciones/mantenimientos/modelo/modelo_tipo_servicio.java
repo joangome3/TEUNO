@@ -1,23 +1,70 @@
 package bp.aplicaciones.mantenimientos.modelo;
 
 import java.sql.Timestamp;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "sibod_tipo_servicio")
 public class modelo_tipo_servicio {
 
+	@Id
+	@Column(name = "id_tipo_servicio", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id_tipo_servicio;
+	@Column(name = "nom_tipo_servicio", length = 500)
 	private String nom_tipo_servicio;
+	@Column(name = "des_tipo_servicio", length = 500)
 	private String des_tipo_servicio;
+	@Column(name = "est_tipo_servicio", length = 5)
 	private String est_tipo_servicio;
+	@Column(name = "usu_ingresa", length = 20)
 	private String usu_ingresa;
+	@Column(name = "fec_ingresa")
 	private Timestamp fec_ingresa;
+	@Column(name = "usu_modifica", length = 20)
 	private String usu_modifica;
+	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
+
+	@OneToMany(mappedBy = "tipo_servicio", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_parametros_generales_10> parametros_10;
 
 	/**
 	 * 
 	 */
 	public modelo_tipo_servicio() {
 		super();
+	}
+
+	/**
+	 * @param nom_tipo_servicio
+	 * @param des_tipo_servicio
+	 * @param est_tipo_servicio
+	 * @param usu_ingresa
+	 * @param fec_ingresa
+	 * @param usu_modifica
+	 * @param fec_modifica
+	 */
+	public modelo_tipo_servicio(String nom_tipo_servicio, String des_tipo_servicio, String est_tipo_servicio,
+			String usu_ingresa, Timestamp fec_ingresa, String usu_modifica, Timestamp fec_modifica) {
+		super();
+		this.nom_tipo_servicio = nom_tipo_servicio;
+		this.des_tipo_servicio = des_tipo_servicio;
+		this.est_tipo_servicio = est_tipo_servicio;
+		this.usu_ingresa = usu_ingresa;
+		this.fec_ingresa = fec_ingresa;
+		this.usu_modifica = usu_modifica;
+		this.fec_modifica = fec_modifica;
 	}
 
 	/**
@@ -156,15 +203,29 @@ public class modelo_tipo_servicio {
 		this.fec_modifica = fec_modifica;
 	}
 
-	@Override
-	public String toString() {
-		return "sibod_tipo_servicio [id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio=" + nom_tipo_servicio
-				+ ", des_tipo_servicio=" + des_tipo_servicio + ", est_tipo_servicio=" + est_tipo_servicio + ", usu_ingresa="
-				+ usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica + ", fec_modifica="
-				+ fec_modifica + "]";
+	/**
+	 * @return the parametros_10
+	 */
+	public List<modelo_parametros_generales_10> getParametros_10() {
+		return parametros_10;
 	}
 
-	public String toStringEstado() {
+	/**
+	 * @param parametros_10 the parametros_10 to set
+	 */
+	public void setParametros_10(List<modelo_parametros_generales_10> parametros_10) {
+		this.parametros_10 = parametros_10;
+	}
+
+	@Override
+	public String toString() {
+		return "modelo_tipo_servicio [id_tipo_servicio=" + id_tipo_servicio + ", nom_tipo_servicio=" + nom_tipo_servicio
+				+ ", des_tipo_servicio=" + des_tipo_servicio + ", est_tipo_servicio=" + est_tipo_servicio
+				+ ", usu_ingresa=" + usu_ingresa + ", fec_ingresa=" + fec_ingresa + ", usu_modifica=" + usu_modifica
+				+ ", fec_modifica=" + fec_modifica + "]";
+	}
+
+	public String mostrarEstado() {
 		String estado = "";
 		if (est_tipo_servicio.charAt(0) == 'A') {
 			estado = "ACTIVO";
@@ -176,6 +237,22 @@ public class modelo_tipo_servicio {
 			estado = "INACTIVO";
 		}
 		return estado;
+	}
+
+	/* Estilos en campos */
+
+	public String estiloMostrarEstado() {
+		String estilo = "";
+		if (est_tipo_servicio.charAt(0) == 'A') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #CCFFE1;";
+		}
+		if (est_tipo_servicio.charAt(0) == 'P') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FAF8D5;";
+		}
+		if (est_tipo_servicio.charAt(0) == 'I') {
+			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FFDDDD;";
+		}
+		return estilo;
 	}
 
 }

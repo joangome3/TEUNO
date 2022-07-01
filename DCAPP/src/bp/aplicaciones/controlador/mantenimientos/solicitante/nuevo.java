@@ -3,8 +3,8 @@ package bp.aplicaciones.controlador.mantenimientos.solicitante;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -17,20 +17,29 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
+import org.zkoss.zul.ComboitemRenderer;
+import org.zkoss.zul.ListModel;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.ListModels;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
-import bp.aplicaciones.mantenimientos.DAO.dao_empresa;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_solicitante;
-import bp.aplicaciones.mantenimientos.DAO.dao_tipo_documento;
 import bp.aplicaciones.mantenimientos.modelo.modelo_empresa;
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitante;
 import bp.aplicaciones.mantenimientos.modelo.modelo_tipo_documento;
+import bp.aplicaciones.mensajes.Error;
+import bp.aplicaciones.mensajes.Informativos;
+import bp.aplicaciones.mensajes.Validaciones;
 
 @SuppressWarnings({ "serial", "deprecation" })
 public class nuevo extends SelectorComposer<Component> {
@@ -38,13 +47,15 @@ public class nuevo extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zNuevo;
+	Window zNuevoSolicitante;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtDocumento, txtNombres, txtApellidos;
+	Textbox txtDocumento, txtNombres, txtApellidos;
 	@Wire
 	Combobox cmbEmpresa, cmbTipoDocumento;
+
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
 
 	List<modelo_empresa> listaEmpresa = new ArrayList<modelo_empresa>();
 	List<modelo_tipo_documento> listaTipoDocumento = new ArrayList<modelo_tipo_documento>();
@@ -60,6 +71,16 @@ public class nuevo extends SelectorComposer<Component> {
 
 	validar_datos validar = new validar_datos();
 
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
+	Fechas fechas = new Fechas();
+	Validaciones validaciones = new Validaciones();
+
+	Informativos informativos = new Informativos();
+	Error error = new Error();
+
+	@SuppressWarnings("rawtypes")
+	private ListModel mySubModel;
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -68,7 +89,7 @@ public class nuevo extends SelectorComposer<Component> {
 		txtDocumento.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtDocumento.setText(validar.soloNumeros(txtDocumento.getText()));
+				txtDocumento.setText(validar.soloNumeros(txtDocumento.getText().trim()));
 			}
 		});
 		txtNombres.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
@@ -83,7 +104,6 @@ public class nuevo extends SelectorComposer<Component> {
 				txtApellidos.setText(txtApellidos.getText().toUpperCase().trim());
 			}
 		});
-		obtenerId();
 		cargarEmpresas();
 		cargarTipoDocumentos();
 	}
@@ -96,62 +116,78 @@ public class nuevo extends SelectorComposer<Component> {
 		return listaTipoDocumento;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void cargarEmpresas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_empresa dao = new dao_empresa();
-		String criterio = "";
-		try {
-			listaEmpresa = dao.obtenerEmpresas(criterio, 1, String.valueOf(id_dc), "1", 0);
-			binder.loadComponent(cmbEmpresa);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar las empresas. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar empresa ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaEmpresa = consultasABaseDeDatos.consultarEmpresas(id_dc, id_mantenimiento, "", "", 0, 12);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_empresa bean = (modelo_empresa) o2;
+				return (bean.getNom_empresa()).contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaEmpresa), myComparator, 15);
+		cmbEmpresa.setModel(mySubModel);
+		ComboitemRenderer<modelo_empresa> myRenderer = new ComboitemRenderer<modelo_empresa>() {
+			@Override
+			public void render(Comboitem item, modelo_empresa bean, int index) throws Exception {
+				item.setLabel(bean.getNom_empresa());
+				item.setValue(bean);
+			}
+		};
+		cmbEmpresa.setItemRenderer(myRenderer);
+		binder.loadComponent(cmbEmpresa);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void cargarTipoDocumentos() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_tipo_documento dao = new dao_tipo_documento();
-		String criterio = "";
-		try {
-			listaTipoDocumento = dao.obtenerTipoDocumentos(criterio);
-			binder.loadComponent(cmbTipoDocumento);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los tipo de documentos. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cagar tipo de documento ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
-	}
-
-	public void obtenerId() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_solicitante dao = new dao_solicitante();
-		try {
-			id = dao.obtenerNuevoId();
-			txtId.setText(String.valueOf(id));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			Messagebox.show("Error al obtener el nuevo Id. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Obtener ID ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaTipoDocumento = consultasABaseDeDatos.consultarTipoDocumentos(0, 0, "", "", 0, 2);
+		Comparator myComparator = new Comparator() {
+			@Override
+			public int compare(Object o1, Object o2) {
+				String input = (String) o1;
+				modelo_tipo_documento bean = (modelo_tipo_documento) o2;
+				return (bean.getNom_tipo_documento()).contains(input.toUpperCase().trim()) ? 0 : 1;
+			}
+		};
+		mySubModel = ListModels.toListSubModel(new ListModelList(listaTipoDocumento), myComparator, 15);
+		cmbTipoDocumento.setModel(mySubModel);
+		ComboitemRenderer<modelo_tipo_documento> myRenderer = new ComboitemRenderer<modelo_tipo_documento>() {
+			@Override
+			public void render(Comboitem item, modelo_tipo_documento bean, int index) throws Exception {
+				item.setLabel(bean.getNom_tipo_documento());
+				item.setValue(bean);
+			}
+		};
+		cmbTipoDocumento.setItemRenderer(myRenderer);
+		binder.loadComponent(cmbTipoDocumento);
 	}
 
 	@SuppressWarnings("static-access")
 	@Listen("onBlur=#txtDocumento")
 	public void onBlur$txtDocumento()
-			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		if (cmbTipoDocumento.getSelectedItem() == null) {
-			return;
-		}
+			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		if (txtDocumento.getText().length() <= 0) {
 			return;
 		}
-		if (cmbTipoDocumento.getSelectedItem().getValue().toString().equals("2")) {
-			if (validar.validarCedula(txtDocumento.getText()) == 0) {
-				txtDocumento.setErrorMessage("El numero de documento es incorrecto.");
-				return;
+		if (cmbTipoDocumento.getSelectedItem() != null) {
+			modelo_tipo_documento tipo_documento = (modelo_tipo_documento) cmbTipoDocumento.getSelectedItem()
+					.getValue();
+			if (tipo_documento.getId_tipo_documento() == 2) {
+				if (validar.validarCedula(txtDocumento.getText()) == 0) {
+					txtDocumento.setFocus(true);
+					Clients.showNotification("El número de documento es incorrecto.", Clients.NOTIFICATION_TYPE_WARNING,
+							dSolicitudes, "top_right", 2000, true);
+					return;
+				}
 			}
 		}
 		dao_solicitante dao = new dao_solicitante();
-		if (dao.obtenerSolicitantes(txtDocumento.getText(), 3, "", "", 0).size() > 0) {
-			txtDocumento.setErrorMessage("El numero de documento ya se encuentra registrado.");
+		if (dao.consultarSolicitantes(0, 0, txtDocumento.getText(), "", 0, 3).size() > 0) {
 			txtDocumento.setFocus(true);
+			Clients.showNotification("El número de documento ya se encuentra registrado.",
+					Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 	}
@@ -161,40 +197,51 @@ public class nuevo extends SelectorComposer<Component> {
 	public void onClick$btnGrabar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (cmbTipoDocumento.getSelectedItem() == null) {
-			cmbTipoDocumento.setErrorMessage("Seleccione un tipo de documento.");
+			Clients.showNotification("Seleccione el tipo de documento.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			cmbTipoDocumento.setFocus(true);
 			return;
 		}
 		if (txtDocumento.getText().length() <= 0) {
-			txtDocumento.setErrorMessage("Ingrese el numero de documento.");
+			Clients.showNotification("Seleccione el número de documento.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			txtDocumento.setFocus(true);
 			return;
 		}
-		if (cmbTipoDocumento.getSelectedItem().getValue().toString().equals("2")) {
-			if (validar.validarCedula(txtDocumento.getText()) == 0) {
-				txtDocumento.setErrorMessage("El numero de documento es incorrecto.");
-				txtDocumento.setFocus(true);
-				return;
+		if (cmbTipoDocumento.getSelectedItem() != null) {
+			modelo_tipo_documento tipo_documento = (modelo_tipo_documento) cmbTipoDocumento.getSelectedItem()
+					.getValue();
+			if (tipo_documento.getId_tipo_documento() == 2) {
+				if (validar.validarCedula(txtDocumento.getText()) == 0) {
+					txtDocumento.setFocus(true);
+					Clients.showNotification("El número de documento es incorrecto.", Clients.NOTIFICATION_TYPE_WARNING,
+							dSolicitudes, "top_right", 2000, true);
+					return;
+				}
 			}
 		}
 		dao_solicitante dao = new dao_solicitante();
-		if (dao.obtenerSolicitantes(txtDocumento.getText(), 3, "", "", 0).size() > 0) {
-			txtDocumento.setErrorMessage("El numero de documento ya se encuentra registrado.");
+		if (dao.consultarSolicitantes(0, 0, txtDocumento.getText(), "", 0, 3).size() > 0) {
 			txtDocumento.setFocus(true);
+			Clients.showNotification("El número de documento ya se encuentra registrado.",
+					Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 		if (txtNombres.getText().length() <= 0) {
-			txtNombres.setErrorMessage("Ingrese el nombre.");
+			Clients.showNotification("Ingrese el/los nombre(s).", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"top_right", 2000, true);
 			txtNombres.setFocus(true);
 			return;
 		}
 		if (txtApellidos.getText().length() <= 0) {
-			txtApellidos.setErrorMessage("Ingrese el apellido.");
+			Clients.showNotification("Ingrese el/los apellido(s).", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"top_right", 2000, true);
 			txtApellidos.setFocus(true);
 			return;
 		}
 		if (cmbEmpresa.getSelectedItem() == null) {
-			cmbEmpresa.setErrorMessage("Seleccione una empresa.");
+			Clients.showNotification("Seleccione la empresa.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes,
+					"top_right", 2000, true);
 			cmbEmpresa.setFocus(true);
 			return;
 		}
@@ -205,30 +252,27 @@ public class nuevo extends SelectorComposer<Component> {
 						if (event.getName().equals("onOK")) {
 							dao_solicitante dao = new dao_solicitante();
 							modelo_solicitante solicitante = new modelo_solicitante();
-							solicitante.setId_tip_documento(
-									Long.parseLong(cmbTipoDocumento.getSelectedItem().getValue().toString()));
-							solicitante
-									.setId_empresa(Long.parseLong(cmbEmpresa.getSelectedItem().getValue().toString()));
+							modelo_tipo_documento tipo_documento = (modelo_tipo_documento) cmbTipoDocumento
+									.getSelectedItem().getValue();
+							modelo_empresa empresa = (modelo_empresa) cmbEmpresa.getSelectedItem().getValue();
+							solicitante.setTipo_documento(tipo_documento);
 							solicitante.setNum_documento(txtDocumento.getText());
 							solicitante.setNom_solicitante(txtNombres.getText());
 							solicitante.setApe_solicitante(txtApellidos.getText());
-							solicitante.setEst_solicitante("PAC");
+							solicitante.setEmpresa(empresa);
+							solicitante.setEst_solicitante("AE");
 							solicitante.setUsu_ingresa(user);
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							solicitante.setFec_ingresa(timestamp);
+							solicitante.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							try {
 								dao.insertarSolicitante(solicitante);
-								Messagebox.show(
-										"El solicitante se guardo correctamente. \n\n No olvide crear las relaciones para el solicitante.",
-										".:: Nuevo solicitante ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+								Clients.showNotification("El solicitante se guardó correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "top_right", 4000);
 								limpiarCampos();
-								obtenerId();
 							} catch (Exception e) {
-								Messagebox.show(
+								Clients.showNotification(
 										"Error al guardar el solicitante. \n\n" + "Mensaje de error: \n\n"
 												+ e.getMessage(),
-										".:: Nuevo solicitante ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -238,7 +282,7 @@ public class nuevo extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zNuevo));
+		Events.postEvent(new Event("onClose", zNuevoSolicitante));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

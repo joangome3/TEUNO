@@ -267,8 +267,7 @@ public class revision3 extends SelectorComposer<Component> {
 
 	public void setearSolicitante(long id_solicitante)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
 		binder.loadComponent(lbxSolicitantes);
 		Iterator<modelo_solicitante> it = listaSolicitante.iterator();
 		int indice = 0;
@@ -295,8 +294,7 @@ public class revision3 extends SelectorComposer<Component> {
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
 		listaEmpresa = consultasABaseDeDatos.cargarEmpresas("", 2, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
 		listaTurno = consultasABaseDeDatos.cargarTurnos("A");
 		binder.loadComponent(lbxSolicitantes);
@@ -640,8 +638,8 @@ public class revision3 extends SelectorComposer<Component> {
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, IOException {
 		bdxSolicitantes.setText("");
 		bdxSolicitantes.setTooltiptext("");
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes(txtBuscarProveedor.getText().toString().trim(), 8,
-				String.valueOf(id_dc), String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc,
+				txtBuscarProveedor.getText().toUpperCase().toUpperCase().trim(), "", 0, 7);
 		lbxSolicitantes.clearSelection();
 		binder.loadComponent(lbxSolicitantes);
 	}

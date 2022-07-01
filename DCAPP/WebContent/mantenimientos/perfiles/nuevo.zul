@@ -1,41 +1,32 @@
 <?page title="Nuevo perfil" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<window title=".:: Nuevo perfil ::." border="normal" id="zNuevo"
-		closable="true"
+	<window title=".:: Nuevo perfil ::." border="normal"
+		id="zNuevoPerfil" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.perfiles.nuevo"
-		position="center, center" sizable="true" width="45%" height="70%"
-		maximizable="true" minimizable="false">
+		position="center, center" sizable="true" height="80%" width="768px"
+		maximizable="false" minimizable="false" contentStyle="overflow:auto"
+		shadow="false" mode="overlapped" focus="true"
+		action="show: slideDown;hide: slideUp">
 		<div height="100%" width="100%">
+		<toolbar>
+					<button id="btnGrabar"
+						image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+						autodisable="self" visible="true" />
+				</toolbar>
 			<borderlayout vflex="max" style="height: calc(100%);"
 				width="100%">
-				<center style="overflow: scroll;">
+				<center>
 					<grid>
 						<custom-attributes
 							org.zkoss.zul.nativebar="false" />
 						<columns>
-							<column width="50%"></column>
+							<column width="50%" align="right"></column>
 							<column width="50%"></column>
 						</columns>
 						<rows>
 							<row>
-								<cell colspan="2">
-									<div class="img-logo"></div>
-								</cell>
-							</row>
-							<row>
-								<cell colspan="2">
-									<div align="center">
-										<label value="ID:"
-											class="z-label-1" />
-										<vlayout>
-											<hlayout>
-												<textbox id="txtId"
-													width="220px" readonly="true" class="z-textbox-1" />
-											</hlayout>
-										</vlayout>
-									</div>
-								</cell>
+								<space></space>
 							</row>
 							<row>
 								<cell colspan="2">
@@ -45,7 +36,7 @@
 										<vlayout>
 											<hlayout>
 												<textbox id="txtNombre"
-													width="200px" rows="2" constraint="" class="z-textbox-2" />
+													width="400px" rows="3" constraint="" class="z-textbox-2" />
 												<image
 													src="/img/botones/ButtonPopup.png" tooltip="nom"
 													style="cursor: help; width: 16px; height: 16px;" />
@@ -57,7 +48,7 @@
 							<row>
 								<cell colspan="4">
 									<div align="center">
-										<groupbox>
+										<groupbox closable="false">
 											<caption label="Permisos"
 												style="text-align: center;">
 											</caption>
@@ -80,12 +71,12 @@
 													<row>
 														<space></space>
 														<label
-															value="Consultar:">
+															value="Consultar:" style="font-weight: bold;">
 														</label>
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkConsultar" />
+																id="chkConsultar" mold="switch"/>
 															<space
 																width="118px">
 															</space>
@@ -96,18 +87,18 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkSolicitar" />
+																id="chkSolicitar" mold="switch"/>
 														</cell>
 													</row>
 													<row>
 														<space></space>
 														<label
-															value="Insertar:">
+															value="Insertar:" style="font-weight: bold;">
 														</label>
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkInsertar" />
+																id="chkInsertar" mold="switch"/>
 															<space
 																width="122px">
 															</space>
@@ -118,19 +109,19 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkRevisar" />
+																id="chkRevisar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
 													<row>
 														<space></space>
 														<label
-															value="Modificar:">
+															value="Modificar:" style="font-weight: bold;">
 														</label>
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkModificar" />
+																id="chkModificar" mold="switch"/>
 															<space
 																width="116px">
 															</space>
@@ -141,19 +132,19 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkAprobar" />
+																id="chkAprobar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
 													<row>
 														<space></space>
 														<label
-															value="Relacionar:">
+															value="Relacionar:" style="font-weight: bold;">
 														</label>
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkRelacionar" />
+																id="chkRelacionar" mold="switch"/>
 															<space
 																width="116px">
 															</space>
@@ -164,19 +155,19 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkEjecutar" />
+																id="chkEjecutar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
 													<row>
 														<space></space>
 														<label
-															value="Desactivar:">
+															value="Desactivar:" style="font-weight: bold;">
 														</label>
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkDesactivar" />
+																id="chkDesactivar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -184,12 +175,12 @@
 														visible="false">
 														<space></space>
 														<label
-															value="Eliminar:">
+															value="Eliminar:" style="font-weight: bold;">
 														</label>
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkEliminar" />
+																id="chkEliminar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -197,13 +188,6 @@
 											</grid>
 										</groupbox>
 									</div>
-								</cell>
-							</row>
-							<row align="center">
-								<cell colspan="4">
-									<button id="btnGrabar"
-										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
-										autodisable="self" />
 								</cell>
 							</row>
 							<row>
@@ -217,6 +201,7 @@
 		<popup id="nom" width="300px">
 			<html>
 
+
 				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> El
 				nombre no puede repetirse con algun otro que ya se haya
@@ -224,6 +209,7 @@
 				font-style: italic; font-weight: bold;"> El sistema
 				validará que el nombre no se encuentre registrado.
 				</span> </p> ]]>
+				
 				
 
 			</html>

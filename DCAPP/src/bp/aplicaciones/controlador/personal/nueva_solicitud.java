@@ -248,11 +248,9 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
-		listaUsuario = consultasABaseDeDatos.cargarUsuarios(String.valueOf(id_dc), 4, 0);
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
-		listaProveedor = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
+		listaProveedor = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
 		listaCliente = consultasABaseDeDatos.cargarEmpresas("", 6, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
 		listaEmpresa = consultasABaseDeDatos.cargarEmpresas("", 10, String.valueOf(id_dc), "", 0);
@@ -275,8 +273,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 
 	public void setearSolicitante(long id_solicitante)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
 		binder.loadComponent(lbxSolicitantes);
 		Iterator<modelo_solicitante> it = listaSolicitante.iterator();
 		int indice = 0;
@@ -463,8 +460,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 	@Listen("onOK=#txtBuscarSolicitante")
 	public void onOK$txtBuscarSolicitante()
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes(txtBuscarSolicitante.getText().toUpperCase(), 8,
-				String.valueOf(id_dc), String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc,
+				txtBuscarSolicitante.getText().toUpperCase().toUpperCase().trim(), "", 0, 7);
 		bdxSolicitantes.setText("");
 		lbxSolicitantes.clearSelection();
 		binder.loadComponent(lbxSolicitantes);
@@ -486,8 +483,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		if (cmbEmpresa.getSelectedItem() != null) {
 			id_empresa = Integer.valueOf(cmbEmpresa.getSelectedItem().getValue().toString());
 		}
-		listaProveedor = consultasABaseDeDatos.cargarSolicitantes(txtBuscarProveedor.getText().toUpperCase(), 8,
-				String.valueOf(id_dc), String.valueOf(id_opcion), id_empresa);
+		listaProveedor = listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc,
+				txtBuscarProveedor.getText().toUpperCase().toUpperCase().trim(), String.valueOf(id_empresa), 0, 7);
 		bdxProveedores.setText("");
 		lbxProveedores1.clearSelection();
 		binder.loadComponent(lbxProveedores1);
@@ -500,8 +497,8 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		if (cmbEmpresa.getSelectedItem() != null) {
 			id_empresa = Integer.valueOf(cmbEmpresa.getSelectedItem().getValue().toString());
 		}
-		listaProveedor = consultasABaseDeDatos.cargarSolicitantes(txtBuscarProveedor.getText().toUpperCase(), 8,
-				String.valueOf(id_dc), String.valueOf(id_opcion), id_empresa);
+		listaProveedor = listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc,
+				txtBuscarProveedor.getText().toUpperCase().toUpperCase().trim(), String.valueOf(id_empresa), 0, 7);
 		bdxProveedores.setText("");
 		lbxProveedores1.clearSelection();
 		binder.loadComponent(lbxProveedores1);
@@ -574,7 +571,7 @@ public class nueva_solicitud extends SelectorComposer<Component> {
 		lItem.appendChild(lCell);
 		/* EMPRESA */
 		lCell = new Listcell();
-		lCell.setLabel(listaProveedor.get(indice).getNom_empresa());
+		lCell.setLabel(listaProveedor.get(indice).getEmpresa().getNom_empresa());
 		lCell.setStyle("text-align: center !important;");
 		lItem.appendChild(lCell);
 		/* DISPOSITIVO */

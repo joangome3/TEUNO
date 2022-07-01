@@ -1,0 +1,77 @@
+<?page title="Nuevo Modulos" contentType="text/html;charset=UTF-8"?>
+<?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
+<zk>
+	<window border="normal" id="zNuevoOpcion" closable="true"
+		apply="bp.aplicaciones.controlador.mantenimientos.opcion.nuevo"
+		position="center, center" sizable="true" height="45%" width="768px"
+		maximizable="false" minimizable="false"
+		title=".:: Nuevo Módulo ::." shadow="false" mode="overlapped"
+		focus="true" action="show: slideDown;hide: slideUp">
+		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
+			<borderlayout vflex="max" style="height: calc(100%);"
+				width="100%">
+				<center style="overflow: scroll;">
+					<grid>
+						<custom-attributes
+							org.zkoss.zul.nativebar="false" />
+						<columns>
+							<column hflex="1"></column>
+							<column hflex="5"></column>
+							<column hflex="1"></column>
+						</columns>
+						<rows>
+							<row>
+								<separator></separator>
+							</row>
+							<row>
+								<separator></separator>
+							</row>
+							<row>
+								<separator></separator>
+								<cell colspan="1">
+									<div align="center">
+										<label value="* Nombre:"
+											class="z-label-1" />
+										<vlayout>
+											<hlayout>
+												<textbox id="txtNombre"
+													width="425px" rows="3" maxlength="100" />
+												<image
+													src="/img/botones/ButtonPopup.png" tooltip="nom"
+													style="cursor: help; width: 16px; height: 16px;" />
+											</hlayout>
+										</vlayout>
+									</div>
+								</cell>
+								<separator></separator>
+							</row>
+							<row>
+								<separator></separator>
+							</row>
+							<row>
+								<separator></separator>
+							</row>
+						</rows>
+					</grid>
+				</center>
+			</borderlayout>
+		</div>
+		<popup id="nom" width="300px">
+			<html>
+
+				<![CDATA[ <p style="color: black; font-size: 12px;"> El
+				nombre no puede repetirse con algun otro que ya se haya
+				registrado. <span style="color: black; font-size: 12px;
+				font-style: italic; font-weight: bold;"> El sistema
+				validará que el nombre no se encuentre registrado.
+				</span> </p> ]]>
+	
+			</html>
+		</popup>
+	</window>
+</zk>

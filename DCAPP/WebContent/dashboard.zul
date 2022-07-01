@@ -93,16 +93,24 @@
 							</menu>
 							<menu
 								image="/img/botones/ButtonSettings1.png"
-								label=" - CONFIGURACIONES" id="tMantenimientos">
+								label=" - CONFIGURACIONES" id="tMantenimientos" class="m-item_a">
 								<menupopup>
 									<menu
 										image="/img/botones/ButtonAdministrator2.png"
 										label=" - Administración" height="35px" class="m-item_a">
 										<menupopup>
-											<menuitem
-												image="/img/botones/ButtonParameters1.png"
+											<menu image="/img/botones/ButtonParameters1.png"
 												label=" - Parametros generales"
-												id="tcMantenimientoParametros" height="35px" class="m-item" />
+												id="tMantenimientoParametros" height="35px" class="m-item_a">
+												<menupopup>
+													<menuitem
+												image="/img/botones/ButtonGroup1.png"
+												label=" - Permitir registro manual de servicio"
+												id="tcMantenimientoParametros1" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+												</menupopup>
+											</menu>
 											<menuseparator
 												visible="false" />
 											<menuitem
@@ -112,8 +120,23 @@
 											<menuseparator
 												visible="false" />
 											<menuitem
+												image="/img/botones/ButtonGroup1.png" label=" - Mantenimientos"
+												id="tcMantenimientoMantenimientos" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonGroup1.png" label=" - Módulos"
+												id="tcMantenimientoOpciones" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
 												image="/img/botones/ButtonGroup1.png" label=" - Perfiles"
 												id="tcMantenimientoPerfiles" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonGroup1.png" label=" - Tipo de servicios"
+												id="tcMantenimientoTipoServicios" height="35px" class="m-item" />
 										</menupopup>
 									</menu>
 									<menuseparator visible="false" />
@@ -129,6 +152,11 @@
 											<menuitem
 												image="/img/botones/ButtonCompany1.png" label=" - Empresas"
 												id="tcMantenimientoEmpresas" height="35px" class="m-item" />
+											<menuseparator
+												visible="false" />
+											<menuitem
+												image="/img/botones/ButtonGroup1.png" label=" - Tipo de documento"
+												id="tcMantenimientoTipoDocumentos" height="35px" class="m-item" />
 											<menuseparator
 												visible="false" />
 											<menuitem
@@ -281,17 +309,14 @@
 						</menubar>
 					</div>
 					<div align="right" class="m_botones">
-						<combobox width="210px" id="cmbLocalidad"
-							model="@{zDashboard$dashboard.obtenerLocalidades}" readonly="true"
-							disabled="false">
-							<comboitem self="@{each=lista}"
-								label="@{lista.getNom_localidad}"
-								value="@{lista.getId_localidad}">
-							</comboitem>
+						<combobox width="250px" id="cmbLocalidad"
+							readonly="false" disabled="false" autodrop="true"
+							autocomplete="false" buttonVisible="true">
 						</combobox>
 						<button id="btnUsuario"
-							image="/img/botones/ButtonUser1.png" tooltiptext="Información de usuario y sesión"
-							autodisable="self" style="background: rgb(2, 0, 36) !important;" />
+							image="/img/botones/ButtonUser1.png"
+							tooltiptext="Información de usuario y sesión" autodisable="self"
+							style="background: rgb(2, 0, 36) !important;" />
 						<button id="btnSalir"
 							image="/img/principal/btnExit2.png" tooltiptext="Cerrar sesión"
 							autodisable="self" style="background: rgb(2, 0, 36) !important;" />

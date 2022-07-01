@@ -2,7 +2,9 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<div id="zConsultar" width="100%" height="100%"
-		apply="bp.aplicaciones.controlador.mantenimientos.perfiles.consultar" align="center">
+		apply="bp.aplicaciones.controlador.mantenimientos.perfiles.consultar"
+		align="center">
+		<div id="winList" class="m-div-c"></div>
 		<grid>
 			<columns>
 				<column width="50%"></column>
@@ -33,8 +35,29 @@
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="205px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;" maxlength="50">
 											</textbox>
+											<space width="5px"></space>
+											<combobox id="cmbLimite"
+												readonly="true" width="100px"
+												tooltiptext="Seleccione la cantidad de registros a visualizar"
+												style="font-weight: bold !important; color:black !important; font-style: normal !important;">
+												<comboitem label="10"
+													value="10">
+												</comboitem>
+												<comboitem label="50"
+													value="50">
+												</comboitem>
+												<comboitem label="100"
+													value="100">
+												</comboitem>
+												<comboitem label="500"
+													value="500">
+												</comboitem>
+												<comboitem label="1000"
+													value="1000">
+												</comboitem>
+											</combobox>
 										</cell>
 									</row>
 								</rows>
@@ -47,73 +70,60 @@
 		<vlayout vflex="1">
 			<hlayout vflex="1" style="overflow: scroll;">
 				<listbox mold="paging" id="lbxPerfiles" vflex="true"
-					width="100%" sizedByContent="true">
+					sizedByContent="true" width="100%"
+					model="@{zConsultar$consultar.obtenerPerfiles}">
 					<listhead sizable="false"
 						style="overflow: scroll;">
 						<listheader label="ID"
 							style="text-align: center !important;">
 						</listheader>
-						<listheader label="NOMBRE"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="CONSULTAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="INSERTAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="MODIFICAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="RELACIONAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="DESACTIVAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="ELIMINAR"
-							style="text-align: center !important;" visible="false">
-						</listheader>
-						<listheader label="SOLICITAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="REVISAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="APROBAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="EJECUTAR"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="ACCIONES" align="center"
+						<listheader label="NOMBRE"></listheader>
+						<listheader label="ESTADO"
 							style="text-align: center !important;">
 						</listheader>
 					</listhead>
+					<listitem context="editPopup"
+						self="@{each=lista}">
+						<listcell label="@{lista.getId_perfil}" />
+						<listcell label="@{lista.getNom_perfil}" />
+						<listcell label="@{lista.mostrarEstado}"
+							style="@{lista.estiloMostrarEstado}" />
+					</listitem>
 				</listbox>
 			</hlayout>
 		</vlayout>
 	</div>
+
+	<menupopup id="editPopup">
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar el registro seleccionado."
+			visible="true" />
+		<menuseparator id="mSeparador1"></menuseparator>
+		<menuitem id="mRelacionar" iconSclass="z-icon-gears" label=" - Permisos" tooltiptext="Permite asignar permisos a mantenimientos y módulos" visible="true" />
+		<menuseparator id="mSeparador2"></menuseparator>
+		<menuitem id="mEstado" label="" tooltiptext="" visible="true" />
+	</menupopup>
+
 	<popup id="cons" width="300px">
 		<html>
 
-			<![CDATA[ <p style="color: black; font-size: 12px;">
-				Usted puede usar este campo para realizar consultas
-				entre los registros. </br> </br> <span style="color:
-				black; font-size: 12px; font-style: normal; font-weight:
-				bold;"> TIPS: </span> </br> 1.- Puede buscar de una
-				manera rapida entre los registros solo escribiendo parte
-				de la palabra y presionando la tecla Enter. </br> 2.-
-				Para mostrar todos los registros deje limpio el campo y
-				presione la tecla Enter. </br> 3.- Puede usar el boton
-				refrescar para actualizar la información de la lista.
-				</p> ]]>
+			<![CDATA[ <p style="color: black; font-size: 12px;"> Usted
+			puede usar este campo para realizar consultas entre los
+			registros. </br> </br> <span style="color: black; font-size:
+			12px; font-style: normal; font-weight: bold;"> TIPS: </span>
+			</br> 1.- Puede buscar de una manera rapida entre los
+			registros solo escribiendo parte de la palabra y presionando
+			la tecla Enter. </br> 2.- Para mostrar todos los registros
+			deje limpio el campo y presione la tecla Enter. </br> 3.-
+			Puede usar el boton refrescar para actualizar la información
+			de la lista. </p> ]]>
 
 			</html>
 	</popup>
 	<zscript>
 	<![CDATA[
-            lbxPerfiles.pagingChild.mold = "os".equals(lbxPerfiles.pagingChild.mold) ? "default" : "os";
-        ]]>
+	lbxPerfiles.pagingChild.mold = "os".equals(lbxPerfiles.pagingChild.mold) ? "default" : "os";
+]]>
 	</zscript>
 </zk>

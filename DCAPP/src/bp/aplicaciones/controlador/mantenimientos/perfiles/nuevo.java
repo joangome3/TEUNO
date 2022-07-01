@@ -3,7 +3,6 @@ package bp.aplicaciones.controlador.mantenimientos.perfiles;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.zkoss.zk.ui.Component;
@@ -15,6 +14,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkplus.databind.AnnotateDataBinder;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
@@ -23,6 +23,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Window;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.Fechas;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.modelo.modelo_perfil;
 
@@ -32,16 +33,20 @@ public class nuevo extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zNuevo;
+	Window zNuevoPerfil;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
-	Textbox txtId, txtNombre;
+	Textbox txtNombre;
 	@Wire
 	Checkbox chkConsultar, chkInsertar, chkModificar, chkRelacionar, chkDesactivar, chkEliminar, chkSolicitar,
 			chkRevisar, chkAprobar, chkEjecutar;
 
+	Button dSolicitudes = (Button) Sessions.getCurrent().getAttribute("btn");
+
 	long id = 0;
+
+	long id_mantenimiento = 7;
 
 	long id_user = (long) Sessions.getCurrent().getAttribute("id_user");
 	long id_perfil = (long) Sessions.getCurrent().getAttribute("id_perfil");
@@ -50,6 +55,7 @@ public class nuevo extends SelectorComposer<Component> {
 	String nom_ape_user = (String) Sessions.getCurrent().getAttribute("nom_ape_user");
 
 	validar_datos validar = new validar_datos();
+	Fechas fechas = new Fechas();
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -59,22 +65,9 @@ public class nuevo extends SelectorComposer<Component> {
 		txtNombre.addEventListener(Events.ON_BLUR, new EventListener<Event>() {
 			@SuppressWarnings("static-access")
 			public void onEvent(Event event) throws Exception {
-				txtNombre.setText(validar.soloLetrasyNumeros(txtNombre.getText()));
+				txtNombre.setText(txtNombre.getText().toUpperCase().trim());
 			}
 		});
-		obtenerId();
-	}
-
-	public void obtenerId() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_perfil dao = new dao_perfil();
-		try {
-			id = dao.obtenerNuevoId();
-			txtId.setText(String.valueOf(id));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			Messagebox.show("Error al obtener el nuevo Id. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Obtener ID ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
 	}
 
 	@Listen("onBlur=#txtNombre")
@@ -84,8 +77,10 @@ public class nuevo extends SelectorComposer<Component> {
 			return;
 		}
 		dao_perfil dao = new dao_perfil();
-		if (dao.obtenerPerfiles(txtNombre.getText(), 2, 0).size() > 0) {
-			txtNombre.setErrorMessage("El nombre ya se encuentra registrado.");
+		if (dao.consultarPerfiles(0, 0, txtNombre.getText(), "", 0, 3).size() > 0) {
+			txtNombre.setFocus(true);
+			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 			return;
 		}
 	}
@@ -95,13 +90,16 @@ public class nuevo extends SelectorComposer<Component> {
 	public void onClick$btnGrabar()
 			throws WrongValueException, ClassNotFoundException, FileNotFoundException, SQLException, IOException {
 		if (txtNombre.getText().length() <= 0) {
-			txtNombre.setErrorMessage("Ingrese el nombre.");
+			txtNombre.setFocus(true);
+			Clients.showNotification("Ingrese el nombre.", Clients.NOTIFICATION_TYPE_WARNING, dSolicitudes, "top_right",
+					2000, true);
 			return;
 		}
 		dao_perfil dao = new dao_perfil();
-		if (dao.obtenerPerfiles(txtNombre.getText(), 2, 0).size() > 0) {
-			txtNombre.setErrorMessage("El nombre ya se encuentra registrado.");
-			return;
+		if (dao.consultarPerfiles(0, 0, txtNombre.getText(), "", 0, 3).size() > 0) {
+			txtNombre.setFocus(true);
+			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
+					dSolicitudes, "top_right", 2000, true);
 		}
 		Messagebox.show("Esta seguro de guardar el perfil?", ".:: Nuevo perfil ::.", Messagebox.OK | Messagebox.CANCEL,
 				Messagebox.QUESTION, new org.zkoss.zk.ui.event.EventListener() {
@@ -161,21 +159,18 @@ public class nuevo extends SelectorComposer<Component> {
 							} else {
 								perfil.setEjecutar("N");
 							}
-							perfil.setEst_perfil("A");
+							perfil.setEst_perfil("AE");
 							perfil.setUsu_ingresa(user);
-							java.util.Date date = new Date();
-							Timestamp timestamp = new Timestamp(date.getTime());
-							perfil.setFec_ingresa(timestamp);
+							perfil.setFec_ingresa(fechas.obtenerTimestampDeDate(new Date()));
 							try {
 								dao.insertarPerfil(perfil);
-								Messagebox.show("El perfil se guardo correctamente.", ".:: Nuevo perfil ::.",
-										Messagebox.OK, Messagebox.EXCLAMATION);
+								Clients.showNotification("El perfil se guardó correctamente.",
+										Clients.NOTIFICATION_TYPE_INFO, dSolicitudes, "top_right", 4000);
 								limpiarCampos();
-								obtenerId();
 							} catch (Exception e) {
-								Messagebox.show(
+								Clients.showNotification(
 										"Error al guardar el perfil. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-										".:: Nuevo perfil ::.", Messagebox.OK, Messagebox.EXCLAMATION);
+										Clients.NOTIFICATION_TYPE_ERROR, dSolicitudes, "top_right", 4000, true);
 							}
 						}
 					}
@@ -184,7 +179,7 @@ public class nuevo extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zNuevo));
+		Events.postEvent(new Event("onClose", zNuevoPerfil));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

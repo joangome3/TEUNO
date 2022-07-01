@@ -22,13 +22,13 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Intbox;
 
 import bp.aplicaciones.controlador.validar_datos;
+import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 import bp.aplicaciones.mantenimientos.DAO.dao_categoria;
 import bp.aplicaciones.mantenimientos.DAO.dao_estado_bitacora;
 import bp.aplicaciones.mantenimientos.DAO.dao_localidad;
 import bp.aplicaciones.mantenimientos.DAO.dao_parametros_generales_1;
 import bp.aplicaciones.mantenimientos.DAO.dao_perfil;
 import bp.aplicaciones.mantenimientos.DAO.dao_tipo_ubicacion;
-import bp.aplicaciones.mantenimientos.DAO.dao_usuario;
 import bp.aplicaciones.mantenimientos.modelo.modelo_categoria;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_bitacora;
 import bp.aplicaciones.mantenimientos.modelo.modelo_localidad;
@@ -64,6 +64,8 @@ public class parametros1 extends SelectorComposer<Component> {
 	String consultar, insertar, modificar, relacionar, desactivar, eliminar, solicitar, revisar, aprobar, ejecutar;
 
 	validar_datos validar = new validar_datos();
+	
+	ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
 
 	List<modelo_parametros_generales_1> listaParametros = new ArrayList<modelo_parametros_generales_1>();
 	List<modelo_perfil> listaPerfil1 = new ArrayList<modelo_perfil>();
@@ -114,14 +116,7 @@ public class parametros1 extends SelectorComposer<Component> {
 	}
 
 	public void cargarUsuarios() throws ClassNotFoundException, FileNotFoundException, IOException {
-		dao_usuario dao = new dao_usuario();
-		String criterio = "";
-		try {
-			listaUsuario = dao.obtenerUsuarios(criterio, 1, 0);
-		} catch (SQLException e) {
-			Messagebox.show("Error al cargar los usuarios. \n\n" + "Mensaje de error: \n\n" + e.getMessage(),
-					".:: Cargar usuario ::.", Messagebox.OK, Messagebox.EXCLAMATION);
-		}
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
 	}
 
 	public void cargarPerfiles2() throws ClassNotFoundException, FileNotFoundException, IOException {

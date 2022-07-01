@@ -498,9 +498,8 @@ public class cerrar_registro extends SelectorComposer<Component> {
 	}
 
 	public void inicializarListas() throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaUsuario = consultasABaseDeDatos.cargarUsuarios(String.valueOf(id_dc), 4, 0);
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
+		listaUsuario = consultasABaseDeDatos.consultarUsuarios(id_dc, 0, "", "", 0, 2);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
 		listaParametros1 = consultasABaseDeDatos.cargarParametros1();
 		listaEstado = consultasABaseDeDatos.cargarEstadosBitacora("", 1, String.valueOf(id_dc));
 		listaCliente = consultasABaseDeDatos.cargarEmpresas("", 6, String.valueOf(id_dc), String.valueOf(id_opcion), 0);
@@ -596,8 +595,7 @@ public class cerrar_registro extends SelectorComposer<Component> {
 
 	public void setearSolicitante(long id_solicitante)
 			throws ClassNotFoundException, FileNotFoundException, IOException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes("", 8, String.valueOf(id_dc),
-				String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc, "", "", 0, 6);
 		binder.loadComponent(lbxSolicitantes);
 		Iterator<modelo_solicitante> it = listaSolicitante.iterator();
 		int indice = 0;
@@ -825,8 +823,8 @@ public class cerrar_registro extends SelectorComposer<Component> {
 	@Listen("onOK=#txtBuscarSolicitante")
 	public void onOK$txtBuscarSolicitante()
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
-		listaSolicitante = consultasABaseDeDatos.cargarSolicitantes(txtBuscarSolicitante.getText().toUpperCase(), 8,
-				String.valueOf(id_dc), String.valueOf(id_opcion), 0);
+		listaSolicitante = consultasABaseDeDatos.consultarSolicitantes(id_opcion, id_dc,
+				txtBuscarSolicitante.getText().toUpperCase().toUpperCase().trim(), "", 0, 7);
 		bdxSolicitantes.setText("");
 		lbxSolicitantes.clearSelection();
 		binder.loadComponent(lbxSolicitantes);
@@ -1054,13 +1052,13 @@ public class cerrar_registro extends SelectorComposer<Component> {
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		boolean tiene_permiso = false;
 		List<modelo_parametros_generales_10> listaParametros = new ArrayList<modelo_parametros_generales_10>();
-		listaParametros = consultasABaseDeDatos.cargarParametros10(String.valueOf(id_opcion),
-				String.valueOf(id_tipo_servicio), String.valueOf(id_dc), 1);
+		listaParametros = consultasABaseDeDatos.consultarParametrosGenerales10(id_opcion, id_tipo_servicio, "",
+				String.valueOf(id_dc), 0, 5);
 		Iterator<modelo_parametros_generales_10> it = listaParametros.iterator();
 		while (it.hasNext()) {
 			modelo_parametros_generales_10 modelo = it.next();
-			if (modelo.getId_tipo_servicio() == id_tipo_servicio) {
-				if (modelo.getSe_puede_eliminar().equals("S")) {
+			if (modelo.getTipo_servicio().getId_tipo_servicio() == id_tipo_servicio) {
+				if (modelo.isSe_puede_crear_modificar_eliminar() == true) {
 					tiene_permiso = true;
 				} else {
 					tiene_permiso = false;
@@ -1429,13 +1427,13 @@ public class cerrar_registro extends SelectorComposer<Component> {
 			throws ClassNotFoundException, FileNotFoundException, IOException {
 		boolean tiene_permiso = false;
 		List<modelo_parametros_generales_10> listaParametros = new ArrayList<modelo_parametros_generales_10>();
-		listaParametros = consultasABaseDeDatos.cargarParametros10(String.valueOf(id_opcion),
-				String.valueOf(id_tipo_servicio), String.valueOf(id_dc), 1);
+		listaParametros = consultasABaseDeDatos.consultarParametrosGenerales10(id_opcion, id_tipo_servicio, "",
+				String.valueOf(id_dc), 0, 5);
 		Iterator<modelo_parametros_generales_10> it = listaParametros.iterator();
 		while (it.hasNext()) {
 			modelo_parametros_generales_10 modelo = it.next();
-			if (modelo.getId_tipo_servicio() == id_tipo_servicio) {
-				if (modelo.getSe_puede_eliminar().equals("S")) {
+			if (modelo.getTipo_servicio().getId_tipo_servicio() == id_tipo_servicio) {
+				if (modelo.isSe_puede_crear_modificar_eliminar() == true) {
 					tiene_permiso = true;
 				} else {
 					tiene_permiso = false;

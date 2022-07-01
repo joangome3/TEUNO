@@ -674,7 +674,7 @@ public class modificar extends SelectorComposer<Component> {
 			throws ClassNotFoundException, FileNotFoundException, IOException, SQLException {
 		String usuario = "";
 		dao_usuario dao = new dao_usuario();
-		modelo_usuario _usuario = dao.obtenerUsuario(user, "", 1);
+		modelo_usuario _usuario = dao.consultarUsuarios(0, 0, user, "", 0, 3).get(0);
 		if (_usuario != null) {
 			usuario = _usuario.verNombreCompleto();
 		}

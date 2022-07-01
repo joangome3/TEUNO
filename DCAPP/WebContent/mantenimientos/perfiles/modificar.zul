@@ -2,14 +2,21 @@
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
 	<window title=".:: Modificar perfil ::." border="normal"
-		id="zModificar" closable="true"
+		id="zModificarPerfil" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.perfiles.modificar"
-		position="center, center" sizable="true" width="45%" height="70%"
-		maximizable="true" minimizable="false">
+		position="center, center" sizable="true" height="80%" width="768px"
+		maximizable="false" minimizable="false" shadow="false"
+		mode="overlapped" focus="true" action="show: slideDown;hide: slideUp"
+		contentStyle="overflow:auto">
 		<div height="100%" width="100%">
+			<toolbar>
+				<button id="btnGrabar"
+					image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
+					autodisable="self" visible="true" />
+			</toolbar>
 			<borderlayout vflex="max" style="height: calc(100%);"
 				width="100%">
-				<center style="overflow: scroll;">
+				<center>
 					<grid>
 						<custom-attributes
 							org.zkoss.zul.nativebar="false" />
@@ -19,9 +26,7 @@
 						</columns>
 						<rows>
 							<row>
-								<cell colspan="2">
-									<div class="img-logo"></div>
-								</cell>
+								<space></space>
 							</row>
 							<row>
 								<cell colspan="2">
@@ -57,7 +62,7 @@
 							<row>
 								<cell colspan="4">
 									<div align="center">
-										<groupbox>
+										<groupbox closable="false">
 											<caption label="Permisos"
 												style="text-align: center;">
 											</caption>
@@ -85,7 +90,7 @@
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkConsultar" />
+																id="chkConsultar" mold="switch"/>
 															<space
 																width="118px">
 															</space>
@@ -96,7 +101,7 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkSolicitar" />
+																id="chkSolicitar" mold="switch"/>
 														</cell>
 													</row>
 													<row>
@@ -107,7 +112,7 @@
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkInsertar" />
+																id="chkInsertar" mold="switch"/>
 															<space
 																width="122px">
 															</space>
@@ -118,7 +123,7 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkRevisar" />
+																id="chkRevisar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -130,7 +135,7 @@
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkModificar" />
+																id="chkModificar" mold="switch"/>
 															<space
 																width="116px">
 															</space>
@@ -141,7 +146,7 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkAprobar" />
+																id="chkAprobar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -153,7 +158,7 @@
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkRelacionar" />
+																id="chkRelacionar" mold="switch"/>
 															<space
 																width="116px">
 															</space>
@@ -164,7 +169,7 @@
 																width="13px">
 															</space>
 															<checkbox
-																id="chkEjecutar" />
+																id="chkEjecutar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -176,7 +181,7 @@
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkDesactivar" />
+																id="chkDesactivar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -189,7 +194,7 @@
 														<cell
 															colspan="2" class="z-cell-check">
 															<checkbox
-																id="chkEliminar" />
+																id="chkEliminar" mold="switch"/>
 														</cell>
 														<space></space>
 													</row>
@@ -197,13 +202,6 @@
 											</grid>
 										</groupbox>
 									</div>
-								</cell>
-							</row>
-							<row align="center">
-								<cell colspan="4">
-									<button id="btnGrabar"
-										image="/img/botones/ButtonSave.png" tooltiptext="Grabar"
-										autodisable="self" />
 								</cell>
 							</row>
 							<row>
@@ -217,6 +215,7 @@
 		<popup id="nom" width="300px">
 			<html>
 
+
 				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> El
 				nombre no puede repetirse con algun otro que ya se haya
@@ -224,6 +223,7 @@
 				font-style: italic; font-weight: bold;"> El sistema
 				validará que el nombre no se encuentre registrado.
 				</span> </p> ]]>
+				
 				
 
 			</html>

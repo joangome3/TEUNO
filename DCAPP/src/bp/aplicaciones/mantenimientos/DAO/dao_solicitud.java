@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +13,8 @@ import com.mysql.jdbc.CallableStatement;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 import bp.aplicaciones.conexion.conexion;
-import bp.aplicaciones.controlador.mail;
+
 import bp.aplicaciones.mantenimientos.modelo.modelo_solicitud;
-import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
-import bp.aplicaciones.sibod.DAO.dao_mail;
-import bp.aplicaciones.sibod.modelo.modelo_mail_destinatarios;
-import bp.aplicaciones.sibod.modelo.modelo_mail_parametros;
 
 public class dao_solicitud {
 
@@ -339,155 +334,155 @@ public class dao_solicitud {
 		}
 	}
 
-	public void redactarMail(long id_solicitud, modelo_solicitud solicitud, String id_parametro)
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		@SuppressWarnings("unused")
-		mail mail = new mail();
-		dao_mail dao = new dao_mail();
-		@SuppressWarnings("unused")
-		String destinatarios[] = null;
-		@SuppressWarnings("unused")
-		String remitente = "", clave = "", asunto = "", cuerpo = "", host = "", starttls = "", port = "", auth = "",
-				ssl = "", debug = "", user = "", user1 = "", date = "";
-		List<modelo_mail_parametros> lista_parametros = new ArrayList<modelo_mail_parametros>();
-		List<modelo_mail_destinatarios> lista_destinatarios = new ArrayList<modelo_mail_destinatarios>();
-		lista_parametros = dao.obtenerParametros(id_parametro, 2);
-		if (lista_parametros.size() == 1) {
-			lista_destinatarios = dao.obtenerDestinatarios(String.valueOf(lista_parametros.get(0).getId_parametro()),
-					1);
-			// remitente = lista_parametros.get(0).getNom_remitente();
-			// clave = lista_parametros.get(0).getPas_remitente();
-			host = lista_parametros.get(0).getSmtp_host();
-			if (lista_parametros.get(0).getSmtp_starttls().equals("S")) {
-				starttls = "true";
-			} else {
-				starttls = "false";
-			}
-			port = lista_parametros.get(0).getSmtp_puerto();
-			if (lista_parametros.get(0).getSmtp_auth().equals("S")) {
-				auth = "true";
-			} else {
-				auth = "false";
-			}
-			ssl = lista_parametros.get(0).getSmtp_trust();
-			debug = lista_parametros.get(0).getSmtp_debug();
-		} else {
-			return;
-		}
-		if (lista_destinatarios.size() > 0) {
-			destinatarios = new String[lista_destinatarios.size()];
-			for (int i = 0; i < lista_destinatarios.size(); i++) {
-				// destinatarios[i] = lista_destinatarios.get(i).getMail_destinatario();
-			}
-		}
-		dao_usuario dao1 = new dao_usuario();
-		modelo_usuario usuario = new modelo_usuario();
-		date = new SimpleDateFormat("dd/MM/yyyy").format(solicitud.getFecha_1());
-		asunto = "#" + id_solicitud + " - SOLICITUD DE " + solicitud.getNom_tipo_solicitud() + " - " + date + "";
-		usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_1()), "", 2);
-		if (usuario != null) {
-			if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
-				user = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-			}
-		} else {
-			return;
-		}
-		if (solicitud.getEst_solicitud().equals("P")) {
-			cuerpo += "<b>Estimad@(s),</b></br></br>"
-					+ "Favor su ayuda con la atención de la siguiente solicitud.</br>";
-		}
-		if (solicitud.getEst_solicitud().equals("R")) {
-			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
-			if (usuario != null) {
-				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
-					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-				}
-			} else {
-				return;
-			}
-			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud se encuentra siendo revisada por " + user1
-					+ ".</br>";
-		}
-		if (solicitud.getEst_solicitud().equals("S")) {
-			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
-			if (usuario != null) {
-				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
-					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-				}
-			} else {
-				return;
-			}
-			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud se encuentra aprobada por " + user1
-					+ " considerar lo siguiente " + solicitud.getComentario_2()
-					+ ", antes de realizar los cambios en el registro.</br>";
-		}
-		if (solicitud.getEst_solicitud().equals("N")) {
-			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
-			if (usuario != null) {
-				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
-					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-				}
-			} else {
-				return;
-			}
-			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud no fue aprobada por " + user1 + " debido a que "
-					+ solicitud.getComentario_2() + ".</br>";
-		}
-		if (solicitud.getEst_solicitud().equals("A")) {
-			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
-			if (usuario != null) {
-				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
-					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-				}
-			} else {
-				return;
-			}
-			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud fue aprobada por " + user1 + " debido a que "
-					+ solicitud.getComentario_2() + ", ya puede utilizar el registro creado.</br>";
-		}
-		if (solicitud.getEst_solicitud().equals("T")) {
-			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
-			if (usuario != null) {
-				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
-					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
-				}
-			} else {
-				return;
-			}
-			cuerpo += "<b>Estimad@(s),</b></br></br>" + "Se deben realizar los siguientes cambios "
-					+ solicitud.getComentario_2() + ", antes de realizar la aprobación de la solicitud.</br>";
-		}
-		cuerpo += "<table class=\"demo\">\r\n" + "	<caption><br></caption>\r\n" + "	<thead>\r\n" + "	<tr>\r\n"
-				+ "		<th style='background:#F0F0F0;'>ID</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>TIPO SOLICITUD</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>CONFIGURACIÓN</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>CAMPO</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>FECHA SOLICITUD</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>SOLICITANTE</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>DETALLE SOLICITUD</th>\r\n"
-				+ "		<th style='background:#F0F0F0;'>ESTADO SOLICITUD</th>\r\n" + "	</tr>\r\n" + "	</thead>\r\n"
-				+ "	<tbody>\r\n" + "	<tr>\r\n" + "		<td style='text-align:center;'>&nbsp;" + id_solicitud
-				+ "</td>\r\n" + "		<td style='text-align:center;'>&nbsp;" + solicitud.getNom_tipo_solicitud()
-				+ "</td>\r\n" + "		<td style='text-align:center;'>&nbsp;" + solicitud.getNom_mantenimiento()
-				+ "</td>\r\n" + "		<td style='text-align:center;'>&nbsp;" + solicitud.getNom_campo() + "</td>\r\n"
-				+ "		<td style='text-align:center;'>&nbsp;" + date + "</td>\r\n"
-				+ "		<td style='text-align:center;'>&nbsp;" + user + "</td>\r\n"
-				+ "		<td style='text-align:center;'>&nbsp;" + solicitud.getComentario_1() + "</td>\r\n"
-				+ "		<td style='text-align:center;'>&nbsp;" + solicitud.toStringEstado() + "</td>\r\n"
-				+ "	</tr>\r\n" + "	</tbody>\r\n" + "</table></br></br>";
-		if (solicitud.getEst_solicitud().equals("P")) {
-			cuerpo += "Saludos Cordiales,\r\n</br></br>" + " \r\n" + user + "\r\n</br>"
-					+ "<b>Operador en Turno</b>\r\n</br>" + "NOC TEUNO\r\n</br>" + "operadorcca@teuno.com\r\n</br>"
-					+ "Dirección: Av. Perimetral Km. 30.5 y Av. Leopoldo Carrera Calvo \r\n</br>"
-					+ "T: (593) -4-6020660 ext. Prefijo (451) 6301.\r\n</br>" + "M: +593 9 88023236</br></br>";
-		} else {
-			cuerpo += "Saludos Cordiales,\r\n</br></br>" + " \r\n" + user1 + "\r\n</br>"
-					+ "<b>Operador en Turno</b>\r\n</br>" + "NOC TEUNO\r\n</br>" + "operadorcca@teuno.com\r\n</br>"
-					+ "Dirección: Av. Perimetral Km. 30.5 y Av. Leopoldo Carrera Calvo \r\n</br>"
-					+ "T: (593) -4-6020660 ext. Prefijo (451) 6301.\r\n</br>" + "M: +593 9 88023236</br></br>";
-		}
-		// mail.enviarMail(remitente, clave, destinatarios, asunto, cuerpo, host,
-		// starttls, port, auth, ssl, debug);
-	}
+//	public void redactarMail(long id_solicitud, modelo_solicitud solicitud, String id_parametro)
+//			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
+//		@SuppressWarnings("unused")
+//		mail mail = new mail();
+//		dao_mail dao = new dao_mail();
+//		@SuppressWarnings("unused")
+//		String destinatarios[] = null;
+//		@SuppressWarnings("unused")
+//		String remitente = "", clave = "", asunto = "", cuerpo = "", host = "", starttls = "", port = "", auth = "",
+//				ssl = "", debug = "", user = "", user1 = "", date = "";
+//		List<modelo_mail_parametros> lista_parametros = new ArrayList<modelo_mail_parametros>();
+//		List<modelo_mail_destinatarios> lista_destinatarios = new ArrayList<modelo_mail_destinatarios>();
+//		lista_parametros = dao.obtenerParametros(id_parametro, 2);
+//		if (lista_parametros.size() == 1) {
+//			lista_destinatarios = dao.obtenerDestinatarios(String.valueOf(lista_parametros.get(0).getId_parametro()),
+//					1);
+//			// remitente = lista_parametros.get(0).getNom_remitente();
+//			// clave = lista_parametros.get(0).getPas_remitente();
+//			host = lista_parametros.get(0).getSmtp_host();
+//			if (lista_parametros.get(0).getSmtp_starttls().equals("S")) {
+//				starttls = "true";
+//			} else {
+//				starttls = "false";
+//			}
+//			port = lista_parametros.get(0).getSmtp_puerto();
+//			if (lista_parametros.get(0).getSmtp_auth().equals("S")) {
+//				auth = "true";
+//			} else {
+//				auth = "false";
+//			}
+//			ssl = lista_parametros.get(0).getSmtp_trust();
+//			debug = lista_parametros.get(0).getSmtp_debug();
+//		} else {
+//			return;
+//		}
+//		if (lista_destinatarios.size() > 0) {
+//			destinatarios = new String[lista_destinatarios.size()];
+//			for (int i = 0; i < lista_destinatarios.size(); i++) {
+//				// destinatarios[i] = lista_destinatarios.get(i).getMail_destinatario();
+//			}
+//		}
+//		dao_usuario dao1 = new dao_usuario();
+//		modelo_usuario_bk usuario = new modelo_usuario_bk();
+//		date = new SimpleDateFormat("dd/MM/yyyy").format(solicitud.getFecha_1());
+//		asunto = "#" + id_solicitud + " - SOLICITUD DE " + solicitud.getNom_tipo_solicitud() + " - " + date + "";
+//		usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_1()), "", 2);
+//		if (usuario != null) {
+//			if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
+//				user = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+//			}
+//		} else {
+//			return;
+//		}
+//		if (solicitud.getEst_solicitud().equals("P")) {
+//			cuerpo += "<b>Estimad@(s),</b></br></br>"
+//					+ "Favor su ayuda con la atención de la siguiente solicitud.</br>";
+//		}
+//		if (solicitud.getEst_solicitud().equals("R")) {
+//			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
+//			if (usuario != null) {
+//				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
+//					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+//				}
+//			} else {
+//				return;
+//			}
+//			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud se encuentra siendo revisada por " + user1
+//					+ ".</br>";
+//		}
+//		if (solicitud.getEst_solicitud().equals("S")) {
+//			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
+//			if (usuario != null) {
+//				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
+//					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+//				}
+//			} else {
+//				return;
+//			}
+//			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud se encuentra aprobada por " + user1
+//					+ " considerar lo siguiente " + solicitud.getComentario_2()
+//					+ ", antes de realizar los cambios en el registro.</br>";
+//		}
+//		if (solicitud.getEst_solicitud().equals("N")) {
+//			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
+//			if (usuario != null) {
+//				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
+//					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+//				}
+//			} else {
+//				return;
+//			}
+//			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud no fue aprobada por " + user1 + " debido a que "
+//					+ solicitud.getComentario_2() + ".</br>";
+//		}
+//		if (solicitud.getEst_solicitud().equals("A")) {
+//			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
+//			if (usuario != null) {
+//				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
+//					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+//				}
+//			} else {
+//				return;
+//			}
+//			cuerpo += "<b>Estimad@(s),</b></br></br>" + "La solicitud fue aprobada por " + user1 + " debido a que "
+//					+ solicitud.getComentario_2() + ", ya puede utilizar el registro creado.</br>";
+//		}
+//		if (solicitud.getEst_solicitud().equals("T")) {
+//			usuario = dao1.obtenerUsuario(String.valueOf(solicitud.getId_user_2()), "", 2);
+//			if (usuario != null) {
+//				if (usuario.getNom_usuario() != null && usuario.getApe_usuario() != null) {
+//					user1 = usuario.getNom_usuario() + " " + usuario.getApe_usuario();
+//				}
+//			} else {
+//				return;
+//			}
+//			cuerpo += "<b>Estimad@(s),</b></br></br>" + "Se deben realizar los siguientes cambios "
+//					+ solicitud.getComentario_2() + ", antes de realizar la aprobación de la solicitud.</br>";
+//		}
+//		cuerpo += "<table class=\"demo\">\r\n" + "	<caption><br></caption>\r\n" + "	<thead>\r\n" + "	<tr>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>ID</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>TIPO SOLICITUD</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>CONFIGURACIÓN</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>CAMPO</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>FECHA SOLICITUD</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>SOLICITANTE</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>DETALLE SOLICITUD</th>\r\n"
+//				+ "		<th style='background:#F0F0F0;'>ESTADO SOLICITUD</th>\r\n" + "	</tr>\r\n" + "	</thead>\r\n"
+//				+ "	<tbody>\r\n" + "	<tr>\r\n" + "		<td style='text-align:center;'>&nbsp;" + id_solicitud
+//				+ "</td>\r\n" + "		<td style='text-align:center;'>&nbsp;" + solicitud.getNom_tipo_solicitud()
+//				+ "</td>\r\n" + "		<td style='text-align:center;'>&nbsp;" + solicitud.getNom_mantenimiento()
+//				+ "</td>\r\n" + "		<td style='text-align:center;'>&nbsp;" + solicitud.getNom_campo() + "</td>\r\n"
+//				+ "		<td style='text-align:center;'>&nbsp;" + date + "</td>\r\n"
+//				+ "		<td style='text-align:center;'>&nbsp;" + user + "</td>\r\n"
+//				+ "		<td style='text-align:center;'>&nbsp;" + solicitud.getComentario_1() + "</td>\r\n"
+//				+ "		<td style='text-align:center;'>&nbsp;" + solicitud.toStringEstado() + "</td>\r\n"
+//				+ "	</tr>\r\n" + "	</tbody>\r\n" + "</table></br></br>";
+//		if (solicitud.getEst_solicitud().equals("P")) {
+//			cuerpo += "Saludos Cordiales,\r\n</br></br>" + " \r\n" + user + "\r\n</br>"
+//					+ "<b>Operador en Turno</b>\r\n</br>" + "NOC TEUNO\r\n</br>" + "operadorcca@teuno.com\r\n</br>"
+//					+ "Dirección: Av. Perimetral Km. 30.5 y Av. Leopoldo Carrera Calvo \r\n</br>"
+//					+ "T: (593) -4-6020660 ext. Prefijo (451) 6301.\r\n</br>" + "M: +593 9 88023236</br></br>";
+//		} else {
+//			cuerpo += "Saludos Cordiales,\r\n</br></br>" + " \r\n" + user1 + "\r\n</br>"
+//					+ "<b>Operador en Turno</b>\r\n</br>" + "NOC TEUNO\r\n</br>" + "operadorcca@teuno.com\r\n</br>"
+//					+ "Dirección: Av. Perimetral Km. 30.5 y Av. Leopoldo Carrera Calvo \r\n</br>"
+//					+ "T: (593) -4-6020660 ext. Prefijo (451) 6301.\r\n</br>" + "M: +593 9 88023236</br></br>";
+//		}
+//		// mail.enviarMail(remitente, clave, destinatarios, asunto, cuerpo, host,
+//		// starttls, port, auth, ssl, debug);
+//	}
 
 }

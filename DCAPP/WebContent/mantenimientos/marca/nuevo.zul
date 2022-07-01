@@ -1,7 +1,7 @@
 <?page title="Nueva marca" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<window border="normal" id="zNuevo" closable="true"
+	<window border="normal" id="zNuevaMarca" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.marca.nuevo"
 		position="center, center" sizable="true" height="80%" width="768px"
 		maximizable="false" minimizable="false" title=".:: Nueva marca ::."

@@ -7,7 +7,7 @@ import bp.aplicaciones.mantenimientos.modelo.modelo_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_estado_articulo;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_articulo_ubicacion;
 import bp.aplicaciones.mantenimientos.modelo.modelo_relacion_estado_articulo_ubicacion;
-import bp.aplicaciones.mantenimientos.modelo.modelo_usuario;
+import bp.aplicaciones.mantenimientos.modelo.modelo_usuario_bk;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class detalle extends SelectorComposer<Component> {
 	String user = (String) Sessions.getCurrent().getAttribute("user");
 	long id_dc = (long) Sessions.getCurrent().getAttribute("id_dc");
 
-	List<modelo_usuario> listaUsuario = new ArrayList<modelo_usuario>();
+	List<modelo_usuario_bk> listaUsuario = new ArrayList<modelo_usuario_bk>();
 	List<modelo_estado_articulo> listaEstados = new ArrayList<modelo_estado_articulo>();
 
 	@Override

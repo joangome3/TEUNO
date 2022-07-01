@@ -1,8 +1,7 @@
 <?page title="Mantenimiento de usuarios" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<div id="zConsultar" width="100%" height="100%"
-		apply="bp.aplicaciones.controlador.mantenimientos.usuario.consultar"
+	<div id="zConsultar" width="100%" height="100%" apply="bp.aplicaciones.controlador.mantenimientos.usuario.consultar"
 		align="center">
 		<div id="winList" class="m-div-c"></div>
 		<grid>
@@ -15,8 +14,6 @@
 					<cell colspan="2" class="m-cell-a">
 						<div align="center">
 							<grid>
-								<custom-attributes
-									org.zkoss.zul.nativebar="true" />
 								<columns>
 									<column width="2%"></column>
 									<column width="48%"></column>
@@ -25,7 +22,7 @@
 								</columns>
 								<rows>
 									<row>
-										<cell colspan="4" align="left"
+										<cell colspan="4"
 											class="m-cell-b">
 											<button id="btnNuevo"
 												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
@@ -37,7 +34,7 @@
 											<space width="20px"></space>
 											<textbox id="txtBuscar"
 												width="205px" placeholder="Ingrese palabra clave"
-												tooltip="cons" style="font-style: italic;">
+												tooltip="cons" style="font-style: italic;"  maxlength="50">
 											</textbox>
 											<space width="5px"></space>
 											<combobox id="cmbLimite"
@@ -60,6 +57,7 @@
 													value="1000">
 												</comboitem>
 											</combobox>
+											<space width="25px"></space>
 										</cell>
 									</row>
 								</rows>
@@ -70,64 +68,57 @@
 			</rows>
 		</grid>
 		<vlayout vflex="1">
+		<label value="Recuerda que una vez que indiques cual será tu nombre de usuario y guardes el registro, el nombre de usuario no se podrá modificar." class="z-label-1"></label>
+		<label value="No olvides marcar la casilla cambio de contraseña cuando estes creando un usuario nuevo o si deseas cambiar la contraseña, recuerda que la clave por defecto es noc123." class="z-label-1"></label>
+		<label value="¿Ya marcaste la casilla cambio de contraseña, pero al modificar el usuario no te deja cambiar la clave?, debes cerrar sesión e iniciar nuevamente con la clave por defecto que es noc123, ¡ahí si podrás cambiar la clave!" class="z-label-1"></label>
 			<hlayout vflex="1" style="overflow: scroll;">
 				<listbox mold="paging" id="lbxUsuarios" vflex="true"
 					sizedByContent="true" width="100%"
 					model="@{zConsultar$consultar.obtenerUsuarios}">
 					<listhead sizable="false"
 						style="overflow: scroll;">
-						<listheader></listheader>
 						<listheader label="ID"
 							style="text-align: center !important;">
 						</listheader>
-						<listheader label="USUARIO"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="NOMBRE"></listheader>
-						<listheader label="APELLIDO"></listheader>
-						<listheader label="PERFIL"
-							style="text-align: center !important;">
-						</listheader>
-						<listheader label="¿DEBE CAMBIAR CONTRASEÑA?"
-							style="text-align: center !important;">
-						</listheader>
+						<listheader label="USUARIO"></listheader>
+						<listheader label="NOMBRES"></listheader>
+						<listheader label="APELLIDOS"></listheader>
+						<listheader label="PERFIL"></listheader>
+						<listheader label="¿DEBE CAMBIAR LA CONTRASEÑA?"></listheader>
 						<listheader label="ESTADO"
 							style="text-align: center !important;">
 						</listheader>
 					</listhead>
 					<listitem context="editPopup"
 						self="@{each=lista}">
-						<listcell image="@{lista.mostrarImagenEstadoSolicitud}" style="text-align: center !important;"/>
-						<listcell label="@{lista.getId_usuario}" />
 						<listcell
-							label="@{lista.getUse_usuario}" />
+							label="@{lista.getId_usuario}" />
 						<listcell
-							label="@{lista.getNom_usuario}" />
+							label="@{lista.getUse_usuario}"/>
+						<listcell label="@{lista.getNom_usuario}" />
+						<listcell label="@{lista.getApe_usuario}" />
 						<listcell
-							label="@{lista.getApe_usuario}" />
-							<listcell
-							label="@{lista.getNom_perfil}" />
-						<listcell image="@{lista.mostrarImagenCambiarPassword}" style="@{lista.estiloImagenCambiarPassword}" />
-						<listcell label="@{lista.mostrarEstado}" style="@{lista.estiloMostrarEstado}"/>
+							label="@{lista.getPerfil.getNom_perfil}" />
+						<listcell
+							style="@{lista.estiloImagenCambiarPassword}"
+							image="@{lista.mostrarImagenCambiarPassword}" />
+						<listcell label="@{lista.mostrarEstado}"
+							style="@{lista.estiloMostrarEstado}" />
 					</listitem>
 				</listbox>
 			</hlayout>
 		</vlayout>
 	</div>
-	
+
 	<menupopup id="editPopup">
-		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
-			label=" - Seguimiento"
-			tooltiptext="Permite visualizar el estado de la solicitud." />
-		<menuseparator id="mSeparador1" />
-		<menuitem id="mSolicitar" iconSclass="z-icon-check"
-			label=" - Solicitar"
-			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador." />
-		<menuitem id="mAccion" iconSclass="z-icon-check"
-			label=" - Accion"
-			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador." />
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar el registro seleccionado."
+			visible="true" />
+		<menuseparator id="mSeparador1"></menuseparator>
+		<menuitem id="mEstado" label="" tooltiptext="" visible="true" />
 	</menupopup>
-	
+
 	<popup id="cons" width="300px">
 		<html>
 
@@ -146,7 +137,7 @@
 	</popup>
 	<zscript>
 	<![CDATA[
-            lbxUsuarios.pagingChild.mold = "os".equals(lbxUsuarios.pagingChild.mold) ? "default" : "os";
-        ]]>
+	lbxUsuarios.pagingChild.mold = "os".equals(lbxUsuarios.pagingChild.mold) ? "default" : "os";
+]]>
 	</zscript>
 </zk>

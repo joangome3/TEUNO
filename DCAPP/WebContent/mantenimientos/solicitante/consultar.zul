@@ -23,7 +23,8 @@
 								</columns>
 								<rows>
 									<row>
-										<cell colspan="4" class="m-cell-b">
+										<cell colspan="4"
+											class="m-cell-b">
 											<button id="btnNuevo"
 												image="/img/botones/ButtonNew.png" tooltiptext="Nuevo"
 												autodisable="self" />
@@ -32,8 +33,14 @@
 												image="/img/botones/ButtonRefresh.png"
 												tooltiptext="Refrescar lista" autodisable="self" />
 											<space width="20px"></space>
+											<combobox width="200px"
+												id="cmbEmpresa" readonly="false" disabled="false"
+												autocomplete="false" autodrop="true">
+											</combobox>
+											<space width="15px"></space>
 											<textbox id="txtBuscar"
-												width="205px" placeholder="Ingrese palabra clave" tooltip="cons" style="font-style: italic;">
+												width="205px" placeholder="Ingrese palabra clave"
+												tooltip="cons" style="font-style: italic;" maxlength="50">
 											</textbox>
 											<space width="5px"></space>
 											<combobox id="cmbLimite"
@@ -56,6 +63,17 @@
 													value="1000">
 												</comboitem>
 											</combobox>
+											<checkbox id="chkClonarPermisos"
+												mold="switch" />
+											<space width="25px"></space>
+											<combobox width="250px"
+												id="cmbSolicitante" readonly="false" disabled="true"
+												autocomplete="false" autodrop="true">
+											</combobox>
+											<button
+												id="btnClonarPermisos" label=""
+												tooltiptext="Copiar permisos" autodisable="self"
+												sclass="btn-success" iconSclass="z-icon-spinner" disabled="true"/>
 										</cell>
 									</row>
 								</rows>
@@ -66,62 +84,53 @@
 			</rows>
 		</grid>
 		<vlayout vflex="1">
+			<label value="¿A donde se verá el solicitante?, selecciona el solicitante y con el click derecho del ratón en el menú escoge Permisos, o si quieres puedes copiar los permisos de otro solicitante." class="z-label-1"></label>
+			<label value="¿Quieres copiar los permisos de otro solicitante?, selecciona el o los solicitantes de la lista a la que les copiarás los permisos y presiona el botón Copiar Permisos, claro debes indicar antes de que solicitante tomarás los permisos." class="z-label-1"></label>
 			<hlayout vflex="1" style="overflow: scroll;">
-		<listbox mold="paging" id="lbxSolicitantes" vflex="true"
-			sizedByContent="true" width="100%"
-			model="@{zConsultar$consultar.obtenerSolicitantes}">
-			<listhead sizable="false" style="overflow: scroll;">
-				<listheader></listheader>
-				<listheader label="ID"
-					style="text-align: center !important;">
-				</listheader>
-				<listheader label="TIPO DOCUMENTO"
-					style="text-align: center !important;">
-				</listheader>
-				<listheader label="DOCUMENTO"
-					style="text-align: center !important;">
-				</listheader>
-				<listheader label="NOMBRES"></listheader>
-				<listheader label="APELLIDOS"></listheader>
-				<listheader label="EMPRESA"></listheader>
-				<listheader label="ESTADO"
-					style="text-align: center !important;">
-				</listheader>
-			</listhead>
-			<listitem context="editPopup"
-				self="@{each=lista}">
-				<listcell image="@{lista.mostrarImagenEstadoSolicitud}" style="text-align: center !important;"/>
-				<listcell label="@{lista.getId_solicitante}" />
-				<listcell
-					label="@{lista.getNom_tip_documento}" />
-				<listcell label="@{lista.getNum_documento}" />
-				<listcell label="@{lista.getNom_solicitante}" />
-				<listcell label="@{lista.getApe_solicitante}" />
-				<listcell label="@{lista.getNom_empresa}" />
-				<listcell label="@{lista.mostrarEstado}" style="@{lista.estiloMostrarEstado}"/>
-			</listitem>
-		</listbox>
-		</hlayout>
+				<listbox mold="paging" id="lbxSolicitantes" vflex="true"
+					sizedByContent="true" width="100%"
+					model="@{zConsultar$consultar.obtenerSolicitantes}" checkmark="true" multiple="true">
+					<listhead sizable="false"
+						style="overflow: scroll;">
+						<listheader label="ID"
+							style="text-align: center !important;">
+						</listheader>
+						<listheader label="EMPRESA"></listheader>
+						<listheader label="TIPO DE DOCUMENTO"></listheader>
+						<listheader label="NÚMERO DE DOCUMENTO"></listheader>
+						<listheader label="NOMBRES"></listheader>
+						<listheader label="APELLIDOS"></listheader>
+						<listheader label="ESTADO"
+							style="text-align: center !important;">
+						</listheader>
+					</listhead>
+					<listitem context="editPopup"
+						self="@{each=lista}">
+						<listcell label="@{lista.getId_solicitante}" />
+						<listcell label="@{lista.getEmpresa.getNom_empresa}" />
+						<listcell label="@{lista.getTipo_documento.getNom_tipo_documento}" />
+						<listcell label="@{lista.getNum_documento}" />
+						<listcell label="@{lista.getNom_solicitante}" />
+						<listcell label="@{lista.getApe_solicitante}" />
+						<listcell label="@{lista.mostrarEstado}"
+							style="@{lista.estiloMostrarEstado}" />
+					</listitem>
+				</listbox>
+			</hlayout>
 		</vlayout>
 	</div>
-	
+
 	<menupopup id="editPopup">
-		<menuitem id="mSeguimiento" iconSclass="z-icon-search-plus"
-			label=" - Seguimiento"
-			tooltiptext="Permite visualizar el estado de la solicitud." visible="true" />
-		<menuseparator id="mSeparador1" visible="true" />
-		<menuitem id="mSolicitar" iconSclass="z-icon-check"
-			label=" - Solicitar"
-			tooltiptext="Permite realizar la solicitud para la aprobacion del aprobador." visible="true" />
-		<menuitem id="mAccion" iconSclass="z-icon-check"
-			label=" - Accion"
-			tooltiptext="Permite realizar la accion solicitada luego de la aprobacion del aprobador."  visible="true"/>
-		<menuseparator id="mSeparador2" visible="true" />
-		<menuitem id="mRelacionar" iconSclass="z-icon-th-list"
-			label=" - Relacionar"
-			tooltiptext="Permite relacionar los solicitantes para que se pueda utilizar en modulos y configuraciones." visible="true" />
+		<menuitem id="mModificar" iconSclass="z-icon-edit"
+			label=" - Modificar"
+			tooltiptext="Permite modificar el registro seleccionado."
+			visible="true" />
+		<menuseparator id="mSeparador1"></menuseparator>
+		<menuitem id="mRelacionar" iconSclass="z-icon-gears" label=" - Permisos" tooltiptext="Permite asignar permisos a mantenimientos y módulos" visible="true" />
+		<menuseparator id="mSeparador2"></menuseparator>
+		<menuitem id="mEstado" label="" tooltiptext="" visible="true" />
 	</menupopup>
-	
+
 	<popup id="cons" width="300px">
 		<html>
 
@@ -140,7 +149,8 @@
 	</popup>
 	<zscript>
 	<![CDATA[
-            lbxSolicitantes.pagingChild.mold = "os".equals(lbxSolicitantes.pagingChild.mold) ? "default" : "os";
-        ]]>
+	lbxSolicitantes.pagingChild.mold = "os".equals(lbxSolicitantes.pagingChild.mold) ? "default" : "os";
+]]>
 	</zscript>
+	<style>.z-listheader-checkable { visibility: hidden; }</style>
 </zk>

@@ -33,7 +33,7 @@ public class nuevo extends SelectorComposer<Component> {
 	AnnotateDataBinder binder;
 
 	@Wire
-	Window zNuevo;
+	Window zNuevaMarca;
 	@Wire
 	Button btnGrabar, btnCancelar;
 	@Wire
@@ -78,7 +78,6 @@ public class nuevo extends SelectorComposer<Component> {
 			txtNombre.setFocus(true);
 			Clients.showNotification("El nombre ya se encuentra registrado.", Clients.NOTIFICATION_TYPE_WARNING,
 					dSolicitudes, "top_right", 2000, true);
-			;
 			return;
 		}
 	}
@@ -128,7 +127,7 @@ public class nuevo extends SelectorComposer<Component> {
 
 	@Listen("onClick=#btnCancelar")
 	public void onClick$btnCancelar() {
-		Events.postEvent(new Event("onClose", zNuevo));
+		Events.postEvent(new Event("onClose", zNuevaMarca));
 	}
 
 	public void limpiarCampos() throws ClassNotFoundException, FileNotFoundException, IOException {

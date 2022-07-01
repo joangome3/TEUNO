@@ -216,6 +216,7 @@ public class dao_empresa {
 		}
 	}
 	
+	// SE ELIMINARA LO DE ARRIBA 
 	
 	private SessionFactory sessionFactory = hibernateUtil.getSessionFactory();
 

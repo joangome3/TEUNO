@@ -4,13 +4,13 @@
 	<window title=".:: Cambiar contraseña ::." border="normal"
 		id="zModificar" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.usuario.cambiar_contrasena"
-		width="25%">
+		width="25%" contentStyle="overflow:auto">
 		<div>
 			<grid>
 				<columns>
 					<column width="6%"></column>
-					<column width="30%"></column>
-					<column width="60%"></column>
+					<column width="35%"></column>
+					<column width="65%"></column>
 					<column width="2%"></column>
 				</columns>
 				<rows>

@@ -20,7 +20,10 @@
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_localidad" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_parametros_generales_10" />
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_empresa" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_tipo_servicio" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_solicitante" />
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_tipo_equipo" />
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_tipo_conector" />
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_equipo_tipo_conector" />
@@ -37,5 +40,20 @@
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_etiquetado_poder" />
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_etiquetado_pdu" />
         <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_observacion" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_usuario" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_perfil" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_opcion" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_mantenimiento" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_perfil_mantenimiento" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_perfil_opcion" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_empresa_mantenimiento" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_empresa_opcion" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_empresa_localidad" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_solicitante_mantenimiento" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_solicitante_opcion" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_solicitante_localidad" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_opcion_mantenimiento" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_relacion_mantenimiento_mantenimiento" />
+        <mapping class="bp.aplicaciones.mantenimientos.modelo.modelo_tipo_documento" />
     </session-factory>
 </hibernate-configuration>

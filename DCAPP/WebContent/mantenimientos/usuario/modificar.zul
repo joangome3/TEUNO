@@ -1,12 +1,12 @@
 <?page title="Modificar usuario" contentType="text/html;charset=UTF-8"?>
 <?forward uri="/index.zul" if="${sessionScope.id_user==null}"?>
 <zk>
-	<window border="normal" id="zModificar" closable="true"
+	<window border="normal" id="zModificarLocalidad" closable="true"
 		apply="bp.aplicaciones.controlador.mantenimientos.usuario.modificar"
-		position="center, center" sizable="true" width="55%" height="80%"
+		position="center, center" sizable="true" height="95%" width="768px"
 		maximizable="false" minimizable="false"
 		title=".:: Modificar usuario ::." shadow="false" mode="overlapped"
-		focus="true" action="show: slideDown;hide: slideUp">
+		focus="true" action="show: slideDown;hide: slideUp" contentStyle="overflow:auto">
 		<div height="100%" width="100%">
 			<toolbar>
 				<button id="btnGrabar"
@@ -15,7 +15,7 @@
 			</toolbar>
 			<borderlayout vflex="max" style="height: calc(100%);"
 				width="100%">
-				<center style="overflow: scroll;">
+				<center>
 					<grid>
 						<custom-attributes
 							org.zkoss.zul.nativebar="false" />
@@ -28,6 +28,13 @@
 								<space height="20px"></space>
 							</row>
 							<row>
+								<cell colspan="2" align="center">
+								<label style="position: initial !important;" class="z-label-1" value="Recuerda ver los tips de ayuda pasando el puntero del mouse por las imagenes con el símbolo ?."></label>
+								<separator></separator>
+								<label style="position: initial !important;" class="z-label-1" value="En las listas borra el contenido para que se muestren más items, también puedes escribir alguna palabra y de existir, se mostrarán las coincidencias."></label>
+								</cell>
+							</row>
+							<row>
 								<cell colspan="2">
 									<div align="center">
 										<label value="ID:"
@@ -35,7 +42,8 @@
 										<vlayout>
 											<hlayout>
 												<textbox id="txtId"
-													width="220px" readonly="true" class="z-textbox-1" />
+													width="200px" readonly="true" class="z-textbox-1" />
+												<space width="20px"></space>
 											</hlayout>
 										</vlayout>
 									</div>
@@ -49,7 +57,7 @@
 										<vlayout>
 											<hlayout>
 												<textbox id="txtUsuario"
-													width="200px" class="z-textbox-2" />
+													width="200px" class="z-textbox-2" readonly="true"/>
 												<image
 													src="/img/botones/ButtonPopup.png" tooltip="user"
 													style="cursor: help; width: 16px; height: 16px;" />
@@ -139,14 +147,9 @@
 										<vlayout>
 											<hlayout>
 												<combobox width="200px"
-													id="cmbPerfil"
-													model="@{zModificar$modificar.obtenerPerfiles}"
-													readonly="true"
-													style="font-weight: bold; color:black !important;">
-													<comboitem
-														self="@{each=lista}" label="@{lista.getNom_perfil}"
-														value="@{lista.getId_perfil}">
-													</comboitem>
+													id="cmbPerfil" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
 												</combobox>
 												<image
 													src="/img/botones/ButtonPopup.png" tooltip="perf"
@@ -166,7 +169,7 @@
 										<vlayout>
 											<hlayout>
 												<checkbox
-													id="chkCambiarPassword" />
+													id="chkCambiarPassword" mold="switch"/>
 												<space width="10px"></space>
 												<image
 													src="/img/botones/ButtonPopup.png" tooltip="cam"
@@ -184,33 +187,13 @@
 										<vlayout>
 											<hlayout>
 												<combobox width="250px"
-													id="cmbLocalidad"
-													model="@{zModificar$modificar.obtenerLocalidades}"
-													readonly="true"
-													style="font-weight: bold; color:black !important;">
-													<comboitem
-														self="@{each=lista}" label="@{lista.getNom_localidad}"
-														value="@{lista.getId_localidad}">
-													</comboitem>
+													id="cmbLocalidad" readonly="false" disabled="false"
+													autodrop="true" autocomplete="false"
+													buttonVisible="true">
 												</combobox>
 												<image
 													src="/img/botones/ButtonPopup.png" tooltip="dc"
 													style="cursor: help; width: 16px; height: 16px;" />
-											</hlayout>
-										</vlayout>
-									</div>
-								</cell>
-							</row>
-							<row>
-								<cell colspan="2">
-									<div align="center">
-										<label value="* Comentario:"
-											class="z-label-1" />
-										<vlayout>
-											<hlayout>
-												<textbox
-													id="txtComentario" width="450px" rows="4"
-													class="z-textbox-2" />
 											</hlayout>
 										</vlayout>
 									</div>
@@ -227,7 +210,6 @@
 		<popup id="pass" width="300px">
 			<html>
 
-				
 				<![CDATA[ <p style="color: black; font-size: 12px;"> La
 				contraseña debe tener al menos entre 8 y 16 caracteres,
 				al menos un numero, al menos una minúscula, al menos una
@@ -237,7 +219,6 @@
 				usando un algoritmo de 256 bits para garantizar la
 				seguridad del acceso a la aplicación. </span> </p> ]]>
 				
-	
 			</html>
 		</popup>
 		<popup id="user" width="300px">

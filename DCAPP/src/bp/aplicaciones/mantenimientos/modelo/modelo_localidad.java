@@ -1,8 +1,5 @@
 package bp.aplicaciones.mantenimientos.modelo;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -16,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import bp.aplicaciones.equipos.modelo.modelo_gestion_equipo;
-import bp.aplicaciones.extensiones.ConsultasABaseDeDatos;
 
 @Entity
 @Table(name = "sibod_localidad")
@@ -28,7 +24,7 @@ public class modelo_localidad {
 	private long id_localidad;
 	@Column(name = "nom_localidad", length = 100)
 	private String nom_localidad;
-	@Column(name = "des_localidad", length = 200)
+	@Column(name = "des_localidad", length = 500)
 	private String des_localidad;
 	@Column(name = "est_localidad", length = 5)
 	private String est_localidad;
@@ -40,6 +36,10 @@ public class modelo_localidad {
 	private String usu_modifica;
 	@Column(name = "fec_modifica")
 	private Timestamp fec_modifica;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_usuario> usuarios;
 
 	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
@@ -56,10 +56,18 @@ public class modelo_localidad {
 	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	private List<modelo_rack> racks;
+	
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_parametros_generales_10> parametros_10;
 
 	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 			CascadeType.REFRESH })
 	private List<modelo_gestion_equipo> gestion_equipos;
+
+	@OneToMany(mappedBy = "localidad", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	private List<modelo_relacion_empresa_localidad> relaciones_empresa_localidad;
 
 	/**
 	 * 
@@ -223,6 +231,20 @@ public class modelo_localidad {
 	}
 
 	/**
+	 * @return the usuarios
+	 */
+	public List<modelo_usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	/**
+	 * @param usuarios the usuarios to set
+	 */
+	public void setUsuarios(List<modelo_usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	/**
 	 * @return the equipos
 	 */
 	public List<modelo_equipo> getEquipos() {
@@ -292,6 +314,20 @@ public class modelo_localidad {
 		this.gestion_equipos = gestion_equipos;
 	}
 
+	/**
+	 * @return the relaciones_empresa_localidad
+	 */
+	public List<modelo_relacion_empresa_localidad> getRelaciones_empresa_localidad() {
+		return relaciones_empresa_localidad;
+	}
+
+	/**
+	 * @param relaciones_empresa_localidad the relaciones_empresa_localidad to set
+	 */
+	public void setRelaciones_empresa_localidad(List<modelo_relacion_empresa_localidad> relaciones_empresa_localidad) {
+		this.relaciones_empresa_localidad = relaciones_empresa_localidad;
+	}
+
 	@Override
 	public String toString() {
 		return "sibod_localidad [id_localidad=" + id_localidad + ", nom_localidad=" + nom_localidad + ", des_localidad="
@@ -329,70 +365,6 @@ public class modelo_localidad {
 			estilo = "text-align: center !important; font-weight: bold !important; font-style: normal !important; background-color: #FFDDDD;";
 		}
 		return estilo;
-	}
-
-	public String mostrarImagenEstadoSolicitud()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		String imagen = "";
-		if (validarSiExisteSolicitudCreada() == true) {
-			imagen = "/img/botones/ButtonEye.png";
-		} else if (validarSiExisteSolicitudPendienteEjecucionOActualizacion()) {
-			imagen = "/img/botones/ButtonOK.png";
-		} else {
-			imagen = "/img/botones/ButtonRequire.png";
-		}
-		return imagen;
-	}
-
-	public boolean validarSiExisteSolicitudCreada()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
-		boolean existe_solicitud_creada = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 3, id_localidad, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("P") || estado.equals("R")) {
-					existe_solicitud_creada = true;
-				}
-			}
-		}
-		return existe_solicitud_creada;
-	}
-
-	public boolean validarSiExisteSolicitudCerrada()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
-		boolean existe_solicitud_cerrada = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 3, id_localidad, 9);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("E") || estado.equals("N") || estado.equals("A")) {
-					existe_solicitud_cerrada = true;
-				}
-			}
-		}
-		return existe_solicitud_cerrada;
-	}
-
-	public boolean validarSiExisteSolicitudPendienteEjecucionOActualizacion()
-			throws ClassNotFoundException, FileNotFoundException, SQLException, IOException {
-		ConsultasABaseDeDatos consultasABaseDeDatos = new ConsultasABaseDeDatos();
-		boolean existe_solicitud_pendiente = false;
-		modelo_solicitud solicitud = new modelo_solicitud();
-		solicitud = consultasABaseDeDatos.obtenerSolicitudesxEstado("", 3, id_localidad, 7);
-		if (solicitud != null) {
-			String estado = solicitud.getEst_solicitud();
-			if (estado != null) {
-				if (estado.equals("S") || estado.equals("T")) {
-					existe_solicitud_pendiente = true;
-				}
-			}
-		}
-		return existe_solicitud_pendiente;
 	}
 
 }
